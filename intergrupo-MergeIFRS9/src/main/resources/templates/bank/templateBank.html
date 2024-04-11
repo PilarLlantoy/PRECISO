@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+
+<div class="main-container">
+
+    <div class="row m-0 bg-primary fixed-top myNav">
+        <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
+            <h3 class="fw-bold text-white mx-4 my-3">Plantilla Carga Banco</h3>
+            <h5 th:utext="'Periodo: '+${vFilter}" class="fw-bold text-white mx-4 my-3"></h5>
+        </div>
+        <div class="col-md-6 d-flex align-items-center justify-content-end pe-5">
+            <form class="form-inline" method="get" th:action="@{/bank/templateBank}">
+                <div class="input-group">
+                    <div class="input-group-append d-flex align-items-center">
+                        <h5 class="me-2 mb-0">Fecha Consulta: </h5>
+                        <input type="month" th:name="period" th:value="${period}" class="form-control" required>
+                        <select class="form-control" th:name="order" required>
+                            <option hidden th:value="${order}" th:text="${order}" selected></option>
+                            <option th:value="Pre-Carga">Pre-Carga</option>
+                            <option th:value="Plantilla">Plantilla</option>
+                        </select>
+                        <button class="btn btn-secondary" type="submit"><i class="fa fa-search"></i></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row m-0 px-4 mt-5">
+        <div class="row m-0 p-0">
+            <div class="col-md-8 d-block p-0">
+                <form th:action="@{/bank/templateBank}" id="fileUploadForm" enctype="multipart/form-data"
+                      method="post" class="d-flex flex-column">
+                    <div class="form-group my-2 d-flex align-items-center">
+                        <h5 class="fw-bold me-2 mb-0">Cargar archivo: </h5>
+                        <input accept=".xls,.xlsx,.xlsm" type="file" name="file" class="custom-file-control" id="file" required>
+                        <button type="submit" class="btn btn-primary">Cargar</button>
+                    </div>
+                    <div class="form-group mb-2 d-flex align-items-center">
+                        <h5 class="fw-bold me-2 mb-0">Periodo: </h5>
+                        <input type="month" th:name="period" th:value="${period}" class="form-control w-25" required>
+                    </div>
+                </form>
+            </div>
+
+            <div class="col-md-4 d-flex align-items-center justify-content-end">
+                <div class="text-right pr-3 col-md-6 my-2 d-flex align-content-center justify-content-end" >
+                    <a class="btn btn-info mx-1 " th:if="${inter == false}"
+                       th:href="@{/bank/templateBank/sendIntergrupo?period={period}&order={order}(period=${period},order=${order})}">
+                        Enviar a Intergrupo V1
+                    </a>
+                    <button disabled class="btn btn-info btn-sm" type="submit" th:if="${inter}">Plantilla Confirmada</button>
+                    <a class="btn btn-primary mx-1"
+                       th:href="@{/bank/templateBank?period={period}&order={order}(period=${period},order=${order})}">
+                        <i class="fas fa-redo-alt"></i>
+                    </a>
+                    <button class="btn btn-primary" id="clearTable" th:data1="${period}" th:onclick="'javascript:operationDeleteOne(this.getAttribute(\'data1\'),\'templateBank\')'">Limpiar Plantilla</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12 p-0">
+            <div class="table-responsive rounded border-primary">
+                <table id="example" class="table table-sm table-striped table-hover text-center table-bordered" width="100%">
+                    <thead class="bg-primary">
+                    <tr>
+                        <th>YNTP Empresa</th>
+                        <th>Cod Neocon</th>
+                        <th>Divisa</th>
+                        <th>Yntp</th>
+                        <th>Sociedad Yntp</th>
+                        <th>Contrato</th>
+                        <th>Nit contraparte</th>
+                        <th>Valor</th>
+                        <th>Cod Pais</th>
+                        <th>Pais</th>
+                        <th>Cuenta local</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="templateBank,iter : ${allTemplateBanks}">
+                        <th th:text="${templateBank[0]}"></th>
+                        <th th:text="${templateBank[1]}"></th>
+                        <th th:text="${templateBank[2]}"></th>
+                        <th th:text="${templateBank[3]}"></th>
+                        <th th:text="${templateBank[4]}"></th>
+                        <th th:text="${templateBank[5]}"></th>
+                        <th th:text="${templateBank[6]}"></th>
+                        <th th:text="${#numbers.formatDecimal(templateBank[7],1,'POINT',2,'COMMA')}"></th>
+                        <th th:text="${templateBank[8]}"></th>
+                        <th th:text="${templateBank[9]}"></th>
+                        <th th:text="${templateBank[10]}"></th>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="row" th:if="${last != 0}">
+                <div class="col-md-4 text-left">
+                    <nav arial-label="Pagination">
+                        <ul class="pagination">
+                            <li class="page-item" th:classappend="${prev == 0 ? 'disabled' : ''}">
+                                <a class="page-link"
+                                   th:href="@{/bank/{dir}/?page={page}&order={order}&period={period}(period=${period},page=${prev},dir=${directory},order=${order})}">Anterior</a>
+                            </li>
+                            <li class="page-item" th:classappend="${current == last ? 'disabled' : ''}">
+                                <a class="page-link"
+                                   th:href="@{/bank/{dir}/?page={page}&order={order}&period={period}(period=${period},page=${next},dir=${directory},order=${order})}">Siguiente</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="col-md-4 text-center">
+                    <h6 th:utext="${registers} + ' Registros Encontrados'"></h6>
+                </div>
+                <div class="col-md-4 text-right">
+                    <h6 class="mx-1" th:utext="'Página ' + ${current} + ' de ' + ${last}"></h6>
+                </div>
+            </div>
+            <div class="pr-3 col-md-12 my-2">
+                <div class="d-flex align-items-center justify-content-center">
+                    <a th:href="@{/bank/templateBank/downloadReport?period={period}(period=${period})}" class="btn btn-primary mx-1">Exportar Tabla Pre-Carga</a>
+                    <a th:href="@{/bank/templateBank/download?period={period}(period=${period})}" class="btn btn-primary">Exportar Plantilla Carga Periodo</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min.js" ></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+<script type="text/javascript">
+    var queryString = window.location.search;
+    var urlParams = new URLSearchParams(queryString);
+    var respuesta = urlParams.get('resp');
+    var row = urlParams.get('row');
+    var column = urlParams.get('colum');
+    validateAlerts(respuesta, row, column);
+</script>
+
+</body>
+
+
+</html>

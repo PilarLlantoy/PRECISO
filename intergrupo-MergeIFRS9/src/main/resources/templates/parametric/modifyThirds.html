@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+<div class="main-container">
+    <!-- Cover -->
+    <div id="content">
+        <form method="POST" th:action="@{/parametric/modifyThirds}" th:object="${thirdModify}">
+            <div class="row mt-5">
+                <div class="col-md-12">
+                    <h3 class="mb-3">Editar Tercero</h3>
+                    <input class="form-control" id="id" maxlength="14" required th:name="id" th:value="*{nit}"
+                           type="hidden">
+                    <input class="form-control" id="yntpOld" max="99999999999999" min="1" required
+                           th:name="yntpOld" th:value="${yntpId}" type="hidden">
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Nit Contraparte</label>
+                        <input class="form-control" id="idNew" maxlength="14" name="idNew" required th:field="*{nit}"
+                               type="text">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Contraparte</label>
+                        <input class="form-control" maxlength="255" required th:field="*{contraparte}" type="text">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>DV</label>
+                        <input class="form-control" max="9" min="0" required th:field="*{dv}" type="number">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Marca Tipo de Institucion</label>
+                        <input class="form-control" max="99999" min="0" required th:field="*{marcaTipoInstitucion}"
+                               type="number">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Código Cliente</label>
+                        <input class="form-control" max="99999999999999" min="0" required
+                               th:field="*{codigoCliente}" type="number">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>TIPO</label>
+                        <input class="form-control" max="99" min="0" required th:field="*{tipo}" type="number">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>YNTP</label>
+                        <input class="form-control" id="yntpNew" maxlength="5" minlength="5" required
+                               th:name="yntpNew" th:value="${yntpId}" type="text">
+                    </div>
+                </div>
+            </div>
+            <div class="row pt-5 py-3">
+                <div class="col-md-12 d-flex align-content-center justify-content-center">
+                    <div class="d-grid gap-2 col-3">
+                        <button type="submit" class="btn btn-primary">Modificar</button>
+                    </div>
+                    <div class="d-grid gap-2 col-3">
+                        <a class="btn btn-danger" th:href="@{/parametric/third}">Cancelar</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script crossorigin="anonymous"
+        integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
+        src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script crossorigin="anonymous"
+        integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
+        src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#sidebarCollapse').on('click', function () {
+            $('#sidebar').toggleClass('active');
+        });
+    });
+    $("#idNew").change(function () {
+        $.get("/parametric/validateNit/?idNew=" + $("#idNew").val() + "&id=" + $("#id").val(), function (responseText) {
+            if (responseText != 'valid') {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'warning',
+                    title: '¡Validación NIT Fallo!',
+                    text: 'El NIT con valor ' + $("#idNew").val() + ' ingresado en el campo Nit Contraparte ya se encuentra asociado a otro registro.',
+                    showConfirmButton: true
+                });
+                $("#idNew").val('');
+            }
+        });
+    });
+    $("#yntpNew").change(function () {
+        $.get("/parametric/validateSocietyInverse/?yntpNew=" + $("#yntpNew").val() + "&yntpOld=" + $("#yntpOld").val(), function (responseText) {
+            if (responseText != 'valid') {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'warning',
+                    title: '¡Validación Yntp Fallo!',
+                    text: 'El Yntp con valor ' + $("#yntpNew").val() + ' ingresado en el campo YNTP no se encuentra existente en la tabla sociedades Yntp.',
+                    showConfirmButton: true
+                });
+                $("#yntpNew").val('');
+            }
+        });
+    });
+</script>
+</body>
+</html>

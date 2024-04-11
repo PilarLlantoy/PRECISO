@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+<div class="main-container">
+    <!-- Cover -->
+    <div class="row m-0 bg-primary fixed-top myNav">
+        <div class="col-md-4 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
+            <h3 class="fw-bold text-white mx-4 my-3">Rechazos Descontabilización</h3>
+            <h5 class="fw-bold text-white mx-2 my-2" th:utext="'Periodo: '+${period}"></h5>
+        </div>
+        <div class="col-md-8 d-flex align-items-center justify-content-end pe-5">
+            <form class="form-inline" method="get"
+                  th:action="@{/parametric/rechazosDescontabilizacion?period={period}&order={order}&opcion={opcion}(period=${period},order=${order},opcion=${opcion})}">
+                <div class="input-group">
+                    <div class="input-group-append d-flex align-items-center">
+                        <h5 class="me-2 mb-0">Fecha Consulta: </h5>
+                        <input class="form-control" required th:name="period" th:value="${period}" type="month">
+                        <select class="form-control" id="orderSelect" onclick="check()" required th:name="order">
+                            <option hidden selected th:text="${order}" th:value="${order}"></option>
+                            <option th:value="NoFiltro">NoFiltro</option>
+                            <option th:value="ContratoEnVerticalNoConciliacion">ContratoEnVerticalNoConciliacion
+                            </option>
+                            <option th:value="CuentaNoHomologada">CuentaNoHomologada</option>
+                        </select>
+                        <select class="form-control" required th:name="opcion">
+                            <option hidden selected th:text="${opcion}" th:value="${opcion}"></option>
+                            <option th:value="Pre-Carga">Pre-Carga</option>
+                            <option th:value="Salida">Salida</option>
+                        </select>
+                        <button class="btn btn-secondary" type="submit"><i class="fa fa-search"></i></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row m-0 px-4 mt-5">
+        <div class="row m-0 p-0">
+            <div class="col-md-6 d-flex" th:if="${opcion.equals('Salida')}">
+                <form class="d-flex flex-column" enctype="multipart/form-data"
+                      id="fileUploadForm"
+                      method="post" th:action="@{/parametric/rechazosDescontabilizacion}">
+                    <div class="form-group my-3">
+                        <label>Cargar archivo:</label>
+                        <input accept=".xls,.xlsx,.xlsm" class="custom-file-control" id="file" name="file" required
+                               type="file">
+                        <button class="btn btn-primary mx-2" type="submit">Cargar</button>
+                    </div>
+                </form>
+            </div>
+            <!--<div class="col-md-auto d-flex align-items-center justify-content-center my-3"
+                 th:if="${opcion.equals('Pre-Carga')}">
+                <form class="row g-2 align-items-center w-100" id="myForm"
+                      th:action="@{/parametric/rejectDescon/upload}">
+                    <div class="col-8 form-inline d-flex align-items-center justify-content-evenly">
+                        <label class="form-label m-0 p-0 font-weight-bold" for="picker">Periodo:</label>
+                        <input class="form-control w-75" id="picker" required th:name="fileDate" type="month">
+                    </div>
+                    <div class="col-3">
+                        <button class="btn btn-primary mb-0" id="BtnUploadReject">Cargar Rechazos</button>
+                    </div>
+                </form>
+            </div>-->
+            <div class="col-md-auto d-flex" th:if="${opcion.equals('Pre-Carga')}">
+                <form class="d-flex flex-column" enctype="multipart/form-data"
+                      id="fileUploadForm1"
+                      method="post" th:action="@{/parametric/rejectDescon/uploadExam?period={period}(period=${period})}">
+                    <div class="form-group my-3">
+                        <label>Ruta archivo:</label>
+                        <!--<input accept=".txt" class="custom-file-control" id="file" name="file" required
+                               type="file">-->
+                        <input class="custom-file-control" id="ruta" name="ruta" required
+                               type="text">
+                        <button class="btn btn-primary mx-2" type="submit">Cargar</button>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-auto d-flex align-items-center justify-content-end p-0">
+                <div class="text-right pr-3 col-md-6 d-flex align-content-center justify-content-end">
+                    <a class="btn btn-primary mx-1"
+                       th:href="@{/parametric/rechazosDescontabilizacion?period={period}&order={order}&opcion={opcion}(period=${period},order=${order},opcion=${opcion})}"><i
+                            class="fas fa-redo-alt"></i>
+                    </a>
+                    <button class="btn btn-primary" id="clearTable" th:data1="${period}"
+                            th:onclick="'javascript:operationDeleteOne(this.getAttribute(\'data1\'),\'rechazosDescontabilizacionPreCarga\')'">
+                        Limpiar Tabla
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="col-md-12 p-0">
+            <div class="table-responsive rounded border-primary">
+                <table class="table table-sm table-striped table-hover text-center table-bordered" id="example"
+                       width="100%">
+                    <thead class="bg-primary">
+                    <tr>
+                        <th>Cuenta</th>
+                        <th>Centro</th>
+                        <th>Divisa</th>
+                        <th>Contrato</th>
+                        <th>Saldo</th>
+                        <th>Descripción</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="rechazo,iter : ${allTemplateRechazos}">
+                        <th th:if="${opcion != 'Salida'}" th:text="${rechazo[3]}"></th>
+                        <th th:if="${opcion != 'Salida'}" th:text="${rechazo[1]}"></th>
+                        <th th:if="${opcion != 'Salida'}" th:text="${rechazo[4]}"></th>
+                        <th th:if="${opcion != 'Salida'}" th:text="${rechazo[2]}"></th>
+                        <th th:if="${opcion != 'Salida'}" th:text="${rechazo[7]}"></th>
+                        <th th:if="${opcion == 'Salida'}" th:text="${rechazo[3]}"></th>
+                        <th th:if="${opcion == 'Salida'}" th:text="${rechazo[1]}"></th>
+                        <th th:if="${opcion == 'Salida'}" th:text="${rechazo[4]}"></th>
+                        <th th:if="${opcion == 'Salida'}" th:text="${rechazo[2]}"></th>
+                        <th th:if="${opcion == 'Salida'}" th:text="${rechazo[6]}"></th>
+                        <th th:if="${opcion == 'Salida'}" th:text="${rechazo[7]}"></th>
+                        <th th:if="${opcion != 'Salida'}" th:text="${rechazo[8]}"></th>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row" th:if="${last != 0}">
+            <div class="col-md-4 text-left">
+                <nav arial-label="Pagination">
+                    <ul class="pagination">
+                        <li class="page-item" th:classappend="${prev == 0 ? 'disabled' : ''}">
+                            <a class="page-link"
+                               th:href="@{/parametric/{dir}/?page={page}&period={period}&order={order}&opcion={opcion}(period=${period},order=${order},opcion=${opcion},page=${prev},dir=${directory})}">Anterior</a>
+                        </li>
+                        <li class="page-item" th:classappend="${current == last ? 'disabled' : ''}">
+                            <a class="page-link"
+                               th:href="@{/parametric/{dir}/?page={page}&period={period}&order={order}&opcion={opcion}(period=${period},order=${order},opcion=${opcion},page=${next},dir=${directory})}">Siguiente</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="col-md-4 text-center">
+                <h6 th:utext="${registers} + ' Registros Encontrados'"></h6>
+            </div>
+            <div class="col-md-4 text-right">
+                <h6 class="mx-1" th:utext="'Página ' + ${current} + ' de ' + ${last}"></h6>
+            </div>
+        </div>
+        <div class="pr-3 col-md-12 my-2">
+            <div class="d-flex align-items-center justify-content-center">
+                <a class="btn btn-primary mx-1"
+                   th:href="@{/parametric/rechazosDescontabilizacion/downloadPerCarga?period={period}&order={order}(period=${period},order=${order})}">Exportar
+                    Rechazos Pre-Carga</a>
+                <a class="btn btn-primary mx-1"
+                   th:href="@{/parametric/rechazosDescontabilizacion/download?period={period}&order={order}(period=${period},order=${order})}">Exportar
+                    Rechazos</a>
+                <a class="btn btn-primary mx-1"
+                   th:href="@{/parametric/rechazosDescontabilizacion/downloadCV?period={period}&order={order}(period=${period},order=${order})}">Exportar
+                    Cruce Validación</a>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min.js"></script>
+<script crossorigin="anonymous"
+        integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
+        src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+<script crossorigin="anonymous"
+        integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
+        src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+    var queryString = window.location.search;
+    var urlParams = new URLSearchParams(queryString);
+    var respuesta = urlParams.get('resp');
+    var row = urlParams.get('row');
+    var column = urlParams.get('colum');
+    validateAlerts(respuesta, row, column);
+    $(document).ready(function () {
+        $('#sidebarCollapse').on('click', function () {
+            $('#sidebar').toggleClass('active');
+        });
+    });
+
+    let myBtn = document.querySelector('#BtnUploadReject');
+
+    myBtn.addEventListener('click', e => {
+        e.preventDefault();
+
+        let picker = document.querySelector('#picker')
+
+        if (picker.value === '') {
+            Swal.fire({
+                title: 'Error',
+                text: 'Seleccione una fecha válida',
+                icon: 'error'
+            })
+        } else {
+            Swal.fire({
+                title: 'Atención!',
+                text: `¿Está seguro de que el archivo de rechazos en la ruta (\\\\co.igrupobbva\\svrfilesystem\\TX\\ENVIO_HOST\\XC\\CONSOLIDACION) corresponde al periodo ${picker.value}?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Si,Cargar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    let form = document.querySelector('#myForm')
+                    form.submit();
+                }
+            })
+        }
+
+
+    })
+
+</script>
+</body>
+
+</html>

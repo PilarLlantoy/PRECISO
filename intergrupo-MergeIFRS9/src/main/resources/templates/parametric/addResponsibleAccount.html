@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+<div class="main-container">
+    <nav id="sidebar">
+        <div th:replace="fragments/template :: templateNavLeft"></div>
+    </nav>
+    <!-- Cover -->
+    <div id="content">
+        <form method="post" th:action="@{/parametric/addResponsibleAccount}" th:object="${responsibleAccount}">
+            <div class="row mt-5">
+                <div class="col-md-12">
+                    <h3 class="mb-3">Agregar Cuenta Responsable</h3>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Cuenta Local</label>
+                        <input class="form-control" id="idNew" max="99999999999999" min="1000" name="idNew"
+                               placeholder="Ingrese la Cuenta Local" required th:field="*{cuentaLocal}"
+                               type="number">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Centro de Costos</label>
+                        <input class="form-control" id="idCenter" maxlength="254" name="idCenter" placeholder="Ingrese el centro de costos"
+                               required type="text">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Input</label>
+                        <input class="form-control" maxlength="254" placeholder="Ingrese la Entrada" required
+                               th:field="*{entrada}" type="text">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Componente</label>
+                        <input class="form-control" maxlength="254" placeholder="Ingrese el componente" required
+                               th:field="*{componente}" type="text">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Aplica SICC</label>
+                        <select class="form-control" th:field="*{sicc}">
+                            <option th:text="Activo" th:value="true"></option>
+                            <option th:text="Inactivo" th:value="false"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Aplica Base Fiscal</label>
+                        <select class="form-control" th:field="*{baseFiscal}">
+                            <option th:text="Activo" th:value="true"></option>
+                            <option th:text="Inactivo" th:value="false"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Aplica Metodología</label>
+                        <select class="form-control" th:field="*{metodologia}">
+                            <option th:text="Activo" th:value="true"></option>
+                            <option th:text="Inactivo" th:value="false"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row pt-5 py-3">
+                <div class="col-md-12 d-flex align-content-center justify-content-center">
+                    <div class="d-grid gap-2 col-3">
+                        <button type="submit" class="btn btn-primary">Agregar</button>
+                    </div>
+                    <div class="d-grid gap-2 col-3">
+                        <a class="btn btn-danger" th:href="@{/parametric/responsibleAccount}">Cancelar</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script crossorigin="anonymous"
+        integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
+        src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+<script crossorigin="anonymous"
+        integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
+        src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#sidebarCollapse').on('click', function () {
+            $('#sidebar').toggleClass('active');
+        });
+    });
+    $("#idNew").change(function () {
+        $.get("/parametric/validateCuentaLocal/?idNew=" + $("#idNew").val() + "&idT=0", function (responseText) {
+            if (responseText != 'valid') {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'warning',
+                    title: '¡Validación Cuenta Local Fallo!',
+                    text: 'La cuenta con valor ' + $("#idNew").val() + ' ingresado en el campo Cuenta Local ya se encuentra asociado a otro registro.',
+                    showConfirmButton: true
+                });
+                $("#idNew").val('');
+            }
+        });
+    });
+    $("#idCenter").change(function () {
+        $.get("/views/validateCenterUser/?idCenter=" + $("#idCenter").val() + "&idT=0", function (responseText) {
+            if (responseText != 'valid') {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'warning',
+                    title: '¡Validación Centro de costos Falló!',
+                    text: 'El centro de costos con valor ' + $("#idCenter").val() + ' ingresado en el campo Centro de Costos no se encuentra asociado a un usuario que lo gestione.',
+                    showConfirmButton: true
+                });
+                $("#idCenter").val('');
+            }
+        });
+    });
+</script>
+</body>
+</html>

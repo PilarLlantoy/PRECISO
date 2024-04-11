@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+<div class="main-container">
+    <!-- Cover -->
+    <div id="content">
+        <form method="POST" th:action="@{/parametric/modifyContract}" th:object="${contractModify}">
+            <div class="row mt-5">
+                <div class="col-md-12">
+                    <h2 class="mb-3">Editar Contrato</h2>
+                    <input class="form-control" id="idOld" name="idOld" required th:value="${contractModify[0][0]}"
+                           type="hidden">
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Contrato:</label>
+                        <input class="form-control" id="idNew" max="999999999999999999" min="1" name="idNew"
+                               required th:value="${contractModify[0][0]}" type="number">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Origen:</label>
+                        <input class="form-control" maxlength="255" name="origen" required
+                               th:value="${contractModify[0][1]}" type="text">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Tipo Aval Origen:</label>
+                        <input class="form-control" disabled maxlength="255" name="tipoAvalOrigen" required
+                               th:value="${contractModify[0][2]}" type="text">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Tipo Aval:</label>
+                        <select class="form-select form-control" name="tipoAval" required>
+                            <option hidden selected th:if="${contractModify[0][3] != null}"
+                                    th:text="${contractModify[0][4]}" th:value="${contractModify[0][3]}"></option>
+                            <option selected th:if="${contractModify[0][3] == null}" value="">Seleccione...</option>
+                            <option th:each="aval : ${avales}" th:text="${aval[0]}" th:value="${aval[1]}"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Tipo Proceso:</label>
+                        <input class="form-control" maxlength="255" name="tipoProceso" th:value="${contractModify[0][5]}"
+                               type="text">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Banco:</label>
+                        <select class="form-select form-control" name="yntpSelect" required>
+                            <option hidden selected th:if="${contractModify[0][6] != null}"
+                                    th:text="${contractModify[0][7]}" th:value="${contractModify[0][6]}"></option>
+                            <option selected th:if="${contractModify[0][6] == null}" value="">Seleccione...</option>
+                            <option th:each="bank : ${sociedades}" th:text="${bank.nombreBancoReal}"
+                                    th:value="${bank.nit}"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>País:</label>
+                        <select class="form-select form-control" name="paisSelect" required>
+                            <option hidden selected th:if="${contractModify[0][8]!= null}"
+                                    th:text="${contractModify[0][9]}" th:value="${contractModify[0][8]}"></option>
+                            <option selected th:if="${contractModify[0][8] == null}" value="">Seleccione...</option>
+                            <option th:each="country : ${paises}" th:text="${country.nombre}"
+                                    th:value="${country.id}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row pt-5 py-3">
+                <div class="col-md-12 d-flex align-content-center justify-content-center">
+                    <div class="d-grid gap-2 col-3">
+                        <button type="submit" class="btn btn-primary">Modificar</button>
+                    </div>
+                    <div class="d-grid gap-2 col-3">
+                        <a class="btn btn-danger" th:href="@{/parametric/contract}">Cancelar</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script crossorigin="anonymous"
+        integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
+        src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script crossorigin="anonymous"
+        integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
+        src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#sidebarCollapse').on('click', function () {
+            $('#sidebar').toggleClass('active');
+        });
+    });
+    $("#idNew").change(function () {
+        $.get("/parametric/validateIdContract/?idNew=" + $("#idNew").val() + "&idT=" + $("#idOld").val(), function (responseText) {
+            if (responseText != 'valid') {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'warning',
+                    title: '¡Validación Código de país Fallo!',
+                    text: 'El Código con valor ' + $("#idNew").val() + ' ingresado en el campo Código País ya se encuentra asociado a otro registro.',
+                    showConfirmButton: true
+                });
+                $("#idNew").val('');
+            }
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+<div class="main-container">
+    <!-- Cover -->
+    <div id="content">
+        <form th:object="${quotas}" th:action="@{/ifrs/addQuota}" method="POST">
+            <div class="row mt-5">
+                <div class="col-md-12" >
+                    <h3 class="mb-3">Agregar Parametría Contingentes Anexo 8</h3>
+                </div>
+                <div class="col-md-6" >
+                    <div class="form-group mb-1">
+                        <label>Cuenta PUC</label>
+                        <input type="text" id="idNew" name="idNew" minlength="9" maxlength="18" class="form-control" placeholder="Ingrese la cuenta PUC" th:field="*{cuentasPuc}" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Contrato Origen</label>
+                        <input type="text" maxlength="20" class="form-control" th:field="*{contratoOrigen}" placeholder="Ingrese el contrato origen">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Contrato IFRS9</label>
+                        <input type="text" minlength="4" maxlength="20"  class="form-control" th:field="*{contratoIfrs9}" placeholder="Ingrese el contrato ifrs9" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="d-grid gap-2 col-6 mx-auto">
+                        <button type="submit" class="button d-inline-block mt-3 justify-content-center btn btn-primary">Agregar</button>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="d-grid gap-2 col-6 mx-auto">
+                        <a class="button d-inline-block mt-3 justify-content-center btn btn-primary" th:href="@{/ifrs/quotas}" >Volver</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+      $('#sidebarCollapse').on('click', function() {
+        $('#sidebar').toggleClass('active');
+      });
+    });
+  </script>
+</body>
+</html>

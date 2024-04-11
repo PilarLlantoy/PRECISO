@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+<div class="main-container">
+    <div class="row m-0 bg-primary fixed-top myNav">
+        <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
+            <h3 class="fw-bold text-white mx-4 my-3">Creación de Otras Cuentas (General)</h3>
+        </div>
+        <div class="col-md-6 d-flex align-items-center justify-content-end pe-5">
+        </div>
+    </div>
+    <div id="content">
+        <form method="POST" th:action="@{/ifrs/accountCreationOther/modify}" th:object="${accountModify}">
+            <div class="row mt-5">
+                <div class="col-md-12">
+                    <h3 class="mb-3">Editar Cuenta Manual</h3>
+                    <input class="form-control" maxlength="255" required th:field="*{idCuentas}"
+                           type="hidden">
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group mb-1">
+                        <label>Empresa</label>
+                        <input class="form-control" disabled maxlength="4" minlength="4" required th:field="*{empresa}" type="text">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group mb-1">
+                        <label>Cuenta</label>
+                        <input class="form-control" disabled minlength="6" maxlength="15" required th:field="*{nucta}"
+                               type="text">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group mb-1">
+                        <label>Nombre Cuenta Larga</label>
+                        <input class="form-control" maxlength="65" required th:field="*{nombreCuentaLarga}"
+                               type="text">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group mb-1">
+                        <label>Nombre Cuenta Corta</label>
+                        <input class="form-control" required maxlength="35" th:field="*{nombreCuentaCorta}"
+                               type="text">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group mb-1">
+                        <label>Justificación Global</label>
+                        <input class="form-control" required th:field="*{justificacionGlobal}"
+                               type="text">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group mb-1">
+                        <label>Dinamica Cuenta</label>
+                        <input class="form-control" required th:field="*{dinamicaCuenta}"
+                               type="text">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group mb-1">
+                        <label>Tipo Cuenta</label>
+                        <select class="form-control" name="impSelect" th:field="*{tipoCta}"  required>
+                            <option hidden selected
+                                    th:text="${accountModify.tipoCta}" th:value="${accountModify.tipoCta}"></option>
+                            <option th:value="'A'" th:text="'A'"></option>
+                            <option th:value="'P'" th:text="'P'"></option>
+                            <option th:value="'I'" th:text="'I'"></option>
+                            <option th:value="'G'" th:text="'G'"></option>
+                            <option th:value="'PT'" th:text="'PT'"></option>
+                            <option th:value="'O'" th:text="'O'"></option>
+                            <option th:value="'K'" th:text="'K'"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group mb-1">
+                        <label>Indic</label>
+                        <input class="form-control" disabled required th:field="*{indic}"
+                               type="text">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group mb-1">
+                        <label>Clave Acceso</label>
+                        <select class="form-control" name="impSelect" th:field="*{claveAcceso}"  required>
+                            <option hidden selected
+                                    th:text="${accountModify.claveAcceso}" th:value="${accountModify.claveAcceso}"></option>
+                            <option th:value="'B'" th:text="'B'"></option>
+                            <option th:value="'A'" th:text="'A'"></option>
+                            <option th:value="'O'" th:text="'O'"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group mb-1">
+                        <label>Mon</label>
+                        <select class="form-control" name="impSelect" th:field="*{mon}"  required>
+                            <option hidden selected
+                                    th:text="${accountModify.mon}" th:value="${accountModify.mon}"></option>
+                            <option th:value="'0'" th:text="'0'"></option>
+                            <option th:value="'1'" th:text="'1'"></option>
+                            <option th:value="'2'" th:text="'2'"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group mb-1">
+                        <label>Centro Origen</label>
+                        <input class="form-control" maxlength="4" minlength="4" required th:field="*{centroOrigen}"
+                               type="text">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group mb-1">
+                        <label>Centro Destino</label>
+                        <input class="form-control" maxlength="4" minlength="4" required th:field="*{centroDestino}"
+                               type="text">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group mb-1">
+                        <label>Código Gestión</label>
+                        <input class="form-control" maxlength="5" minlength="5" th:field="*{codigoGestion}"
+                               type="text">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group mb-1">
+                        <label>Epigrafe</label>
+                        <input class="form-control" maxlength="5" minlength="5" th:field="*{epigrafe}"
+                               type="text">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group mb-1">
+                        <label>Consolid</label>
+                        <input class="form-control" maxlength="5" minlength="5" th:field="*{consolid}"
+                               type="text">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group mb-1">
+                        <label>Tipo Apunte</label>
+                        <input class="form-control" maxlength="1" minlength="1" th:field="*{tipoApunte}"
+                               type="text">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group mb-1">
+                        <label>Código Control</label>
+                        <input class="form-control" maxlength="2" minlength="2" th:field="*{codigoControl}"
+                               type="text">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group mb-1">
+                        <label>Indicador Cierre</label>
+                        <select class="form-control" name="impSelect" th:field="*{indicadorCierre}"  required>
+                            <option hidden selected
+                                    th:text="${accountModify.indicadorCierre}" th:value="${accountModify.indicadorCierre}"></option>
+                            <option th:value="'+'" th:text="'+'"></option>
+                            <option th:value="'-'" th:text="'-'"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group mb-1">
+                        <label>Días Plazo</label>
+                        <input class="form-control" required maxlength="3" minlength="3" th:field="*{diasPlazo}"
+                               type="text">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group mb-1">
+                        <label>Indicador Cuenta</label>
+                        <input class="form-control" maxlength="1" minlength="1" th:field="*{indicadorCuenta}"
+                               type="text">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group mb-1">
+                        <label>Interfaz</label>
+                        <input class="form-control" required maxlength="3" minlength="3" th:field="*{interfaz}"
+                               type="text">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group mb-1">
+                        <label>Contrapartida Orden</label>
+                        <input class="form-control" required maxlength="9" th:field="*{contrapartidaOrden}"
+                               type="text">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group mb-1">
+                        <label>Tipo Cuenta Orden</label>
+                        <input class="form-control" required maxlength="3" minlength="3" th:field="*{tipoCuentaOrden}"
+                               type="text">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group mb-1">
+                        <label>Contrapartida Resultados</label>
+                        <input class="form-control" required maxlength="3" minlength="3" th:field="*{contrapartidaResultados}"
+                               type="text">
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group mb-1">
+                        <input class="form-control" th:field="*{empresa}" type="hidden">
+                        <input class="form-control" th:field="*{nucta}" type="hidden">
+                        <input class="form-control" th:field="*{indic}" type="hidden">
+                        <input class="form-control" th:field="*{creador}" type="hidden">
+                        <input class="form-control" th:field="*{responsablecontroloperativocenoperes1}" type="hidden">
+                        <input class="form-control" th:field="*{responsablecontroloperativocenoperes2}" type="hidden">
+                        <input class="form-control" th:field="*{responsablecontroloperativocenoperes3}" type="hidden">
+                        <input class="form-control" th:field="*{responsablecontroloperativocenoperes4}" type="hidden">
+                        <input class="form-control" th:field="*{responsablecontroloperativocenoperes5}" type="hidden">
+                        <input class="form-control" th:field="*{responsablecontroloperativocenoperes6}" type="hidden">
+                        <input class="form-control" th:field="*{responsablecontroldegestioncengesres1}" type="hidden">
+                        <input class="form-control" th:field="*{responsablecontroldegestioncengesres2}" type="hidden">
+                        <input class="form-control" th:field="*{responsablecontroldegestioncengesres3}" type="hidden">
+                        <input class="form-control" th:field="*{responsablecontroldegestioncengesres4}" type="hidden">
+                        <input class="form-control" th:field="*{responsablecontroldegestioncengesres5}" type="hidden">
+                        <input class="form-control" th:field="*{responsablecontroldegestioncengesres6}" type="hidden">
+                        <input class="form-control" th:field="*{responsablecontroladministrativocenadmres1}" type="hidden">
+                        <input class="form-control" th:field="*{responsablecontroladministrativocenadmres2}" type="hidden">
+                        <input class="form-control" th:field="*{responsablecontroladministrativocenadmres3}" type="hidden">
+                        <input class="form-control" th:field="*{responsablecontroladministrativocenadmres4}" type="hidden">
+                        <input class="form-control" th:field="*{responsablecontroladministrativocenadmres5}" type="hidden">
+                        <input class="form-control" th:field="*{responsablecontroladministrativocenadmres6}" type="hidden">
+                        <input class="form-control" th:field="*{periodo}" type="hidden">
+                        <input class="form-control" th:field="*{estadoGeneral}" type="hidden">
+                        <input class="form-control" th:field="*{estadoConsolidacion}" type="hidden">
+                        <input class="form-control" th:field="*{estadoControl}" type="hidden">
+                        <input class="form-control" th:field="*{estadoGestion}" type="hidden">
+                    </div>
+                </div>
+            </div>
+            <div class="row pt-5 py-3">
+                <div class="col-md-12 d-flex align-content-center justify-content-center">
+                    <div class="d-grid gap-2 col-3">
+                        <button type="submit" class="btn btn-primary">Modificar Cuenta</button>
+                    </div>
+                    <div class="d-grid gap-2 col-3">
+                        <a class="btn btn-danger" th:href="@{/ifrs/accountCreationOther}">Cancelar</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script crossorigin="anonymous"
+        integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
+        src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script crossorigin="anonymous"
+        integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
+        src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#sidebarCollapse').on('click', function () {
+            $('#sidebar').toggleClass('active');
+        });
+    });
+</script>
+</body>
+</html>

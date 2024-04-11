@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+
+<div class="main-container">
+    <div class="row m-0 bg-primary fixed-top myNav">
+        <form class="form-inline" method="get" th:action="@{/information/calendarDates}">
+            <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
+                <h3 class="fw-bold text-white mx-4 my-3">Fechas Calculo 1%</h3>
+                <h5 class="fw-bold text-white mx-4 my-3" th:utext="'Periodo: '+${period}"></h5>
+            </div>
+            <div class="col-md-6 d-flex align-items-center justify-content-end">
+                <div class="input-group">
+                    <div class="input-group-append d-flex align-items-center">
+                        <h5 class="me-2 mb-0">Fecha Consulta: </h5>
+                        <input class="form-control rounded" required th:name="period" th:value="${period}" type="month">
+                        <button class="btn btn-secondary" type="submit"><i class="fa fa-search"></i></button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="row m-0 px-4 mt-5">
+        <div class="row my-3 p-0">
+            <div class="col-6 d-flex align-items-center justify-content-center">
+                <div class="alert alert-warning d-flex align-items-center m-0" role="alert">
+                    <i class="fas fa-exclamation-triangle fa-lg me-3"></i>
+                    <h5 class="m-0">
+                        Esta tabla está ligada a la tabla FECHAS_HABILES y a los días marcados como habiles
+                    </h5>
+                </div>
+            </div>
+            <div class="col-6 d-flex align-items-center justify-content-end">
+                <a class="btn btn-primary mx-1"
+                   th:href="@{/information/calendarDates/refresh?period={period}(period=${period})}">
+                    Actualizar Fechas
+                </a>
+                <a class="btn btn-primary mx-1"
+                   th:href="@{/information/calendarDates?period={period}(period=${period})}">
+                    <i class="fas fa-redo-alt"></i>
+                </a>
+            </div>
+        </div>
+        <div class="col-md-12 p-0">
+            <div class="col-md-12 p-0">
+                <div class="table-responsive rounded border-primary">
+                    <table class="table table-sm table-striped table-hover text-center table-bordered" id="example">
+                        <thead class="bg-primary">
+                        <tr>
+                            <th>Mes Contable</th>
+                            <th>Periodo Contable</th>
+                            <th>Fecha</th>
+                            <th>Version</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="date:${dateList}">
+                            <th th:text="${date.getMesContable()}"></th>
+                            <th th:text="${date.getFechaCorte()}"></th>
+                            <th th:text="${date.getFecha()}"></th>
+                            <th th:text="${date.getVersion()}"></th>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="row" th:if="${last != 0}">
+            <div class="col-md-4 text-left">
+                <nav arial-label="Pagination">
+                    <ul class="pagination">
+                        <li class="page-item" th:classappend="${prev == 0 ? 'disabled' : ''}">
+                            <a class="page-link"
+                               th:href="@{/information/{dir}/?page={page}&period={period}(page=${prev},dir=${directory},period=${period})}">Anterior</a>
+                        </li>
+                        <li class="page-item" th:classappend="${current == last ? 'disabled' : ''}">
+                            <a class="page-link"
+                               th:href="@{/information/{dir}/?page={page}&period={period}(page=${next},dir=${directory},period=${period})}">Siguiente</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="col-md-4 text-center">
+                <h6 th:utext="${registers} + ' Registros Encontrados'"></h6>
+            </div>
+            <div class="col-md-4 text-right">
+                <h6 class="mx-1" th:utext="'Página ' + ${current} + ' de ' + ${last}"></h6>
+            </div>
+        </div>
+    </div>
+
+</div>
+</div>
+</div>
+</body>
+</html>

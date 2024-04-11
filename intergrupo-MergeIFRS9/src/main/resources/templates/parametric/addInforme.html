@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+<div class="main-container">
+    <div class="row m-0 bg-primary fixed-top myNav">
+        <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
+            <h3 class="fw-bold text-white mx-4 my-3">Informe Balance y PYG</h3>
+        </div>
+        <div class="col-md-6 d-flex align-items-center justify-content-end pe-5">
+        </div>
+    </div>
+    <div id="content">
+        <form method="post" th:action="@{/parametric/addInforme}" th:object="${informe}">
+            <div class="row mt-5">
+                <div class="col-md-12">
+                    <h3 class="mb-3">Agregar Informe</h3>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Agrupa 1</label>
+                        <select class="form-control" name="impSelect" th:field="*{agrupa1}" required>
+                            <option disabled hidden selected th:value="''" th:text="'Seleccione una opción'"></option>
+                            <option th:value="'ID_GRUPO'" th:text="'ID_GRUPO'"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Aplica Query</label>
+                        <select class="form-control" name="impSelect" th:field="*{aplicaQuery}" required>
+                            <option disabled hidden selected th:value="''" th:text="'Seleccione una opción'"></option>
+                            <option th:value="'BALANCE'" th:text="'BALANCE'"></option>
+                            <option th:value="'PYG'" th:text="'PYG'"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Agrupa 2</label>
+                        <input class="form-control" placeholder="Ingrese el agrupa 2" required
+                               th:field="*{agrupa2}" type="text">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Moneda</label>
+                        <select class="form-control" name="impSelect" th:field="*{moneda}" required>
+                            <option disabled hidden selected th:value="''" th:text="'Seleccione una opción'"></option>
+                            <option th:value="'ML'" th:text="'ML'"></option>
+                            <option th:value="'ME'" th:text="'ME'"></option>
+                            <option th:value="'MT'" th:text="'MT'"></option>
+                            <option th:value="''" th:text="''"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Signo</label>
+                        <select class="form-control" name="impSelect" th:field="*{signo}" required>
+                            <option disabled hidden selected th:value="''" th:text="'Seleccione una opción'"></option>
+                            <option th:value="'1'" th:text="'1'"></option>
+                            <option th:value="'-1'" th:text="'-1'"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Concepto</label>
+                        <input class="form-control" placeholder="Ingrese el concepto" required
+                               th:field="*{concepto}" type="text">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Id</label>
+                        <input class="form-control" placeholder="Ingrese el Id" required
+                               th:field="*{idG}" type="text">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Condición</label>
+                        <select class="form-control" name="impSelect" th:field="*{condicion}" required>
+                            <option disabled hidden selected th:value="''" th:text="'Seleccione una opción'"></option>
+                            <option th:value="'SALDO'" th:text="'SALDO'"></option>
+                            <option th:value="'SUMA'" th:text="'SUMA'"></option>
+                            <option th:value="'TOTAL 4 Y 5'" th:text="'TOTAL 4 Y 5'"></option>
+                            <option th:value="'SUMA A13'" th:text="'SUMA A13'"></option>
+                            <option th:value="'SUMA B13'" th:text="'SUMA B13'"></option>
+                            <option th:value="'SUMA A14'" th:text="'SUMA A14'"></option>
+                            <option th:value="'SUMA B14'" th:text="'SUMA B14'"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Nota</label>
+                        <input class="form-control" placeholder="Ingrese la Nota"
+                               th:field="*{notas}" type="text">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Aplica</label>
+                        <select class="form-control" name="aplSelect" th:field="*{aplica}" required>
+                            <option disabled hidden selected th:value="''" th:text="'Seleccione una opción'"></option>
+                            <option th:value="'T'" th:text="'T'"></option>
+                            <option th:value="'A'" th:text="'A'"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row pt-5 py-3">
+                <div class="col-md-12 d-flex align-content-center justify-content-center">
+                    <div class="d-grid gap-2 col-3">
+                        <button type="submit" class="btn btn-primary">Agregar Informe</button>
+                    </div>
+                    <div class="d-grid gap-2 col-3">
+                        <a class="btn btn-danger" th:href="@{/parametric/informe}">Cancelar</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script crossorigin="anonymous"
+        integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
+        src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+<script crossorigin="anonymous"
+        integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
+        src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#sidebarCollapse').on('click', function () {
+            $('#sidebar').toggleClass('active');
+        });
+    });
+</script>
+</body>
+</html>

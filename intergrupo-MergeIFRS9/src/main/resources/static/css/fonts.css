@@ -1,0 +1,30 @@
+@font-face {
+    font-family: BentonSansBBVABold;
+    src: url("../fonts/BentonSansBBVA-Bold.woff") format("woff"), url("../fonts/BentonSansBBVA-Bold.woff2") format("woff2"), url("../fonts/BentonSansBBVA-Bold.ttf") format("opentype"), url("../fonts/BentonSansBBVA-Bold.svg") format("SVG"), url("../fonts/BentonSansBBVA-Bold.eot") format("embedded-opentype");
+}
+
+@font-face {
+    font-family: BentonSansBBVABook;
+    src: url("../fonts/BentonSansBBVA-Book.woff") format("woff"), url("../fonts/BentonSansBBVA-Book.woff2") format("woff2"), url("../fonts/BentonSansBBVA-Book.ttf") format("opentype"), url("../fonts/BentonSansBBVA-Book.svg") format("SVG"), url("../fonts/BentonSansBBVA-Book.eot") format("embedded-opentype");
+}
+
+@font-face {
+    font-family: BentonSansBBVAItalic;
+    src: url("../fonts/BentonSansBBVA-BookItalic.woff") format("woff"), url("../fonts/BentonSansBBVA-BookItalic.woff2") format("woff2"), url("../fonts/BentonSansBBVA-BookItalic.ttf") format("opentype"), url("../fonts/BentonSansBBVA-BookItalic.svg") format("SVG"), url("../fonts/BentonSansBBVA-BookItalic.eot") format("embedded-opentype");
+}
+
+@font-face {
+    font-family: BentonSansBBVALight;
+    src: url("../fonts/BentonSansBBVA-Light.woff") format("woff"), url("../fonts/BentonSansBBVA-Light.woff2") format("woff2"), url("../fonts/BentonSansBBVA-Light.ttf") format("opentype"), url("../fonts/BentonSansBBVA-Light.svg") format("SVG"), url("../fonts/BentonSansBBVA-Light.eot") format("embedded-opentype");
+}
+
+@font-face {
+    font-family: BentonSansBBVAMedium;
+    src: url("../fonts/BentonSansBBVA-Medium.woff") format("woff"), url("../fonts/BentonSansBBVA-Medium.woff2") format("woff2"), url("../fonts/BentonSansBBVA-Medium.ttf") format("opentype"), url("../fonts/BentonSansBBVA-Medium.svg") format("SVG"), url("../fonts/BentonSansBBVA-Medium.eot") format("embedded-opentype");
+}
+
+@font-face {
+    font-family: BentonSansBBVAMediumItalic;
+    src: url("../fonts/BentonSansBBVA-MediumItalic.woff") format("woff"), url("../fonts/BentonSansBBVA-MediumItalic.woff2") format("woff2"), url("../fonts/BentonSansBBVA-MediumItalic.ttf") format("opentype"), url("../fonts/BentonSansBBVA-MediumItalic.svg") format("SVG"), url("../fonts/BentonSansBBVA-MediumItalic.eot") format("embedded-opentype");
+}
+

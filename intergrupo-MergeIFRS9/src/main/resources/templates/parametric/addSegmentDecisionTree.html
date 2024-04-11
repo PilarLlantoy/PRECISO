@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+<div class="main-container">
+    <!-- Cover -->
+    <div id="content">
+        <form th:object="${segmentDecisionTree}" th:action="@{/parametric/addSegmentDecisionTree}" method="POST">
+            <div class="row mt-5">
+                <div class="col-md-12" >
+                    <h3 class="mb-3">Agregar Arbol de decisión de segmento</h3>
+                </div>
+                <div class="col-md-6" >
+                    <div class="form-group mb-1">
+                        <label>Código IFRS9</label>
+                        <input type="text" id="idNew" name="idNew" maxlength="3" minlength="3" class="form-control"  th:field="*{codigoIFRS9}" placeholder="Ingrese el código IFRS9" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Descripción sectorización</label>
+                        <input type="text" maxlength="50" class="form-control" th:field="*{descripcionSectorizacion}" placeholder="Ingrese la descripción de sectorización">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Corasu</label>
+                        <div class="input-group">
+                            <span class="input-group-text">Operador</span>
+                            <select th:field="*{corasuOp}" class="form-control">
+                                <option value="">Seleccione...</option>
+                                <option value="=">Igual</option>
+                                <option value="<>">Diferente</option>
+                                <option value=">">Mayor que</option>
+                                <option value="<">Menor que</option>
+                                <option value="IN">Contenido en</option>
+                                <option value="NOT IN">No contenido en</option>
+                            </select>
+                            <span class="input-group-text">Valor</span>
+                            <input type="text" maxlength="50" class="form-control" th:field="*{corasu}" placeholder="Ingrese el Corasu">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>SubCorasu</label>
+                        <div class="input-group">
+                            <span class="input-group-text">Operador</span>
+                            <select th:field="*{subCorasuOp}" class="form-control">
+                                <option value="">Seleccione...</option>
+                                <option value="=">Igual</option>
+                                <option value="<>">Diferente</option>
+                                <option value=">">Mayor que</option>
+                                <option value="<">Menor que</option>
+                                <option value="IN">Contenido en</option>
+                                <option value="NOT IN">No contenido en</option>
+                            </select>
+                            <span class="input-group-text">Valor</span>
+                            <input type="text" maxlength="50" class="form-control" th:field="*{subCorasu}" placeholder="Ingrese el SubCorasu">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>CIIU</label>
+                        <div class="input-group">
+                            <span class="input-group-text">Operador</span>
+                            <select th:field="*{ciiuOp}" class="form-control">
+                                <option value="">Seleccione...</option>
+                                <option value="=">Igual</option>
+                                <option value="<>">Diferente</option>
+                                <option value=">">Mayor que</option>
+                                <option value="<">Menor que</option>
+                                <option value="IN">Contenido en</option>
+                                <option value="NOT IN">No contenido en</option>
+                            </select>
+                            <span class="input-group-text">Valor</span>
+                            <input type="text" maxlength="50" class="form-control" th:field="*{ciiu}" placeholder="Ingrese el ciiu">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Número de empleados</label>
+                        <div class="input-group">
+                            <span class="input-group-text">Operador</span>
+                            <select th:field="*{numeroEmpleadosOp}" class="form-control">
+                                <option value="">Seleccione...</option>
+                                <option value="=">Igual</option>
+                                <option value="<>">Diferente</option>
+                                <option value=">">Mayor que</option>
+                                <option value="<">Menor que</option>
+                                <option value="IN">Contenido en</option>
+                                <option value="NOT IN">No contenido en</option>
+                            </select>
+                            <span class="input-group-text">Valor</span>
+                            <input type="text" maxlength="50" class="form-control" th:field="*{numeroEmpleados}" placeholder="Ingrese el número de empleados">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Total de activos</label>
+                        <div class="input-group">
+                            <span class="input-group-text">Operador</span>
+                            <select th:field="*{totalActivosOp}" class="form-control">
+                                <option value="">Seleccione...</option>
+                                <option value="=">Igual</option>
+                                <option value="<>">Diferente</option>
+                                <option value=">">Mayor que</option>
+                                <option value="<">Menor que</option>
+                                <option value="IN">Contenido en</option>
+                                <option value="NOT IN">No contenido en</option>
+                            </select>
+                            <span class="input-group-text">Valor</span>
+                            <input type="text" maxlength="50"  class="form-control" th:field="*{totalActivos}" placeholder="Ingrese el total de activos">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Total de ventas</label>
+                        <div class="input-group">
+                            <span class="input-group-text">Operador</span>
+                            <select th:field="*{totalVentasOp}" class="form-control">
+                                <option value="">Seleccione...</option>
+                                <option value="=">Igual</option>
+                                <option value="<>">Diferente</option>
+                                <option value=">">Mayor que</option>
+                                <option value="<">Menor que</option>
+                                <option value="IN">Contenido en</option>
+                                <option value="NOT IN">No contenido en</option>
+                            </select>
+                            <span class="input-group-text">Valor</span>
+                            <input type="text" maxlength="50"  class="form-control" th:field="*{totalVentas}" placeholder="Ingrese el total de ventas">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Verificación de contrato</label>
+                        <input type="text" maxlength="50"  class="form-control" th:field="*{verificacionContratos}" placeholder="Ingrese la verificación de contrato">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Otros criterios</label>
+                        <input type="text" maxlength="50"  class="form-control" th:field="*{otrosCriterios}" placeholder="Ingrese otros criterios">
+                    </div>
+                </div>
+            </div>
+            <div class="row pt-5 py-3">
+                <div class="col-md-12 d-flex align-content-center justify-content-center">
+                    <div class="d-grid gap-2 col-3">
+                        <button type="submit" class="btn btn-primary">Agregar</button>
+                    </div>
+                    <div class="d-grid gap-2 col-3">
+                        <a class="btn btn-danger" th:href="@{/parametric/segmentDecisionTree}">Cancelar</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#sidebarCollapse').on('click', function() {
+            $('#sidebar').toggleClass('active');
+        });
+    });
+</script>
+</body>
+</html>

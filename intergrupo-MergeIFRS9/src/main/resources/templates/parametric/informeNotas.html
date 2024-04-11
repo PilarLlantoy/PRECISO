@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+<div class="main-container">
+    <!-- Cover -->
+    <div class="row m-0 bg-primary fixed-top myNav">
+        <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
+            <h3 class="fw-bold text-white mx-4 my-3">Informe Notas</h3>
+        </div>
+        <div class="col-md-6 d-flex align-items-center justify-content-end pe-5">
+            <form class="form-inline" method="get" th:action="@{/parametric/searchInformeNotas}">
+                <div class="input-group">
+                    <input class="form-control" placeholder="Buscar..." th:name="vId" type="text">
+                    <div class="input-group-append">
+                        <select class="form-control" required th:name="vFilter">
+                            <option disabled hidden selected value="">Seleccione un filtro</option>
+                            <option th:each="item : ${columns}" th:text="${item}" th:value="${item}"></option>
+                        </select>
+                    </div>
+                    <div class="input-group-append d-flex align-items-center">
+                        <button class="btn btn-secondary" type="submit"><i class="fa fa-search"></i></button>
+                        <a class="btn btn-secondary" th:href="@{/parametric/informeNotas}"><i class="fas fa-window-close"></i></a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="content">
+        <div class="row mt-5">
+            <div class="text-left pr-3 col-md-6 my-1">
+                <form enctype="multipart/form-data" id="fileUploadForm" method="post" th:action="@{/parametric/informeNotas}">
+                    <div class="form-group my-3">
+                        <label>Cargar archivo: </label> <input accept=".xls,.xlsx,.xlsm" class="custom-file-control"
+                                                               id="file"
+                                                               name="file" required type="file">
+                        <button class="btn btn-primary" type="submit">Cargar</button>
+                    </div>
+                </form>
+            </div>
+            <div class="text-right pr-3 col-md-6 my-1">
+                <a class="btn btn-primary mx-1" th:href="@{/parametric/informeNotas}"><i class="fas fa-redo-alt"></i></a>
+                <a class="btn btn-primary mx-1" th:href="@{/parametric/addInformeNotas}">Agregar Moneda</a>
+                <button class="btn btn-primary" id="clearTable" th:onclick="operationDelete('informeNotas');">Limpiar Tabla
+                </button>
+            </div>
+            <div class="col-12">
+                <div class="table-responsive rounded border-primary">
+                    <table class="table table-sm table-striped table-hover text-center table-bordered" id="example">
+                        <thead class="bg-primary">
+                        <tr>
+                            <th>Agrupa 1</th>
+                            <th>Aplica Query</th>
+                            <th>Agrupa 2</th>
+                            <th>ID</th>
+                            <th>Moneda</th>
+                            <th>Signo</th>
+                            <th>Concepto</th>
+                            <th>Condición</th>
+                            <th>Nota</th>
+                            <th>Aplica</th>
+                            <th COLSPAN="2">Acciones</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="data : ${allData}">
+                            <td th:text="${data.agrupa1}"></td>
+                            <td th:text="${data.aplicaQuery}"></td>
+                            <td th:text="${data.agrupa2}"></td>
+                            <td th:text="${data.idG}"></td>
+                            <td th:text="${data.moneda}"></td>
+                            <td th:text="${data.signo}"></td>
+                            <td th:text="${data.concepto}"></td>
+                            <td th:text="${data.condicion}"></td>
+                            <td th:text="${data.notas}"></td>
+                            <td th:text="${data.aplica}"></td>
+                            <td><a class="btn btn-primary" th:href="@{/parametric/modifyInformeNotas/{id}(id=${data.idNic34})}">Editar</a></td>
+                            <td>
+                                <button class="btn btn-danger btn-sm" id="clearTableOne" th:data1="${data.idNic34}"
+                                        th:onclick="'javascript:operationDeleteOne(this.getAttribute(\'data1\'),\'informeNotas\')'">
+                                    Eliminar
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="row" th:if="${last != 0}">
+            <div class="col-md-4 text-left">
+                <nav arial-label="Pagination">
+                    <ul class="pagination">
+                        <li class="page-item" th:classappend="${prev == 0 ? 'disabled' : ''}">
+                            <a class="page-link"
+                               th:href="@{/parametric/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${prev},dir=${directory},vId=${vId})}">Anterior</a>
+                        </li>
+                        <li class="page-item" th:classappend="${current == last ? 'disabled' : ''}">
+                            <a class="page-link"
+                               th:href="@{/parametric/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${next},dir=${directory},vId=${vId})}">Siguiente</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="col-md-4 text-center">
+                <h6 th:utext="${registers} + ' Registros Encontrados'"></h6>
+            </div>
+            <div class="col-md-4 text-right">
+                <h6 class="mx-1" th:utext="'Página ' + ${current} + ' de ' + ${last}"></h6>
+            </div>
+        </div>
+        <div class="d-flex align-items-center justify-content-center" th:if="${filterExport != 'Original'}">
+            <h5><span class="badge badge-pill text-light badge-info py-2 px-5">¡La Tabla se encuentra Filtrada!</span>
+            </h5>
+        </div>
+        <div class="d-flex align-items-center justify-content-center">
+            <a class="btn btn-primary"
+               th:href="@{/parametric/informeNotas/download/?vFilter={vFilter}&vId={vId}(vFilter=${vFilter},vId=${vId})}">Exportar
+                a Excel</a>
+        </div>
+    </div>
+</div>
+<script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min.js"></script>
+<script crossorigin="anonymous"
+        integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
+        src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+<script crossorigin="anonymous"
+        integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
+        src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+    var queryString = window.location.search;
+    var urlParams = new URLSearchParams(queryString);
+    var respuesta = urlParams.get('resp');
+    var row = urlParams.get('row');
+    var column = urlParams.get('colum');
+    validateAlerts(respuesta, row, column);
+</script>
+</body>
+
+</html>

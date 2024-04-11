@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+<div class="main-container">
+    <!-- Cover -->
+    <div id="content">
+        <form method="POST" th:action="@{/ifrs/modifyChanges}" th:object="${changeModify}">
+            <div class="row mt-5">
+                <div class="col-md-12">
+                    <h3 class="mb-3">Editar Cambio Cuenta Query</h3>
+                    <input class="form-control" id="id" th:name="id" th:value="*{idCambio}" type="hidden">
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Empresa</label>
+                        <input class="form-control" disabled th:field="*{empresa}" type="text">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Cuenta</label>
+                        <input class="form-control" disabled th:field="*{cuenta}" type="text">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Código de consolidación anterior</label>
+                        <input class="form-control" disabled th:field="*{codiconsAnterior}" type="text">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Código de consolidación nuevo</label>
+                        <input class="form-control" disabled th:field="*{codiconsNuevo}" type="text">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Fecha corte</label>
+                        <input class="form-control" disabled th:field="*{fechaCorte}" type="text">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Perímetro IFRS9</label>
+                        <input class="form-control" disabled th:field="*{perimetroIfrs9}" type="text">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Observación</label>
+                        <input class="form-control" maxlength="255" required th:field="*{observacion}" type="text">
+                    </div>
+                </div>
+            </div>
+            <div class="row pt-5 py-3">
+                <div class="col-md-12 d-flex align-content-center justify-content-center">
+                    <div class="d-grid gap-2 col-3">
+                        <button type="submit" class="btn btn-primary">Modificar</button>
+                    </div>
+                    <div class="d-grid gap-2 col-3">
+                        <a class="btn btn-danger" th:href="@{/ifrs/changeAccountQuery}">Cancelar</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script crossorigin="anonymous"
+        integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
+        src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script crossorigin="anonymous"
+        integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
+        src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#sidebarCollapse').on('click', function () {
+            $('#sidebar').toggleClass('active');
+        });
+    });
+</script>
+</body>
+</html>

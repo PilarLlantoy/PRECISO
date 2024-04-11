@@ -1,0 +1,361 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+ol,ul{
+    padding-left: 0;
+}
+
+.h3, h3 {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+body {
+    position: relative;
+    min-height: 100vh;
+    width: 100%;
+    overflow: hidden;
+    z-index: -10;
+}
+
+.sidebar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: #004481;
+    height: 100%;
+    width: 100px;
+    z-index: 9999;
+}
+
+/* For Home */
+
+.sidebar .logo_details {
+    position: relative;
+    list-style: none;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding-right: 20px;
+    padding-left: 20px;
+}
+
+.sidebar .logo_details i {
+    margin-top: 20px;
+    font-size: 40px;
+    color: white;
+    height: 50px;
+    width: 100%;
+    text-align: center;
+    line-height: 50px;
+    cursor: pointer;
+}
+
+.sidebar .logo_details i:hover {
+    font-size: 40px;
+    color: #043263;
+    background-color: white;
+    border-radius: 10px;
+}
+
+/* For List */
+
+.sidebar .nav_links {
+    height: 100%;
+    margin-top: 20px;
+}
+
+.sidebar .nav_links li {
+    position: relative;
+    list-style: none;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding-right: 20px;
+    padding-left: 20px;
+}
+
+.sidebar .nav_links li i {
+    font-size: 40px;
+    color: white;
+    height: 50px;
+    width: 100%;
+    text-align: center;
+    line-height: 50px;
+    cursor: pointer;
+}
+
+.sidebar .nav_links li i:hover {
+    font-size: 40px;
+    color: #043263;
+    background-color: white;
+    border-radius: 10px;
+}
+
+/* For Profile */
+
+.sidebar .profile {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    margin-bottom: 20px;
+    padding-right: 20px;
+    padding-left: 20px;
+}
+
+.sidebar .profile i {
+    margin-top: 20px;
+    font-size: 40px;
+    color: white;
+    height: 50px;
+    width: 100%;
+    text-align: center;
+    line-height: 50px;
+    cursor: pointer;
+}
+
+.sidebar .profile i:hover {
+    font-size: 40px;
+    color: #043263;
+    background-color: white;
+    border-radius: 10px;
+}
+
+/* For tooltip */
+
+.sidebar .nav_links li .tooltip {
+    position: absolute;
+    left: 115px;
+    top: 0;
+    line-height: 50px;
+    text-align: center;
+    transform: translateY(-50%);
+    border-radius: 10px;
+    height: 50px;
+    width: 300px;
+    background-color: white;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    transition: 0s;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.sidebar .nav_links li:hover .tooltip {
+    transition: all 0.5s ease;
+    top: 50%;
+    opacity: 1;
+}
+
+.sidebar .logo_details .tooltip {
+    position: absolute;
+    left: 115px;
+    top: 0;
+    line-height: 50px;
+    text-align: center;
+    transform: translateY(-50%);
+    border-radius: 10px;
+    height: 50px;
+    width: 300px;
+    background-color: white;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    transition: 0s;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.sidebar .logo_details:hover .tooltip {
+    transition: all 0.5s ease;
+    top: 60%;
+    opacity: 1;
+}
+
+.sidebar .profile .tooltip {
+    position: absolute;
+    left: 115px;
+    top: 0;
+    line-height: 50px;
+    text-align: center;
+    transform: translateY(-50%);
+    border-radius: 10px;
+    height: 50px;
+    width: 300px;
+    background-color: white;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    transition: 0s;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.sidebar .profile:hover .tooltip {
+    transition: all 0.5s ease;
+    top: 60%;
+    opacity: 1;
+}
+
+/* SideNav */
+
+.sidenav {
+    overflow: auto;
+    top: 0;
+    height: 100%;
+    width: 250px;
+    margin-left: 100px;
+    position: fixed;
+    background-color: #1464a5;
+    left: -350px;
+    transition: all 0.5s ease;
+    z-index: 10;
+}
+
+.show_menu {
+    transition: all 1.5s ease;
+    left: 0;
+}
+
+.sidenav .name {
+    width: 100%;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    margin-top: 20px;
+}
+
+.sidenav .nav_links {
+    height: 100%;
+    margin-top: 10px;
+}
+
+.sidenav .nav_links li {
+    position: relative;
+    list-style: none;
+    height: 20px;
+    width: 100%;
+    margin-top: 30px;
+    margin-bottom: 10px;
+    padding-right: 10px;
+    padding-left: 10px;
+    cursor: pointer;
+}
+
+.sidenav .nav_links li a {
+    color: white;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    justify-content: space-between;
+    transition: all 0.4s ease;
+}
+
+.sidenav .nav_links li a:hover {
+    background-color: white;
+    color: #1464a5;
+}
+
+/* Overlay */
+
+.overlay {
+    position: fixed;/* Sit on top of the page content */ /* Hidden by default */
+    width: 100%;/* Full width (cover the whole page) */
+    height: 100% ;/* Full height (cover the whole page) */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);/* Black background with opacity */
+    z-index: 6;/* Specify a stack order in case you're using a different order for other elements */
+    cursor: pointer;/* Add a pointer on hover */
+}
+
+.no_overlay {
+    display: none;
+}
+
+/* Sub Menu */
+
+.submenu {
+    top: 0;
+    height: 100%;
+    width: 250px;
+    margin-left: 349px;
+    position: fixed;
+    left: -600px;
+    background-color: #1973b8;
+    transition: all 0.5s ease;
+    z-index: 7;
+}
+
+.show_submenu {
+    transition: all 1s ease;
+    left: 0;
+}
+
+.submenu .name {
+    width: 100%;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    margin-top: 20px;
+}
+
+.submenu .nav_links {
+    height: 100%;
+    margin-top: 10px;
+}
+
+.submenu .nav_links li {
+    /*
+    position: relative;
+    list-style: none;
+    height: 20px;
+    width: 100%;
+    margin-top: 30px;
+    margin-bottom: 10px;
+    padding-right: 10px;
+    padding-left: 10px;
+    cursor: pointer;
+    */
+
+    min-height: 30px;
+    list-style: none;
+    width: 100%;
+    margin-bottom: 10px;
+    padding-right: 10px;
+    padding-left: 10px;
+    cursor: pointer;
+    display: block;
+    min-width: 100%;
+}
+
+.submenu .nav_links li a {
+    color: white;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    justify-content: space-between;
+    transition: all 0.4s ease;
+}
+
+.submenu .nav_links li a:hover {
+    background-color: white;
+    color: #1464a5;
+}
+
+.main-container{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    padding-left: 100px;
+    overflow-x: hidden;
+}
+
+.myNav{
+    margin-left: 100px !important;
+    z-index: 5;
+}

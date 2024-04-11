@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:fragment="templateHead">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" type="image/png" th:href="@{/images/Favicon.ico}">
+    <title>Intergroup</title>
+    <meta name="description" content="Free Bootstrap 4 Pingendo Aquamarine template made for app and softwares.">
+    <meta name="keywords" content="Pingendo app aquamarine free template bootstrap 4">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css">
+    <link rel="stylesheet" th:href="@{/css/aquamarine.css}"/>
+    <script th:href="@{/js/navbar-ontop.js}"></script>
+    <script th:href="@{/js/animate-in.js}"></script>
+    <script type="text/javascript" th:src="@{/js/alerts.js}"></script>
+    <link th:href="@{/css/fonts.css}" rel="stylesheet"/>
+    <script defer="" src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
+    <script defer="" src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
+    <!-- JQuery Primero -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.16/dist/sweetalert2.all.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.16/dist/sweetalert2.min.css"></link>
+</head>
+</div>
+<div th:fragment="styleSearchBar">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="shortcut icon" type="image/png" th:href="@{/images/Favicon.ico}">
+        <title>Intergroup</title>
+        <meta name="description" content="Free Bootstrap 4 Pingendo Aquamarine template made for app and softwares.">
+        <meta name="keywords" content="Pingendo app aquamarine free template bootstrap 4">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css">
+        <link rel="stylesheet" th:href="@{/css/aquamarine.css}"/>
+        <script th:href="@{/js/navbar-ontop.js}"></script>
+        <script th:href="@{/js/animate-in.js}"></script>
+        <script type="text/javascript" th:src="@{/js/alerts.js}"></script>
+        <link th:href="@{/css/fonts.css}" rel="stylesheet"/>
+        <script defer="" src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
+        <script defer="" src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
+        <!-- JQuery Primero -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.16/dist/sweetalert2.all.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.16/dist/sweetalert2.min.css"></link>
+      <style>
+        .menu {
+          z-index: 200;
+          position: relative;
+        }
+
+        .menu-option {
+          padding: 6px 20px 6px;
+        }
+
+        #overlay {
+          position: absolute;
+          top: 0px;
+          left: 0px;
+          width: 100%;
+          height: 100%;
+          z-index: 100;
+        }
+      </style>
+      <title>Modificar Usuarios</title>
+    </head>
+</div>
+
+
+<body>
+<div th:fragment="templateNavTop">
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top bg-primary" style="	background-image: linear-gradient(to bottom, rgba(0,68,129,1), rgba(0,68,129,1));	background-position: top left;	background-size: 100%;	background-repeat: repeat;">
+    <div class="container overflow-auto">
+        <div class="collapse navbar-collapse" id="navbar20">
+            <ul class="navbar-nav mr-auto">
+                <button type="button" id="sidebarCollapse" class="btn btn-primary text-light">
+                    <i class="fas fa-align-left"></i>
+                    <span></span>
+                </button>
+                <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" style="">
+                    <i class="fas fa-align-justify"></i>
+                </button>
+            </ul>
+            <img class="img-fluid d-block" th:src="@{/images/logo_bbva_blanco.svg}" width="13%">
+            <ul class="navbar-nav ml-auto">
+                <div class="btn-group">
+                    <button class="btn dropdown-toggle btn-primary text-light" data-toggle="dropdown">Mi Cuenta&nbsp; &nbsp; -</button>
+                    <div class="dropdown-menu text-center">
+                        <img class="img-fluid d-block rounded-circle mx-auto mb-2" th:src="@{/images/user.png}" width="50%">
+                        <li th:utext="${userName}" class="mx-1"></li>
+                        <li th:utext="${userEmail}" class="mx-1"></li>
+                        <form th:action="@{/logout}" method="get">
+                            <button class="btn btn-md dropdown-item btn-block btn-primary active mt-2" name="registration"
+                                    type="Submit">Cerrar Sesión
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </ul>
+        </div>
+    </div>
+</nav>
+</div>
+<div class="wrapper">
+        <nav id="sidebar">
+        <div th:fragment="templateNavLeft">
+        <div class="sidebar-header mt-5">
+            <h3>NEXCO Consolidación</h3>
+            <strong>NC</strong>
+        </div>
+        <ul class="list-unstyled components">
+            <li>
+                <a th:href="@{/home}"><i class="fas fa-paper-plane"></i> Principal</a>
+            </li>
+            <li class="active">
+                <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle" target="_blank">
+                    <i class="fas fa-users-cog"></i> Administración</a>
+                <ul class="collapse list-unstyled" id="homeSubmenu" style="">
+                    <li>
+                        <a th:href="@{/admin/users}"><i class="fas fa-chevron-circle-right"></i>  Administración de usuarios</a>
+                    </li>
+                    <li>
+                        <a th:href="@{/profile/roles}"><i class="fas fa-chevron-circle-right"></i>  Administración de perfiles</a>
+                    </li>
+                    <li>
+                        <a th:href="@{/admin/audit}"><i class="fas fa-chevron-circle-right"></i>  Log de auditoria</a>
+                    </li>
+                    <li>
+                        <a th:href="@{/admin/controlPanel?period={period}(period='')}"><i class="fas fa-chevron-circle-right"></i>  Cuadro de Mando Inputs</a>
+                    </li>
+                    <li>
+                        <a th:href="@{/admin/controlPanelJobs}"><i class="fas fa-chevron-circle-right"></i>  Cuadro de Mando Jobs</a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                    <i class="fas fa-university"></i> Banco</a>
+                <ul class="collapse list-unstyled" id="pageSubmenu" style="">
+                    <li>
+                        <a th:href="@{/bank/taxBase?period={period}(period='')}"><i class="fas fa-chevron-circle-right"></i>  Base Fiscal</a>
+                    </li>
+                    <li>
+                        <a th:href="@{/bank/templateBank?period={period}&order={order}(period='',order='')}"><i class="fas fa-chevron-circle-right"></i>  Plantilla De Carga</a>
+                    </li>
+                    <li>
+                        <a th:href="@{/bank/subsidiariesTemplate?period={period}&order={order}(period='',order='')}"><i class="fas fa-chevron-circle-right"></i>  Plantilla De Filiales</a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a href="#pageSubmenu1" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                    <i class="fas fa-table"></i> Tablas Paramétricas</a>
+                <ul class="collapse list-unstyled" id="pageSubmenu1" style="">
+                    <li>
+                        <a th:href="@{/parametric/third}"><i class="fas fa-chevron-circle-right"></i>  Histórico de Terceros</a>
+                    </li>
+                    <li>
+                        <a th:href="@{/parametric/yntp}"><i class="fas fa-chevron-circle-right"></i>  Histórico de Sociedades YNTP</a>
+                    </li>
+                    <li>
+                        <a th:href="@{/parametric/currency}"><i class="fas fa-chevron-circle-right"></i>  Histórico de Divisas</a>
+                    </li>
+                    <li>
+                        <a th:href="@{/parametric/country}"><i class="fas fa-chevron-circle-right"></i>  Histórico de Países</a>
+                    </li>
+                    <li>
+                        <a th:href="@{/parametric/subsidiaries}"><i class="fas fa-chevron-circle-right"></i>  Histórico de Cruce Filiales</a>
+                    </li>
+                    <li>
+                        <a th:href="@{/parametric/contract}"><i class="fas fa-chevron-circle-right"></i>  Histórico de Contratos</a>
+                    </li>
+                    <li>
+                        <a th:href="@{/parametric/responsibleAccount}"><i class="fas fa-chevron-circle-right"></i>  Cuentas Responsables</a>
+                    </li>
+                    <li>
+                        <a th:href="@{/parametric/operationAccount}"><i class="fas fa-chevron-circle-right"></i>  Operación y Riesgo Cuentas</a>
+                    </li>
+                    <li>
+                        <a th:href="@{/parametric/indicators}"><i class="fas fa-chevron-circle-right"></i>  Indicadores Intergrupo</a>
+                    </li>
+                    <li>
+                        <a th:href="@{/parametric/reclassification}"><i class="fas fa-chevron-circle-right"></i>  Reclasificación Local</a>
+                    </li>
+                    <li>
+                        <a th:href="@{/parametric/provisions}"><i class="fas fa-chevron-circle-right"></i>  Provisiones</a>
+                    </li>
+                    <li>
+                        <a th:href="@{/parametric/neocon}"><i class="fas fa-chevron-circle-right"></i>  Cuentas Neocon</a>
+                    </li>
+                    <li>
+                        <a th:href="@{/parametric/avalType}"><i class="fas fa-chevron-circle-right"></i>  Tipos de aval</a>
+                    </li>
+                    <li>
+                        <a th:href="@{/parametric/comerParametric}"><i class="fas fa-chevron-circle-right"></i>  Metodología Comercializadora</a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a href="#pageSubmenu2" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                    <i class="fas fa-box"></i> Reportes</a>
+                <ul class="collapse list-unstyled" id="pageSubmenu2" style="">
+                    <li>
+                        <a th:href="@{/reports/rp21?period={period}(period='')}"><i class="fas fa-chevron-circle-right"></i>  Reporte Rp21</a>
+                    </li>
+                    <li>
+                        <a th:href="@{/reports/contingentes?period={period}(period='')}"><i class="fas fa-chevron-circle-right"></i>  Reporte Contingentes</a>
+                    </li>
+                    <li>
+                        <a th:href="@{/reports/contingentesAvalType}"><i class="fas fa-chevron-circle-right"></i>  Contingentes Contratos</a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a href="#pageSubmenu3" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                    <i class="fas fa-file-alt"></i> Conciliación IFRS9</a>
+                <ul class="collapse list-unstyled" id="pageSubmenu3" style="">
+                    <li>
+                        <a th:href="@{/ifrs/h140}"><i class="fas fa-chevron-circle-right"></i>  HADT140</a>
+                    </li>
+                    <li>
+                        <a th:href="@{/home}"><i class="fas fa-chevron-circle-right"></i>  Condeta</a>
+                    </li>
+                    <li>
+                        <a th:href="@{/home}"><i class="fas fa-chevron-circle-right"></i>  Centros</a>
+                    </li>
+                    <li>
+                        <a th:href="@{/ifrs/Risk}"><i class="fas fa-chevron-circle-right"></i>  Riesgos</a>
+                    </li>
+                    <li>
+                        <a th:href="@{/ifrs/center}"><i class="fas fa-chevron-circle-right"></i>  Centros de Oficinas</a>
+                    </li>
+                    <li>
+                        <a th:href="@{/ifrs/descontabilizacion}"><i class="fas fa-chevron-circle-right"></i>  Descontabilizacion</a>
+                    </li>
+                    <li>
+                        <a th:href="@{/ifrs/firstadjustment}"><i class="fas fa-chevron-circle-right"></i>Ajuste de primera vez</a>
+                    </li>
+                    <li>
+                        <a th:href="@{/ifrs/Eeff?period={period}&type={type}(period='',type='')}">Eeff</a>
+                    </li>
+                    <li>
+                        <a th:href="@{/ifrs/incurredloss}">Perdida Incurrida</a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a href="#pageSubmenu4" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                    <i class="fas fa-table"></i> Información</a>
+                <ul class="collapse list-unstyled" id="pageSubmenu4" style="">
+                    <li>
+                        <a th:href="@{/information/lastCharge}">Fecha de carga</a>
+                    </li>
+                    <li>
+                        <a th:href="@{/information/sicc}">Sicc</a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a href="#pageSubmenu5" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                    <i class="fas fa-table"></i> Precargas</a>
+                <ul class="collapse list-unstyled" id="pageSubmenu5" style="">
+                    <li>
+                        <a th:href="@{/precharges/comer}">Precarga Comer</a>
+                    </li>
+                </ul>
+            </li>
+
+        </ul>
+
+
+        </div>
+    </nav>
+</div>
+<script type="text/javascript">
+    var queryString = window.location.search;
+    var urlParams = new URLSearchParams(queryString);
+    var respuesta = urlParams.get('resp');
+    var row = urlParams.get('row');
+    var column = urlParams.get('colum');
+    validateAlerts(respuesta,row,column);
+    $(document).ready(function() {
+      $('#sidebarCollapse').on('click', function() {
+        $('#sidebar').toggleClass('active');
+      });
+    });
+  </script>
+</div>
+</body>
+
+
+</html>

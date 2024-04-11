@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+<div class="main-container">
+    <!-- Cover -->
+    <div id="content">
+        <form method="post" th:action="@{/parametric/addYntp}" th:object="${yntp}">
+            <div class="row mt-5">
+                <div class="col-md-12">
+                    <h3 class="mb-3">Agregar Yntp a Sociedad</h3>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Yntp</label>
+                        <input class="form-control" id="idNew" maxlength="5" minlength="5" name="idNew"
+                               placeholder="Ingrese el YNTP"
+                               required th:field="*{yntp}" type="text">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Sociedad Descripcion Larga</label>
+                        <input class="form-control" maxlength="254" placeholder="Ingrese la Sociedad Larga" required
+                               th:field="*{sociedadDescripcionLarga}" type="text">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Sociedad Descripcion Corta</label>
+                        <input class="form-control" maxlength="254" placeholder="Ingrese la Sociedad Corta" required
+                               th:field="*{sociedadDescripcionCorta}" type="text">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>País</label>
+                        <select class="form-control" name="paisSelect" required>
+                            <option disabled hidden selected value="">Seleccione un país</option>
+                            <option th:each="country : ${paises}" th:text="${country.nombre}"
+                                    th:value="${country.id}"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Divisa</label>
+                        <select class="form-control" name="divisaSelect" required>
+                            <option disabled hidden selected value="">Seleccione una divisa</option>
+                            <option th:each="currency : ${divisas}" th:text="${currency.nombre}"
+                                    th:value="${currency.id}"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Grupo Consolidación IFRS </label>
+                        <select class="form-control" name="grupoSelect" required>
+                            <option disabled hidden selected value="">Seleccione un grupo</option>
+                            <option th:each="group : ${grupos}" th:text="${group.nombre}"
+                                    th:value="${group.id}"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Método Consolidación IFRS </label>
+                        <select class="form-control" name="metodoSelect" required>
+                            <option disabled hidden selected value="">Seleccione un método</option>
+                            <option th:each="metodo : ${metodos}" th:text="${metodo.nombre}"
+                                    th:value="${metodo.id}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row pt-5 py-3">
+                <div class="col-md-12 d-flex align-content-center justify-content-center">
+                    <div class="d-grid gap-2 col-3">
+                        <button type="submit" class="btn btn-primary">Agregar</button>
+                    </div>
+                    <div class="d-grid gap-2 col-3">
+                        <a class="btn btn-danger" th:href="@{/parametric/yntp}">Cancelar</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script crossorigin="anonymous"
+        integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
+        src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+<script crossorigin="anonymous"
+        integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
+        src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#sidebarCollapse').on('click', function () {
+            $('#sidebar').toggleClass('active');
+        });
+    });
+    $("#idNew").change(function () {
+        $.get("/parametric/validateSociety/?idNew=" + $("#idNew").val() + "&id=0", function (responseText) {
+            if (responseText != 'valid') {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'warning',
+                    title: '¡Validación YNTP Fallo!',
+                    text: 'El YNTP con valor ' + $("#idNew").val() + ' ingresado en el campo Nit Contraparte ya se encuentra asociado a otro registro.',
+                    showConfirmButton: true
+                });
+                $("#idNew").val('');
+            }
+        });
+    });
+</script>
+</body>
+</html>

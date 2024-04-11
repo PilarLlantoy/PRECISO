@@ -1,0 +1,1427 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:fragment="menuHead">
+    <head>
+        <meta charset="UTF-8">
+        <meta content="IE=edge" http-equiv="X-UA-Compatible">
+        <title>Nexco</title>
+        <link rel="shortcut icon" th:href="@{/images/Favicon.ico}" type="image/png">
+        <meta content="width=device-width, initial-scale=1.0" name="viewport">
+        <script crossorigin="anonymous"
+                integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj"
+                src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
+        <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css"
+              integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We"
+              rel="stylesheet">
+        <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
+              type="text/css">
+        <link rel="stylesheet" th:href="@{/css/aquamarine.css}"/>
+        <link rel="stylesheet" th:href="@{/css/menuStyle.css}">
+        <script th:src="@{/js/alerts.js}" type="text/javascript"></script>
+        <script crossorigin="anonymous" defer=""
+                integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ"
+                src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js"></script>
+        <script crossorigin="anonymous" defer=""
+                integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY"
+                src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js"></script>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.16/dist/sweetalert2.all.min.js"></script>
+        <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.16/dist/sweetalert2.min.css" rel="stylesheet"/>
+
+    </head>
+</div>
+
+
+<div th:fragment="menuBody">
+    <div class="sidebar">
+        <div class="logo_details">
+            <a th:href="@{/home}"><i class='bx bxs-home'></i></a>
+            <span class="tooltip">Inicio</span>
+        </div>
+        <ul class="nav_links">
+            <li id="btnIntergrupo">
+                <a>
+                    <i class='bx bxs-group'></i>
+                </a>
+                <span class="tooltip">Intergrupo</span>
+            </li>
+            <li id="btnIfrs9">
+                <a>
+                    <i class='bx bx-grid-alt'></i>
+                </a>
+                <span class="tooltip">IFRS9</span>
+            </li>
+            <li id="btnCreacion">
+                <a>
+                    <i class='bx bx-book'></i>
+                </a>
+                <span class="tooltip">Creación de Cuentas</span>
+            </li>
+            <li id="btnProvisiones">
+                <a>
+                    <i class='bx bxs-bank'></i>
+                </a>
+                <span class="tooltip">Provisiones</span>
+            </li>
+            <li id="btneeffMenu">
+                <a>
+                    <i class='bx bxs-file-find'></i>
+                </a>
+                <span class="tooltip">EEFF Consolidado</span>
+            </li>
+            <li id="btnCollectionAccount">
+                <a>
+                    <i class='bx bxs-wallet-alt'></i>
+                </a>
+                <span class="tooltip">Cuentas por Cobrar</span>
+            </li>
+            <li id="btnReportNIC34">
+                <a>
+                    <i class='bx bxs-report'></i>
+                </a>
+                <span class="tooltip">NIC34</span>
+            </li>
+            <li id="btnInformacion">
+                <a>
+                    <i class='bx bxs-info-circle'></i>
+                </a>
+                <span class="tooltip">Informacionales</span>
+            </li>
+            <li id="btnPortafolio">
+                <a>
+                    <i class='bx bxs-briefcase'></i>
+                </a>
+                <span class="tooltip">Portafolio</span>
+            </li>
+            <li id="btnAdministracion">
+                <a>
+                    <i class='bx bxs-id-card'></i>
+                </a>
+                <span class="tooltip">Administración</span>
+            </li>
+            <li id="btnDataQuality">
+                <a>
+                    <i class='bx bxs-check-shield'></i>
+                </a>
+                <span class="tooltip">Data Quality</span>
+            </li>
+        </ul>
+        <div class="profile">
+            <a th:href="@{/logout}"><i class='bx bxs-log-out'></i></a>
+            <span class="tooltip">Cerrar Sesión</span>
+        </div>
+    </div>
+
+    <div class="overlay no_overlay" id="overlay"></div>
+
+    <!-- Menu Intergrupo -->
+
+    <div class="sidenav" id="intergrupo_menu">
+        <div class="name">
+            <h3>Intergrupo</h3>
+        </div>
+        <ul class="nav_links">
+            <li>
+                <a id="btnPlantillaCarga">
+                    <span class="links_name">Plantilla De Carga</span>
+                    <i class='bx bxs-right-arrow'></i>
+                </a>
+            </li>
+            <li>
+                <a id="btnContingentes">
+                    <span class="links_name">Contingentes</span>
+                    <i class='bx bxs-right-arrow'></i>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/reports/rp21?period={period}(period='')}">
+                    <span class="links_name">RP21</span>
+                </a>
+            </li>
+            <li>
+                <a id="btnComercializadora">
+                    <span class="links_name">Comercializadora</span>
+                    <i class='bx bxs-right-arrow'></i>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/bank/taxBase?period={period}(period='')}">
+                    <span class="links_name">Base Fiscal</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/information/sicc}" |>
+                    <span class="links_name">SICC</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/information/mis}" |>
+                    <span class="links_name">MIS-Depositos</span>
+                </a>
+            </li>
+            <li>
+                <a id="btnConciliacion">
+                    <span class="links_name">Conciliación</span>
+                    <i class='bx bxs-right-arrow'></i>
+                </a>
+            </li>
+            <li>
+                <a id="btnPlantillaNeocon">
+                    <span class="links_name">Intergrupo</span>
+                    <i class='bx bxs-right-arrow'></i>
+                </a>
+            </li>
+            <li>
+                <a id="btnParametricasInter">
+                    <span class="links_name">Paramétricas</span>
+                    <i class='bx bxs-right-arrow'></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="submenu" id="plantilla_carga">
+        <div class="name">
+            <h3>Plantilla De Carga</h3>
+        </div>
+        <ul class="nav_links">
+            <li>
+                <a th:href="@{/bank/templateBank?period={period}&order={order}(period='',order='')}">
+                    <span class="links_name">Banco</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/bank/subsidiariesTemplate?period={period}&order={order}(period='',order='')}">
+                    <span class="links_name">Filiales</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="submenu" id="contingentes">
+        <div class="name">
+            <h3>Contingentes</h3>
+        </div>
+        <ul class="nav_links">
+            <li>
+                <a th:href="@{/reports/contingentes?period={period}(period='')}">
+                    <span class="links_name">Reporte Contingentes</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/reports/contingentesAvalType}">
+                    <span class="links_name">Contingentes Contratos</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="submenu" id="depositos">
+        <div class="name">
+            <h3>Comercializadora</h3>
+        </div>
+        <ul class="nav_links">
+            <!--                <li>
+                                <a th:href="@{/information/mis}">
+                                    <span class="links_name">Depósitos</span>
+                                </a>
+                            </li>-->
+            <li>
+                <a th:href="@{/bank/gpsreport?period={period}(period='')}">
+                    <span class="links_name">GPS</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/reports/conciliacionComer/?period={period}(period='')}">
+                    <span class="links_name">Conciliación Comer</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="submenu" id="conciliacion">
+        <div class="name">
+            <h3>Conciliación</h3>
+        </div>
+        <ul class="nav_links">
+            <li>
+                <a th:href="@{/reports/reconciliationIntV1?period={period}(period='')}">
+                    <span class="links_name">Intergrupo - Query</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/reports/reconciliationIntV1Fil?period={period}(period='')}">
+                    <span class="links_name">Intergrupo Banco - Filiales</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="submenu" id="neoconInter">
+        <div class="name">
+            <h3>Intergrupo</h3>
+        </div>
+        <ul class="nav_links">
+            <li>
+                <a th:href="@{/reports/intergroup1?period={period}&order={order}(period='',order='')}">
+                    <span class="links_name">Intergrupo V1 Banco</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/reports/intergroup2?period={period}(period='')}">
+                    <span class="links_name">Intergrupo V2 Banco</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/reports/intergroup3?period={period}(period='')}">
+                    <span class="links_name">Intergrupo V3 Banco</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/bank/intergrupoSubsidiaries?period={period}(period='')}">
+                    <span class="links_name">Intergrupo Filiales</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/reports/intergroupVersions?period={period}(period='')}">
+                    <span class="links_name">Descargables Intergrupo</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="submenu" id="paramInter" style="overflow-y: scroll">
+        <div class="name">
+            <h3>Paramétricas</h3>
+        </div>
+        <ul class="nav_links">
+            <li>
+                <a th:href="@{/parametric/typeEntity}">
+                    <span class="links_name">Tipo de Entidad</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/parametric/responsibleAccount}">
+                    <span class="links_name">Cuenta Responsable</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/parametric/garantBank}">
+                    <span class="links_name">Banco Garante</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/parametric/third}">
+                    <span class="links_name">Histórico de Terceros</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/parametric/yntp}">
+                    <span class="links_name">Sociedades YNTP</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/parametric/country}">
+                    <span class="links_name">Países</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/parametric/subsidiaries}">
+                    <span class="links_name">Cruce con Filiales</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/parametric/operationAccount}">
+                    <span class="links_name">Operación y Riesgo</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/parametric/avalType}">
+                    <span class="links_name">Tipos de Aval</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/parametric/contract}">
+                    <span class="links_name">Histórico de Contratos</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/parametric/currency}">
+                    <span class="links_name">Transformación Divisas</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/parametric/indicators}">
+                    <span class="links_name">Indicadores Cuenta</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/parametric/comerParametric}">
+                    <span class="links_name">Metodología Comercializadora</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/parametric/reclassificationV2}">
+                    <span class="links_name">Reclasif. Intergrupo V2</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/parametric/accountBanco}">
+                    <span class="links_name">Naturaleza Cuenta</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Menu IFRS9 -->
+
+    <div class="sidenav" id="ifrs9_menu">
+        <div class="name">
+            <h3>Conciliación IFRS9</h3>
+        </div>
+        <ul class="nav_links">
+            <li>
+                <a th:href="@{/ifrs/anexo}">
+                    <span class="links_name">Anexo 8 Cupos</span>
+                </a>
+            </li>
+            <li>
+                <a id="btnCuadreGeneral">
+                    <span class="links_name">Cuadre General</span>
+                    <i class='bx bxs-right-arrow'></i>
+                </a>
+            </li>
+            <li>
+                <a id="btnSegmentos">
+                    <span class="links_name">Cambios de segmento</span>
+                    <i class='bx bxs-right-arrow'></i>
+                </a>
+            </li>
+            <li>
+                <a id="btnEntradasIFRS9">
+                    <span class="links_name">Entradas IFRS9</span>
+                    <i class='bx bxs-right-arrow'></i>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/ifrs/rysConcil}">
+                    <span class="links_name">Conciliación RYS</span>
+                </a>
+            </li>
+            <li>
+                <a id="btnRiskIFRS9">
+                    <span class="links_name">Riesgos</span>
+                    <i class='bx bxs-right-arrow'></i>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/ifrs9/concilScopeIFRS9}">
+                    <span class="links_name">Conciliación Scope IFRS9</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/reports/descontabilizacionReport}">
+                    <span class="links_name">Fichero Descon.</span>
+                </a>
+            </li>
+            <li>
+                <a id="btnValDesc">
+                    <span class="links_name">Archivos Host</span>
+                    <i class='bx bxs-right-arrow'></i>
+                </a>
+            </li>
+            <li>
+                <a id="btnNeocon">
+                    <span class="links_name">Plantillas Neocon</span>
+                    <i class='bx bxs-right-arrow'></i>
+                </a>
+            </li>
+            <li>
+                <a id="btnParamIfrs9">
+                    <span class="links_name">Paramétricas</span>
+                    <i class='bx bxs-right-arrow'></i>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/ifrs9/fitDifferences}">
+                    <span class="links_name">Cuadre Contable IFRS9</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/reports/vsQueryBalance}">
+                    <span class="links_name">Cuadre VS-CC-Q</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="submenu" id="cuadreGeneral">
+        <div class="name">
+            <h3>Cuadre General</h3>
+        </div>
+        <ul class="nav_links">
+            <li>
+                <a th:href="@{/reports/ifrs9Report?period={period}(period='')}">
+                    <span class="links_name">Cuadre Vertical Saldos</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/ifrs/valQueryEeff}">
+                    <span class="links_name">Cuadre Query EEFF</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/ifrs/adjustmentsHom}">
+                    <span class="links_name">Ajustes Homogeneización</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/ifrs/manualAdjustments}">
+                    <span class="links_name">Ajustes Locales</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="submenu" id="segmentos">
+        <div class="name">
+            <h3>Cambios de segmento</h3>
+        </div>
+        <ul class="nav_links">
+            <li>
+                <a th:href="@{/ifrs/segments}">
+                    <span class="links_name">Verificación Segmentos</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/ifrs/segmentsRisk}">
+                    <span class="links_name">Ajuste Segmentos Rechazos</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="submenu" id="valDesc">
+        <div class="name">
+            <h3>Archivos Host</h3>
+        </div>
+        <ul class="nav_links">
+            <li>
+                <a th:href="@{/ifrs9/desconValidation}">
+                    <span class="links_name">Carga Archivos Host</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/ifrs9/desconValConcil}">
+                    <span class="links_name">Conciliación Archivos Host</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="submenu" id="neoconMenu">
+        <div class="name">
+            <h3>Validación IFRS9</h3>
+        </div>
+        <ul class="nav_links">
+            <li>
+                <a th:href="@{/ifrs9/valIFRS9}">
+                    <span class="links_name">Cuadre Plantillas</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/ifrs9/plainIFRS9}">
+                    <span class="links_name">Plantillas Neocon</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/ifrs9/historicPyg}">
+                    <span class="links_name">Histórico PYG & Impuesto</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="submenu" id="entradasIFRS9">
+        <div class="name">
+            <h3>Entradas IFRS9</h3>
+        </div>
+        <ul class="nav_links">
+            <li>
+                <a th:href="@{/ifrs/desconnv15}">
+                    <span class="links_name">Descontabilización Nivel 15</span>
+                </a>
+            </li>
+            <!--<li>
+                <a th:href="@{/ifrs/connv15}">
+                    <span class="links_name">Contabilidad Nivel 15</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/ifrs/informenv15}">
+                    <span class="links_name">Informe Nivel 15</span>
+                </a>
+            </li>-->
+            <li>
+                <a th:href="@{/ifrs/manuals}">
+                    <span class="links_name">Manuales (Anexo8-SICC)</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/ifrs9/firstAdjustment}">
+                    <span class="links_name">Ajuste Primera Vez</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/ifrs/incurredloss}">
+                    <span class="links_name">Pérdida Incurrida</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/ifrs/descontabilizacion?period={period}(period='')}">
+                    <span class="links_name">Diferencias Conciliación Auto</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/parametric/rechazosDescontabilizacion}">
+                    <span class="links_name">Rechazos Descontabilización</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="submenu" id="paramIFRS9" style="overflow-y: scroll">
+        <div class="name">
+            <h3>Paramétricas</h3>
+        </div>
+        <ul class="nav_links">
+            <!--<li>
+                <a>
+                    <span class="links_name">Contrapartida</span>
+                </a>
+            </li>-->
+            <li>
+                <a th:href="@{/ifrs/rysParametric}">
+                    <span class="links_name">R&S Conciliacion</span>
+                </a>
+            </li>
+            <!--<li>
+                <a>
+                    <span class="links_name">Creacion Cuentas IFRS9</span>
+                </a>
+            </li>-->
+            <li>
+                <a th:href="@{/ifrs/quotas}">
+                    <span class="links_name">Parametría Contingentes Anexo 8</span>
+                </a>
+            </li>
+            <!--<li>
+                <a>
+                    <span class="links_name">Cuenta Local</span>
+                </a>
+            </li>-->
+            <!--<li>
+                <a>
+                    <span class="links_name">Crediclientela</span>
+                </a>
+            </li>-->
+            <li>
+                <a th:href="@{/parametric/genericAccount}">
+                    <span class="links_name">Cuentas genéricas</span>
+                </a>
+            </li>
+            <!--<li>
+                <a th:href="@{/parametric/reposYSimultaneas}">
+                    <span class="links_name">Repos y Simultáneas</span>
+                </a>
+            </li>-->
+            <li>
+                <a th:href="@{/parametric/counterpartyGenericContracts}">
+                    <span class="links_name">Contrapartida y genéricos</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/parametric/accountHistoryIFRS9}">
+                    <span class="links_name">Histórico de cuentas IFRS9</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/parametric/accountAndByProduct}">
+                    <span class="links_name">Cuenta y subproductos</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/ifrs9Parametrics/genericsParametric}">
+                    <span class="links_name">Genéricas</span>
+                </a>
+            </li>
+            <!--<li>
+                <a th:href="@{/parametric/provisionsAndProduct}">
+                    <span class="links_name">Provisiones y producto</span>
+                </a>
+            </li>-->
+            <li>
+                <a th:href="@{/parametric/provisions}">
+                    <span class="links_name">Producto y Provisión</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/parametric/segmentDecisionTree}">
+                    <span class="links_name">Árbol de decisión segmento</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/parametric/ciiu}">
+                    <span class="links_name">CIIU</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/ifrs/center}">
+                    <span class="links_name">Centros de Oficinas</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/parametric/typeTemplate}">
+                    <span class="links_name">Tipos de Procesos Plantilla España</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/parametric/pyg}">
+                    <span class="links_name">PyG</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="submenu" id="riskIFRS9" style="overflow-y: scroll">
+        <div class="name">
+            <h3>Riesgos</h3>
+        </div>
+        <ul class="nav_links">
+            <li>
+                <a th:href="@{/ifrs/riskAccountLoad}">
+                    <span class="links_name">Cargue Fichero</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/ifrs/riskAccount}">
+                    <span class="links_name">Contabilización Riesgos</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Menu Creacion de cuentas -->
+
+    <div class="sidenav" id="creacion_menu">
+        <div class="name">
+            <h3>Creación de cuentas</h3>
+        </div>
+        <ul class="nav_links">
+            <li>
+                <a id="btnPlan00">
+                    <span class="links_name">Plan 00</span>
+                    <i class='bx bxs-right-arrow'></i>
+                </a>
+            </li>
+            <li>
+                <a id="btnOtrasCuentas">
+                    <span class="links_name">Otras Cuentas</span>
+                    <i class='bx bxs-right-arrow'></i>
+                </a>
+            </li>
+            <li>
+                <a id="btnParamCc">
+                    <span class="links_name">Paramétricas</span>
+                    <i class='bx bxs-right-arrow'></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="submenu" id="plan00">
+        <div class="name">
+            <h3>Plan 00</h3>
+        </div>
+        <ul class="nav_links">
+            <li>
+                <a th:href="@{/ifrs/rejectionsCc}">
+                    <span class="links_name">Rechazos</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/ifrs/accountCreation}">
+                    <span class="links_name">Creación de Cuentas</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/ifrs/planeRistras}">
+                    <span class="links_name">Planos Ristras</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="submenu" id="otrasCuentas">
+        <div class="name">
+            <h3>Otras Cuentas</h3>
+        </div>
+        <ul class="nav_links">
+            <li>
+                <a th:href="@{/ifrs/accountCreationOther}">
+                    <span class="links_name">Creación de Cuentas</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/ifrs/accountCreationOtherPlane}">
+                    <span class="links_name">Generación Planos</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="submenu" id="paramCc">
+        <div class="name">
+            <h3>Paramétricas</h3>
+        </div>
+        <ul class="nav_links">
+            <li>
+                <a th:href="@{/ifrs/rejectIdP1}">
+                    <span class="links_name">Identificación Cuentas</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/ifrs/rejectIdP2}">
+                    <span class="links_name">Identificación Rechazos</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/ifrs/accountControl}">
+                    <span class="links_name">Control Contable</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/ifrs/equivalences}">
+                    <span class="links_name">Equivalencias</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Menu Provisiones -->
+
+    <div class="sidenav" id="provisiones_menu">
+        <div class="name">
+            <h3>Provisiones</h3>
+        </div>
+        <ul class="nav_links">
+            <li>
+                <a th:href="@{/ifrs9/generalInterestProvision}">
+                    <span class="links_name">Circular 22</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/ifrs9/onePercent}">
+                    <span class="links_name">Calculo 1%</span>
+                </a>
+            </li>
+            <li>
+                <a id="btnParamProv">
+                    <span class="links_name">Paramétricas</span>
+                    <i class='bx bxs-right-arrow'></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="submenu" id="paramProv">
+        <div class="name">
+            <h3>Paramétricas</h3>
+        </div>
+        <ul class="nav_links">
+            <li>
+                <a th:href="@{/ifrs9Parametrics/genericsParametric}">
+                    <span class="links_name">Genéricas</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/information/calendarDates}">
+                    <span class="links_name">Fechas Cálculo 1%</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Menu Informacionales -->
+
+    <div class="sidenav" id="informacion_menu">
+        <div class="name">
+            <h3>Informacionales</h3>
+        </div>
+        <ul class="nav_links">
+            <li>
+                <a id="btnInfoLocal">
+                    <span class="links_name">Local</span>
+                    <i class='bx bxs-right-arrow'></i>
+                </a>
+            </li>
+            <li>
+                <a id="btnInfoNeocon">
+                    <span class="links_name">Neocon</span>
+                    <i class='bx bxs-right-arrow'></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="submenu" id="infoLocal">
+        <div class="name">
+            <h3>Local</h3>
+        </div>
+        <ul class="nav_links">
+            <li>
+                <a th:href="@{/parametric/query}">
+                    <span class="links_name">Query</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/parametric/changeCurrency}">
+                    <span class="links_name">Tasas</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/ifrs/changeAccountQuery}">
+                    <span class="links_name">Histórico Cambios de Cuentas</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/ifrs/desconnv15}">
+                    <span class="links_name">Descontabilización Automáticas</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/information/neocon60}">
+                    <span class="links_name">Neocon 60</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/reports/anexo8finrep}">
+                    <span class="links_name">Anexo 8 FINREP</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="submenu" id="infoNeocon">
+        <div class="name">
+            <h3>Neocon</h3>
+        </div>
+        <ul class="nav_links">
+            <li>
+                <a th:href="@{/ifrs/Eeff?period={period}(period='')}">
+                    <span class="links_name">EEFF Neocon</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/parametric/neocon}">
+                    <span class="links_name">PUC Plan 00</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Menu Portafolio -->
+
+    <div class="sidenav" id="portafolio_menu">
+        <div class="name">
+            <h3>Portafolio</h3>
+        </div>
+        <ul class="nav_links">
+            <li>
+                <a id="btnICRV">
+                    <span class="links_name">ICRV</span>
+                    <i class='bx bxs-right-arrow'></i>
+                </a>
+            </li>
+            <li>
+                <a id="btnICRF">
+                    <span class="links_name">ICRF</span>
+                    <i class='bx bxs-right-arrow'></i>
+                </a>
+            </li>
+            <li>
+                <a id="btnPortaParam">
+                    <span class="links_name">Parametricas</span>
+                    <i class='bx bxs-right-arrow'></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="submenu" id="infoICRV">
+        <div class="name">
+            <h3>ICRV</h3>
+        </div>
+        <ul class="nav_links">
+            <li>
+                <a th:href="@{/briefcase/baseicrv}">
+                    <span class="links_name">Base</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/briefcase/priceicrv}">
+                    <span class="links_name">Precio</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/briefcase/pduicrv}">
+                    <span class="links_name">PDU</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/briefcase/calculoicrv}">
+                    <span class="links_name">Cálculo</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/briefcase/valoresicrv}">
+                    <span class="links_name">Valores</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/briefcase/fiduciariaicrv}">
+                    <span class="links_name">Fiduciaria</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/briefcase/niveljerarquiaicrv}">
+                    <span class="links_name">Nivel Jerarquia</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/briefcase/f351icrv}">
+                    <span class="links_name">F351</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/briefcase/icrv}">
+                    <span class="links_name">Reporte Final</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="submenu" id="infoICRF">
+        <div class="name">
+            <h3>ICRF</h3>
+        </div>
+        <ul class="nav_links">
+            <li>
+                <a th:href="@{/briefcase/ventaencortoicrf}">
+                    <span class="links_name">Ventas En Corto</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="submenu" id="infoPortaParam">
+        <div class="name">
+            <h3>Parametricas</h3>
+        </div>
+        <ul class="nav_links">
+            <li>
+                <a th:href="@{/briefcase/balvaloresicrv}">
+                    <span class="links_name">Bal Valores (ICRV)</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/briefcase/balfiduciariaicrv}">
+                    <span class="links_name">Bal Fiduciaria (ICRV)</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/briefcase/contactosicrv}">
+                    <span class="links_name">Contactos (ICRV)</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/briefcase/uvricrf}">
+                    <span class="links_name">UVR (ICRF)</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Menu Administracion -->
+
+    <div class="sidenav" id="admin_menu">
+        <div class="name">
+            <h3>Administración</h3>
+        </div>
+        <ul class="nav_links">
+            <li>
+                <a th:href="@{/admin/users}">
+                    <span class="links_name">Usuarios</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/profile/roles}">
+                    <span class="links_name">Roles</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/admin/controlPanel?period={period}(period='')}">
+                    <span class="links_name">Cuadro Mando Intergrupo</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/admin/controlPanelJobs}">
+                    <span class="links_name">Cuadro Mando Jobs</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/admin/audit}">
+                    <span class="links_name">Logs</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Menu Data Quality -->
+
+    <div class="sidenav" id="dq_menu">
+        <div class="name">
+            <h3>Data Quality</h3>
+        </div>
+        <ul class="nav_links">
+            <li>
+                <a th:href="@{/dataquality/rules}">
+                    <span class="links_name">Reglas DQ</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Menu Cuentas de Cobro -->
+
+    <div class="sidenav" id="cuentasCobro_menu">
+        <div class="name">
+            <h3>Cuentas Por Cobrar</h3>
+        </div>
+        <ul class="nav_links">
+            <li>
+                <a th:href="@{/accountsReceivable/invoicesCc}">
+                    <span class="links_name">Generación Informe</span>
+                </a>
+            </li>
+            <li>
+                <a id="btnParamCuC">
+                    <span class="links_name">Parametricas</span>
+                    <i class='bx bxs-right-arrow'></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="submenu" id="parametrica_cuc">
+        <div class="name">
+            <h3>Parametricas</h3>
+        </div>
+        <ul class="nav_links">
+            <li>
+                <a th:href="@{/parametric/thirdsCc}">
+                    <span class="links_name">Terceros</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/parametric/signature}">
+                    <span class="links_name">Firmas</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/accountsReceivable/accountCc}">
+                    <span class="links_name">Cuentas</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Menu EEFF Consolidado -->
+
+    <div class="sidenav" id="eeffMenu">
+        <div class="name">
+            <h3>EEFF Consolidado</h3>
+        </div>
+        <ul class="nav_links">
+            <li>
+                <!-- <a th:href="@{/eeffConsolidated/filiales}"> -->
+                <a id="btnFiliales_3">
+                    <span class="links_name">EEFF Filiales</span>
+                    <i class='bx bxs-right-arrow'></i>
+                </a>
+            </li>
+
+
+            <li>
+                <a id="btnPlantillafiliales">
+                    <span class="links_name">Consolidación Filiales</span>
+                    <i class='bx bxs-right-arrow'></i>
+                </a>
+            </li>
+
+
+            <li>
+                <a id="btnEliminacionesFiliales">
+                    <span class="links_name">Eliminaciones</span>
+                    <i class='bx bxs-right-arrow'></i>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/eeffConsolidated/parametricsConsolidated}">
+                    <span class="links_name">Parametria</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/eeffConsolidated/parametricsAjustesMinimos}">
+                    <span class="links_name">Ajustes Minimos</span>
+                </a>
+            </li>
+
+            <li>
+                <a th:href="@{/eeffConsolidated/parametricsAjustesMayores}">
+                    <span class="links_name">Ajustes IFRS</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="submenu" id="filiales_3">
+        <div class="name">
+
+            <h3>Filiales</h3>
+
+        </div>
+        <ul class="nav_links">
+            <li>
+                <a th:href="@{/eeffConsolidated/filiales}">
+                    <span class="links_name">Fiduciaria</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/eeffConsolidated/filialesValores}">
+                    <span class="links_name">Valores</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/eeffConsolidated/filialesBanco}">
+                    <span class="links_name">Banco</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="submenu" id="plantilla_filiales">
+        <div class="name">
+
+            <h3> Consolidación Filiales</h3>
+
+        </div>
+        <ul class="nav_links">
+            <li>
+                <a th:href="@{/eeffConsolidated/SubsidiaryVerification}">
+                    <span class="links_name">Verificación Filiales</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/eeffConsolidated/ConcilFilialesEEFF}">
+                    <span class="links_name">Consolidación</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="submenu" id="Eliminaciones_filiales">
+        <div class="name">
+            <h3> Eliminaciones</h3>
+        </div>
+        <ul class="nav_links">
+            <li>
+                <a th:href="@{/eeffConsolidated/IntergrupoEliminaciones}">
+                    <span class="links_name">Intergrupo</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/eeffConsolidated/VerificacionEliminaciones}">
+                    <span class="links_name">Verificación Eliminaciones</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/eeffConsolidated/EeffPatrimoniales}">
+                    <span class="links_name">Patrimoniales</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/eeffConsolidated/patrimonialesVerPT}">
+                    <span class="links_name">VER - PT</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Menu NIC 34 -->
+    <div class="sidenav" id="nic34_menu">
+        <div class="name">
+            <h3>NIC34</h3>
+        </div>
+        <ul class="nav_links">
+            <li>
+                <a id="btnNIC34Separado">
+                    <span class="links_name">Separado</span>
+                    <i class='bx bxs-right-arrow'></i>
+                </a>
+            </li>
+            <li>
+                <a id="btnNIC34Consol">
+                    <span class="links_name">Consolidado</span>
+                    <i class='bx bxs-right-arrow'></i>
+                </a>
+            </li>
+            <li>
+                <a id="btnParamNIC34">
+                    <span class="links_name">Parametricas</span>
+                    <i class='bx bxs-right-arrow'></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="submenu" id="NIC34Separado">
+        <div class="name">
+            <h3>Separado</h3>
+        </div>
+        <ul class="nav_links">
+            <li>
+                <a th:href="@{/reportNIC34/nic34}">
+                    <span class="links_name">Generación Base</span>
+                </a>
+            </li>
+            <li>
+                <a id="btnEEFFNIC34">
+                    <span class="links_name">EEFF</span>
+                    <i class='bx bxs-right-arrow'></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="submenu" id="NIC34Consol">
+        <div class="name">
+            <h3>Consolidado</h3>
+        </div>
+        <ul class="nav_links">
+            <li>
+                <a th:href="@{/reportNIC34/nic34Consol}">
+                    <span class="links_name">Generación Base</span>
+                </a>
+            </li>
+            <li>
+                <a id="btnEEFFNIC34Consol">
+                    <span class="links_name">EEFF</span>
+                    <i class='bx bxs-right-arrow'></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="submenu" id="NIC34EEFFSeparado">
+        <div class="name">
+            <h3>EEFF Separado</h3>
+        </div>
+        <ul class="nav_links">
+            <li>
+                <a th:href="@{/reportNIC34/nic34Balance}">
+                    <span class="links_name">Balance</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/reportNIC34/nic34Pyg}">
+                    <span class="links_name">PYG</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/reportNIC34/nic34Notas}">
+                    <span class="links_name">Notas</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="submenu" id="NIC34EEFFConsol">
+        <div class="name">
+            <h3>EEFF Consolidado</h3>
+        </div>
+        <ul class="nav_links">
+            <li>
+                <a th:href="@{/reportNIC34/nic34ConsolBalance}">
+                    <span class="links_name">Balance</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/reportNIC34/nic34ConsolPyg}">
+                    <span class="links_name">PYG</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/reportNIC34/nic34ConsolNotas}">
+                    <span class="links_name">Notas</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="submenu" id="paramNIC34">
+        <div class="name">
+            <h3>Parametria</h3>
+        </div>
+        <ul class="nav_links">
+            <li>
+                <a th:href="@{/parametric/mda}">
+                    <span class="links_name">Moneda</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/parametric/fechas}">
+                    <span class="links_name">Fechas</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/parametric/nic34}">
+                    <span class="links_name">Cuentas General</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/parametric/nic34Consol}">
+                    <span class="links_name">Cuentas Consolidado</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/parametric/informe}">
+                    <span class="links_name">Informe Balance y PYG</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/parametric/informeNotas}">
+                    <span class="links_name">Informe Notas</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <script th:src="@{/js/MenuScript.js}"></script>
+</div>
+
+
+</html>

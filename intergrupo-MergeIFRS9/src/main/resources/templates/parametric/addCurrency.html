@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+<div class="main-container">
+    <div class="row m-0 bg-primary fixed-top myNav">
+        <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
+            <h3 class="fw-bold text-white mx-4 my-3">Transformación de Divisas</h3>
+        </div>
+    </div>
+    <div id="content">
+        <form method="post" th:action="@{/parametric/addCurrency}" th:object="${currency}">
+            <div class="row mt-5">
+                <div class="col-md-12">
+                    <h3 class="mb-3">Agregar Divisa</h3>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Divisa Local</label>
+                        <input class="form-control" id="idNew" maxlength="3" minlength="3" name="idNew" placeholder="Ingrese la Divisa Local"
+                               required th:field="*{id}" type="text">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Nombre Divisa</label>
+                        <input class="form-control" id="id2" maxlength="255" name="id2" placeholder="Ingrese el Nombre Divisa" required
+                               th:field="*{nombre}" type="text">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Divisa Neocon</label>
+                        <input class="form-control" id="id3" maxlength="254" name="id3" placeholder="Ingrese la Divisa Neocon"
+                               required th:field="*{divisaNeocon}" type="text">
+                    </div>
+                </div>
+            </div>
+            <div class="row pt-5 py-3">
+                <div class="col-md-12 d-flex align-content-center justify-content-center">
+                    <div class="d-grid gap-2 col-3">
+                        <button type="submit" class="btn btn-primary">Agregar</button>
+                    </div>
+                    <div class="d-grid gap-2 col-3">
+                        <a class="btn btn-danger" th:href="@{/parametric/currency}">Cancelar</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script crossorigin="anonymous"
+        integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
+        src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+<script crossorigin="anonymous"
+        integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
+        src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#sidebarCollapse').on('click', function () {
+            $('#sidebar').toggleClass('active');
+        });
+    });
+    $("#idNew").change(function () {
+        $.get("/parametric/validateId/?idNew=" + $("#idNew").val() + "&idT=0", function (responseText) {
+            if (responseText != 'valid') {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'warning',
+                    title: '¡Validación Código Divisa Fallo!',
+                    text: 'El Código con valor ' + $("#idNew").val() + ' ingresado en el campo Código Divisa ya se encuentra asociado a otro registro.',
+                    showConfirmButton: true
+                });
+                $("#idNew").val('');
+            }
+        });
+    });
+
+    $("#idNew").change(function () {
+        if ($("#idNew").val().trim().replace(' ', '').length != 3) {
+            Swal.fire({
+                position: 'center',
+                icon: 'warning',
+                title: '¡Validación Código Divisa Fallo!',
+                text: 'El Código ingresado en el campo Código Divisa debe tener 3 carcateres obligatorios.',
+                showConfirmButton: true
+            });
+            $("#idNew").val('');
+        }
+    });
+
+    $("#id2").change(function () {
+        if ($("#id2").val().trim().replace(' ', '').length < 1) {
+            Swal.fire({
+                position: 'center',
+                icon: 'warning',
+                title: '¡Validación Nombre Divisa Fallo!',
+                text: 'El Valor ingresado en el campo Nombre Divisa no esta informado.',
+                showConfirmButton: true
+            });
+            $("#id2").val('');
+        }
+    });
+
+    $("#id3").change(function () {
+        if ($("#id3").val().trim().replace(' ', '').length < 1) {
+            Swal.fire({
+                position: 'center',
+                icon: 'warning',
+                title: '¡Validación Divisa Neocon Fallo!',
+                text: 'El Valor ingresado en el campo Divisa Neocon no esta informado.',
+                showConfirmButton: true
+            });
+            $("#id3").val('');
+        }
+    });
+
+
+</script>
+</body>
+</html>

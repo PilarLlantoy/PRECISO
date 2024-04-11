@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+<div class="main-container">
+    <!-- Cover -->
+    <div class="row m-0 bg-primary fixed-top myNav">
+        <div class="col-md-8 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
+            <h3 class="fw-bold text-white mx-4 my-3">Archivos Host</h3>
+            <h5 class="fw-bold text-white mx-2 my-2" th:utext="'Periodo: '+${period}" id="date"></h5>
+        </div>
+        <div class="col-md-4 d-flex align-items-center justify-content-end pe-5">
+            <form class="form-inline" method="get"
+                  th:action="@{/ifrs9/desconValidation?period={period}(period=${period})}">
+                <div class="input-group">
+                    <div class="input-group-append d-flex align-items-center">
+                        <h5 class="me-2 mb-0">Fecha Consulta: </h5>
+                        <input class="form-control" required th:name="period" th:value="${period}" type="month">
+                        <button class="btn btn-secondary" type="submit"><i class="fa fa-search"></i></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row m-0 px-4 mt-5">
+        <div class="row m-0 p-0">
+            <div class="col-md-6 d-flex">
+                <form id="myForm" class="d-flex flex-column" enctype="multipart/form-data"
+                      method="post" th:action="@{/ifrs9/desconValidation/upload?period={period}(period=${period})}">
+                    <div class="form-group my-3">
+                        <label>Cargar archivo:</label>
+                        <input accept=".txt,.csv" class="custom-file-control" id="files" multiple name="files"
+                               required type="file">
+                        <button class="btn btn-primary mx-2" id="btnUpload">Cargar</button>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-3 my-2 py-1 border">
+                <i class="fa fa-check-circle text-success mx-1" th:if="${validateDesconH}"></i>
+                <i class="fa fa-times-circle text-danger mx-1" th:if="${!validateDesconH}"></i>
+                <label class="mx-1" th:if="${validateDesconH}" th:text="' Última carga el '+${dateDesconH}"></label>
+                <label class="mx-1" th:if="${!validateDesconH}">Sin cargar</label>
+            </div>
+            <div class="col-md-3 d-flex align-items-center justify-content-end p-0">
+                <div class="text-right pr-3 col-md-6 d-flex align-content-center justify-content-end">
+                    <a class="btn btn-primary mx-1"
+                       th:href="@{/ifrs9/desconValidation?period={period}(period=${period})}"><i
+                            class="fas fa-redo-alt"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12 p-0">
+            <div class="table-responsive rounded border-primary">
+                <table class="table table-sm table-striped table-hover text-center table-bordered" id="example"
+                       width="100%">
+                    <thead class="bg-primary">
+                    <tr>
+                        <th>Neocon</th>
+                        <th>Cuenta</th>
+                        <th>Divisa</th>
+                        <th>Sald</th>
+                        <th>Salc</th>
+                        <th>Sald Div</th>
+                        <th>Salc Div</th>
+                        <th>Variación ML</th>
+                        <th>Variación ME</th>
+                        <th>Variación Total</th>
+                        <th>Variación Miles</th>
+                        <th>Observación</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="val : ${allVal}">
+                        <th th:text="${val.getCodNeocon()}"></th>
+                        <th th:text="${val.getCuenta()}"></th>
+                        <th th:text="${val.getDiv()}"></th>
+                        <th th:text="${#numbers.formatDecimal(val.getSald(),1,'POINT',2,'COMMA')}"></th>
+                        <th th:text="${#numbers.formatDecimal(val.getSalc(),1,'POINT',2,'COMMA')}"></th>
+                        <th th:text="${#numbers.formatDecimal(val.getSaldDiv(),1,'POINT',2,'COMMA')}"></th>
+                        <th th:text="${#numbers.formatDecimal(val.getSalcDiv(),1,'POINT',2,'COMMA')}"></th>
+                        <th th:text="${#numbers.formatDecimal(val.getVrMl(),1,'POINT',2,'COMMA')}"></th>
+                        <th th:text="${#numbers.formatDecimal(val.getVrMe(),1,'POINT',2,'COMMA')}"></th>
+                        <th th:text="${#numbers.formatDecimal(val.getVrTotal(),1,'POINT',2,'COMMA')}"></th>
+                        <th th:text="${#numbers.formatDecimal(val.getVrMiles(),1,'POINT',2,'COMMA')}"></th>
+                        <th th:text="${val.getObservacion()}"></th>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row" th:if="${last != 0}">
+            <div class="col-md-4 text-left">
+                <nav aria-label="Pagination">
+                    <ul class="pagination">
+                        <li class="page-item" th:classappend="${prev == 0 ? 'disabled' : ''}">
+                            <a class="page-link"
+                               th:href="@{/ifrs9/{dir}/?page={page}&period={period}&order={order}&opcion={opcion}(period=${period},order=${order},opcion=${opcion},page=${prev},dir=${directory})}">Anterior</a>
+                        </li>
+                        <li class="page-item" th:classappend="${current == last ? 'disabled' : ''}">
+                            <a class="page-link"
+                               th:href="@{/ifrs9/{dir}/?page={page}&period={period}&order={order}&opcion={opcion}(period=${period},order=${order},opcion=${opcion},page=${next},dir=${directory})}">Siguiente</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="col-md-4 text-center">
+                <h6 th:utext="${registers} + ' Registros Encontrados'"></h6>
+            </div>
+            <div class="col-md-4 text-right">
+                <h6 class="mx-1" th:utext="'Página ' + ${current} + ' de ' + ${last}"></h6>
+            </div>
+        </div>
+        <div class="pr-3 col-md-12 my-2">
+            <div class="d-flex align-items-center justify-content-center">
+                <a class="btn btn-primary mx-1"
+                   th:href="@{/ifrs9/desconValidation/download?period={period}&order={order}(period=${period},order=${order})}">
+                    Exportar Validación
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min.js"></script>
+<script crossorigin="anonymous"
+        integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
+        src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+<script crossorigin="anonymous"
+        integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
+        src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+    let date = document.querySelector('#date').textContent.replace("Periodo: ","");
+    let myBtn = document.querySelector('#btnUpload');
+
+    myBtn.addEventListener('click', e => {
+        e.preventDefault();
+
+        Swal.fire({
+            title: 'Atención!',
+            text: `¿Está seguro de que los archivos pertenecen a la descontabilización de host para el periodo ${date}?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Si,Cargar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                let form = document.querySelector('#myForm')
+                form.submit();
+            }
+        })
+    })
+
+    let queryString = window.location.search;
+    let urlParams = new URLSearchParams(queryString);
+    let respuesta = urlParams.get('resp');
+
+    if(respuesta != null){
+        if(respuesta === "correct"){
+            createPersonalAlert(
+                'success',
+                'Carga Correcta',
+                `<p>Se ha cargado para el periodo ${date}</p>`,
+                '/ifrs9/desconValidation',
+                date
+            )
+        } else{
+            createPersonalAlert(
+                'error',
+                'Carga Incorrecta',
+                `<p>No se ha cargado para el periodo ${date}</p>`,
+                '/ifrs9/desconValidation',
+                date
+            )
+        }
+    }
+
+</script>
+</body>
+
+</html>

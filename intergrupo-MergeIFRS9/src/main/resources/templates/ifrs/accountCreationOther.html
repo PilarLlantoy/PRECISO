@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+
+<div class="main-container">
+    <div class="row m-0 bg-primary fixed-top myNav">
+        <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
+            <h3 th:utext="'Creación de Otras Cuentas ('+${rol}+')'" class="fw-bold text-white mx-4 my-3"></h3>
+            <h5 th:utext="'Periodo: '+${vFilter}" class="fw-bold text-white mx-4 my-3"></h5>
+        </div>
+        <div class="col-md-6 d-flex align-items-center justify-content-end pe-5">
+            <form class="form-inline" method="get" th:action="@{/ifrs/accountCreationOther}">
+                <div class="input-group">
+                    <div class="input-group-append d-flex align-items-center">
+                        <h5 class="me-2 mb-0">Fecha Consulta: </h5>
+                        <input type="date" th:name="period" th:value="${period}" class="form-control" required>
+                        <button class="btn btn-secondary" type="submit"><i class="fa fa-search"></i></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row m-0 px-4 mt-5">
+        <div class="row m-0 p-0 mt-3">
+            <div class="col-md-8 d-block p-0">
+                <form th:action="@{/ifrs/accountCreationOther}" id="fileUploadForm" enctype="multipart/form-data"
+                      method="post" class="d-flex flex-column" th:if="${cargar != false}">
+                    <div class="form-group my-2 d-flex align-items-center">
+                        <h5 class="fw-bold me-2 mb-0">Cargar archivo: </h5>
+                        <input accept=".xls,.xlsx,.xlsm" type="file" name="file" class="custom-file-control" id="file"
+                               required>
+                        <input type="hidden" th:name="period" th:value="${period}" class="form-control w-25" required>
+                        <input type="hidden" th:name="rol" th:value="${rol}" class="form-control" required>
+                        <button type="submit" class="btn btn-primary">Cargar</button>
+                    </div>
+                </form>
+                <button disabled th:if="${cargar != true}" class="btn btn-primary">Este periodo no corresponde al día actual</button>
+            </div>
+
+            <div class="col-md-4 d-flex align-items-center justify-content-end">
+                <div class="pr-3 col-md-6 my-2 d-flex align-content-center justify-content-end">
+                    <a th:if="${rol == 'GENERAL'}" href="#exportModal" role="button" class="btn btn-large btn-info mx-1" data-toggle="modal">Actualizar Guía</a>
+                    <a th:href="@{/ifrs/accountCreationOther/downloadGuia}" class="btn btn-primary mx-1">Descargar Guía</a>
+                    <a class="btn btn-primary mx-1"
+                       th:href="@{/ifrs/accountCreationOther?period={period}(period=${period})}">
+                        <i class="fas fa-redo-alt"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="row border-primary">
+        <div class="col-md-12 p-2">
+            <div class="table-responsive rounded border-primary">
+                <form action="/ifrs/accountCreationOther/proccess" method="get">
+                    <input type="hidden" th:name="period" th:value="${period}" class="form-control" required>
+                    <input type="hidden" th:name="rol" th:value="${rol}" class="form-control" required>
+                <table id="example1" class="table table-sm table-striped table-hover text-center table-bordered">
+                    <tbody class="bg-primary" th:if="${allRulesData2.size() == 0}">
+                        <tr>
+                            <th class="text-light">No se encontrontaron registros cargados</th>
+                        </tr>
+                    </tbody>
+                    <thead class="bg-primary" th:if="${allRulesData2.size() != 0}">
+                    <tr>
+                        <th><div class="form-check d-flex justify-content-center"><input class="form-check-input" type="checkbox" id="checkTodos"/></div></th>
+                        <th>Empresa</th>
+                        <th>Cuenta</th>
+                        <th>Nombre Corto</th>
+                        <th>Tipo Cta</th>
+                        <th>Indic</th>
+                        <th>Mon</th>
+                        <th>Cód Gestión</th>
+                        <th>Epigrafe</th>
+                        <th>Consolid</th>
+                        <th>Cód Control</th>
+                        <th>Indic Cta</th>
+                        <th>Tipo Apunte</th>
+                        <th>General</th>
+                        <th>Gestión</th>
+                        <th>Consol</th>
+                        <th>Control</th>
+                        <th th:if="${rol == 'GENERAL'}" colspan="3">Acciones</th>
+                        <th th:if="${rol != 'GENERAL'}" >Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody th:if="${allRulesData2.size() != 0}">
+                    <tr th:each="sub: ${allRulesData2}">
+                        <th th:if="${rol == 'GENERAL' and sub.estadoGeneral == 'EMPTY'}" ><div class="form-check d-flex justify-content-center"><input class="form-check-input" id="opciones" name="opciones" type="checkbox" th:value="${sub.idCuentas}" style="font-size: 20px;" /></div></th>
+                        <th th:if="${rol == 'GENERAL' and sub.estadoGeneral != 'EMPTY'}"></th>
+
+                        <th th:if="${rol == 'CONSOLIDACION' and sub.estadoConsolidacion == 'PENDING' and sub.consolid != null}" ><div class="form-check d-flex justify-content-center"><input class="form-check-input" id="opciones" name="opciones" type="checkbox" th:value="${sub.idCuentas}" style="font-size: 20px;" /></div></th>
+                        <th th:if="${rol == 'CONSOLIDACION' and (sub.estadoConsolidacion != 'PENDING' or sub.consolid == null)}"></th>
+
+                        <th th:if="${rol == 'CONTROL CONTABLE' and sub.estadoControl == 'PENDING' and sub.codigoControl != null and sub.tipoApunte != null and sub.indicadorCuenta != null}" ><div class="form-check d-flex justify-content-center"><input class="form-check-input" id="opciones" name="opciones" type="checkbox" th:value="${sub.idCuentas}" style="font-size: 20px;" /></div></th>
+                        <th th:if="${rol == 'CONTROL CONTABLE' and (sub.estadoControl != 'PENDING' or sub.codigoControl == null or sub.tipoApunte == null or sub.indicadorCuenta == null)}"></th>
+
+                        <th th:if="${rol == 'GESTION' and sub.estadoGestion == 'PENDING' and sub.epigrafe != null and sub.codigoGestion != null}" ><div class="form-check d-flex justify-content-center"><input class="form-check-input" id="opciones" name="opciones" type="checkbox" th:value="${sub.idCuentas}" style="font-size: 20px;" /></div></th>
+                        <th th:if="${rol == 'GESTION' and (sub.estadoGestion != 'PENDING' or sub.epigrafe == null or sub.codigoGestion == null)}"></th>
+
+                        <th th:text="${sub.empresa}"></th>
+                        <th th:text="${sub.nucta}"></th>
+                        <th th:text="${sub.nombreCuentaCorta}"></th>
+                        <th th:text="${sub.tipoCta}"></th>
+                        <th th:text="${sub.indic}"></th>
+                        <th th:text="${sub.mon}"></th>
+                        <th th:text="${sub.codigoGestion}"></th>
+                        <th th:text="${sub.epigrafe}"></th>
+                        <th th:text="${sub.consolid}"></th>
+                        <th th:text="${sub.codigoControl}"></th>
+                        <th th:text="${sub.indicadorCuenta}"></th>
+                        <th th:text="${sub.tipoApunte}"></th>
+
+                        <th th:if="${sub.estadoGeneral == 'EMPTY' OR sub.estadoGeneral == 'PENDING'}"><i class="fa fa-cog fa-spin fa-lg text-warning" aria-hidden="true"></i></th>
+                        <th th:if="${sub.estadoGeneral == 'COMPLETED'}"><i class="fa fa-check-circle fa-lg text-success"></i></th>
+                        <th th:if="${sub.estadoGeneral == 'CANCELLED'}"><i class="fa fa-times-circle fa-lg text-danger"></i></th>
+
+                        <th th:if="${sub.estadoGestion == 'PENDING'}"><i class="fa fa-cog fa-spin fa-lg text-warning" aria-hidden="true"></i></th>
+                        <th th:if="${sub.estadoGestion == 'COMPLETED'}"><i class="fa fa-check-circle fa-lg text-success"></i></th>
+                        <th th:if="${sub.estadoGestion == 'CANCELLED' OR sub.estadoGestion == 'EMPTY'}"><i class="fa fa-times-circle fa-lg text-danger"></i></th>
+
+                        <th th:if="${sub.estadoConsolidacion == 'PENDING'}"><i class="fa fa-cog fa-spin fa-lg text-warning" aria-hidden="true"></i></th>
+                        <th th:if="${sub.estadoConsolidacion == 'COMPLETED'}"><i class="fa fa-check-circle fa-lg text-success"></i></th>
+                        <th th:if="${sub.estadoConsolidacion == 'CANCELLED' OR sub.estadoConsolidacion == 'EMPTY'}"><i class="fa fa-times-circle fa-lg text-danger"></i></th>
+
+                        <th th:if="${sub.estadoControl == 'PENDING'}"><i class="fa fa-cog fa-spin fa-lg text-warning" aria-hidden="true"></i></th>
+                        <th th:if="${sub.estadoControl == 'COMPLETED'}"><i class="fa fa-check-circle fa-lg text-success"></i></th>
+                        <th th:if="${sub.estadoControl == 'CANCELLED' OR sub.estadoControl == 'EMPTY'}"><i class="fa fa-times-circle fa-lg text-danger"></i></th>
+
+                        <td th:if="${rol == 'GENERAL' and (sub.estadoGeneral == 'EMPTY' OR sub.estadoGeneral == 'PENDING')}"><a class="btn btn-primary" th:href="@{/ifrs/accountCreationOther/modify/{id}(id=${sub.idCuentas})}">Editar</a></td>
+                        <td th:if="${rol == 'GENERAL' and (sub.estadoGeneral == 'CANCELLED' OR sub.estadoGeneral == 'COMPLETED')}"><a class="btn btn-primary text-light disabled">Editar</a></td>
+                        <td th:if="${rol == 'GENERAL' and (sub.estadoGeneral == 'EMPTY' OR sub.estadoGeneral == 'PENDING')}"><a class="btn btn-primary" th:href="@{/ifrs/accountCreationOther/anulAccount/{id}?period={period}(period=${period},id=${sub.idCuentas})}">Anular</a></td>
+                        <td th:if="${rol == 'GENERAL' and (sub.estadoGeneral == 'CANCELLED' OR sub.estadoGeneral == 'COMPLETED')}"><a class="btn btn-primary text-light disabled">Anular</a></td>
+
+                        <td th:if="${rol == 'GENERAL' and sub.estadoGeneral == 'PENDING'}"><a class="btn btn-primary" th:href="@{/ifrs/accountCreationOther/respAccount/{id}?period={period}&rol={rol}(period=${period},id=${sub.idCuentas},rol=${rol})}">Comentario</a></td>
+                        <td th:if="${rol == 'GENERAL' and sub.estadoGeneral != 'PENDING'}"><a class="btn btn-primary text-light disabled">Comentario</a></td>
+
+                        <td th:if="${rol == 'GESTION' and sub.estadoGestion == 'PENDING'}"><a class="btn btn-primary" th:href="@{/ifrs/accountCreationOther/respAccount/{id}?period={period}&rol={rol}(period=${period},id=${sub.idCuentas},rol=${rol})}">Comentario</a></td>
+                        <td th:if="${rol == 'GESTION' and sub.estadoGestion != 'PENDING'}"><a class="btn btn-primary text-light disabled">Comentario</a></td>
+
+                        <td th:if="${rol == 'CONSOLIDACION' and sub.estadoConsolidacion == 'PENDING'}"><a class="btn btn-primary" th:href="@{/ifrs/accountCreationOther/respAccount/{id}?period={period}&rol={rol}(period=${period},id=${sub.idCuentas},rol=${rol})}">Comentario</a></td>
+                        <td th:if="${rol == 'CONSOLIDACION' and sub.estadoConsolidacion != 'PENDING'}"><a class="btn btn-primary text-light disabled">Comentario</a></td>
+
+                        <td th:if="${rol == 'CONTROL CONTABLE' and sub.estadoControl == 'PENDING'}"><a class="btn btn-primary" th:href="@{/ifrs/accountCreationOther/respAccount/{id}?period={period}&rol={rol}(period=${period},id=${sub.idCuentas},rol=${rol})}">Comentario</a></td>
+                        <td th:if="${rol == 'CONTROL CONTABLE' and sub.estadoControl != 'PENDING'}"><a class="btn btn-primary text-light disabled">Comentario</a></td>
+                    </tr>
+                    </tbody>
+                </table>
+                    <div class="pr-3 col-md-12 my-2">
+                        <div class="d-flex align-items-center justify-content-center">
+                            <a th:href="@{/ifrs/accountCreationOther/downloadPending?period={period}&rol={rol}(period=${period},rol=${rol})}"
+                               class="btn btn-primary mx-1">Exportar Pendientes</a>
+                            <a th:href="@{/ifrs/accountCreationOther/download?period={period}&rol={rol}(period=${period},rol=${rol})}"
+                               class="btn btn-primary mx-1">Exportar Actual</a>
+                            <a th:if="${rol != 'GENERAL'}" th:href="@{/ifrs/accountCreationOther/downloadPre?period={period}&rol={rol}(period=${period},rol=${rol})}"
+                               class="btn btn-primary mx-1">Exportar Pre-carga</a>
+                            <a th:href="@{/ifrs/accountCreationOther/downloadAll?period={period}(period=${period})}"
+                               class="btn btn-primary mx-1">Exportar Histórico</a>
+                            <button type="submit" class="btn btn-info mx-1">Confirmar Selección</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+            <div id="exportModal" class="modal fade">
+                <div class="modal-dialog rounded-1 modal-dialog-centered">
+                    <div class="modal-content">
+                        <form method="post" th:action="@{/ifrs/accountCreationOther/loadGuia}" enctype="multipart/form-data">
+                            <div class="modal-header bg-primary text-light">
+                                <h4 class="modal-title">Actualizar Documento Guía</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row px-3">
+                                    <div class="form-check col-md-12">
+                                        <h5 class="fw-bold me-2 mb-0">Cargar archivo: </h5>
+                                        <input accept=".docx,.xlsx,.pdf,.jpeg,.png" type="file" name="file" class="custom-file-control" id="file"
+                                               required>
+                                        <input type="hidden" th:name="period" th:value="${period}" class="form-control w-25" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer d-flex justify-content-center">
+                                <button class="btn btn-primary" type="submit">Cargar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min.js" ></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+<script type="text/javascript">
+    var queryString = window.location.search;
+    var urlParams = new URLSearchParams(queryString);
+    var respuesta = urlParams.get('resp');
+    var row = urlParams.get('row');
+    var column = urlParams.get('colum');
+    validateAlerts(respuesta, row, column);
+</script>
+<script>
+        // Obtén el checkbox "Marcar Todos" y todas las casillas de verificación
+        const checkTodos = document.getElementById('checkTodos');
+        const checkboxes = document.querySelectorAll('.form-check-input');
+
+        // Agrega un evento de cambio al checkbox "Marcar Todos"
+        checkTodos.addEventListener('change', function() {
+            // Si "Marcar Todos" está marcado, marca todas las casillas, de lo contrario, desmárcalas
+            checkboxes.forEach(function(checkbox) {
+                checkbox.checked = checkTodos.checked;
+            });
+        });
+
+        // Agrega un evento de cambio a cada casilla de verificación
+        checkboxes.forEach(function(checkbox) {
+            checkbox.addEventListener('change', function() {
+                // Si todas las casillas están marcadas, marca el checkbox "Marcar Todos", de lo contrario, desmárcalo
+                checkTodos.checked = [...checkboxes].every(function(checkbox) {
+                    return checkbox.checked;
+                });
+            });
+        });
+    </script>
+</body>
+</html>

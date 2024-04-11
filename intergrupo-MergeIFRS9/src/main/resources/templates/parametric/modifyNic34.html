@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+<div class="main-container">
+    <div class="row m-0 bg-primary fixed-top myNav">
+        <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
+            <h3 class="fw-bold text-white mx-4 my-3">Cuentas Generales</h3>
+        </div>
+        <div class="col-md-6 d-flex align-items-center justify-content-end pe-5">
+        </div>
+    </div>
+    <div id="content">
+        <form method="POST" th:action="@{/parametric/modifyNic34}" th:object="${nic34Modify}">
+            <div class="row mt-5">
+                <div class="col-md-12">
+                    <h3 class="mb-3">Editar Registro</h3>
+                    <input class="form-control" maxlength="255" required th:field="*{idNic34}"
+                           type="hidden">
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>L6</label>
+                        <input class="form-control" maxlength="6" minlength="6" required th:field="*{l6}" type="text">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Cuenta</label>
+                        <input class="form-control" required th:field="*{cuenta}"
+                               type="text">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>ID Grupo</label>
+                        <input class="form-control" required th:field="*{idGrupo}"
+                               type="text">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Grupo</label>
+                        <input class="form-control" required th:field="*{grupo}"
+                               type="text">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Aplica</label>
+                        <select class="form-control" name="impSelect" th:field="*{aplica}"  required>
+                            <option hidden selected
+                                    th:text="${nic34Modify.aplica}" th:value="${nic34Modify.aplica}"></option>
+                            <option th:value="'T'" th:text="'T'"></option>
+                            <option th:value="'A'" th:text="'A'"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>ID Nota</label>
+                        <input class="form-control" required th:field="*{idNota}"
+                               type="text">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Nota</label>
+                        <input class="form-control" required th:field="*{nota}"
+                               type="text">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>ID SubNota</label>
+                        <input class="form-control" required th:field="*{idSubnota}"
+                               type="text">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>SubNota</label>
+                        <input class="form-control" required th:field="*{subnota}"
+                               type="text">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>ID Campo</label>
+                        <input class="form-control" th:field="*{idCampo}"
+                               type="text">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Campo</label>
+                        <input class="form-control" th:field="*{campo}"
+                               type="text">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Moneda</label>
+                        <select class="form-control" name="impSelect" th:field="*{moneda}"  required>
+                            <option hidden selected
+                                    th:text="${nic34Modify.moneda}" th:value="${nic34Modify.moneda}"></option>
+                            <option th:value="'ML'" th:text="'ML'"></option>
+                            <option th:value="'ME'" th:text="'ME'"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Signo</label>
+                        <select class="form-control" name="impSelect" th:field="*{signo}"  required>
+                            <option hidden selected
+                                    th:text="${nic34Modify.signo}" th:value="${nic34Modify.signo}"></option>
+                            <option th:value="'-1'" th:text="'-1'"></option>
+                            <option th:value="'1'" th:text="'1'"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <input class="form-control" placeholder="Ingrese el Responsable"
+                               th:field="*{responsable}" type="hidden">
+                    </div>
+                </div>
+            </div>
+            <div class="row pt-5 py-3">
+                <div class="col-md-12 d-flex align-content-center justify-content-center">
+                    <div class="d-grid gap-2 col-3">
+                        <button type="submit" class="btn btn-primary">Modificar Registro</button>
+                    </div>
+                    <div class="d-grid gap-2 col-3">
+                        <a class="btn btn-danger" th:href="@{/parametric/nic34}">Cancelar</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script crossorigin="anonymous"
+        integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
+        src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script crossorigin="anonymous"
+        integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
+        src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#sidebarCollapse').on('click', function () {
+            $('#sidebar').toggleClass('active');
+        });
+    });
+</script>
+</body>
+</html>

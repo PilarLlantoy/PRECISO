@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+
+<div class="main-container">
+    <div class="row m-0 bg-primary fixed-top myNav">
+        <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
+            <h3 class="fw-bold text-white mx-4 my-3">Resumen Archivos Host</h3>
+            <h5 th:utext="'Periodo: '+${period}" class="fw-bold text-white mx-4 my-3"></h5>
+        </div>
+        <div class="col-md-6 d-flex align-items-center justify-content-end pe-5">
+            <form th:action="@{/ifrs9/desconValConcil}" id="reconciliationForm" method="get">
+                <div class="input-group">
+                    <div class="input-group-append d-flex align-items-center">
+                        <h5 class="me-2 mb-0">Fecha Consulta: </h5>
+                        <input type="month" th:name="period" th:value="${period}" class="form-control" required>
+                        <button class="btn btn-secondary" type="submit"><i class="fa fa-search"></i></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div >
+        <br>
+        <br>
+        <div class="mx-5">
+            <div class="row m-0 px-4 mt-5 border-bottom">
+                <form th:action="@{/ifrs9/desconValConcil/upload?period={period}(period=${period})}" id="reconciliationForm2" method="post">
+                    <div class="row mb-3 align-items-center">
+                        <!--<div class="col-auto">
+                            <label class="col-form-label">Versión Query:</label>
+                        </div>
+                        <div class="col-auto">
+                            <select id="queryV" class="form-select" name="queryV">
+                                <option value="" selected>Seleccione...</option>
+                                <option th:selected="${queryV == 'LOCAL'}" value="LOCAL">Local</option>
+                                <option th:selected="${queryV == 'IFRS9'}" value="IFRS9">IFRS9</option>
+                            </select>
+                        </div>
+                        <div class="col-auto">
+                            <label class="col-form-label">Empresa a cruzar:</label>
+                        </div>
+                        <div class="col-auto">
+                            <select id="company" class="form-select" name="company">
+                                <option value="" selected>Seleccione...</option>
+                                <option th:selected="${companySel == company}" th:value="${companySel}" th:text="${companySel}" th:each="companySel : ${companies}"></option>
+                            </select>
+                        </div>-->
+                        <div class="col-auto">
+                            <label class="col-form-label">Tipo de cuenta:</label>
+                        </div>
+                        <div class="col-auto">
+                            <select id="concilType" class="form-select" name="concilType" required>
+                                <option value="" selected>Seleccione...</option>
+                                <option th:selected="${concilType == 'local'}" value="local">Cuenta Local</option>
+                                <option th:selected="${concilType == 'neocon'}" value="neocon">Cuenta Neocon</option>
+                            </select>
+                        </div>
+                        <div class="col-auto">
+                            <label class="col-form-label">Nivel de cuenta:</label>
+                        </div>
+                        <div class="col-auto">
+                            <select id="concilLvl" class="form-select" name="concilLvl" required>
+                                <option value="" selected>Seleccione...</option>
+                                <option th:selected="${concilLvl == '2'}" value="2">Nivel 2</option>
+                                <option th:selected="${concilLvl == '4'}" value="4">Nivel 4</option>
+                                <option th:selected="${concilLvl == '6'}" value="6">Nivel 6</option>
+                                <option th:selected="${concilLvl == '9'}" value="9">Nivel 9</option>
+                                <option th:selected="${concilLvl == 'Detalle'}" value="Detalle">Detalle</option>
+                            </select>
+                        </div>
+    <!--                    <div class="col-auto">
+                            <label class="col-form-label">Versión Intergrupo:</label>
+                        </div>
+                        <div class="col-auto">
+                            <select id="interV" class="form-select" name="interV" required>
+                                <option value="" selected>Seleccione...</option>
+                                <option th:selected="${interV == 'v1'}" value="v1">Versión 1</option>
+                                <option th:selected="${interV == 'v2'}" value="v2">Versión 2</option>
+                                <option th:selected="${interV == 'v3'}" value="v3">Versión 3</option>
+                            </select>
+                        </div>-->
+                        <div class="col-auto">
+                            <input id="periodConfirm" type="hidden" th:value="${period}" th:name="period" class="form-control" required>
+                            <button type="submit" class="btn btn-primary">Conciliar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="row mt-2 border-bottom" th:if="${isPost}">
+                <div class="col-12 d-block">
+                    <table class="table table-sm table-bordered border-light table-hover text-center">
+                        <thead class="bg-primary">
+                        <tr>
+                            <th>Codicons</th>
+                            <th>Cuenta</th>
+                            <th>DESCON_NIV15_PROV</th>
+                            <th>TANQUE_NIV15_PROV</th>
+                            <th>CONTAB_NIV15_PROV</th>
+                            <th>PATPYG_NIV15_PROV</th>
+                            <th>INFORME_NIVEL15_RECLASIFICACION</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="recon : ${reconciliation}">
+                            <td th:text="${recon.codicons}"></td>
+                            <td th:text="${recon.cuenta}"></td>
+                            <td th:text="${#numbers.formatDecimal(recon.saldoDifConc,1,'POINT',2,'COMMA')}"></td>
+                            <td th:text="${#numbers.formatDecimal(recon.saldoManuales,1,'POINT',2,'COMMA')}"></td>
+                            <td th:text="${#numbers.formatDecimal(recon.saldoProvGenint,1,'POINT',2,'COMMA')}"></td>
+                            <td th:text="${#numbers.formatDecimal(recon.saldoPorcCal,1,'POINT',2,'COMMA')}"></td>
+                            <td th:text="${#numbers.formatDecimal(recon.saldoRechazosAut,1,'POINT',2,'COMMA')}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row" th:if="${last != 0}">
+                    <div class="col-md-4 text-left">
+                        <nav arial-label="Pagination">
+                            <ul class="pagination">
+                                <li class="page-item" th:classappend="${prev == 0 ? 'disabled' : ''}">
+                                    <a class="page-link" th:href="@{/ifrs9/{dir}/?page={page}(period=${period},vId=${vId},vFilter=${vFilter},page=${prev},dir=${directory})}">Anterior</a>
+                                </li>
+                                <li class="page-item" th:classappend="${current == last ? 'disabled' : ''}">
+                                    <a class="page-link" th:href="@{/ifrs9/{dir}/?page={page}(period=${period},vId=${vId},vFilter=${vFilter},page=${next},dir=${directory})}">Siguiente</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <h6 th:utext="${registers} + ' Registros Encontrados'"></h6>
+                    </div>
+                    <div class="col-md-4 text-right">
+                        <h6 class="mx-1" th:utext="'Página ' + ${current} + ' de ' + ${last}" ></h6>
+                    </div>
+                </div>
+                <div class="row m-0 px-4">
+                    <div class="pr-3 col-md-12 my-2">
+                        <div class="d-flex align-items-center justify-content-center">
+                            <div class="col-auto">
+                                <form th:action="@{/ifrs9/desconValConcil/download}" id="downloadForm" method="get">
+                                    <input id="period1" type="hidden" th:name="period" th:value="${period}" class="form-control" required>
+                                    <button type="submit" class="btn btn-primary">Descargar Excel</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-2 border-bottom" th:if="${isPost == false}">
+                <div class="d-flex align-items-center justify-content-center">
+                    <div class="col-auto d-block">
+                        <p class="fw-bold me-2 pt-2 mb-0">No hay ejecuciones realizadas en este periodo</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min.js" ></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+<script type="text/javascript">
+    var queryString = window.location.search;
+    var urlParams = new URLSearchParams(queryString);
+    var respuesta = urlParams.get('resp');
+    var row = urlParams.get('row');
+    var column = urlParams.get('colum');
+    validateAlerts(respuesta, row, column);
+
+    const selectElement = document.getElementById("period");
+    const selectElement2 = document.getElementById("company");
+    const selectElement3 = document.getElementById("account");
+    const selectElement4 = document.getElementById("queryV");
+    const selectElement5 = document.getElementById("interV");
+
+    selectElement.addEventListener('change', (event) => {
+        let resultDate = document.getElementById('periodConfirm');
+        resultDate.value = selectElement.value;
+
+        let resultDate2 = document.getElementById('periodConfirm2');
+        resultDate2.value = selectElement.value;
+    });
+
+    selectElement2.addEventListener('change', (event) => {
+        let resultDate = document.getElementById('companyConfirm');
+        resultDate.value = selectElement2.value;
+    });
+
+    selectElement3.addEventListener('change', (event) => {
+        let resultDate = document.getElementById('accountConfirm');
+        resultDate.value = selectElement3.value;
+    });
+
+    selectElement4.addEventListener('change', (event) => {
+        let resultDate = document.getElementById('queryVConfirm');
+        resultDate.value = selectElement4.value;
+    });
+
+    selectElement5.addEventListener('change', (event) => {
+        let resultDate = document.getElementById('interVConfirm');
+        resultDate.value = selectElement5.value;
+    });
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+<div class="main-container">
+  <!-- Cover -->
+  <div class="row m-0 bg-primary fixed-top myNav">
+    <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
+      <h3 class="fw-bold text-white mx-4 my-3">Cuadre Query EEFF</h3>
+      <h5 th:utext="'Periodo: '+${period}" class="fw-bold text-white mx-4 my-3"></h5>
+    </div>
+    <div class="col-md-6 d-flex align-items-center justify-content-end pe-5">
+      <form class="form-inline" method="get" th:action="@{/ifrs/valQueryEeff?period={period}&opcionQuery={opcionQuery}&opcionEEFF={opcionEEFF}&tipoValidacion={tipoValidacion}(period=${period},opcionQuery=${opcionQuery},opcionEEFF=${opcionEEFF},tipoValidacion=${tipoValidacion})}">
+        <div class="input-group">
+          <div class="input-group-append d-flex align-items-center">
+            <p class="me-2 mb-0 ml-2">Fecha:</p>
+            <input type="month" th:name="period" th:value="${period}" class="form-control" required>
+            <button class="btn btn-secondary" type="submit"><i class="fa fa-search"></i></button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div id="content">
+    <div class="row mt-5">
+      <div class="row m-0 px-4 mt-1 mb-2">
+        <form th:action="@{/ifrs/valQueryEeff/validacionQuery}" id="form1" method="get">
+          <div class="row mb-3 align-items-center" th:if="${noQuery}">
+            <!--
+            <div class="col-auto">
+              <label class="col-form-label">Versión Query:</label>
+            </div>
+            <div class="col-auto">
+              <select class="form-control form-select" id="opcionQuery" th:name="opcionQuery" onclick="check()" required>
+                <option value="" selected>Seleccione...</option>
+                <option th:selected="${opcionQuery == 'LOCAL'}" th:value="LOCAL">LOCAL</option>
+                <option th:selected="${opcionQuery == 'IFRS9'}" th:value="IFRS9">IFRS9</option>
+              </select>
+            </div>
+            <div class="col-auto">
+              <label class="col-form-label">Empresa a cruzar:</label>
+            </div>
+            <div class="col-auto">
+              <select id="company" class="form-select form-control" name="opcionCompany" required>
+                <option value="" selected>Seleccione...</option>
+                <option th:selected="${companySel == company}" th:value="${companySel}" th:text="${companySel}" th:each="companySel : ${companies}"></option>
+              </select>
+            </div>
+            <div class="col-auto">
+              <label class="col-form-label">EEFF:</label>
+            </div>
+            <div class="col-auto">
+              <select class="form-control form-select" id="opcionEEFF" th:name="opcionEEFF" onclick="check()" required>
+                <option value="" selected>Seleccione...</option>
+                <option th:selected="${opcionEEFF == 'LOCAL'}" th:value="LOCAL">LOCAL</option>
+                <option th:selected="${opcionEEFF == 'IFRS9'}" th:value="IFRS9">IFRS9</option>
+              </select>
+            </div>
+            -->
+            <div class="col-auto">
+              <input id="periodConfirm" type="hidden" th:value="${period}" th:name="period" class="form-control" required>
+              <button type="submit" class="btn btn-primary">Generar Conciliación</button>
+            </div>
+            <div class="col-auto">
+              <button type="button" class="btn btn-primary" th:data1="${period}" id="clearTable" th:onclick="'javascript:operationDeleteReconIFRS9(\'EEFF-ALL\', this.getAttribute(\'data1\'))'">Limpiar Tabla</button>
+            </div>
+          </div>
+          <div class="row mb-3 align-items-center" th:if="${noQuery == false}">
+            <p class="fw-bold me-2 pt-2 mb-0">No hay Query cargado para la fecha</p>
+          </div>
+        </form>
+      </div>
+      <div class="col-md-6">
+      </div>
+      <div class="col-md-12 mt-2">
+        <div class="table-responsive rounded border-primary">
+          <table id="example" class="table table-sm table-striped table-hover text-center table-bordered" width="100%">
+            <thead class="bg-primary">
+            <tr>
+              <th>Código Consolidación</th>
+              <th>Tipo Cuenta</th>
+              <th>Descripción</th>
+              <th>Divisa</th>
+              <th>Sociedad IC</th>
+              <th>Nombre Sociedad IC</th>
+              <th>Diferencia Local</th>
+              <th>Diferencia IFRS9</th>
+              <th>Diferencia EEFF Inter. Local</th>
+              <th>Diferencia EEFF Inter. IFRS9</th>
+              <th>Perímetro</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <tr th:each="cuadre : ${allTemplateCuadre}">
+              <th th:text="${cuadre.codigoConsolidacion}"></th>
+              <td th:text="${cuadre.tipoCuenta}"></td>
+              <td th:text="${cuadre.descripcion}"></td>
+              <td th:text="${cuadre.divisa}"></td>
+              <td th:text="${cuadre.sociedadIc}"></td>
+              <td th:text="${cuadre.descripcionIc}"></td>
+              <td th:text="${#numbers.formatDecimal(cuadre.saldoDifLocal,1,'POINT',2,'COMMA')}"></td>
+              <td th:text="${#numbers.formatDecimal(cuadre.saldoDifIfrs9,1,'POINT',2,'COMMA')}"></td>
+              <td th:text="${#numbers.formatDecimal(cuadre.saldoDifEeffLocal,1,'POINT',2,'COMMA')}"></td>
+              <td th:text="${#numbers.formatDecimal(cuadre.saldoDifEeffIfrs9,1,'POINT',2,'COMMA')}"></td>
+              <td th:text="${cuadre.perimetro}"></td>
+            </tr>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="row" th:if="${last != 0}">
+      <div class="col-md-4 text-left">
+        <nav arial-label="Pagination">
+          <ul class="pagination">
+            <li class="page-item" th:classappend="${prev == 0 ? 'disabled' : ''}">
+              <a class="page-link" th:href="@{/ifrs/{dir}/?page={page}(period=${period},opcionQuery=${opcionQuery},opcionEEFF=${opcionEEFF},tipoValidacion=${tipoValidacion},page=${prev},dir=${directory})}">Anterior</a>
+            </li>
+            <li class="page-item" th:classappend="${current == last ? 'disabled' : ''}">
+              <a class="page-link" th:href="@{/ifrs/{dir}/?page={page}(period=${period},opcionQuery=${opcionQuery},opcionEEFF=${opcionEEFF},tipoValidacion=${tipoValidacion},page=${next},dir=${directory})}">Siguiente</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+      <div class="col-md-4 text-center">
+        <h6 th:utext="${registers} + ' Registros Encontrados'"></h6>
+      </div>
+      <div class="col-md-4 text-right">
+        <h6 class="mx-1" th:utext="'Página ' + ${current} + ' de ' + ${last}" ></h6>
+      </div>
+    </div>
+    <div class="pr-3 col-md-12 my-2">
+      <div class="d-flex align-items-center justify-content-center">
+        <a th:href="@{/ifrs/valQueryEeff/download?period={period}&opcionQuery={opcionQuery}&opcionEEFF={opcionEEFF}&tipoValidacion={tipoValidacion}(period=${period},opcionQuery=${opcionQuery},opcionEEFF=${opcionEEFF},tipoValidacion=${tipoValidacion})}"
+           class="btn btn-primary">Exportar Cuadre</a>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min.js" ></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+<script type="text/javascript">
+  var queryString = window.location.search;
+  var urlParams = new URLSearchParams(queryString);
+  var respuesta = urlParams.get('resp');
+  var row = urlParams.get('row');
+  var column = urlParams.get('colum');
+  validateAlerts(respuesta,row,column);
+  $(document).ready(function() {
+    $('#sidebarCollapse').on('click', function() {
+      $('#sidebar').toggleClass('active');
+    });
+  });
+</script>
+</body>
+
+</html>

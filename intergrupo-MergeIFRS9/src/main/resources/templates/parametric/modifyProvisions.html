@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+<div class="main-container">
+    <!-- Cover -->
+    <div id="content">
+        <form method="POST" th:action="@{/parametric/modifyProvisions}" th:object="${provisionsModify}">
+            <div class="row mt-5">
+                <div class="col-md-12">
+                    <h3 class="mb-3">Editar Provisión</h3>
+                    <input class="form-control" id="id" max="99999999999999" min="1" required th:name="id"
+                           th:value="*{cuentaNeocon}" type="hidden">
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Cuenta Neocon</label>
+                        <input class="form-control" id="idNew" max="99999999999999" min="1" name="idNew" placeholder="Ingrese la Cuenta Neocon"
+                               required th:field="*{cuentaNeocon}" type="number">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Instrumento</label>
+                        <input class="form-control" maxlength="254" placeholder="Ingrese la Instrumento" required
+                               th:field="*{instrumento}" type="text">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Jerarquía</label>
+                        <input class="form-control" maxlength="254" placeholder="Ingrese el Jerarquía" required
+                               th:field="*{jerarquia}" type="text">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Descripción</label>
+                        <input class="form-control" maxlength="254" placeholder="Ingrese la Descripción" required
+                               th:field="*{descripcion}" type="text">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Mínimo</label>
+                        <input class="form-control" maxlength="254" placeholder="Ingrese el Mínimo" required
+                               th:field="*{minimo}" type="text">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Parímetro IFRS9</label>
+                        <select class="form-control" th:field="*{ifrs9}">
+                            <option th:text="PR" th:value="PR"></option>
+                            <option th:text="CV" th:value="CV"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Stage España</label>
+                        <input class="form-control" maxlength="254" placeholder="Ingrese el Stage" required
+                               th:field="*{stageEspana}" type="text">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Producto España</label>
+                        <input class="form-control" maxlength="254" placeholder="Ingrese el Producto" required
+                               th:field="*{productoEspana}" type="text">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Sector</label>
+                        <input class="form-control" maxlength="254" placeholder="Ingrese el Sector" required
+                               th:field="*{sector}" type="text">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Signo<abbr aria-label="required"
+                                          title="Signo con maximo 254 caracteres alfanúmericos">*</abbr></label>
+                        <input class="form-control" maxlength="1" placeholder="Ingrese el Signo" required
+                               th:field="*{signo}" type="text">
+                    </div>
+                </div>
+            </div>
+            <div class="row pt-5 py-3">
+                <div class="col-md-12 d-flex align-content-center justify-content-center">
+                    <div class="d-grid gap-2 col-3">
+                        <button type="submit" class="btn btn-primary">Modificar</button>
+                    </div>
+                    <div class="d-grid gap-2 col-3">
+                        <a class="btn btn-danger" th:href="@{/parametric/provisions}">Cancelar</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script crossorigin="anonymous"
+        integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
+        src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script crossorigin="anonymous"
+        integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
+        src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#sidebarCollapse').on('click', function () {
+            $('#sidebar').toggleClass('active');
+        });
+    });
+    $("#idNew").change(function () {
+        $.get("/parametric/validateNitProvisions/?idNew=" + $("#idNew").val() + "&id=" + $("#id").val(), function (responseText) {
+            if (responseText != 'valid') {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'warning',
+                    title: '¡Validación Cuenta Fallo!',
+                    text: 'La Cuenta con valor ' + $("#idNew").val() + ' ingresado en el campo Cuenta Neocon ya se encuentra asociado a otro registro.',
+                    showConfirmButton: true
+                });
+                $("#idNew").val('');
+            }
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+
+<div class="main-container">
+    <div class="row m-0 bg-primary fixed-top myNav">
+        <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
+            <h3 class="fw-bold text-white mx-4 my-3">Conciliación RYS</h3>
+            <h5 class="fw-bold text-white mx-4 my-3" th:utext="'Periodo: '+${vFilter}"></h5>
+        </div>
+        <div class="col-md-6 d-flex align-items-center justify-content-end pe-5">
+            <form class="form-inline" method="get" th:action="@{/ifrs/rysConcil}">
+                <div class="input-group">
+                    <div class="input-group-append d-flex align-items-center">
+                        <h5 class="me-2 mb-0">Fecha Consulta: </h5>
+                        <input class="form-control" required th:name="period" th:value="${period}" type="month">
+                        <button class="btn btn-secondary" type="submit"><i class="fa fa-search"></i></button>
+                        <a class="btn btn-primary" th:href="@{/ifrs/rysConcil?period={period}(period=${period})}"><i
+                                class="fas fa-redo-alt"></i></a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="content">
+        <div class="row m-0 px-1 mt-5 align-items-center">
+            <div class="row m-0 p-0 justify-content-between">
+                <div class="col-md-6 d-block px-2">
+                    <div class="col-auto my-2 py-1 border">
+                        <label>Estado Cargue RYS Derivados :</label>
+                        <i class="fa fa-check-circle text-success mx-1" th:if="${validateRys}"></i>
+                        <i class="fa fa-times-circle text-danger mx-1" th:if="${!validateRys}"></i>
+                        <label class="mx-1" th:if="${!validateRys}">Sin cargar RYS</label>
+                        <label class="mx-1" th:if="${validateRys}">RYS Cargado exitoso</label>
+                        <a th:href="@{/reports/rp21/download?period={period}&checkFuturos2='false'&concil='Y'&rys='FULL'(period=${period})}" th:if="${validateRys}" class="btn btn-sm btn-primary mx-1 text-right">Exportar RYS Derivados</a>
+                        <button th:if="${!validateRys}" class="btn btn-sm btn-primary mx-1 text-right" disabled>Exportar RYS Derivados</button>
+                    </div>
+                    <div class="col-sm-12 my-2 py-0 border">
+                        <form class="d-flex flex-column " enctype="multipart/form-data" id="fileUploadForm"
+                              method="post" th:action="@{/ifrs/rysConcil}">
+                            <div class="form-group my-2 d-flex align-items-center">
+                                <label class="mb-0 mx-1 my-0">Carga Riesgos Mercados: </label>
+                                <input accept=".xls,.xlsx,.xlsm" class="custom-file-control" id="file" multiple
+                                       name="file"
+                                       required type="file">
+                                <button class="btn btn-sm btn-primary" type="submit">Cargar</button>
+                            </div>
+                            <div class="form-group mb-2 d-flex align-items-center">
+                                <label class="mb-0 mx-1 my-0">Periodo: </label>
+                                <input class="form-control-sm" required th:name="period" th:value="${period}"
+                                       type="month">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-md-5 d-block">
+                    <div class="col-md-12 my-2 border">
+                        <div class="row justify-content-center">
+                            <div class="col-md-5 me-1 pt-1 mb-1 justify-content-center">
+                                <a class="btn btn-sm btn-primary mx-1" th:href="@{/ifrs/rysConcil/generate?period={period}(period=${period})}">Generar Ajuste Repos Mercados</a>
+                            </div>
+                            <div class="col-md-5 me-1 pt-1 mb-1 justify-content-center">
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 my-2 border">
+                        <form method="get" th:action="@{/ifrs/rysConcil/downloadRYSRP?period={period}(period=${period})}">
+                            <div class="row justify-content-center align-items-center">
+                                <input required th:name="period" th:value="${period}" type="hidden">
+                                <div class="col-sm-5 me-1 pt-1 mb-1">
+                                    <div class="form-check">
+                                        <input checked class="form-check-input" id="CmAju" th:name="CmAju"
+                                               type="checkbox">
+                                        <label class="form-check-label mx-1" for="CmAju">
+                                            Ajuste
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" id="CmRev" th:name="CmRev" type="checkbox">
+                                        <label class="form-check-label mx-1" for="CmRev">
+                                            Reversión
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-5 me-1 pt-1 mb-1">
+                                    <button class="btn btn-sm btn-primary" id="CmSubmit" type="submit">Descargar Carga
+                                        Masiva
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row m-0 px-1 mt-2">
+            <div class="col-md-12">
+                <div class="table table-sm table-responsive rounded border-primary">
+                    <table cellspacing="0" class="table table-sm table-striped text-center table-bordered" id="example"
+                           width="50%">
+                        <thead class="bg-primary">
+                        <tr>
+                            <th>Número Papeleta</th>
+                            <th>Número Identificación</th>
+                            <th>Tipo Entidad</th>
+                            <th>CNTRO_CNTBLE_1_CONCILIACION</th>
+                            <th>CNTA_CNTBLE_1_CONCILIACION</th>
+                            <th>DVSA_CNTBLE_1_CONCILIACION</th>
+                            <th>CNTA_CNTBLE_1_PYG</th>
+                            <th>Total RYS</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="rysConcil : ${allRys}">
+                            <td th:text="${rysConcil[0]}"></td>
+                            <td th:text="${rysConcil[1]}"></td>
+                            <td th:text="${rysConcil[2]}"></td>
+                            <td th:text="${rysConcil[3]}"></td>
+                            <td th:text="${rysConcil[4]}"></td>
+                            <td th:text="${rysConcil[5]}"></td>
+                            <td th:text="${rysConcil[6]}"></td>
+                            <td th:text="${#numbers.formatDecimal(rysConcil[7],1,'POINT',2,'COMMA')}" th:if="${rysConcil[7]!=''}"></td>
+                            <td th:if="${rysConcil[7]==''}">0</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="row" th:if="${last != 0}">
+            <div class="col-md-4 text-left">
+                <nav arial-label="Pagination">
+                    <ul class="pagination">
+                        <li class="page-item" th:classappend="${prev == 0 ? 'disabled' : ''}">
+                            <a class="page-link"
+                               th:href="@{/ifrs/{dir}/?page={page}&vId={vId}&period={period}(period=${period},page=${prev},dir=${directory},vId=${vId})}">Anterior</a>
+                        </li>
+                        <li class="page-item" th:classappend="${current == last ? 'disabled' : ''}">
+                            <a class="page-link"
+                               th:href="@{/ifrs/{dir}/?page={page}&vId={vId}&period={period}(period=${period},page=${next},dir=${directory},vId=${vId})}">Siguiente</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="col-md-4 text-center">
+                <h6 th:utext="${registers} + ' Registros Encontrados'"></h6>
+            </div>
+            <div class="col-md-4 text-right">
+                <h6 class="mx-1" th:utext="'Página ' + ${current} + ' de ' + ${last}"></h6>
+            </div>
+        </div>
+        <div class="pr-3 col-md-12 my-2">
+            <div class="d-flex align-items-center justify-content-center">
+                <a class="btn btn-primary mx-1" th:href="@{/ifrs/rysConcil/downloadConcil?period={period}(period=${period})}">Exportar Ajuste Repos Mercados</a>
+                <a class="btn btn-primary mx-1"
+                   th:href="@{/ifrs/rysConcil/downloadRisk?period={period}(period=${period})}">Exportar
+                    Carga Riesgos Mercados</a>
+                <a class="btn btn-primary"
+                   th:href="@{/ifrs/rysConcil/downloadReport?period={period}(period=${period})}">Exportar
+                    Resumen</a>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min.js"></script>
+<script crossorigin="anonymous"
+        integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
+        src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+<script crossorigin="anonymous"
+        integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
+        src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+    var queryString = window.location.search;
+    var urlParams = new URLSearchParams(queryString);
+    var respuesta = urlParams.get('resp');
+    var row = urlParams.get('row');
+    var column = urlParams.get('colum');
+    validateAlerts(respuesta, row, column);
+    $(document).ready(function () {
+        $('#sidebarCollapse').on('click', function () {
+            $('#sidebar').toggleClass('active');
+        });
+    });
+</script>
+</body>
+
+</html>

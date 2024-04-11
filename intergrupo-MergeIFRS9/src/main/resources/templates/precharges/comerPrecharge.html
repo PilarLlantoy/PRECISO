@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+
+<div class="main-container">
+    <div class="row m-0 bg-primary fixed-top myNav">
+        <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
+            <h3 class="fw-bold text-white mx-4 my-3">Precarga Comer</h3>
+            <h5 th:utext="'Periodo: '+${vFilter}" class="fw-bold text-white mx-4 my-3"></h5>
+        </div>
+    </div>
+
+    <div id="content">
+        <div class="mt-5">
+
+            <div class="row m-0 p-0">
+
+                <div class="col-md-12 d-flex align-items-center justify-content-end">
+                    <div class="text-right pr-3 col-md-6 my-2">
+                        <a class="btn btn-primary mx-1"
+                           th:href="@{/bank/gpsreport?period={period}(period=${period})}">
+                            Volver a GPS
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-md-12 p-0">
+                <div class="table-responsive rounded border-primary">
+                    <table id="example" class="table table-sm table-striped table-hover text-center table-bordered" width="100%">
+                        <thead class="bg-primary">
+                        <tr>
+                            <th>Yntp Empresa Reportante</th>
+                            <th>Cod Neocon</th>
+                            <th>Divisa</th>
+                            <th>YNTP</th>
+                            <th>Sociedad YNTP</th>
+                            <th>Contrato</th>
+                            <th>Nit</th>
+                            <th>Valor</th>
+                            <th>Cod País</th>
+                            <th>País</th>
+                            <th>Cuenta Local</th>
+                            <th>Observaciones</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="comer:${comerList}">
+                            <th th:text="${comer.getYntpReportante()}"></th>
+                            <td th:text="${comer.getCodNeocon()}"></td>
+                            <td th:text="${comer.getDivisa()}"></td>
+                            <td th:text="${comer.getYntp()}"></td>
+                            <td th:text="${comer.getSociedadYntp()}"></td>
+                            <td th:text="${comer.getContrato()}"></td>
+                            <td th:text="${comer.getNit()}"></td>
+                            <td th:text="${#numbers.formatDecimal(comer.getValor(),1,'POINT',2,'COMMA')}"></td>
+                            <td th:text="${comer.getCodPais()}"></td>
+                            <td th:text="${comer.getPais()}"></td>
+                            <td th:text="${comer.getCuentaLocal()}"></td>
+                            <td th:text="${comer.getObservaciones()}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="row" th:if="${last != 0}">
+            <div class="col-md-4 text-left">
+                <nav arial-label="Pagination">
+                    <ul class="pagination">
+                        <li class="page-item" th:classappend="${prev == 0 ? 'disabled' : ''}">
+                            <a class="page-link" th:href="@{/precharges/{dir}/?page={page}&vId={vId}&period={vFilter}(vFilter=${vFilter},page=${prev},dir=${directory},vId=${vId})}">Anterior</a>
+                        </li>
+                        <li class="page-item" th:classappend="${current == last ? 'disabled' : ''}">
+                            <a class="page-link" th:href="@{/precharges/{dir}/?page={page}&vId={vId}&period={vFilter}(vFilter=${vFilter},page=${next},dir=${directory},vId=${vId})}">Siguiente</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="col-md-4 text-center">
+                <h6 th:utext="${registers} + ' Registros Encontrados'"></h6>
+            </div>
+            <div class="col-md-4 text-right">
+                <h6 class="mx-1" th:utext="'Página ' + ${current} + ' de ' + ${last}" ></h6>
+            </div>
+        </div>
+        <div class="pr-3 col-md-12 my-2">
+            <div class="d-flex align-items-center justify-content-center">
+                <a th:href="@{/precharges/comer/download/?period={period}&vId={vId}(period=${period},vId=${vId})}"
+                   class="btn btn-primary">Exportar a Excel</a>
+            </div>
+        </div>
+    </div>
+
+</div>
+</div>
+</div>
+
+<script type="text/javascript">
+    var queryString = window.location.search;
+    var urlParams = new URLSearchParams(queryString);
+    var respuesta = urlParams.get('resp');
+    var row = urlParams.get('row');
+    var column = urlParams.get('colum');
+    validateAlerts(respuesta,row,column);
+    $(document).ready(function() {
+        $('#sidebarCollapse').on('click', function() {
+            $('#sidebar').toggleClass('active');
+        });
+    });
+</script>
+
+</body>
+</html>

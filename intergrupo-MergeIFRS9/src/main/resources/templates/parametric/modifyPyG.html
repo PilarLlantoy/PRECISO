@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+<div class="main-container">
+    <div class="row m-0 bg-primary fixed-top myNav">
+        <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
+            <h3 class="fw-bold text-white mx-4 my-3">Parametría PyG</h3>
+        </div>
+        <div class="col-md-6 d-flex align-items-center justify-content-end pe-5">
+            <form class="form-inline" method="get" th:action="@{/parametric/searchPyG}">
+                <div class="input-group">
+                    <input class="form-control" placeholder="Buscar..." th:name="vId" type="text">
+                    <div class="input-group-append">
+                        <select class="form-control" required th:name="vFilter">
+                            <option disabled hidden selected value="">Seleccione un filtro</option>
+                            <option th:each="item : ${columns}" th:text="${item}" th:value="${item}"></option>
+                        </select>
+                    </div>
+                    <div class="input-group-append d-flex align-items-center">
+                        <button class="btn btn-secondary" type="submit"><i class="fa fa-search"></i></button>
+                        <a class="btn btn-secondary" th:href="@{/parametric/pyg}"><i class="fas fa-window-close"></i></a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- Cover -->
+    <div id="content">
+        <form th:object="${pygModify}" th:action="@{/parametric/modifyPyG}" method="POST">
+            <div class="row mt-5">
+                <div class="col-md-12" >
+                    <h3 class="mb-3">Editar Parametría PyG</h3>
+                    <input type="hidden" maxlength="5" id="id" name="id" class="form-control"  th:value="*{id}"  required>
+                </div>
+                <div class="col-md-6" >
+                    <div class="form-group mb-1">
+                        <label>Año</label>
+                        <input type="text" id="idNew" maxlength="4" minlength="4" class="form-control"  th:field="*{anio}" placeholder="Ingrese el Año" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Descripción</label>
+                        <input type="text" maxlength="100" class="form-control" th:field="*{descripcion}" placeholder="Ingrese la Descripción" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Cuenta D</label>
+                        <input type="text" maxlength="20" class="form-control" th:field="*{cuenta}" placeholder="Ingrese la Cuenta D" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Cuenta H</label>
+                        <input type="text" maxlength="20" class="form-control" th:field="*{cuentaH}" placeholder="Ingrese la Cuenta H" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Tipo</label>
+                        <input type="text" maxlength="20" class="form-control" th:field="*{tipo}" placeholder="Ingrese el Tipo" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Stage</label>
+                        <input type="text" maxlength="2" class="form-control" th:field="*{stage}" placeholder="Ingrese el Stage" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Divisa</label>
+                        <input type="text" minlength="3" maxlength="3" class="form-control" th:field="*{divisa}" placeholder="Ingrese la Divisa" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Valor</label>
+                        <input type="number" step=".01" class="form-control" th:name="valor" th:value="${#numbers.formatDecimal(pygModify.valor,1,2,'POINT')}" placeholder="Ingrese el valor" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Naturaleza</label>
+                        <select th:field="*{naturaleza}" class="form-control" required>
+                            <option value="">Seleccione...</option>
+                            <option value="D">Débito (D)</option>
+                            <option value="H">Crédito (C)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row pt-5 py-3">
+                <div class="col-md-12 d-flex align-content-center justify-content-center">
+                    <div class="d-grid gap-2 col-3">
+                        <button type="submit" class="btn btn-primary">Modificar</button>
+                    </div>
+                    <div class="d-grid gap-2 col-3">
+                        <a class="btn btn-danger" th:href="@{/parametric/pyg}">Cancelar</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#sidebarCollapse').on('click', function() {
+            $('#sidebar').toggleClass('active');
+        });
+    });
+</script>
+</body>
+</html>

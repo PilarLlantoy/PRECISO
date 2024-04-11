@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+<div class="main-container">
+    <div class="row m-0 bg-primary fixed-top myNav">
+        <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
+            <h3 class="fw-bold text-white mx-4 my-3">Cuenta Responsable</h3>
+        </div>
+    </div>
+    <div id="content">
+        <form method="POST" th:action="@{/parametric/modifyResponsibleAccount}" th:object="${responsibleAccountModify}">
+            <div class="row mt-5">
+                <div class="col-md-12">
+                    <h3 class="mb-3">Editar Cuenta Responsable</h3>
+                    <input class="form-control" id="idOld" required th:name="idOld" th:value="*{cuentaLocal}"
+                           type="hidden">
+                    <input class="form-control" id="idOldUsuario" required th:name="idOldUsuario"
+                           th:value="${usuarioId}" type="hidden">
+                    <input class="form-control" id="idCentro" name="idCentro" required th:value="*{centro}"
+                           type="hidden">
+                    <input class="form-control" id="idComponente" name="idComponente" required
+                           th:value="*{componente}" type="hidden">
+                    <input class="form-control" id="idInput" name="idInput" required th:value="*{entrada}"
+                           type="hidden">
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Cuenta Local</label>
+                        <input class="form-control" id="idNew" max="99999999999999" min="1000" name="idNew"
+                               placeholder="Ingrese la Cuenta Local" required th:field="*{cuentaLocal}"
+                               type="number">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Centro Costos</label>
+                        <input class="form-control" max="9999" maxlength="4" min="1" minlength="4" placeholder="Ingrese la Cuenta Local"
+                               required th:field="*{centro}" type="text">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Input</label>
+                        <input class="form-control" maxlength="254" placeholder="Ingrese la Entrada" required
+                               th:field="*{entrada}" type="text">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Componente<abbr aria-label="required"
+                                               title="Entrada con maximo 254 caracter alfanúmericos">*</abbr></label>
+                        <input class="form-control" maxlength="254" placeholder="Ingrese el componente" required
+                               th:field="*{componente}" type="text">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Aplica SICC</label>
+                        <select class="form-control" th:field="*{sicc}">
+                            <option th:text="Activo" th:value="true"></option>
+                            <option th:text="Inactivo" th:value="false"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Aplica Base Fiscal</label>
+                        <select class="form-control" th:field="*{baseFiscal}">
+                            <option th:text="Activo" th:value="true"></option>
+                            <option th:text="Inactivo" th:value="false"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Aplica Metodología</label>
+                        <select class="form-control" th:field="*{metodologia}">
+                            <option th:text="Activo" th:value="true"></option>
+                            <option th:text="Inactivo" th:value="false"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Aplica Mis</label>
+                        <select class="form-control" th:field="*{mis}">
+                            <option th:text="Activo" th:value="true"></option>
+                            <option th:text="Inactivo" th:value="false"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row pt-5 py-3">
+                <div class="col-md-12 d-flex align-content-center justify-content-center">
+                    <div class="d-grid gap-2 col-3">
+                        <button type="submit" class="btn btn-primary">Modificar</button>
+                    </div>
+                    <div class="d-grid gap-2 col-3">
+                        <a class="btn btn-danger" th:href="@{/parametric/responsibleAccount}">Cancelar</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script crossorigin="anonymous"
+        integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
+        src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script crossorigin="anonymous"
+        integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
+        src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#sidebarCollapse').on('click', function () {
+            $('#sidebar').toggleClass('active');
+        });
+    });
+    $("#idNew").change(function () {
+        $.get("/parametric/validateCuentaLocal/?idNew=" + $("#idNew").val() + "&idT=" + $("#idOld").val(), function (responseText) {
+            if (responseText != 'valid') {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'warning',
+                    title: '¡Validación Cuenta Fallo!',
+                    text: 'La cuenta con valor ' + $("#idNew").val() + ' ingresado en el campo Cuenta Local ya se encuentra asociado a otro registro.',
+                    showConfirmButton: true
+                });
+                $("#idNew").val('');
+            }
+        });
+    });
+</script>
+</body>
+</html>

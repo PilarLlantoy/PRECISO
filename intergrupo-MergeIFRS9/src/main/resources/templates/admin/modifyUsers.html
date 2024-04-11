@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+<div class="main-container">
+
+    <div class="row m-0 bg-primary fixed-top myNav">
+        <div class="col-md-12 border-bottom border-primary p-0 bg-primary d-flex align-items-center">
+            <h3 class="fw-bold text-white mx-4 my-3">Modificar Usuario</h3>
+        </div>
+    </div>
+
+    <!-- Cover -->
+    <div id="content m-5">
+        <form class="mt-5 mx-3" method="POST" th:action="@{/admin/modifyUsers}" th:object="${userModify}">
+            <div class="row pt-5 py-3">
+                <div class="col-md-12">
+                    <input class="form-control" required id="newU" name="newU" th:value="${userModify.usuario}" type="hidden">
+                    <input class="form-control" required th:field="*{roles}" type="hidden">
+                    <input class="form-control" th:field="*{contra}" type="hidden">
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Usuario</label>
+                        <input class="form-control" maxlength="7" minlength="7" required th:field="*{usuario}"
+                               type="text">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Nombre</label>
+                        <input class="form-control" maxlength="255" required th:field="*{nombre}" type="text">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Correo</label>
+                        <input class="form-control" maxlength="255" required th:field="*{correo}" type="text">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Centro</label>
+                        <input class="form-control" maxlength="18" required th:field="*{centro}" type="text">
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Empresa</label>
+                        <input class="form-control" maxlength="5" minlength="5" required th:field="*{empresa}"
+                               type="text">
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Estado</label>
+                        <select class="form-control" required th:field="*{estado}">
+                            <option th:text="Activo" th:value="true"></option>
+                            <option th:text="Inactivo" th:value="false"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-12">
+                            <p>Roles:</p>
+                        </div>
+                        <div class="form-group col-12">
+                            <div class="form-check form-check-inline" th:each="role : ${roles}">
+                                <input class="form-check-input " name="selectedRoles" th:id="${role.nombre}"
+                                       th:value="${role.nombre}" type="checkbox">
+                                <input id="userRoles" th:value="${hasRoles}" type="hidden"/>
+                                <label>[[${role.nombre}]]</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row pt-5 py-3">
+                <div class="col-md-12 d-flex align-content-center justify-content-center">
+                    <div class="d-grid gap-2 col-3">
+                        <button type="submit" class="btn btn-primary">Modificar</button>
+                    </div>
+                    <div class="d-grid gap-2 col-3">
+                        <a class="btn btn-danger"th:href="@{/admin/users}">Cancelar</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+</div>
+<script>
+
+    window.onload = checkIfChecked();
+
+    function checkIfChecked() {
+        const input = document.querySelector('#userRoles');
+        const roles = JSON.parse(input.value);
+        roles.forEach(role => {
+            const nombre = role.nombre;
+            console.log(nombre);
+            const getField = document.getElementById(nombre);
+            console.log(getField)
+            if (getField !== null) {
+                getField.setAttribute('checked', 'checked');
+            }
+        })
+    }
+
+</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script crossorigin="anonymous"
+        integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
+        src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+<script crossorigin="anonymous"
+        integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
+        src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#sidebarCollapse').on('click', function () {
+            $('#sidebar').toggleClass('active');
+        });
+    });
+    $("#idNew").change(function () {
+        $.get("/parametric/validateSociety/?idNew=" + $("#idNew").val() + "&id=" + $("#id").val(), function (responseText) {
+            if (responseText != 'valid') {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'warning',
+                    title: '¡Validación YNTP Fallo!',
+                    text: 'El YNTP con valor ' + $("#idNew").val() + ' ingresado en el campo YNTP ya se encuentra asociado a otro registro.',
+                    showConfirmButton: true
+                });
+                $("#idNew").val('');
+            }
+        });
+    });
+</script>
+</body>
+</html>

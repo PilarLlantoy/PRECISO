@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+<div class="main-container">
+    <div class="row m-0 bg-primary fixed-top myNav">
+        <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
+            <h3 class="fw-bold text-white mx-4 my-3">Cruce Filiales</h3>
+        </div>
+        <div class="col-md-6 d-flex align-items-center justify-content-end pe-5">
+            <form class="form-inline" method="get" th:action="@{/parametric/searchSubsidiaries}">
+                <div class="input-group">
+                    <input class="form-control" placeholder="Buscar..." th:name="vId" type="text">
+                    <div class="input-group-append">
+                        <select class="form-control" required th:name="vFilter">
+                            <option disabled hidden selected value="">Seleccione un filtro</option>
+                            <option th:each="item : ${columns}" th:text="${item}" th:value="${item}"></option>
+                        </select>
+                    </div>
+                    <div class="input-group-append d-flex align-items-center">
+                        <button class="btn btn-secondary" type="submit"><i class="fa fa-search"></i></button>
+                        <a class="btn btn-secondary" th:href="@{/parametric/subsidiaries}"><i
+                                class="fas fa-window-close"></i></a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- Cover -->
+    <div id="content">
+        <form method="POST" th:action="@{/parametric/modifySubsidiaries}" th:object="${subsidiariesModify}">
+            <div class="row mt-5">
+                <div class="col-md-12">
+                    <h3 class="mb-3">Editar Cruce Filial</h3>
+                    <input class="form-control" id="id" maxlength="5" name="id" required th:value="*{id}" type="hidden">
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Yntp Empresa</label>
+                        <input class="form-control" id="idNew" maxlength="5" name="idNew" required
+                               th:field="*{yntpEmpresa}" type="text">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Cuenta Local</label>
+                        <input class="form-control" maxlength="20" placeholder="Ingrese la Cuenta Local" required
+                               th:field="*{cuentaLocal}" type="text">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Cuenta Filial</label>
+                        <input class="form-control" id="idCuenta" maxlength="20" placeholder="Ingrese la Cuenta Filial" required
+                               th:field="*{cuentaFilial}" th:name="idCuenta" type="text">
+                    </div>
+                </div>
+                <!--
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Divisa</label>
+                        <input class="form-control" id="divi" maxlength="3" name="divi" placeholder="Ingrese la Divisa" required
+                               th:field="*{divisa}" type="text">
+                    </div>
+                </div>
+                -->
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Contrato Banco</label>
+                        <input class="form-control" maxlength="18" placeholder="Ingrese el Contrato Banco"
+                               th:field="*{contratoBanco}" type="text">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Contrato Filial</label>
+                        <input class="form-control" maxlength="18" placeholder="Ingrese el Contrato Filial"
+                               th:field="*{contratoFilial}" type="text">
+                    </div>
+                </div>
+                <!--<div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Observación Reportante</label>
+                        <input class="form-control" maxlength="255" placeholder="Ingrese la Observación Reportante" required
+                               th:field="*{observacionReportante}" type="text">
+                    </div>
+                </div>-->
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Conceptos</label>
+                        <input class="form-control" maxlength="255" placeholder="Ingrese el Conceptos" required
+                               th:field="*{conceptos}" type="text">
+                    </div>
+                </div>
+            </div>
+            <div class="row pt-5 py-3">
+                <div class="col-md-12 d-flex align-content-center justify-content-center">
+                    <div class="d-grid gap-2 col-3">
+                        <button type="submit" class="btn btn-primary">Modificar</button>
+                    </div>
+                    <div class="d-grid gap-2 col-3">
+                        <a class="btn btn-danger" th:href="@{/parametric/subsidiaries}">Cancelar</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script crossorigin="anonymous"
+        integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
+        src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script crossorigin="anonymous"
+        integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
+        src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#sidebarCollapse').on('click', function () {
+            $('#sidebar').toggleClass('active');
+        });
+    });
+    $("#idNew").change(function () {
+        $.get("/parametric/validateYntpSubsidiaries/?idNew=" + $("#idNew").val() + "&id=" + $("#id").val() + "&idCuenta=" + $("#idCuenta").val() + "&idCuentaOld=" + $("#idCuentaOld").val(), function (responseText) {
+            if (responseText == 'invalid') {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'warning',
+                    title: '¡Validación Yntp Empresa Fallo!',
+                    text: 'El Yntp con valor ' + $("#idNew").val() + ' ingresado en el campo Yntp Empresa no se encuentra existente en la tabla de Sociedades Yntp',
+                    showConfirmButton: true
+                });
+                $("#idNew").val('');
+            } else if (responseText == 'yntp') {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'warning',
+                    title: '¡Validación Yntp Empresa Fallo!',
+                    text: 'El Yntp con valor ' + $("#idNew").val() + ' ingresado en el campo Yntp Empresa ya se encuentra asociada a una cueta Responsable igual',
+                    showConfirmButton: true
+                });
+                $("#idNew").val('');
+            }
+        });
+    });
+    $("#idCuenta").change(function () {
+        $.get("/parametric/validateYntpSubsidiaries/?idNew=" + $("#idNew").val() + "&id=" + $("#id").val() + "&idCuenta=" + $("#idCuenta").val() + "&idCuentaOld=" + $("#idCuentaOld").val(), function (responseText) {
+            if (responseText == 'yntp') {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'warning',
+                    title: '¡Validación Cuenta Responsable Fallo!',
+                    text: 'La Cuenta Responsable con valor ' + $("#idCuenta").val() + ' ingresado en el campo Cuenta Responsable ya se encuentra asociada la cuenta al Yntp de la empresa',
+                    showConfirmButton: true
+                });
+                $("#idCuenta").val('');
+            }
+        });
+    });
+</script>
+</body>
+</html>

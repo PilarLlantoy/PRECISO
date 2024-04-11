@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+<div class="main-container">
+  <!-- Cover -->
+  <div class="row m-0 bg-primary fixed-top myNav">
+  </div>
+  <div id="content">
+    <div class="row mt-5">
+      <div class="col-md-12 my-5 text-lg-left text-center align-self-center border rounded" >
+        <img class="img-fluid d-block mx-auto" th:src="@{/images/disconnect.png}" width="20%" height="10%">
+        <p class="lead text-center mt-3">Página inaccesible</p>
+        <p class="lead text-center">El usuario no tiene los permisos necesarios para acceder a esta funcionalidad.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+<script type="text/javascript">
+    var queryString = window.location.search;
+    var urlParams = new URLSearchParams(queryString);
+    var respuesta = urlParams.get('resp');
+    var row = urlParams.get('row');
+    var column = urlParams.get('colum');
+    var message = urlParams.get('message');
+    validateAlerts(respuesta,row,column,message);
+    $(document).ready(function() {
+      $('#sidebarCollapse').on('click', function() {
+        $('#sidebar').toggleClass('active');
+      });
+    });
+  </script>
+</body>
+
+</html>

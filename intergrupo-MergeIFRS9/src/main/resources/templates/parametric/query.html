@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+<div class="main-container">
+    <div class="row m-0 bg-primary fixed-top myNav">
+        <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
+            <h3 class="fw-bold text-white mx-4 my-3">Query</h3>
+        </div>
+        <div class="col-md-6 d-flex align-items-center justify-content-end pe-5">
+            <form class="form-inline" method="get" th:action="@{/parametric/query}">
+                <div class="input-group">
+                    <div class="input-group-append d-flex align-items-center">
+                        <h5 class="me-2 mb-0">Fecha Consulta: </h5>
+                        <input type="month" th:name="period" th:value="${period}" class="form-control" required>
+                        <button class="btn btn-secondary" type="submit"><i class="fa fa-search"></i></button>
+                    </div>
+                </div>
+            </form>
+            <a class="btn btn-secondary mx-1" th:href="@{/parametric/query}"><i class="fas fa-redo-alt"></i></a>
+        </div>
+    </div>
+    <div id="content">
+        <div class="row mt-5">
+            <div class="col-md-12 d-flex align-items-center justify-content-end">
+                <div class="pr-3 col-md-8 my-2">
+                    <div class="input-group">
+                        <div class="input-group-append d-flex align-items-center">
+                            <form th:action="@{/parametric/query/load?period={period}(period=${period})}" id="fileUploadForm" enctype="multipart/form-data" method="post" class="d-flex flex-column">
+                                <div class="form-group my-2 d-flex align-items-center">
+                                    <h5 class="fw-bold me-2 mb-0">Cargar archivo: </h5>
+                                    <input accept=".txt" type="file" name="file" class="custom-file-control" id="file" multiple required>
+                                    <button type="submit" class="btn btn-primary">Cargar</button>
+                                </div>
+                                <div class="form-group mb-2 d-flex align-items-center">
+                                    <h5 class="fw-bold me-2 mb-0">Tipo Marca: </h5>
+                                    <select class="form-control" name="typemark" required>
+                                        <option disabled value="" selected hidden>Seleccione un tipo</option>
+                                        <option>LOCAL</option>
+                                        <option>IFRS9</option>
+                                    </select>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-right pr-3 col-md-4 my-2">
+
+                </div>
+            </div>
+            <div class="col-md-12 p-0">
+                <br>
+                <div class="table-responsive-sm rounded border-primary">
+                    <table id="example" class="table table-sm table-striped table-hover text-center table-bordered" width="100%">
+                        <thead class="bg-primary">
+                            <tr>
+                                <th>Tipo Query</th>
+                                <th>Fecha Contable</th>
+                                <th>Fecha Proceso</th>
+                                <th>Descargar</th>
+                                <th th:if="${apply != false}" colspan="2">Marcaciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${apply != false && listDates != null}">
+                                <td>Query Hoy</td>
+                                <td th:if="${listDates[0][0] != null}" class="card-text" th:utext="${listDates[0][0]}"></td>
+                                <td th:if="${listDates[0][0] == null}" class="card-text" th:utext="'Sin Asignación'"></td>
+                                <td th:if="${listDatesaP[0][0] != null}" class="card-text" th:utext="${listDatesaP[0][0]}"></td>
+                                <td th:if="${listDatesaP[0][0] == null}" class="card-text" th:utext="'Sin Asignación'"></td>
+                                <td><a  th:href="@{/parametric/query/downloadHoy?period={period}(period=${period})}" class="btn btn-primary mx-1 mt-2">Exportar</a></td>
+                                <td><a class="btn btn-primary mx-1" th:href="@{/parametric/query/queryCheckLocal?type=0&period={period}(period=${period})}">Marcar Local</a></td>
+                                <td><a class="btn btn-primary mx-1" th:href="@{/parametric/query/queryCheckIfrs9?type=0&period={period}(period=${period})}">Marcar IFRS9</a></td>
+                            </tr>
+                            <tr th:if="${apply != false && listDates != null}">
+                                <td>Query Ayer</td>
+                                <td th:if="${listDates[0][1] != null}" class="card-text" th:utext="${listDates[0][1]}"></td>
+                                <td th:if="${listDates[0][1] == null}" class="card-text" th:utext="'Sin Asignación'"></td>
+                                <td th:if="${listDatesaP[0][1] != null}" class="card-text" th:utext="${listDatesaP[0][1]}"></td>
+                                <td th:if="${listDatesaP[0][1] == null}" class="card-text" th:utext="'Sin Asignación'"></td>
+                                <td><a  th:href="@{/parametric/query/downloadAyer?&period={period}(period=${period})}" class="btn btn-primary mx-1 mt-2">Exportar</a></td>
+                                <td><a  class="btn btn-primary mx-1" th:href="@{/parametric/query/queryCheckLocal?type=1&period={period}(period=${period})}">Marcar Local</a></td>
+                                <td><a  class="btn btn-primary mx-1" th:href="@{/parametric/query/queryCheckIfrs9?type=1&period={period}(period=${period})}">Marcar IFRS9</a></td>
+                            </tr>
+                            <tr th:if="${listDates != null }">
+                                <td>Query Marcado Local</td>
+                                <td th:if="${listDates[0][2] != null}" class="card-text" th:utext="${listDates[0][2]}"></td>
+                                <td th:if="${listDates[0][2] == null}" class="card-text" th:utext="'Sin Asignación'"></td>
+                                <td th:if="${listDatesaP[0][2] != null}" class="card-text" th:utext="${listDatesaP[0][2]}"></td>
+                                <td th:if="${listDatesaP[0][2] == null}" class="card-text" th:utext="'Sin Asignación'"></td>
+                                <td><a th:href="@{/parametric/query/downloadMarcadoLocal?period={period}(period=${period})}" class="btn btn-primary mx-1">Exportar</a></td>
+                                <td th:if="${apply != false && listDates[0][2] != null}"><a  th:href="@{/parametric/query/clearMarcadoRP?period={period}&type=0(period=${period})}" class="btn btn-primary">Desmarcar Local</a></td>
+                                <td th:if="${apply != false && listDates[0][2] == null}"></td>
+                                <td th:if="${apply != false}"></td>
+                            </tr>
+                            <tr th:if="${listDates != null}">
+                                <td>Query Marcado IFRS9</td>
+                                <td th:if="${listDates[0][3] != null}" class="card-text" th:utext="${listDates[0][3]}"></td>
+                                <td th:if="${listDates[0][3] == null}" class="card-text" th:utext="'Sin Asignación'"></td>
+                                <td th:if="${listDatesaP[0][3] != null}" class="card-text" th:utext="${listDatesaP[0][3]}"></td>
+                                <td th:if="${listDatesaP[0][3] == null}" class="card-text" th:utext="'Sin Asignación'"></td>
+                                <td><a th:href="@{/parametric/query/downloadMarcadoRP?period={period}(period=${period})}" class="btn btn-primary">Exportar</a></td>
+                                <td th:if="${apply != false}"></td>
+                                <td th:if="${apply != false && listDates[0][3] == null}"></td>
+                                <td th:if="${apply != false && listDates[0][3] != null}"><a  th:href="@{/parametric/query/clearMarcadoRP?period={period}&type=1(period=${period})}" class="btn btn-primary">Desmarcar IFRS9</a></td>
+                            </tr>
+                            <tr>
+                                <td>Conciliación Marcado IFRS9</td>
+                                <td class="card-text" th:utext="*{listDatesCon}"></td>
+                                <td class="card-text" th:utext="*{listDatesaPCon}"></td>
+                                <td><a th:href="@{/parametric/query/downloadMarcadoRPCon?period={period}(period=${period})}" class="btn btn-primary">Exportar</a></td>
+                                <td th:if="${apply != false && !listGof.isEmpty()}" class="card-text" th:utext="${listGof[0]}"></td>
+                                <td th:if="${apply != false && listGof.isEmpty()}" class="card-text"></td>
+                                <td th:if="${apply != false && listDatesCon == 'Sin Asignación'}"><a  th:href="@{/parametric/query/clearMarcadoRPCon?period={period}&type=0(period=${period})}"  class="btn btn-primary">Marcar IFRS9 </a></td>
+                                <td th:if="${apply != false && listDatesCon != 'Sin Asignación'}"><a  th:href="@{/parametric/query/clearMarcadoRPCon?period={period}&type=1(period=${period})}"  class="btn btn-primary">Desmarcar IFRS9</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+${mess}
+<script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min.js" ></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+<script type="text/javascript">
+    var queryString = window.location.search;
+    var urlParams = new URLSearchParams(queryString);
+    var respuesta = urlParams.get('resp');
+    var periodo = urlParams.get('period').toString();
+
+
+    console.log(periodo)
+    console.log(respuesta)
+
+    if(respuesta === "true"){
+        createPersonalAlert(
+            'success',
+            'Query cargado correctamente',
+            `Se ha cargado el query para el periodo ${periodo}`,
+            '/parametric/query/',
+            periodo
+        )
+    }
+    else{
+        var cause = urlParams.get('cause').toString();
+        var message  = '<p>' +urlParams.get('mess').toString() + '<p>';
+        if(cause ==='fecha'){
+            createPersonalAlert(
+                'error',
+                'Fecha incorrecta del query',
+                message,
+                '/parametric/query/',
+                periodo
+            )
+        }
+        else if(cause ==='div'){
+            createPersonalAlert(
+                'info',
+                'Se ha cargado el Query con errores',
+                message,
+                '/parametric/query/',
+                periodo
+            )
+        }
+    }
+
+  </script>
+</body>
+</html>

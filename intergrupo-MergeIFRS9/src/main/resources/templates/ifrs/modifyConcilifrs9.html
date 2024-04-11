@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+<div class="main-container">
+    <!-- Cover -->
+    <div id="content">
+        <form th:object="${concilifrs9Modify}" th:action="@{/ifrs/modifyConcilifrs9}" method="POST">
+            <div class="row mt-5">
+                <div class="col-md-12" >
+                    <h3 class="mb-3">Incluir observación</h3>
+                    <input type="hidden" maxlength="5" id="empresa" name="empresa" class="form-control"  th:value="*{empresa}"  required>
+                    <input type="hidden" maxlength="5" id="cuenta" name="cuenta" class="form-control"  th:value="*{cuenta}"  required>
+                    <input type="hidden" maxlength="5" id="centro" name="centro" class="form-control"  th:value="*{centro}"  required>
+                    <input type="hidden" maxlength="5" id="periodo" name="periodo" class="form-control"  th:value="*{periodo}"  required>
+                </div>
+                <div class="col-md-6" >
+                    <div class="form-group mb-1">
+                        <label>Cuenta</label>
+                        <input type="text" maxlength="50" class="form-control"  th:field="*{cuenta}" placeholder="Ingrese las observaciones" disabled>
+                    </div>
+                </div>
+                <div class="col-md-6" >
+                    <div class="form-group mb-1">
+                        <label>Cuenta</label>
+                        <input type="text" maxlength="50" class="form-control"  th:field="*{centro}" placeholder="Ingrese las observaciones" disabled>
+                    </div>
+                </div>
+                <div class="col-md-6" >
+                    <div class="form-group mb-1">
+                        <label>Empresa</label>
+                        <input type="text" maxlength="50" class="form-control"  th:field="*{empresa}" placeholder="Ingrese las observaciones" disabled>
+                    </div>
+                </div>
+                <div class="col-md-6" >
+                    <div class="form-group mb-1">
+                        <label>Descripción</label>
+                        <input type="text" maxlength="50" class="form-control"  th:field="*{descripcion}" placeholder="Ingrese las observaciones" disabled>
+                    </div>
+                </div>
+                <div class="col-md-6" >
+                    <div class="form-group mb-1">
+                        <label>Codicons</label>
+                        <input type="text" maxlength="50" class="form-control"  th:field="*{codicons}" placeholder="Ingrese las observaciones" disabled>
+                    </div>
+                </div>
+                <div class="col-md-6" >
+                    <div class="form-group mb-1">
+                        <label>Saldo S2</label>
+                        <input type="text" maxlength="50" class="form-control"  th:field="*{saldoS2}" placeholder="Ingrese las observaciones" disabled>
+                    </div>
+                </div>
+                <div class="col-md-6" >
+                    <div class="form-group mb-1">
+                        <label>Saldo pérdida incurrida</label>
+                        <input type="text" maxlength="50" class="form-control"  th:field="*{saldoperdincurrida}" placeholder="Ingrese las observaciones" disabled>
+                    </div>
+                </div>
+                <div class="col-md-6" >
+                    <div class="form-group mb-1">
+                        <label>Saldo diferencias Concil Auto</label>
+                        <input type="text" maxlength="50" class="form-control"  th:field="*{saldo_contable_condeta}" placeholder="Ingrese las observaciones" disabled>
+                    </div>
+                </div>
+                <div class="col-md-6" >
+                    <div class="form-group mb-1">
+                        <label>Saldo ajuste primera vez</label>
+                        <input type="text" maxlength="50" class="form-control"  th:field="*{ajuste_primera_vez}" placeholder="Ingrese las observaciones" disabled>
+                    </div>
+                </div>
+                <div class="col-md-6" >
+                    <div class="form-group mb-1">
+                        <label>Saldo anexos</label>
+                        <input type="text" maxlength="50" class="form-control"  th:field="*{saldoanexo}" placeholder="Ingrese las observaciones" disabled>
+                    </div>
+                </div>
+                <div class="col-md-6" >
+                    <div class="form-group mb-1">
+                        <label>Saldo genéricas</label>
+                        <input type="text" maxlength="50" class="form-control"  th:field="*{saldo_genericas}" placeholder="Ingrese las observaciones" disabled>
+                    </div>
+                </div>
+                <div class="col-md-6" >
+                    <div class="form-group mb-1">
+                        <label>Saldo desc nivel 15</label>
+                        <input type="text" maxlength="50" class="form-control"  th:field="*{saldo_esc_nvel15}" placeholder="Ingrese las observaciones" disabled>
+                    </div>
+                </div>
+                <div class="col-md-6" >
+                    <div class="form-group mb-1">
+                        <label>Saldo rechazos</label>
+                        <input type="text" maxlength="50" class="form-control"  th:field="*{ctas_sin_scope}" placeholder="Ingrese las observaciones" disabled>
+                    </div>
+                </div>
+                <div class="col-md-6" >
+                    <div class="form-group mb-1">
+                        <label>Diferencia Conciliación</label>
+                        <input type="text" maxlength="50" class="form-control"  th:field="*{diferencia_conciliacion}" placeholder="Ingrese las observaciones" disabled>
+                    </div>
+                </div>
+                <div class="col-md-6" >
+                    <div class="form-group mb-1">
+                        <label>Validacion=0</label>
+                        <input type="text" maxlength="50" class="form-control"  th:field="*{validacion0}" placeholder="Ingrese las observaciones" disabled>
+                    </div>
+                </div>
+                <div class="col-md-6" >
+                    <div class="form-group mb-1">
+                        <label>Observaciones</label>
+                        <input type="text" maxlength="50" class="form-control"  th:field="*{observacion}" placeholder="Ingrese las observaciones" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="d-grid gap-2 col-6 mx-auto">
+                        <button type="submit" class="button d-inline-block mt-3 justify-content-center btn btn-primary">Modificar</button>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="d-grid gap-2 col-6 mx-auto">
+                        <a class="button d-inline-block mt-3 justify-content-center btn btn-primary"th:href="@{/ifrs/concilifrs9}">Volver</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#sidebarCollapse').on('click', function() {
+            $('#sidebar').toggleClass('active');
+        });
+    });
+</script>
+</body>
+</html>

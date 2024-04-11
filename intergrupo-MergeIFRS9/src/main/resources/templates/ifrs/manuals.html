@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+
+<div class="main-container">
+    <div class="row m-0 bg-primary fixed-top myNav d-flex justify-content-between">
+        <form class="form-inline" method="get" th:action="@{/ifrs/manuals}">
+            <div class="col-md-4 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
+                <h3 class="fw-bold text-white mx-4 my-3">Manuales (ANEXO8 - SICC)</h3>
+                <h5 class="fw-bold text-white mx-4 my-3" th:utext="'Periodo: '+${period}"></h5>
+            </div>
+            <div class="col-md-4 d-flex align-items-center justify-content-start">
+                <div class="input-group">
+                    <div class="input-group-append d-flex align-items-center">
+                        <h5 class="me-2 mb-0">Fecha Consulta: </h5>
+                        <input class="form-control rounded" required th:name="period" th:value="${period}" type="month">
+                        <button class="btn btn-secondary" type="submit"><i class="fa fa-search"></i></button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 d-flex align-items-center justify-content-start">
+                <div class="input-group d-flex align-items-center ">
+                    <h5 class="me-2 mb-0">Filtro: </h5>
+                    <input class="form-control rounded" placeholder="Buscar..." th:name="vId" type="text">
+                    <div class="input-group-append d-flex align-items-center">
+                        <select class="form-control" th:name="vFilter">
+                            <option disabled hidden selected value="">Seleccione un filtro</option>
+                            <option th:each="item : ${columns}" th:text="${item}" th:value="${item}"></option>
+                        </select>
+                    </div>
+                    <div class="input-group-append d-flex align-items-center">
+                        <button class="btn btn-secondary" type="submit"><i class="fa fa-search"></i></button>
+                        <a class="btn btn-secondary" th:href="@{/ifrs/manuals}"><i
+                                class="fas fa-window-close"></i></a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div id="content">
+        <div class="row mt-5">
+            <div class="col-md-12 d-flex align-items-center justify-content-end">
+                <div class="text-left col-12 my-2 py-1">
+                    <a class="btn btn-sm btn-primary"
+                       th:href="@{/ifrs/anexoLoadM?period={period}(period=${period})}">Cargar información Manuales</a>
+                    <i class="fa fa-check-circle text-success mx-1" th:if="${validateSicc}"></i>
+                    <i class="fa fa-times-circle text-danger mx-1" th:if="${!validateSicc}"></i>
+                    <label th:if="${validateSicc}" th:text="'Última carga el '+${dateSicc}"></label>
+                    <label th:if="${!validateSicc}">Sin cargar</label>
+                </div>
+                <!--<div class="col-4 my-2 py-1 mr-1 border">
+                    <p class="fw-bold me-2 pt-2 mb-2" th:if="${noQuery == false}">No hay Query IFRS9 cargado
+                        para la fecha</p>
+                    <form class="pt-2" method="get" th:action="@{/ifrs/anexoQuery}"
+                          th:if="${noQuery}">
+                        <input class="form-control w-25" required th:name="period" th:value="${period}"
+                               type="hidden">
+                        <div class="row mb-1">
+                            <label class="col-sm-6 col-form-label">Empresa Query IFRS9:</label>
+                            <div class="col-sm-6">
+                                <select class="form-control-sm form-select form-select-sm" id="company"
+                                        required th:name="company" th:value="${company}">
+                                    <option disabled hidden selected value="">Seleccione...</option>
+                                    <option th:each="company : ${companies}" th:text="${company}"
+                                            th:value="${company}"></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12 mb-3">
+                                <button class="btn btn-sm btn-primary" type="submit" >Validar Query</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>-->
+            </div>
+        </div>
+        <div class="row mt-1">
+            <div class="col-md-12">
+                <div class="table-responsive rounded border-primary">
+                    <table class="table table-striped table-hover text-center table-bordered" id="example1" width="100%" >
+                        <thead class="bg-primary">
+                        <tr>
+                            <th>Centro</th>
+                            <th>Cuenta PUC</th>
+                            <th>Divisa</th>
+                            <th>Importe</th>
+                            <th>Fuente Información</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="manual:${allManuals}">
+                            <th th:text="${manual[0]}"></th>
+                            <td th:text="${manual[1]}"></td>
+                            <td th:text="${manual[2]}"></td>
+                            <td th:text="${#numbers.formatDecimal(manual[3],1,'POINT',2,'COMMA')}"></td>
+                            <td th:text="${manual[4]}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="row" th:if="${last != 0}">
+            <div class="col-md-4 text-left">
+                <nav arial-label="Pagination">
+                    <ul class="pagination">
+                        <li class="page-item" th:classappend="${prev == 0 ? 'disabled' : ''}">
+                            <a class="page-link"
+                               th:href="@{/ifrs/{dir}/?page={page}&vId={vId}&vFilter={vFilter}&period={period}(vFilter=${vFilter},page=${prev},dir=${directory},vId=${vId},period=${period})}">Anterior</a>
+                        </li>
+                        <li class="page-item" th:classappend="${current == last ? 'disabled' : ''}">
+                            <a class="page-link"
+                               th:href="@{/ifrs/{dir}/?page={page}&vId={vId}&vFilter={vFilter}&period={period}(vFilter=${vFilter},page=${next},dir=${directory},vId=${vId},period=${period})}">Siguiente</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="col-md-4 text-center">
+                <h6 th:utext="${registers} + ' Registros Encontrados'"></h6>
+            </div>
+            <div class="col-md-4 text-right">
+                <h6 class="mx-1" th:utext="'Página ' + ${current} + ' de ' + ${last}"></h6>
+            </div>
+        </div>
+        <div class="d-flex align-items-center justify-content-center mb-3" th:if="${vFilter != 'Original'}">
+            <h5><span class="badge badge-pill text-light badge-info py-2 px-5">¡La Tabla se encuentra Filtrada!</span>
+            </h5>
+        </div>
+        <div class="d-flex align-items-center justify-content-center mx-3">
+            <a class="btn btn-primary mx-1"
+               th:href="@{/ifrs/manuals/download/?vFilter={vFilter}&vId={vId}&period={period}(vFilter=${vFilter},vId=${vId},period=${period})}">Exportar
+                a Excel</a>
+            <!--<a class="btn btn-primary mx-1"
+               th:href="@{/ifrs/manuals/downloadNotApply/?vFilter={vFilter}&vId={vId}&period={period}(vFilter=${vFilter},vId=${vId},period=${period})}">Exportar
+                Cuentas No Encontradas</a>-->
+        </div>
+    </div>
+
+</div>
+</div>
+</div>
+<script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min.js" ></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+<script type="text/javascript">
+    var queryString = window.location.search;
+    var urlParams = new URLSearchParams(queryString);
+    var respuesta = urlParams.get('resp');
+    var row = urlParams.get('row');
+    var column = urlParams.get('colum');
+    var message = urlParams.get('message');
+    validateAlerts(respuesta, row, column, message);
+</script>
+</body>
+</html>

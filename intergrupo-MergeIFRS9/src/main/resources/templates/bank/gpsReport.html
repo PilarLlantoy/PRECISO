@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+
+<div class="main-container">
+    <div class="row m-0 bg-primary fixed-top myNav">
+        <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
+            <h3 class="fw-bold text-white mx-4 my-3">Cargue Reporte GPS</h3>
+            <h5 class="fw-bold text-white mx-4 my-3" th:utext="'Periodo: '+${period}"></h5>
+        </div>
+        <div class="col-md-6 d-flex align-items-center justify-content-end pe-5">
+            <form class="form-inline" method="get" th:action="@{/bank/gpsreport?period={period}(period=${period})}">
+                <div class="input-group">
+                    <div class="input-group-append d-flex align-items-center">
+                        <h5 class="me-2 mb-0">Fecha Consulta: </h5>
+                        <input class="form-control" required th:name="period" th:value="${period}" type="month">
+                        <button class="btn btn-secondary" type="submit"><i class="fa fa-search"></i></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="content">
+        <div class="mt-5">
+            <div class="row m-0 p-0">
+                <div class="col-md-8 d-block p-0">
+                    <form class="d-flex flex-column" enctype="multipart/form-data"
+                          id="fileUploadForm"
+                          method="post" th:action="@{/bank/gpsreport/insert}">
+                        <div class="form-group my-2 d-flex align-items-center">
+                            <h5 class="fw-bold me-2 mb-0">Cargar archivo: </h5>
+                            <input accept=".txt" class="custom-file-control" id="file" name="file" required type="file">
+                            <button class="btn btn-primary" type="submit">Cargar</button>
+                        </div>
+                        <div class="form-group mb-2 d-flex align-items-center">
+                            <h5 class="fw-bold me-2 mb-0">Periodo: </h5>
+                            <input class="form-control w-25" required th:name="period" th:value="${period}"
+                                   type="month">
+                        </div>
+                    </form>
+                </div>
+
+                <div class="col-md-4 d-flex align-items-center justify-content-end">
+                    <div class="text-right pr-3 col-md-6 my-2 d-flex align-content-center justify-content-end">
+                        <a class="btn btn-info mx-1"
+                           th:href="@{/bank/gpsreport/sendIntergrupo?period={period}(period=${period})}">
+                            Enviar a Intergrupo V1
+                        </a>
+                        <a class="btn btn-primary mx-1"
+                           th:href="@{/bank/gpsreport?period={period}(period=${period})}">
+                            <i class="fas fa-redo-alt"></i>
+                        </a>
+                        <a class="btn btn-primary mx-1"
+                           th:href="@{/precharges/comer/?period={period}(period=${period})}">
+                            Precarga Comer
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 p-0">
+                <div class="table-responsive-sm rounded border-primary">
+                    <table class="table table-sm table-striped table-hover text-center table-bordered" id="example"
+                           width="100%">
+                        <thead class="bg-primary">
+                        <tr>
+                        <tr>
+                            <th>Cuenta local</th>
+                            <th>Clase</th>
+                            <th>Fecha Contable</th>
+                            <th>Importe en Ml</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="gps : ${allGps}">
+                            <th th:text="${gps.getCuenta_local()}"></th>
+                            <td th:text="${gps.getClase()}"></td>
+                            <td th:text="${gps.getEjercicioMes()}"></td>
+                            <td th:text="${#numbers.formatDecimal(gps.getImporte_ml(),1,'POINT',2,'COMMA')}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="row" th:if="${last != 0}">
+            <div class="col-md-4 text-left">
+                <nav arial-label="Pagination">
+                    <ul class="pagination">
+                        <li class="page-item" th:classappend="${prev == 0 ? 'disabled' : ''}">
+                            <a class="page-link"
+                               th:href="@{/bank/{dir}/?page={page}(period=${period},page=${prev},dir=${directory})}">Anterior</a>
+                        </li>
+                        <li class="page-item" th:classappend="${current == last ? 'disabled' : ''}">
+                            <a class="page-link"
+                               th:href="@{/bank/{dir}/?page={page}(period=${period},page=${next},dir=${directory})}">Siguiente</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="col-md-4 text-center">
+                <h6 th:utext="${registers} + ' Registros Encontrados'"></h6>
+            </div>
+            <div class="col-md-4 text-right">
+                <h6 class="mx-1" th:utext="'Página ' + ${current} + ' de ' + ${last}"></h6>
+            </div>
+        </div>
+        <div class="d-flex align-items-center justify-content-center">
+            <a class="btn btn-primary mx-3"
+               th:href="@{/bank/gpsreport/download/?vFilter={vFilter}&vId={vId}(vFilter=${vFilter},vId=${vId})}">Exportar
+                GPS</a>
+            <a class="btn btn-primary mx-3"
+               th:href="@{/bank/gpsreport/downloadGPSForm/?vFilter={vFilter}&vId={vId}(vFilter=${vFilter},vId=${vId})}">Exportar
+                Filtro GPS</a>
+            <a class="btn btn-primary mx-3"
+               th:href="@{/precharges/comer/download/?period={vFilter}&vId={vId}(vFilter=${vFilter},vId=${vId})}">Exportar
+                Filtro GPS Intergrupo</a>
+
+        </div>
+
+    </div>
+</div>
+
+
+<script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min.js"></script>
+<script crossorigin="anonymous"
+        integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
+        src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+<script crossorigin="anonymous"
+        integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
+        src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+    var queryString = window.location.search;
+    var urlParams = new URLSearchParams(queryString);
+    var respuesta = urlParams.get('resp').toString();
+    var row = urlParams.get('row');
+    var column = urlParams.get('colum');
+    var period = urlParams.get('period').toString();
+    var message = `El archivo GPS se ha cargado correctamente para el periodo ${period}`;
+
+    if (respuesta === "true") {
+        createPersonalAlert(
+            'success',
+            'GPS Cargado Correctamente',
+            '<p>' + message + '</p>',
+            '/bank/gpsreport',
+            period
+        )
+    } else if (respuesta === "false") {
+        createPersonalAlert(
+            'error',
+            'Error al cargar el documento GPS',
+            '<p>' + 'Verfique que el documento que está cargando corresponda al reporte GPS' + '</p>',
+            '/bank/gpsreport',
+            period
+        )
+    } else if (respuesta === "correcto") {
+        message = `Se ha enviado ha intergrupo para el periodo ${period}`
+        createPersonalAlert(
+            'success',
+            'Enviado Correctamente a Intergrupo V1',
+            '<p>' + message + '</p>',
+            '/bank/gpsreport',
+            period
+        )
+    } else if (respuesta === "fallo") {
+        message = `No se ha podido enviar a Intergrupo V1 para el periodo ${period}`
+        createPersonalAlert(
+            'error',
+            'Fallo al enviar a Intergrupo V1',
+            '<p>' + message + '</p>',
+            '/bank/gpsreport',
+            period
+        )
+    }
+</script>
+
+</body>
+</html>

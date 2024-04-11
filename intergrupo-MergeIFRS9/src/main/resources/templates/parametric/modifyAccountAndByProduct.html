@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+<div class="main-container">
+    <!-- Cover -->
+    <div id="content">
+        <form th:object="${accountAndByProductModify}" th:action="@{/parametric/modifyAccountAndByProduct}" method="POST">
+            <div class="row mt-5">
+                <div class="col-md-12" >
+                    <h3 class="mb-3">Editar Cuenta y subproductos locales</h3>
+                    <input type="hidden" maxlength="5" id="id" name="id" class="form-control"  th:value="*{id}"  required>
+                </div>
+                <div class="col-md-6" >
+                    <div class="form-group mb-1">
+                        <label>Cuenta</label>
+                        <input type="text" maxlength="18" minlength="4" class="form-control"  th:field="*{cuenta}" placeholder="Ingrese la cuenta"  required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Subproducto</label>
+                        <input type="text" maxlength="50" class="form-control" th:field="*{subproducto}" placeholder="Ingrese el subproducto" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="d-grid gap-2 col-6 mx-auto">
+                        <button type="submit" class="button d-inline-block mt-3 justify-content-center btn btn-primary">Modificar</button>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="d-grid gap-2 col-6 mx-auto">
+                        <a class="button d-inline-block mt-3 justify-content-center btn btn-primary"th:href="@{/parametric/accountAndByProduct}">Volver</a>
+                    </div>
+                </div>
+            </div>
+            <div class="row pt-5 py-3">
+                <div class="col-md-12 d-flex align-content-center justify-content-center">
+                    <div class="d-grid gap-2 col-3">
+                        <button type="submit" class="btn btn-primary">Modificar</button>
+                    </div>
+                    <div class="d-grid gap-2 col-3">
+                        <a class="btn btn-danger" th:href="@{/parametric/accountAndByProduct}">Cancelar</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#sidebarCollapse').on('click', function() {
+            $('#sidebar').toggleClass('active');
+        });
+    });
+</script>
+</body>
+</html>

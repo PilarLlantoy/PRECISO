@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+<div class="main-container">
+
+    <div class="row m-0 bg-primary fixed-top myNav">
+        <div class="col-md-12 border-bottom border-primary p-0 bg-primary d-flex align-items-center">
+            <h3 class="fw-bold text-white mx-4 my-3">Crear Usuario</h3>
+        </div>
+    </div>
+
+    <div id="content m-5">
+        <form class="mt-5 mx-3" method="POST" th:action="@{/admin/createUser}" th:object="${user}">
+            <div class="row mt-5 pt-5 py-3">
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Usuario</label>
+                        <input class="form-control" maxlength="7" minlength="7" required th:field="*{usuario}"
+                               type="text">
+                        <div class="alert alert-warning" th:errors="*{usuario}"
+                             th:if="${#fields.hasErrors('usuario')}"></div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Correo</label>
+                        <input class="form-control" maxlength="255" required th:field="*{correo}" type="email">
+                        <div class="alert alert-warning" th:errors="*{correo}"
+                             th:if="${#fields.hasErrors('correo')}"></div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Empresa</label>
+                        <input class="form-control" maxlength="5" minlength="5" required th:field="*{empresa}"
+                               type="text">
+                        <div class="alert alert-warning" th:errors="*{empresa}"
+                             th:if="${#fields.hasErrors('empresa')}"></div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Centro</label>
+                        <input class="form-control" maxlength="18" required th:field="*{centro}" type="text">
+                        <div class="alert alert-warning" th:errors="*{centro}"
+                             th:if="${#fields.hasErrors('centro')}"></div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Nombre</label>
+                        <input class="form-control" maxlength="255" required th:field="*{nombre}" type="text">
+                        <div class="alert alert-warning" th:errors="*{nombre}"
+                             th:if="${#fields.hasErrors('nombre')}"></div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-12">
+                            <p>Roles:</p>
+                        </div>
+                        <div class="form-group col-12">
+                            <div class="form-check form-check-inline" th:each="role : ${roles}">
+                                <input class="form-check-input " name="selectedRoles" th:id="${role.nombre}"
+                                       th:value="${role.nombre}" type="checkbox">
+                                <label>[[${role.nombre}]]</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row pt-5 py-3">
+                <div class="col-md-12 d-flex align-content-center justify-content-center">
+                    <div class="d-grid gap-2 col-3">
+                        <button type="submit" class="btn btn-primary">Agregar</button>
+                    </div>
+                    <div class="d-grid gap-2 col-3">
+                        <a class="btn btn-danger"th:href="@{/admin/users}">Cancelar</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+</div>
+
+<script>
+
+    function dropDown(event) {
+        event.target.parentElement.children[1].classList.remove("d-none");
+        document.getElementById("overlay").classList.remove("d-none");
+    }
+
+    function hide(event) {
+        let items = document.getElementsByClassName('menu');
+        for (let i = 0; i < items.length; i++) {
+            items[i].classList.add("d-none");
+        }
+        document.getElementById("overlay").classList.add("d-none");
+    }
+</script>
+</body>
+</html>

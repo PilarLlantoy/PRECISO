@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+<div class="main-container">
+    <!-- Cover -->
+    <div id="content">
+        <form th:object="${recModify}" th:action="@{/parametric/modifyRec}" method="POST">
+            <div class="row mt-5">
+                <div class="col-md-12" >
+                    <h2 class="mb-3">Editar Reclasificación</h2>
+                    <input type="hidden"  max="254" id="id" th:name="id" class="form-control"  th:value="*{id}"  required>
+                </div>
+                <div class="col-md-6" >
+                    <div class="form-group mb-1">
+                        <label>Concepto</label>
+                        <input type="text" maxlength="254" id="idNew" th:name="concepto" class="form-control" th:field="*{concepto}" placeholder="Ingrese el Concepto">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Código de Consolidación</label>
+                        <input type="number" maxlength="254"  class="form-control" th:field="*{codicons}" placeholder="Ingrese el Código de Consolidación" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Tipo Sociedad</label>
+                        <input type="text" maxlength="254" id="tipoSociedad" class="form-control" th:field="*{tipoSociedad}" placeholder="Ingrese el tipo de Sociedad">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Segmento</label>
+                        <input type="text" maxlength="254" class="form-control" th:field="*{segmento}" placeholder="Ingrese el Segmento" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Producto</label>
+                        <input type="text" maxlength="254" class="form-control" th:field="*{producto}" placeholder="Ingrese el Producto">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Tipo</label>
+                        <input type="text" maxlength="254" class="form-control" th:field="*{tipo}" placeholder="Ingrese el Tipo">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Stage</label>
+                        <input type="text" maxlength="254" class="form-control" th:field="*{stage}" placeholder="Ingrese el Stage" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Cuenta</label>
+                        <input type="text" maxlength="254" class="form-control" th:field="*{cuenta}" placeholder="Ingrese la Cuenta" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Cuenta Contrapartida</label>
+                        <input type="text" maxlength="254" class="form-control" th:field="*{cuentaContrapartida}" placeholder="Ingrese la Contrapartida">
+                    </div>
+                </div>
+            </div>
+            <div class="row pt-5 py-3">
+                <div class="col-md-12 d-flex align-content-center justify-content-center">
+                    <div class="d-grid gap-2 col-3">
+                        <button type="submit" class="btn btn-primary">Modificar</button>
+                    </div>
+                    <div class="d-grid gap-2 col-3">
+                        <a class="btn btn-danger" th:href="@{/parametric/modifyReclassificationV2}">Cancelar</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+      $('#sidebarCollapse').on('click', function() {
+        $('#sidebar').toggleClass('active');
+      });
+    });
+    $("#idNew").change(function(){
+      $.get("/parametric/validateAval/?idNew="+$("#idNew").val()+"&id=0&id2="+$("#id2").val()+"&idold=0", function(responseText) {
+          if(responseText != 'valid' )
+          {
+            Swal.fire({
+                position: 'center',
+                icon: 'warning',
+                title: '¡Validación tipo de aval Fallo!',
+                text: 'El Tipo de Aval Origen con valor '+$("#idNew").val()+' ingresado en el campo Nit Contraparte ya se encuentra asociado a otro registro.',
+                showConfirmButton: true
+                  });
+            $("#idNew").val('');
+          }
+      });
+    });
+    $("#id2").change(function(){
+      $.get("/parametric/validateAval/?idNew="+$("#idNew").val()+"&id=0&id2="+$("#id2").val()+"&idold=0", function(responseText) {
+          if(responseText != 'valid' )
+          {
+            Swal.fire({
+                position: 'center',
+                icon: 'warning',
+                title: '¡Validación tipo de aval Fallo!',
+                text: 'La cuenta 13 con valor '+$("#id2").val()+' ingresado en el campo Nit Contraparte ya se encuentra asociado a otro registro.',
+                showConfirmButton: true
+                  });
+            $("#id2").val('');
+          }
+      });
+    });
+</script>
+</body>
+</html>

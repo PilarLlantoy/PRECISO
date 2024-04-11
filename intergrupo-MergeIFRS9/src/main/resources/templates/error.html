@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Error</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4"
+            crossorigin="anonymous"></script>
+    <link th:href="@{/css/fonts.css}" rel="stylesheet"/>
+    <link rel="stylesheet" th:href="@{/css/buttons.css}">
+</head>
+<body>
+
+<nav class="navbar navbar-dark" style="background-color: #044a87">
+    <a class="navbar-brand" th:href="@{/home}">
+        <img th:src="@{/images/logo_bbva_blanco.svg}" width="120" height="50" class="d-inline-block align-top ms-3"
+             alt="">
+    </a>
+</nav>
+
+<div class="container">
+    <h1>Error</h1>
+    <p>
+        No tiene permiso para acceder
+    </p>
+    <a th:href="@{/home}">Volver a home</a>
+</div>
+
+</body>
+</html>

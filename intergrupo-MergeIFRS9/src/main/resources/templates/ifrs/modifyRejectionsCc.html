@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+<div class="main-container">
+    <div class="row m-0 bg-primary fixed-top myNav">
+        <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
+            <h3 class="fw-bold text-white mx-4 my-3">Rechazos (Creación Cuentas/Cambios Segementos)</h3>
+        </div>
+    </div>
+    <!-- Cover -->
+    <div id="content">
+        <form method="POST" th:action="@{/ifrs/modifyRejectionsCc}">
+            <div class="row mt-5" th:border="1">
+                <div class="col-md-12">
+                    <h3 class="mb-3">Editar Rechazo</h3>
+                    <input class="form-control" id="id" maxlength="14" required th:name="id" th:value="*{account}"
+                           type="hidden">
+                </div>
+                <div class="col-md-12">
+                    <div class="table-responsive-sm rounded border-primary">
+                        <table id="example" class="table table-sm table-striped table-hover text-center table-bordered" width="100%">
+                            <thead class="bg-primary">
+                            <tr>
+                                <th>Cuenta</th>
+                                <th>Divisa</th>
+                                <th>Tipo Rechazo Real Actual</th>
+                                <th>Tipo Rechazo Real Nuevo</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td th:text="${account}"></td>
+                                <td th:text="${divisa}"></td>
+                                <td th:text="${valida}"></td>
+                                <td>
+                                    <div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="typeNew" id="exampleRadios1" th:value="${valida}" checked>
+                                            <label class="form-check-label" for="exampleRadios1" th:text="${valida}"></label>
+                                        </div>
+                                        <div class="form-check" th:if="${valida != 'Cambio de segmento'}">
+                                            <input class="form-check-input" type="radio" name="typeNew" id="exampleRadios" value="Cambio de segmento">
+                                            <label class="form-check-label" for="exampleRadios">
+                                                Cambio de segmento
+                                            </label>
+                                        </div>
+                                        <div class="form-check" th:if="${valida != 'Creación de cuenta'}">
+                                            <input class="form-check-input" type="radio" name="typeNew" id="exampleRadios2" value="Creación de cuenta">
+                                            <label class="form-check-label" for="exampleRadios2">
+                                                Creación de cuenta
+                                            </label>
+                                        </div>
+                                        <div class="form-check" th:if="${valida != 'Reactivación de cuenta'}">
+                                            <input class="form-check-input" type="radio" name="typeNew" id="exampleRadios3" value="Reactivación de cuenta">
+                                            <label class="form-check-label" for="exampleRadios3">
+                                                Reactivación de cuenta
+                                            </label>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="row pt-5 py-3">
+                <div class="col-md-12 d-flex align-content-center justify-content-center">
+                    <div class="d-grid gap-2 col-3">
+                        <button type="submit" class="btn btn-primary">Modificar Rechazo</button>
+                    </div>
+                    <div class="d-grid gap-2 col-3">
+                        <a class="btn btn-danger" th:href="@{/ifrs/rejectionsCc}">Cancelar</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script crossorigin="anonymous"
+        integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
+        src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script crossorigin="anonymous"
+        integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
+        src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#sidebarCollapse').on('click', function () {
+            $('#sidebar').toggleClass('active');
+        });
+    });
+</script>
+</body>
+</html>

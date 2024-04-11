@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+<div class="main-container">
+  <div class="row m-0 bg-primary fixed-top myNav d-flex justify-content-between">
+    <form class="form-inline" method="get" th:action="@{/ifrs/Eeff}">
+      <div class="col-md-3 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
+        <h3 class="fw-bold text-white mx-4 my-3">EEFF</h3>
+        <h5 class="fw-bold text-white mx-4 my-3" th:utext="'Periodo: '+${period}"></h5>
+      </div>
+      <div class="col-md-5 d-flex align-items-center justify-content-end">
+        <div class="input-group">
+          <div class="input-group-append d-flex align-items-center">
+            <h5 class="me-2 mb-0">Fecha: </h5>
+            <input class="form-control rounded" required th:name="period" th:value="${period}" type="month">
+            <select class="form-select" th:name="type" required>
+              <option hidden th:value="${type}" th:text="${type}" selected></option>
+              <option th:value="Local">Local</option>
+              <option th:value="Ifrs9">Ifrs9</option>
+            </select>
+            <button class="btn btn-secondary" type="submit"><i class="fa fa-search"></i></button>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 d-flex align-items-center justify-content-end">
+        <div class="input-group d-flex align-items-center ">
+          <h5 class="me-2 mb-0">Filtro: </h5>
+          <input class="form-control rounded" placeholder="Buscar..." th:value="${vId}" th:name="vId" type="text">
+          <div class="input-group-append d-flex align-items-center">
+            <select class="form-select" th:name="vFilter">
+              <option disabled hidden selected value="">Seleccione un filtro</option>
+              <option th:selected="${item == vFilter}" th:each="item : ${columns}" th:text="${item}" th:value="${item}"></option>
+            </select>
+          </div>
+          <div class="input-group-append d-flex align-items-center">
+            <button class="btn btn-secondary" type="submit"><i class="fa fa-search"></i></button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div id="content">
+    <div class="row mt-5 m-0 mx-2 px-1 justify-content-between border-bottom">
+      <div class="col-md-8">
+          <form enctype="multipart/form-data" id="fileUploadForm"
+                method="post" th:action="@{/ifrs/Eeff}">
+            <div class="my-1 row">
+              <label class="col-sm-2 col-form-label">Periodo a cargar: </label>
+              <div class="col-sm-4">
+                <input class="form-control form-control-sm" required th:name="period" th:value="${period}"
+                       type="month">
+              </div>
+            </div>
+            <div class="mb-2 row">
+              <label class="col-sm-2 col-form-label">Tipo EEFF a cargar: </label>
+              <div class="col-sm-4">
+                <select class="form-control form-select form-select-sm" th:name="type" required>
+                  <option hidden th:value="${type}" th:text="${type}" selected></option>
+                  <option th:value="Local">Local</option>
+                  <option th:value="Ifrs9">Ifrs9</option>
+                </select>
+              </div>
+            </div>
+            <div class="mb-2 row">
+              <label class="col-sm-2 col-form-label">Carga EEFF: </label>
+              <div class="col-sm-10">
+                <input accept=".xls,.xlsx,.xlsm" class="custom-file-control" id="file" multiple
+                       name="file"
+                       required type="file">
+                <button class="btn btn-sm btn-primary mx-2" type="submit">Cargar</button>
+              </div>
+            </div>
+          </form>
+      </div>
+      <div class="col-md-4 d-block align-content-end">
+        <div class="text-right pr-3 col-md-12 my-2 align-content-end">
+          <a class="btn btn-primary mx-1" th:href="@{/ifrs/Eeff?period={period}&type={type}(period=${period},type=${type})}"><i class="fas fa-redo-alt"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="row m-0 px-1 mt-3">
+      <div class="col-md-12">
+        <div class="table table-sm table-responsive rounded border-primary">
+          <table cellspacing="0" class="table table-sm table-striped text-center table-bordered" id="example"
+                 width="50%">
+            <thead class="bg-primary">
+            <tr>
+              <th>Codigo Sociedad Informante</th>
+              <th>Descripción</th>
+              <th>Denominación de la Cuenta</th>
+              <th>Tipo de Cuenta</th>
+              <th>Cuenta</th>
+              <th>Soc. IC</th>
+              <th>Descripción IC</th>
+              <th>Desgloses</th>
+              <th>Divisa españa</th>
+              <th>Saldo</th>
+              <th>Intergrupo</th>
+              <th>Entrada</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="Eeff : ${alleeff}">
+              <th th:text="${Eeff.codigosSocInformante}"></th>
+              <td th:text="${Eeff.descripcion}"></td>
+              <td th:text="${Eeff.id}"></td>
+              <td th:text="${Eeff.tipoCuenta}"></td>
+              <td th:text="${Eeff.cuenta}"></td>
+              <td th:text="${Eeff.socIC}"></td>
+              <td th:text="${Eeff.descripcionIC}"></td>
+              <td th:text="${Eeff.desgloces}"></td>
+              <td th:text="${Eeff.divisaespana}"></td>
+              <td th:text="${#numbers.formatDecimal(Eeff.saldo,1,'POINT',2,'COMMA')}"></td>
+              <td th:if="${Eeff.socIC != null and Eeff.socIC != '' and Eeff.socIC != ' '}">S</td>
+              <td th:if="${Eeff.socIC == null or Eeff.socIC != '' or Eeff.socIC != ' '}">N</td>
+              <td th:text="${Eeff.entrada}"></td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="row m-0 px-1" th:if="${last != 0}">
+      <div class="col-md-4 text-left">
+        <nav arial-label="Pagination">
+          <ul class="pagination">
+            <li class="page-item" th:classappend="${prev == 0 ? 'disabled' : ''}">
+              <a class="page-link"
+                 th:href="@{/ifrs/{dir}/?page={page}&vId={vId}&period={period}&type={type}&vFilter={vFilter}(vFilter=${vFilter},period=${period},page=${prev},dir=${directory},vId=${vId},type=${type})}">Anterior</a>
+            </li>
+            <li class="page-item" th:classappend="${current == last ? 'disabled' : ''}">
+              <a class="page-link"
+                 th:href="@{/ifrs/{dir}/?page={page}&vId={vId}&period={period}&type={type}&vFilter={vFilter}(vFilter=${vFilter},period=${period},page=${next},dir=${directory},vId=${vId},type=${type})}">Siguiente</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+      <div class="col-md-4 text-center">
+        <h6 th:utext="${registers} + ' Registros Encontrados'"></h6>
+      </div>
+      <div class="col-md-4 text-right">
+        <h6 class="mx-1" th:utext="'Página ' + ${current} + ' de ' + ${last}"></h6>
+      </div>
+    </div>
+    <div class="pr-3 col-md-12 my-2">
+      <div class="d-flex align-items-center justify-content-center">
+        <a class="btn btn-primary mx-1" th:href="@{/ifrs/Eeff/download?period={period}&type={type}&vFilter={vFilter}&vId={vId}(period=${period},type=${type},vFilter=${vFilter},vId=${vId})}">Exportar EEFF</a>
+    </div>
+    </div>
+</div>
+</div>
+</div>
+<script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min.js" ></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+<script type="text/javascript">
+    var queryString = window.location.search;
+    var urlParams = new URLSearchParams(queryString);
+    var respuesta = urlParams.get('resp');
+    var row = urlParams.get('row');
+    var column = urlParams.get('colum');
+    validateAlerts(respuesta,row,column);
+    $(document).ready(function() {
+        $('#sidebarCollapse').on('click', function() {
+            $('#sidebar').toggleClass('active');
+        });
+    });
+</script>
+</body>
+
+</html>

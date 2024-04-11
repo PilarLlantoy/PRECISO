@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+<div class="main-container">
+    <div class="row m-0 bg-primary fixed-top myNav">
+        <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
+            <h3 th:utext="'Creación de Otras Cuentas ('+${rol}+')'" class="fw-bold text-white mx-4 my-3"></h3>
+        </div>
+        <div class="col-md-6 d-flex align-items-center justify-content-end pe-5">
+        </div>
+    </div>
+    <div id="content">
+        <form method="POST" th:action="@{/ifrs/accountCreationOther/respAccount}" th:object="${accountModify}">
+            <div class="row mt-5">
+                <div class="col-md-12">
+                    <h3 class="mb-3">Responder Solicitud Cuenta</h3>
+                    <input class="form-control" maxlength="255" required th:field="*{idCuentas}"
+                           type="hidden">
+                    <input class="form-control" id="rol" name="rol" required th:value="${rol}"
+                           type="hidden">
+                </div>
+                <div class="col-md-12">
+                    <div class="card border border-primary m-1">
+                        <div class="card-header bg-primary text-white">Información Registro</div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group mb-1">
+                                        <label>Empresa</label>
+                                        <input class="form-control" disabled maxlength="4" minlength="4" required th:field="*{empresa}" type="text">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group mb-1">
+                                        <label>Cuenta</label>
+                                        <input class="form-control" disabled minlength="6" maxlength="15" required th:field="*{nucta}"
+                                               type="text">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group mb-1">
+                                        <label>Rol</label>
+                                        <input class="form-control" disabled th:value="${rol}"
+                                               type="text">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12 mt-2" th:if="${rol == 'CONSOLIDACION'}">
+                    <div class="card border border-primary m-1">
+                        <div class="card-header bg-primary text-white">General</div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Comentario Previo</label>
+                                        <textarea class="form-control" disabled id="textAreaDataR1" th:field="*{comentarioConsolidacion}" type="text"></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group mb-1">
+                                        <label>Comentario Consolidación</label>
+                                        <textarea class="form-control" required id="textAreaDataR2"  th:field="*{comentarioConsolidacion}" type="text">:</textarea>
+                                        <input class="form-control" th:field="*{comentarioControl}" type="hidden">
+                                        <input class="form-control" th:field="*{comentarioGestion}" type="hidden">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12 mt-2" th:if="${rol == 'CONTROL CONTABLE'}">
+                    <div class="card border border-primary m-1">
+                        <div class="card-header bg-primary text-white">General</div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Comentario Previo</label>
+                                        <textarea class="form-control" disabled id="textAreaDataR3" th:field="*{comentarioControl}" type="text"></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group mb-1">
+                                        <label>Comentario Control Contable</label>
+                                        <textarea class="form-control" required id="textAreaDataR4" th:field="*{comentarioControl}" type="text"></textarea>
+                                        <input class="form-control" th:field="*{comentarioConsolidacion}" type="hidden">
+                                        <input class="form-control" th:field="*{comentarioGestion}" type="hidden">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12 mt-2" th:if="${rol == 'GESTION'}">
+                    <div class="card border border-primary m-1">
+                        <div class="card-header bg-primary text-white">General</div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Comentario Previo</label>
+                                        <textarea class="form-control" disabled id="textAreaDataR5" th:field="*{comentarioGestion}" type="text"></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group mb-1">
+                                        <label>Comentario Gestión</label>
+                                        <textarea class="form-control" required id="textAreaDataR6" th:field="*{comentarioGestion}" type="text"></textarea>
+                                        <input class="form-control" th:field="*{comentarioConsolidacion}" type="hidden">
+                                        <input class="form-control" th:field="*{comentarioControl}" type="hidden">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mt-2" th:if="${rol == 'GENERAL'}">
+                    <div class="card border border-primary m-1">
+                        <div class="card-header bg-primary text-white">Consolidación</div>
+                        <div class="card-body">
+                                <div class="form-group">
+                                    <label>Comentario Previo</label>
+                                    <textarea class="form-control" disabled id="textAreaData1" th:field="*{comentarioConsolidacion}"
+                                              type="text"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label>Comentario de Respuesta</label>
+                                    <textarea th:if="*{estadoConsolidacion == 'EMPTY'}" required class="form-control" id="textAreaData2" th:field="*{comentarioConsolidacion}" type="text"></textarea>
+                                    <textarea th:if="*{estadoConsolidacion == 'PENDING' or estadoConsolidacion == 'COMPLETED'}" disabled class="form-control" id="textAreaData3" th:field="*{comentarioConsolidacion}" type="text"></textarea>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mt-2" th:if="${rol == 'GENERAL'}">
+                    <div class="card border border-primary m-1">
+                        <div class="card-header bg-primary text-white">Control Contable</div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label>Comentario Previo</label>
+                                <textarea class="form-control" disabled id="textAreaData4" th:field="*{comentarioControl}" type="text"></textarea>
+                            </div>
+                            <div class="form-group mb-1">
+                                <label>Comentario Control Contable</label>
+                                <textarea th:if="*{estadoControl == 'EMPTY'}" required class="form-control" id="textAreaData5" th:field="*{comentarioControl}" type="text"></textarea>
+                                <textarea th:if="*{estadoControl == 'PENDING' or estadoControl == 'COMPLETED'}" disabled class="form-control" id="textAreaData6" th:field="*{comentarioControl}" type="text"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mt-2" th:if="${rol == 'GENERAL'}">
+                    <div class="card border border-primary m-1">
+                        <div class="card-header bg-primary text-white">Gestión</div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label>Comentario Previo</label>
+                                <textarea class="form-control" disabled id="textAreaData7" th:field="*{comentarioGestion}" type="text"></textarea>
+                            </div>
+                            <div class="form-group mb-1">
+                                <label>Comentario Gestión</label>
+                                <textarea th:if="*{estadoGestion == 'EMPTY'}" required class="form-control" id="textAreaData8" th:field="*{comentarioGestion}" type="text"></textarea>
+                                <textarea th:if="*{estadoGestion == 'PENDING' or estadoGestion == 'COMPLETED'}" disabled class="form-control" id="textAreaData9" th:field="*{comentarioGestion}" type="text"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group mb-1">
+                        <input class="form-control" th:field="*{empresa}" type="hidden">
+                        <input class="form-control" th:field="*{nucta}" type="hidden">
+                        <input class="form-control" th:field="*{nombreCuentaLarga}" type="hidden">
+                        <input class="form-control" th:field="*{nombreCuentaCorta}" type="hidden">
+                        <input class="form-control" th:field="*{justificacionGlobal}" type="hidden">
+                        <input class="form-control" th:field="*{dinamicaCuenta}" type="hidden">
+                        <input class="form-control" th:field="*{tipoCta}" type="hidden">
+                        <input class="form-control" th:field="*{indic}" type="hidden">
+                        <input class="form-control" th:field="*{claveAcceso}" type="hidden">
+                        <input class="form-control" th:field="*{mon}" type="hidden">
+                        <input class="form-control" th:field="*{centroOrigen}" type="hidden">
+                        <input class="form-control" th:field="*{centroDestino}" type="hidden">
+                        <input class="form-control" th:field="*{codigoGestion}" type="hidden">
+                        <input class="form-control" th:field="*{epigrafe}" type="hidden">
+                        <input class="form-control" th:field="*{consolid}" type="hidden">
+                        <input class="form-control" th:field="*{tipoApunte}" type="hidden">
+                        <input class="form-control" th:field="*{codigoControl}" type="hidden">
+                        <input class="form-control" th:field="*{indicadorCierre}" type="hidden">
+                        <input class="form-control" th:field="*{diasPlazo}" type="hidden">
+                        <input class="form-control" th:field="*{indicadorCuenta}" type="hidden">
+                        <input class="form-control" th:field="*{interfaz}" type="hidden">
+                        <input class="form-control" th:field="*{responsablecontroloperativocenoperes1}" type="hidden">
+                        <input class="form-control" th:field="*{responsablecontroloperativocenoperes2}" type="hidden">
+                        <input class="form-control" th:field="*{responsablecontroloperativocenoperes3}" type="hidden">
+                        <input class="form-control" th:field="*{responsablecontroloperativocenoperes4}" type="hidden">
+                        <input class="form-control" th:field="*{responsablecontroloperativocenoperes5}" type="hidden">
+                        <input class="form-control" th:field="*{responsablecontroloperativocenoperes6}" type="hidden">
+                        <input class="form-control" th:field="*{responsablecontroldegestioncengesres1}" type="hidden">
+                        <input class="form-control" th:field="*{responsablecontroldegestioncengesres2}" type="hidden">
+                        <input class="form-control" th:field="*{responsablecontroldegestioncengesres3}" type="hidden">
+                        <input class="form-control" th:field="*{responsablecontroldegestioncengesres4}" type="hidden">
+                        <input class="form-control" th:field="*{responsablecontroldegestioncengesres5}" type="hidden">
+                        <input class="form-control" th:field="*{responsablecontroldegestioncengesres6}" type="hidden">
+                        <input class="form-control" th:field="*{responsablecontroladministrativocenadmres1}" type="hidden">
+                        <input class="form-control" th:field="*{responsablecontroladministrativocenadmres2}" type="hidden">
+                        <input class="form-control" th:field="*{responsablecontroladministrativocenadmres3}" type="hidden">
+                        <input class="form-control" th:field="*{responsablecontroladministrativocenadmres4}" type="hidden">
+                        <input class="form-control" th:field="*{responsablecontroladministrativocenadmres5}" type="hidden">
+                        <input class="form-control" th:field="*{responsablecontroladministrativocenadmres6}" type="hidden">
+                        <input class="form-control" th:field="*{contrapartidaOrden}" type="hidden">
+                        <input class="form-control" th:field="*{tipoCuentaOrden}" type="hidden">
+                        <input class="form-control" th:field="*{contrapartidaResultados}" type="hidden">
+                        <input class="form-control" th:field="*{periodo}" type="hidden">
+                        <input class="form-control" th:field="*{estadoGeneral}" type="hidden">
+                        <input class="form-control" th:field="*{estadoConsolidacion}" type="hidden">
+                        <input class="form-control" th:field="*{estadoControl}" type="hidden">
+                        <input class="form-control" th:field="*{estadoGestion}" type="hidden">
+                        <input class="form-control" th:field="*{creador}" type="hidden">
+                        <input class="form-control" th:field="*{usuarioConsolidacion}" type="hidden">
+                        <input class="form-control" th:field="*{usuarioGestion}" type="hidden">
+                        <input class="form-control" th:field="*{usuarioControl}" type="hidden">
+                    </div>
+                </div>
+            </div>
+            <div class="row pt-5 py-3">
+                <div class="col-md-12 d-flex align-content-center justify-content-center">
+                    <div class="d-grid gap-2 col-3">
+                        <button type="submit" class="btn btn-primary">Enviar Comentario</button>
+                    </div>
+                    <div class="d-grid gap-2 col-3">
+                        <a class="btn btn-danger" th:href="@{/ifrs/accountCreationOther?period={period}(period=${period})}">Cancelar</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script crossorigin="anonymous"
+        integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
+        src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script crossorigin="anonymous"
+        integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
+        src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#sidebarCollapse').on('click', function () {
+            $('#sidebar').toggleClass('active');
+        });
+    });
+    $(document).ready(function() {
+        $('#textAreaDataR2').val('');
+        $('#textAreaDataR4').val('');
+        $('#textAreaDataR6').val('');
+        $('#textAreaData2').val('');
+        $('#textAreaData3').val('');
+        $('#textAreaData5').val('');
+        $('#textAreaData6').val('');
+        $('#textAreaData8').val('');
+        $('#textAreaData9').val('');
+    });
+</script>
+</body>
+</html>
