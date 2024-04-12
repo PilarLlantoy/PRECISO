@@ -35,10 +35,11 @@
                     <tbody>
                     <tr th:each="role : ${roles}">
                         <td th:text="${role.nombre}"></td>
-                        <td>
-                            <ul th:each="vista : ${role.vistas}" style="list-style-type: none; margin: 0; padding: 0;">
-                                <li th:text="${vista.viewName}" style="list-style: none;"></li>
-                            </ul>
+                        <td width="50%">
+                            <span th:each="vista, iterStat : ${role.vistas}">
+                                <span th:text="${vista.viewName}"></span>
+                                <span th:if="${!iterStat.last}">,</span>
+                            </span>
                         </td>
                         <td>
                             <input class="big-checkbox" type="checkbox" th:checked="${role.estado}" />

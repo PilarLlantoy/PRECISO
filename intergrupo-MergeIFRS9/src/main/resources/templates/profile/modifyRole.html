@@ -31,7 +31,7 @@
     <div id="content">
         <div class="row mt-5">
             <form th:object="${role}" th:action="@{/profile/modifyRole}" method="POST">
-                <div class="col-md-12 px-5 mb-2">
+                <div class="col-md-12 px-5 mb-3">
                     <label>Rol</label>
                     <input type="hidden" class="form-control"  th:field="*{id}"  required>
                     <input type="text" class="form-control"  th:field="*{nombre}"  required>
@@ -42,7 +42,7 @@
                     <input class="big-checkbox" type="checkbox" th:checked="*{estado}" name="estado" id="estado"/>
                 </div>
                 -->
-                <!-- CAMBIO:   <div class="col-md-6 px-5 mb-2" th:if="${viewsPrincipal1 != null}"> -->
+                <!-- CAMBIO:   <div class="col-md-6 px-5 mb-2" th:if="${viewsPrincipal1 != null}">
 
                 <div class="col-md-6 px-5 mb-2">
                     <label>Menú Principal </label>
@@ -50,48 +50,52 @@
                         <option disabled value="" selected hidden>Seleccione el primer filtro</option>
                         <option th:each="metodo : ${viewsPrincipal}" th:value="${metodo}" th:text="${metodo}"></option>
                     </select>
-                </div>
+                </div> -->
 
+                <!--
                 <div class="col-md-6 px-5 mb-2" id="vistas">
-                    <!--Aqui va los checkbox agregados por js-->
+                Aqui va los checkbox agregados por js
                 </div>
                 <div class="d-none" id="overlay" onclick="hide(event)"></div>
-                <input type="hidden" id="roleViews" th:value="${roleViews}"/>
+                <input type="hidden" id="roleViews" th:value="${roleViews}"/> -->
+
+                <!---PROBANDO TABLAS PARA EL LISTADO DE LAS VISTAS POR MODULO-->
+                <div class="row" style="display: flex; justify-content: center;">
+                    <span  class="table-wrapper mb-3" style="width:600px" th:each="viewPrincipal : ${viewsPrincipal}" >
+                        <table id="example" style="width=600px" class="table table-striped table-hover text-center table-bordered table-sm ">
+                            <thead class="bg-primary">
+                                <tr>
+                                    <th th:text="${viewPrincipal}"></th>
+                                    <th>Permiso</th>
+                                </tr>
+                            </thead>
+                            <tbody  >
+                                <tr th:each="view : ${views}" th:if="${view.menuPrincipal == viewPrincipal}">
+                                    <td th:text="${view.viewName}"></td>
+                                    <td>
+                                        <input class="big-checkbox" th:id="${view.viewName}" th:value="${view.viewName}" type="checkbox" th:checked="${role.vistas.contains(view)}" name="selectedViews"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </span>
+                </div>
 
                 <div class="row pt-5 py-3">
                     <div class="col-md-12 d-flex align-content-center justify-content-center">
                         <div class="d-grid gap-2 col-3">
-                            <button type="submit" class="btn btn-primary">Modificar</button>
+                            <button id="btnModificar"  type="submit" class="btn btn-primary">Modificar</button>
                         </div>
                         <div class="d-grid gap-2 col-3">
                             <a class="btn btn-danger" th:href="@{/profile/roles}">Cancelar</a>
                         </div>
                     </div>
                 </div>
+
             </form>
         </div>
 
-        <!---PROBANDO TABLAS PARA EL LISTADO DE LAS VISTAS POR MODULO-->
-        <div class="row mt-5">
-            <span  class="table-wrapper" style="width: fit-content" th:each="viewPrincipal : ${viewsPrincipal}" >
-                <table id="example" style="width=600px" class="table table-striped table-hover text-center table-bordered table-sm ">
-                    <thead class="bg-primary">
-                        <tr>
-                            <th th:text="${viewPrincipal}"></th>
-                            <th>Permiso</th>
-                        </tr>
-                    </thead>
-                    <tbody  >
-                        <tr th:each="view : ${views}" th:if="${view.menuPrincipal == viewPrincipal}">
-                            <td th:text="${view.viewName}"></td>
-                            <td>
-                                <input class="big-checkbox" type="checkbox" th:checked="${role.vistas.contains(view)}" />
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </span>
-        </div>
+
 
     </div>
 </div>
@@ -99,7 +103,7 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
 <script>
-
+    /*
     const input = document.querySelector('#roleViews');
     const viewsRoles = JSON.parse(input.value);
 
@@ -127,7 +131,7 @@
         $('#estado').change(function() {
             role.setEstado(!role.isEstado);
         });
-
+*/
 
 
 </script>

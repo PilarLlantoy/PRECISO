@@ -87,7 +87,7 @@ public class RoleController {
     }
 
 
-
+    /*
     @PostMapping(value = "/profile/modifyRole")
     public ModelAndView updateRole(
             @ModelAttribute Role role,
@@ -96,7 +96,7 @@ public class RoleController {
         ){
         ModelAndView modelAndView = new ModelAndView("redirect:/profile/roles");
         ArrayList<View> newViews = new ArrayList<>();
-        if(menu=="") menu = null;  //debo obtenerlo de otro lugar
+        if(menu=="") menu = null;
         System.out.println("menu");
         System.out.println(menu);
 
@@ -111,6 +111,25 @@ public class RoleController {
             if (newViews.size() > 0)
                 roleService.registrarNuevasVistas(role, newViews, menu);
         // }
+        return modelAndView;
+    }*/
+
+    @PostMapping(value = "/profile/modifyRole")
+    public ModelAndView updateRole(@ModelAttribute Role role, @RequestParam(defaultValue = "N" ,name = "selectedViews") String[] views){
+        ModelAndView modelAndView = new ModelAndView("redirect:/profile/roles");
+        ArrayList<View> newViews = new ArrayList<>();
+        if(!views[0].equals("N")) {
+            for (String view : views) {
+                View toAdd = viewService.findViewByName(view);
+                newViews.add(toAdd);
+                System.out.println("seleccionada");
+                System.out.println(view);
+            }
+            List<View> allViews = viewService.findAll();
+            modelAndView.addObject("views", allViews);
+            if (newViews.size() > 0)
+                roleService.modifyRole(role, newViews);
+        }
         return modelAndView;
     }
 
