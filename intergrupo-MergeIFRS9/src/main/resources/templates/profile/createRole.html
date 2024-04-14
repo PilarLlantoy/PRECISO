@@ -59,7 +59,7 @@
                     <!---PROBANDO TABLAS PARA EL LISTADO DE LAS VISTAS POR MODULO-->
                     <div class="row" style="display: flex; justify-content: center;">
                         <span  class="table-wrapper mb-3" style="width:600px" th:each="viewPrincipal : ${viewsPrincipal}" >
-                            <table id="example" style="width=600px" class="table table-striped table-hover text-center table-bordered table-sm ">
+                            <table id="example" style="width:600px" class="table table-striped table-hover text-center table-bordered table-sm ">
                                 <thead class="bg-primary">
                                     <tr>
                                         <th th:text="${viewPrincipal}"></th>
@@ -97,7 +97,7 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
 <script>
-
+    /*
     const input = document.querySelector('#roleViews');
     const viewsRoles = JSON.parse(input.value);
 
@@ -116,9 +116,7 @@
                 console.error('Error al obtener las vistas:', error);
             });
         });
-
-
-
+        */
 </script>
 </body>
 </html>
