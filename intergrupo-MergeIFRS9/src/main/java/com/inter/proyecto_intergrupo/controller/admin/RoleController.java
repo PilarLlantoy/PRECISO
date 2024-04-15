@@ -86,6 +86,22 @@ public class RoleController {
         return allViews;
     }
 
+    @PostMapping(value = "/profile/deleteRole/{id}")
+    public boolean deleteRole(@PathVariable int id){
+        Role role = roleService.findRoleById(id);
+        role.setEstado(false);
+        roleService.deleteRole(role);
+        return true;
+    }
+
+    @PostMapping(value = "/profile/modifyActivoRole/{id}/{estado}")
+    public boolean modifyActivoRole(@PathVariable int id, @PathVariable boolean estado){
+        Role role = roleService.findRoleById(id);
+        role.setEstado(!estado);
+        roleService.deleteRole(role);
+        return true;
+    }
+
 
     /*
     @PostMapping(value = "/profile/modifyRole")

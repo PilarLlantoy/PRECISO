@@ -50,6 +50,10 @@ public class RoleService {
         return roleRepository.save(role);
     }
 
+    public Role deleteRole(Role role){
+        return roleRepository.save(role);
+    }
+
     //NUEVOOO
     public void registrarNuevasVistas(Role role, List<View> nuevasVistas, String menu) {
         // Obtener el objeto Role de la base de datos

@@ -7,7 +7,7 @@
 <body>
 <div th:replace="fragments/menuTemplate :: menuBody"></div>
 
-<div class="main-container" style="padding-left:0px">
+<div class="main-container">
     <style>
         .big-checkbox {width: 1.5rem; height: 1.5rem;top:0.5rem}
 
@@ -29,37 +29,39 @@
         </div>
     </div>
     <div id="content">
-        <div class="row justify-content-center mt-5">
-            <div class="col-auto" style="width:80%">
+        <div class="row mt-5">
                 <form th:object="${role}" th:action="@{/profile/createRole}" method="POST">
-                    <div class="form-group mb-1">
+                    <div class="col-md-12 px-5 mb-3">
                         <label>Rol</label>
                         <input type="text" class="form-control"  th:field="*{nombre}"  required>
                     </div>
+                    <!--
+                    <div class="col-md-12 px-5 mb-2">
+                        <label>Activo</label>
+                        <input class="big-checkbox" type="checkbox" th:checked="*{estado}" name="estado" id="estado"/>
+                    </div>
+                    -->
 
                     <!-- MENU PRINCIPAL
-                    <div class="form-group mb-1">
+                    <div class="col-md-6 px-5 mb-2">
                         <label>Menú Principal </label>
                         <select class="form-control" name="principalSelect" id="principalSelect" >
                             <option disabled value="" selected hidden>Seleccione el primer filtro</option>
                             <option th:each="metodo : ${viewsPrincipal}" th:value="${metodo}" th:text="${metodo}"></option>
                         </select>
-                    </div>
-                    -->
+                    </div> -->
 
                     <!--
-                    <div class="form-group mb-1" id="vistas">
+                    <div class="col-md-6 px-5 mb-2" id="vistas">
                         Aqui va los checkbox agregados por js
                     </div>
-
                     <div class="d-none" id="overlay" onclick="hide(event)"></div>
-                    <input type="hidden" id="roleViews" th:value="${roleViews}"/>
-                    -->
+                    <input type="hidden" id="roleViews" th:value="${roleViews}"/> -->
 
                     <!---PROBANDO TABLAS PARA EL LISTADO DE LAS VISTAS POR MODULO-->
                     <div class="row" style="display: flex; justify-content: center;">
                         <span  class="table-wrapper mb-3" style="width:600px" th:each="viewPrincipal : ${viewsPrincipal}" >
-                            <table id="example" style="width:600px" class="table table-striped table-hover text-center table-bordered table-sm ">
+                            <table id="example" class="table table-striped table-hover text-center table-bordered table-sm ">
                                 <thead class="bg-primary">
                                     <tr>
                                         <th th:text="${viewPrincipal}"></th>
@@ -89,7 +91,6 @@
                         </div>
                     </div>
                 </form>
-            </div>
         </div>
     </div>
 </div>
