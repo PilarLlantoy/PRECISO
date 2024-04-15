@@ -169,6 +169,7 @@ IF NOT EXISTS(SELECT * FROM nexco_cuadro_mando_jobs WHERE id_job = 8) BEGIN INSE
 
 IF NOT EXISTS(SELECT * FROM nexco_user_rol WHERE usuario = 'NEXADMI' AND id_perfil=1) BEGIN INSERT INTO nexco_user_rol (id_perfil,usuario) VALUES (1,'NEXADMI') END
 IF NOT EXISTS(SELECT * FROM nexco_rol_vista AS nrv, nexco_vistas AS nv WHERE nrv.id_perfil = 1 AND nv.nombre = 'Ver Roles' AND nv.id_vista = nrv.id_vista) BEGIN INSERT INTO nexco_rol_vista (id_perfil,id_vista) VALUES (1,4) END
+IF NOT EXISTS(SELECT * FROM nexco_rol_vista AS nrv, nexco_vistas AS nv WHERE nrv.id_perfil = 1 AND nv.nombre = 'Ver Roles' AND nv.id_vista = nrv.id_vista) BEGIN INSERT INTO nexco_rol_vista (id_perfil,id_vista) VALUES (1,2) END
 IF NOT EXISTS(SELECT * FROM nexco_operacion_riesgo WHERE cuenta_local='-') BEGIN INSERT INTO nexco_operacion_riesgo (cuenta_local) VALUES ('-') END
 
 -- Datos predeterminados para Contrapartida y Contratos genericos

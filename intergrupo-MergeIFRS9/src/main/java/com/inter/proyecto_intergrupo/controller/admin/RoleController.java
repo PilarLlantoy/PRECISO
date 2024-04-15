@@ -3,9 +3,11 @@ package com.inter.proyecto_intergrupo.controller.admin;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.inter.proyecto_intergrupo.model.admin.Role;
+import com.inter.proyecto_intergrupo.model.admin.RoleView;
 import com.inter.proyecto_intergrupo.model.admin.User;
 import com.inter.proyecto_intergrupo.model.admin.View;
 import com.inter.proyecto_intergrupo.service.adminServices.RoleService;
+import com.inter.proyecto_intergrupo.service.adminServices.RoleViewService;
 import com.inter.proyecto_intergrupo.service.adminServices.UserService;
 import com.inter.proyecto_intergrupo.service.adminServices.ViewService;
 import org.apache.logging.log4j.LogManager;
@@ -19,9 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 public class RoleController {
@@ -31,6 +31,9 @@ public class RoleController {
 
     @Autowired
     ViewService viewService;
+
+    @Autowired
+    RoleViewService roleViewService;
 
     @Autowired
     private UserService userService;
@@ -62,11 +65,17 @@ public class RoleController {
         Role myRole = roleService.findRoleById(id);
 
         List<View> allViews = viewService.findAll();
+
+        List<View> allViewsVer = roleViewService.findViewsVer(myRole.getId());
+        List<View> allViewsModificar = roleViewService.findViewsModificar(myRole.getId());
+
         List<String> allViewsPrincipal = viewService.findAllPrincipal();
         modelAndView.addObject("views",allViews);
         modelAndView.addObject("viewsPrincipal",allViewsPrincipal);
         modelAndView.addObject("viewsPrincipal1",null);
         modelAndView.addObject("role",myRole);
+        modelAndView.addObject("allViewsVer",allViewsVer);
+        modelAndView.addObject("allViewsModificar",allViewsModificar);
 
         List<View> roleViews = myRole.getVistas();
         String hasViews = gson.toJson(roleViews);
@@ -131,21 +140,53 @@ public class RoleController {
     }*/
 
     @PostMapping(value = "/profile/modifyRole")
-    public ModelAndView updateRole(@ModelAttribute Role role, @RequestParam(defaultValue = "N" ,name = "selectedViews") String[] views){
+    public ModelAndView updateRole(@ModelAttribute Role role,
+                                   @RequestParam(defaultValue = "N" ,name = "selectedViewsVer") String[] viewsVer,
+                                   @RequestParam(defaultValue = "N" ,name = "selectedViewsModificar") String[] viewsModificar
+    ){
         ModelAndView modelAndView = new ModelAndView("redirect:/profile/roles");
-        ArrayList<View> newViews = new ArrayList<>();
-        if(!views[0].equals("N")) {
-            for (String view : views) {
+        ArrayList<View> newViewsVer = new ArrayList<>();
+        ArrayList<View> newViewsModificar = new ArrayList<>();
+
+        if(!viewsVer[0].equals("N")) {
+            for (String view : viewsVer) {
                 View toAdd = viewService.findViewByName(view);
-                newViews.add(toAdd);
-                System.out.println("seleccionada");
-                System.out.println(view);
+                newViewsVer.add(toAdd);
             }
-            List<View> allViews = viewService.findAll();
-            modelAndView.addObject("views", allViews);
-            if (newViews.size() > 0)
-                roleService.modifyRole(role, newViews);
         }
+
+        if(!viewsModificar[0].equals("N")) {
+            for (String view : viewsModificar) {
+                View toAdd = viewService.findViewByName(view);
+                newViewsModificar.add(toAdd);
+            }
+        }
+
+        Set<View> set = new HashSet<>(newViewsVer);
+        set.addAll(newViewsModificar);
+        ArrayList<View> newViews = new ArrayList<>(set);
+
+        List<View> allViews = viewService.findAll();
+        modelAndView.addObject("views", allViews);
+        if (newViews.size() > 0) {
+            roleService.modifyRole(role, newViews);
+        }
+
+        for(View newView: newViewsModificar){
+            RoleView roleView = roleViewService.findByViewId(role, newView);
+            roleView.setPModificar(true);
+            roleViewService.saveRoleView(roleView);
+        }
+
+        for(View newView: newViewsVer){
+            RoleView roleView = roleViewService.findByViewId(role, newView);
+            roleView.setPVisualizar(true);
+            roleViewService.saveRoleView(roleView);
+        }
+
+
+
+
         return modelAndView;
     }
 
