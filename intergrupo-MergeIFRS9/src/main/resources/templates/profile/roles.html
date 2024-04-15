@@ -44,7 +44,7 @@
                         </span>
                         </td>
                         <td>
-                            <input class="big-checkbox" type="checkbox" th:checked="${role.estado}" th:onclick="'seleccionarRole(\'' + ${role.id} + '\'); checkboxChanged(\'' + ${role.estado} + '\');'"/>
+                            <input class="big-checkbox" type="checkbox" th:checked="${role.activo}" th:onclick="'seleccionarRole(\'' + ${role.id} + '\'); checkboxChanged(\'' + ${role.activo} + '\');'"/>
                         </td>
                         <td>
                             <a th:href="@{/profile/modifyRole/{id}(id=${role.id})}" class="btn btn-primary">Editar</a>
@@ -116,9 +116,9 @@
             });
     }
 
-    function checkboxChanged(estado) {
-        console.log(estado)
-        var url = '/profile/modifyActivoRole/' + seleccionado + '/' + estado;
+    function checkboxChanged(activo) {
+        //console.log(activo)
+        var url = '/profile/modifyActivoRole/' + seleccionado + '/' + activo;
         // Realizar la solicitud POST con el token CSRF
         $.post(url, {_csrf: csrfToken})
             .done(function(response) {

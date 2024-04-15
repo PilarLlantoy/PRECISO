@@ -37,6 +37,11 @@ public class Role {
     @Column(name = "estado_perfil", columnDefinition = "BIT DEFAULT 1")
     private boolean estado = true;
 
+    // NUEVOOO
+    @Builder.Default
+    @Column(name = "activo_perfil", columnDefinition = "BIT DEFAULT 1")
+    private boolean activo = true;
+
     @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     @ToString.Exclude
     @JoinTable(name="nexco_rol_vista", joinColumns = @JoinColumn(name="id_perfil"), inverseJoinColumns = @JoinColumn(name = "id_vista"))

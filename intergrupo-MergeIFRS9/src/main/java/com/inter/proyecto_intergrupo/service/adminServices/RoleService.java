@@ -54,6 +54,11 @@ public class RoleService {
         return roleRepository.save(role);
     }
 
+    // Método para encontrar todos los roles con estado activo
+    public List<Role> findAllActiveRoles() {
+        return roleRepository.findByEstado(true);
+    }
+
     //NUEVOOO
     public void registrarNuevasVistas(Role role, List<View> nuevasVistas, String menu) {
         // Obtener el objeto Role de la base de datos

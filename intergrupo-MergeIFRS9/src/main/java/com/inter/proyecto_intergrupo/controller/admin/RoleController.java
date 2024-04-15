@@ -43,7 +43,7 @@ public class RoleController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
         if(userService.validateEndpoint(user.getUsuario(),"Ver Roles")) {
-            List<Role> allRoles = roleService.findAll();
+            List<Role> allRoles = roleService.findAllActiveRoles();
             modelAndView.addObject("roles", allRoles);
             modelAndView.setViewName("profile/roles");
         }
@@ -94,10 +94,10 @@ public class RoleController {
         return true;
     }
 
-    @PostMapping(value = "/profile/modifyActivoRole/{id}/{estado}")
-    public boolean modifyActivoRole(@PathVariable int id, @PathVariable boolean estado){
+    @PostMapping(value = "/profile/modifyActivoRole/{id}/{activo}")
+    public boolean modifyActivoRole(@PathVariable int id, @PathVariable boolean activo){
         Role role = roleService.findRoleById(id);
-        role.setEstado(!estado);
+        role.setActivo(!activo);
         roleService.deleteRole(role);
         return true;
     }
