@@ -168,6 +168,7 @@ public class RoleController {
 
         List<View> allViews = viewService.findAll();
         modelAndView.addObject("views", allViews);
+        
         if (newViews.size() > 0) {
             roleService.modifyRole(role, newViews);
         }
@@ -199,6 +200,9 @@ public class RoleController {
         List<String> allViewsPrincipal = viewService.findAllPrincipal();
         List<View> allViews = viewService.findAll();
 
+        List<View> allViewsVer = roleViewService.findViewsVer(rol.getId());
+        List<View> allViewsModificar = roleViewService.findViewsModificar(rol.getId());
+
         List<View> roleViews = null;
         String hasViews = gson.toJson(roleViews);
 
@@ -206,14 +210,23 @@ public class RoleController {
 
         modelAndView.addObject("role",rol);
         modelAndView.addObject("viewsPrincipal",allViewsPrincipal);
+        modelAndView.addObject("allViewsVer",allViewsVer);
+        modelAndView.addObject("allViewsModificar",allViewsModificar);
         modelAndView.addObject("views",allViews);
         modelAndView.setViewName("/profile/createRole");
         return modelAndView;
     }
 
     @PostMapping(value = "/profile/createRole")
-    public ModelAndView createRole(@ModelAttribute Role role, @RequestParam(defaultValue = "N" ,name = "selectedViews")String[] views, BindingResult bindingResult){
+    public ModelAndView createRole(@ModelAttribute Role role,
+                                   @RequestParam(defaultValue = "N" ,name = "selectedViewsVer") String[] viewsVer,
+                                   @RequestParam(defaultValue = "N" ,name = "selectedViewsModificar") String[] viewsModificar,
+                                   BindingResult bindingResult){
         ModelAndView modelAndView = new ModelAndView("redirect:/profile/roles");
+
+        ArrayList<View> newViewsVer = new ArrayList<>();
+        ArrayList<View> newViewsModificar = new ArrayList<>();
+
         List<View> allViews = viewService.findAll();
         modelAndView.addObject("views",allViews);
         Role roleExists = roleService.findRoleById(role.getId());
@@ -226,12 +239,33 @@ public class RoleController {
             modelAndView.setViewName("profile/createRole");
         }else{
             ArrayList<View> roleViews = new ArrayList<>();
-            for(String view: views){
+            for(String view: viewsVer){
                 View v = viewService.findViewByName(view);
-                roleViews.add(v);
+                newViewsVer.add(v);
             }
-            roleService.saveRole(role,roleViews);
+            for(String view: viewsModificar){
+                View v = viewService.findViewByName(view);
+                newViewsModificar.add(v);
+            }
+
+            Set<View> set = new HashSet<>(newViewsVer);
+            set.addAll(newViewsModificar);
+            ArrayList<View> newViews = new ArrayList<>(set);
+
+            roleService.saveRole(role,newViews);
             modelAndView.addObject("role",new Role());
+            
+            for(View newView: newViewsModificar){
+                RoleView roleView = roleViewService.findByViewId(role, newView);
+                roleView.setPModificar(true);
+                roleViewService.saveRoleView(roleView);
+            }
+
+            for(View newView: newViewsVer){
+                RoleView roleView = roleViewService.findByViewId(role, newView);
+                roleView.setPVisualizar(true);
+                roleViewService.saveRoleView(roleView);
+            }
         }
         return modelAndView;
 
