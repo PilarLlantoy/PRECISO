@@ -169,8 +169,19 @@ IF NOT EXISTS(SELECT * FROM nexco_cuadro_mando_jobs WHERE id_job = 7) BEGIN INSE
 IF NOT EXISTS(SELECT * FROM nexco_cuadro_mando_jobs WHERE id_job = 8) BEGIN INSERT INTO nexco_cuadro_mando_jobs (id_job, nombre, estado) VALUES (8,'Calculo 1%',0) END
 
 IF NOT EXISTS(SELECT * FROM nexco_user_rol WHERE usuario = 'NEXADMI' AND id_perfil=1) BEGIN INSERT INTO nexco_user_rol (id_perfil,usuario) VALUES (1,'NEXADMI') END
-IF NOT EXISTS(SELECT * FROM nexco_rol_vista AS nrv, nexco_vistas AS nv WHERE nrv.id_perfil = 1 AND nv.nombre = 'Ver Roles' AND nv.id_vista = nrv.id_vista) BEGIN INSERT INTO nexco_rol_vista (id_perfil,id_vista) VALUES (1,4) END
+IF NOT EXISTS(SELECT * FROM nexco_rol_vista AS nrv, nexco_vistas AS nv WHERE nrv.id_perfil = 1 AND nv.nombre = 'Ver Cuadro Mando Intergrupo' AND nv.id_vista = nrv.id_vista) BEGIN INSERT INTO nexco_rol_vista (id_perfil,id_vista) VALUES (1,4) END
+IF NOT EXISTS(SELECT * FROM nexco_rol_vista AS nrv, nexco_vistas AS nv WHERE nrv.id_perfil = 1 AND nv.nombre = 'Ver Roles' AND nv.id_vista = nrv.id_vista) BEGIN INSERT INTO nexco_rol_vista (id_perfil,id_vista) VALUES (1,2) END
 IF NOT EXISTS(SELECT * FROM nexco_operacion_riesgo WHERE cuenta_local='-') BEGIN INSERT INTO nexco_operacion_riesgo (cuenta_local) VALUES ('-') END
+
+-- Add CARGOS
+IF NOT EXISTS(SELECT * FROM nexco_cargos WHERE id_cargo = 1) BEGIN INSERT INTO nexco_cargos (nombre_cargo) VALUES ('Gerente') END
+IF NOT EXISTS(SELECT * FROM nexco_cargos WHERE id_cargo = 2) BEGIN INSERT INTO nexco_cargos (nombre_cargo) VALUES ('Profesional Especializado') END
+IF NOT EXISTS(SELECT * FROM nexco_cargos WHERE id_cargo = 3) BEGIN INSERT INTO nexco_cargos (nombre_cargo) VALUES ('Profesional') END
+IF NOT EXISTS(SELECT * FROM nexco_cargos WHERE id_cargo = 4) BEGIN INSERT INTO nexco_cargos (nombre_cargo) VALUES ('Analista') END
+IF NOT EXISTS(SELECT * FROM nexco_cargos WHERE id_cargo = 5) BEGIN INSERT INTO nexco_cargos (nombre_cargo) VALUES ('Ingeniero') END
+IF NOT EXISTS(SELECT * FROM nexco_cargos WHERE id_cargo = 6) BEGIN INSERT INTO nexco_cargos (nombre_cargo) VALUES ('Consultor') END
+
+
 
 -- Datos predeterminados para Contrapartida y Contratos genericos
 IF NOT EXISTS(SELECT NULL FROM nexco_counterparty_generic_contracts) BEGIN INSERT INTO nexco_counterparty_generic_contracts (concepto, cuenta, contrato, fuente_informacion,saldo) VALUES (' 2-DESCONT_DESC_CONCIL','196095999','001302039000000101', 'Diferencias conciliación',-1), ('1-DESCONT_CTAS_MANUALES','196095999','001302039000000102','Manuales (Anexos 8)',-1), ('1-DESCONTAB_PROV_GENERAL','196095999','001302039000000103','Provisión general Capitales',-1), ('1-DESCONTAB_PROV_GENERICA_INTERESES','196095999','001302039000000103','Provisión general Intereses',-1), ('2-DESCONT_SIN_SCOPE','196095999','001302039000000104','Rechazos descontabilización',1), ('1-DESCONT_CTAS_RENTA_FIJA','196095999','001302039000000105','Anexos 8 - Renta fija',-1) END
