@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+
+<div class="main-container">
+    <style>
+        .big-checkbox {width: 1.5rem; height: 1.5rem;top:0.5rem}
+    </style>
+    <div class="row m-0 bg-primary fixed-top myNav">
+        <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
+            <h3 class="fw-bold text-white mx-4 my-3">Administración de Cargos</h3>
+        </div>
+    </div>
+    <div class="row m-0 px-4 mt-5">
+
+        <div class="text-right pr-3 col-md-12 my-3">
+            <a class="btn btn-primary mx-1" th:href="@{/admin/cargos}"><i class="fas fa-redo-alt"></i></a>
+            <a class="btn btn-primary mx-1" th:href="@{/admin/createCargo}">Crear Cargo</a>
+        </div>
+
+        <div class="col-md-12 p-0">
+            <div class="table-responsive rounded border-primary">
+                <table id="example" class="table table-striped table-hover text-center table-bordered table-sm" width="100%">
+                    <thead class="bg-primary">
+                    <tr>
+                        <th>Nombre Cargo</th>
+                        <th>Activo</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="cargo : ${cargos}">
+                        <td th:text="${cargo.nombre}"></td>
+                        <td>
+                            <input class="big-checkbox" type="checkbox" th:checked="${cargo.activo}" th:onclick="'seleccionarCargo(\'' + ${cargo.id} + '\'); checkboxChanged(\'' + ${cargo.activo} + '\');'"/>
+                        </td>
+                        <td>
+                            <a th:href="@{/admin/modifyCargo/{id}(id=${cargo.id})}" class="btn btn-primary">Editar</a>
+                            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#eliminarModal" th:onclick="'seleccionarCargo(\'' + ${cargo.id} + '\')'">
+                                Eliminar
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+        <!-- Modal -->
+        <div class="modal fade" id="eliminarModal" tabindex="-1" role="dialog" aria-labelledby="eliminarModal" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Eliminar</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        ¿Estás seguro de eliminar el cargo seleccionado?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-danger" th:onclick="borrar()" data-dismiss="modal">
+                            Eliminar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Campo oculto para el token CSRF -->
+        <input type="hidden" id="csrfToken" th:value="${_csrf.token}" />
+
+    </div>
+</div>
+</div>
+
+<!-- LIBRERIAS PARA MODAL CON BOOSTRAP -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+<script>
+
+    var seleccionado = -1;
+    var csrfToken = $("#csrfToken").val(); // Obtener el token CSRF
+
+    function seleccionarCargo(id) {
+        seleccionado=id
+    }
+
+    function borrar(){
+        var url = '/admin/deleteCargo/' + seleccionado;
+        // Realizar la solicitud POST con el token CSRF
+        $.post(url, {_csrf: csrfToken})
+            .done(function(response) {
+                //console.log("Solicitud POST completada con éxito");
+                location.reload();
+            })
+            .fail(function(xhr, status, error) {
+                console.error("Ocurrió un error al enviar la solicitud POST: " + error);
+            });
+    }
+
+    function checkboxChanged(activo) {
+        //console.log(activo)
+        var url = '/admin/modifyActivoCargo/' + seleccionado + '/' + activo;
+        // Realizar la solicitud POST con el token CSRF
+        $.post(url, {_csrf: csrfToken})
+            .done(function(response) {
+                //console.log("Solicitud POST completada con éxito");
+            })
+            .fail(function(xhr, status, error) {
+                console.error("Ocurrió un error al enviar la solicitud POST: " + error);
+            });
+    }
+
+</script>
+</body>
+</html>

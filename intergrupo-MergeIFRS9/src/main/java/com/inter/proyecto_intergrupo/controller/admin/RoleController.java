@@ -185,9 +185,6 @@ public class RoleController {
             roleViewService.saveRoleView(roleView);
         }
 
-
-
-
         return modelAndView;
     }
 
