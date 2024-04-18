@@ -65,7 +65,7 @@ public class CurrencyService {
                 insert.setComponente("Parametricas");
                 insert.setFecha(today);
                 insert.setInput("Transformación de Divisas");
-                insert.setNombre(user.getNombre());
+                insert.setNombre(user.getPrimerNombre());
                 insert.setUsuario(user.getUsuario());
                 auditRepository.save(insert);
             }else {
@@ -76,7 +76,7 @@ public class CurrencyService {
                 insert.setComponente("Parametricas");
                 insert.setFecha(today);
                 insert.setInput("Transformación de Divisas");
-                insert.setNombre(user.getNombre());
+                insert.setNombre(user.getPrimerNombre());
                 insert.setUsuario(user.getUsuario());
                 auditRepository.save(insert);
             }
@@ -213,7 +213,7 @@ public class CurrencyService {
         insert.setComponente("Parametricas");
         insert.setFecha(today);
         insert.setInput("Histórico Cruce Filiales");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
 
@@ -230,7 +230,7 @@ public class CurrencyService {
         insert.setComponente("Parametricas");
         insert.setFecha(today);
         insert.setInput("Histórico Cruce Filiales");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
         return currencyRepository.save(currency);
@@ -248,7 +248,7 @@ public class CurrencyService {
         insert.setComponente("Parametricas");
         insert.setFecha(today);
         insert.setInput("Histórico Cruce Filiales");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
 
@@ -265,7 +265,7 @@ public class CurrencyService {
         insert.setComponente("Parametricas");
         insert.setFecha(today);
         insert.setInput("Histórico Cruce Filiales");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
     }

@@ -69,7 +69,7 @@ public class ChangeAccountQueryService {
         insert.setComponente("Paramétricas IFRS9");
         insert.setFecha(today);
         insert.setInput("Historico de Cambio Cuenta");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
         return changeAccountQueryRepository.save(toModify);
@@ -84,7 +84,7 @@ public class ChangeAccountQueryService {
         insert.setComponente("Paramétricas IFRS9");
         insert.setFecha(today);
         insert.setInput("Historico de Cambio Cuenta");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
         return changeAccountQueryRepository.save(changeAccountQuery);
@@ -99,7 +99,7 @@ public class ChangeAccountQueryService {
         insert.setComponente("Paramétricas IFRS9");
         insert.setFecha(today);
         insert.setInput("Historico de Cambio Cuenta");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
         changeAccountQueryRepository.deleteById(id);
@@ -114,7 +114,7 @@ public class ChangeAccountQueryService {
         insert.setComponente("Historico de Terceros");
         insert.setFecha(today);
         insert.setInput("Historico de Terceros");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
         changeAccountQueryRepository.deleteAll();

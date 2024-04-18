@@ -50,7 +50,7 @@ public class RysParametricController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Parametrica RYS")) {
+        if(userService.validateEndpoint(user.getId(),"Ver Parametrica RYS")) {
 
             int page = params.get("page") != null ? (Integer.valueOf(params.get("page").toString()) - 1) : 0;
             PageRequest pageRequest = PageRequest.of(page, PAGINATIONCOUNT);
@@ -71,7 +71,7 @@ public class RysParametricController {
             modelAndView.addObject("directory", "rysParametric");
             modelAndView.addObject("registers",pageRysParametric.getTotalElements());
 
-            modelAndView.addObject("userName", user.getNombre());
+            modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.setViewName("ifrs/rysParametric");
         }
@@ -122,7 +122,7 @@ public class RysParametricController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         RysParametric toModify = rysParametricService.findByIdRys(Long.parseLong(id));
         modelAndView.addObject("rysParametricModify",toModify);
@@ -161,7 +161,7 @@ public class RysParametricController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         RysParametric rysParametric = new RysParametric();
         modelAndView.addObject("RysParametric", rysParametric);
@@ -256,7 +256,7 @@ public class RysParametricController {
         modelAndView.addObject("registers",list.size());
 
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         modelAndView.setViewName("ifrs/rysParametric");
         return modelAndView;

@@ -65,7 +65,7 @@ public class PlainIFRS9Controller {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Plantillas Neocon")) {
+        if(userService.validateEndpoint(user.getId(),"Ver Plantillas Neocon")) {
 
         int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
         PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
@@ -375,7 +375,7 @@ public class PlainIFRS9Controller {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
 
         PlainIFRS9 toModify = validationIFRS9.findIFRS9(id).get(0);
@@ -406,7 +406,7 @@ public class PlainIFRS9Controller {
                 insert.setComponente("Plantillas IFRS9");
                 insert.setFecha(today);
                 insert.setInput("Plantillas IFRS9");
-                insert.setNombre(user.getNombre());
+                insert.setNombre(user.getPrimerNombre());
                 insert.setUsuario(user.getUsuario());
                 auditRepository.save(insert);
                 return  modelAndView;

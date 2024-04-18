@@ -48,7 +48,7 @@ public class SubsidiariesTemplateController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Plantilla Filiales")) {
+        if(userService.validateEndpoint(user.getId(),"Ver Plantilla Filiales")) {
             String todayString = "";
 
             if (params.get("period") == null || params.get("period").toString() == "") {

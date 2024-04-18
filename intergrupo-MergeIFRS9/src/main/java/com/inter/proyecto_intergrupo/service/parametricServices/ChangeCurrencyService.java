@@ -67,7 +67,7 @@ public class ChangeCurrencyService {
                 insert.setComponente("Paramétricas");
                 insert.setFecha(today);
                 insert.setInput("Cambio Valor Divisa");
-                insert.setNombre(user.getNombre());
+                insert.setNombre(user.getPrimerNombre());
                 insert.setUsuario(user.getUsuario());
                 auditRepository.save(insert);
             }else{
@@ -78,7 +78,7 @@ public class ChangeCurrencyService {
                 insert.setComponente("Paramétricas");
                 insert.setFecha(today);
                 insert.setInput("Cambio Valor Divisa");
-                insert.setNombre(user.getNombre());
+                insert.setNombre(user.getPrimerNombre());
                 insert.setUsuario(user.getUsuario());
                 auditRepository.save(insert);
             }
@@ -151,7 +151,7 @@ public class ChangeCurrencyService {
             insert.setComponente("PARAMÉTRICAS");
             insert.setFecha(today);
             insert.setInput("CAMBIO VALOR DIVISA");
-            insert.setNombre(user.getNombre());
+            insert.setNombre(user.getPrimerNombre());
             insert.setUsuario(user.getUsuario());
             auditRepository.save(insert);
         }
@@ -216,7 +216,7 @@ public class ChangeCurrencyService {
         insert.setComponente("PARAMÉTRICAS");
         insert.setFecha(today);
         insert.setInput("CAMBIO VALOR DIVISA");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
     }
@@ -253,7 +253,7 @@ public class ChangeCurrencyService {
         insert.setComponente("PARAMÉTRICAS");
         insert.setFecha(today);
         insert.setInput("CAMBIO VALOR DIVISA");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
 
@@ -283,7 +283,7 @@ public class ChangeCurrencyService {
         insert.setComponente("PARAMÉTRICAS");
         insert.setFecha(today);
         insert.setInput("CAMBIO VALOR DIVISA");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
     }
@@ -319,7 +319,7 @@ public class ChangeCurrencyService {
         insert.setComponente("PARAMÉTRICAS");
         insert.setFecha(today);
         insert.setInput("CAMBIO VALOR DIVISA");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
     }

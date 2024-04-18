@@ -55,7 +55,7 @@ public class PduIcrvService {
         insert.setComponente("Portafolio");
         insert.setFecha(today);
         insert.setInput("PDU ICRV");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
     }
@@ -142,7 +142,7 @@ public class PduIcrvService {
         }
         User user = new User();
         user.setCentro("");
-        user.setNombre("SYSTEM JOB");
+        user.setPrimerNombre("SYSTEM JOB");
         user.setUsuario("");
 
         if(findAllPdu(todayString).size()==0)

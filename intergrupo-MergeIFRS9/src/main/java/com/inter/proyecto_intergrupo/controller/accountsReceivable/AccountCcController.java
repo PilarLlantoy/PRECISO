@@ -53,7 +53,7 @@ public class AccountCcController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Parametrica Cuentas por Cobrar")) {
+        if(userService.validateEndpoint(user.getId(),"Ver Parametrica Cuentas por Cobrar")) {
 
             int page = params.get("page") != null ? (Integer.valueOf(params.get("page").toString()) - 1) : 0;
             PageRequest pageRequest = PageRequest.of(page, PAGINATIONCOUNT);
@@ -72,7 +72,7 @@ public class AccountCcController {
             modelAndView.addObject("filterExport", "Original");
             modelAndView.addObject("directory", "accountCc");
             modelAndView.addObject("registers",pageAccount.getTotalElements());
-            modelAndView.addObject("userName", user.getNombre());
+            modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.setViewName("accountsReceivable/accountCc");
         }
@@ -126,7 +126,7 @@ public class AccountCcController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         Long idTemp = null;
         try{
@@ -164,7 +164,7 @@ public class AccountCcController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         AccountCc accountCc = new AccountCc();
         modelAndView.addObject("accountCc", accountCc);
@@ -260,7 +260,7 @@ public class AccountCcController {
         modelAndView.addObject("registers",list.size());
 
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         modelAndView.setViewName("accountsReceivable/accountCc");
         return modelAndView;

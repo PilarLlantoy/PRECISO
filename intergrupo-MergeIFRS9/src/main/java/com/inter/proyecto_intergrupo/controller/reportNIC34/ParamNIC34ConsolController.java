@@ -52,7 +52,7 @@ public class ParamNIC34ConsolController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Parametrica NIC34 Consolidado")) {
+        if(userService.validateEndpoint(user.getId(),"Ver Parametrica NIC34 Consolidado")) {
 
             int page=params.get("page")==null?0:(Integer.valueOf(params.get("page").toString())-1);
             PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
@@ -76,7 +76,7 @@ public class ParamNIC34ConsolController {
             modelAndView.addObject("filterExport", "Original");
             modelAndView.addObject("directory", "nic34Consol");
             modelAndView.addObject("registers",pageNic34.getTotalElements());
-            modelAndView.addObject("userName", user.getNombre());
+            modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.setViewName("parametric/nic34Consol");
         }
@@ -130,7 +130,7 @@ public class ParamNIC34ConsolController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         Long idTemp = null;
         try{
@@ -168,7 +168,7 @@ public class ParamNIC34ConsolController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         ParamNIC34Consol paramNIC34 = new ParamNIC34Consol();
         modelAndView.addObject("nic34Consol", paramNIC34);
@@ -263,7 +263,7 @@ public class ParamNIC34ConsolController {
         modelAndView.addObject("registers",list.size());
 
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         modelAndView.setViewName("parametric/nic34Consol");
         return modelAndView;

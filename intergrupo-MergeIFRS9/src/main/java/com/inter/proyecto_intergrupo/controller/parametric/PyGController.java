@@ -53,7 +53,7 @@ public class PyGController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver PyG")) {
+        if(userService.validateEndpoint(user.getId(),"Ver PyG")) {
 
         int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
         PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
@@ -74,7 +74,7 @@ public class PyGController {
         List<PyG> list = pygService.findAll();
         modelAndView.addObject("registers",list.size());
 
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         modelAndView.setViewName("parametric/pyg");
         }
@@ -148,7 +148,7 @@ public class PyGController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         PyG toModify = pygService.findPyGbyId(id).get(0);
         modelAndView.addObject("pygModify",toModify);
@@ -187,7 +187,7 @@ public class PyGController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         PyG pyg = new PyG();
         modelAndView.addObject("pyg", pyg);
@@ -294,7 +294,7 @@ public class PyGController {
         modelAndView.addObject("directory","searchPyG");
 
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         modelAndView.setViewName("parametric/PyG");
         return modelAndView;

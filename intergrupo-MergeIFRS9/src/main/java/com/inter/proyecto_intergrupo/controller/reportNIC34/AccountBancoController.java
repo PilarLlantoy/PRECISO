@@ -53,7 +53,7 @@ public class AccountBancoController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Parametrica Naturaleza Cuentas")) {
+        if(userService.validateEndpoint(user.getId(),"Ver Parametrica Naturaleza Cuentas")) {
 
             int page=params.get("page")==null?0:(Integer.valueOf(params.get("page").toString())-1);
             PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
@@ -77,7 +77,7 @@ public class AccountBancoController {
             modelAndView.addObject("filterExport", "Original");
             modelAndView.addObject("directory", "accountBanco");
             modelAndView.addObject("registers",pageData.getTotalElements());
-            modelAndView.addObject("userName", user.getNombre());
+            modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.setViewName("parametric/accountBanco");
         }
@@ -131,7 +131,7 @@ public class AccountBancoController {
         ModelAndView modelAndView = new ModelAndView("redirect:/parametric/accountBanco");
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         accountBancoService.changeNaturaleza(id);
         modelAndView.addObject("resp", "nat1");
@@ -143,7 +143,7 @@ public class AccountBancoController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         AccountBanco paramAccountBanco = new AccountBanco();
         modelAndView.addObject("accountBanco", paramAccountBanco);
@@ -239,7 +239,7 @@ public class AccountBancoController {
         modelAndView.addObject("registers",list.size());
 
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         modelAndView.setViewName("parametric/accountBanco");
         return modelAndView;

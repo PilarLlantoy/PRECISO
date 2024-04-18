@@ -62,7 +62,7 @@ public class OperationAccountService {
         insert.setComponente("Parametricas");
         insert.setFecha(today);
         insert.setInput("Operación y Riesgo de Cuentas");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
 
@@ -128,7 +128,7 @@ public class OperationAccountService {
                 insert.setComponente("Parametricas");
                 insert.setFecha(today);
                 insert.setInput("Operación y Riesgo de Cuentas");
-                insert.setNombre(user.getNombre());
+                insert.setNombre(user.getPrimerNombre());
                 insert.setUsuario(user.getUsuario());
                 auditRepository.save(insert);
             } else {
@@ -139,7 +139,7 @@ public class OperationAccountService {
                 insert.setComponente("Parametricas");
                 insert.setFecha(today);
                 insert.setInput("Operación y Riesgo de Cuentas");
-                insert.setNombre(user.getNombre());
+                insert.setNombre(user.getPrimerNombre());
                 insert.setUsuario(user.getUsuario());
                 auditRepository.save(insert);
 
@@ -256,7 +256,7 @@ public class OperationAccountService {
         insert.setComponente("Paramétricas");
         insert.setFecha(today);
         insert.setInput("Operación y Riesgo");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
         responsibleAccountRepository.deleteById(id);
@@ -272,7 +272,7 @@ public class OperationAccountService {
         insert.setComponente("Paramétricas");
         insert.setFecha(today);
         insert.setInput("Operación Riesgo");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
     }
@@ -286,7 +286,7 @@ public class OperationAccountService {
         insert.setComponente("Paramétricas");
         insert.setFecha(today);
         insert.setInput("Operación y Riesgo");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
         return responsibleAccountRepository.save(operationAccount);

@@ -43,20 +43,17 @@
                         <th>Usuario</th>
                         <th>Nombre</th>
                         <th>Correo</th>
-                        <th>Centro</th>
                         <th>Fecha Alta</th>
                         <th>Estado</th>
                         <th>Roles</th>
-                        <th>YNTP Empresa</th>
                         <th>Editar</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr th:each="user : ${allUsers}">
                         <td th:text="${user.usuario}"></td>
-                        <td th:text="${user.nombre}"></td>
+                        <td th:text="${user.primerNombre}"></td>
                         <td th:text="${user.correo}"></td>
-                        <td th:text="${user.centro}"></td>
                         <!--<td th:text="${user.creacion}"></td>-->
                         <td th:text="${#dates.format(user.creacion,'dd-MM-yyyy(HH:mm)')}"></td>
                         <td th:if="${user.estado == true}">Activo</td>
@@ -66,7 +63,6 @@
                                 <li th:text="${role.nombre}" style="list-style: none;"></li>
                             </ul>
                         </td>
-                        <td th:text="${user.empresa}"></td>
                         <td><a th:href="@{/admin/modifyUsers/{id}(id=${user.usuario})}"
                                class="btn btn-primary">Editar</a></td>
                     </tr>

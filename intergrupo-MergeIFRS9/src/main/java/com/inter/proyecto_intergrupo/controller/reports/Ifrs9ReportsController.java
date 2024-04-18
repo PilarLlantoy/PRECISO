@@ -46,7 +46,7 @@ public class Ifrs9ReportsController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Vertical De Saldos")) {
+        if(userService.validateEndpoint(user.getId(),"Ver Vertical De Saldos")) {
 
             String todayString = "";
             if (params.get("period").toString() == null || params.get("period").toString() == "") {
@@ -127,7 +127,7 @@ public class Ifrs9ReportsController {
             modelAndView.addObject("totalData", "0");
             modelAndView.addObject("allReportHash", list);
 
-            modelAndView.addObject("userName", user.getNombre());
+            modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.setViewName("reports/ifrs9Report");
         }

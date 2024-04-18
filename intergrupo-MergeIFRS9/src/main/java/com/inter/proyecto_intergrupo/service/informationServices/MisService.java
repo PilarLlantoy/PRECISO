@@ -143,7 +143,7 @@ public class MisService {
         insert.setInput("Depositos");
         if(user!=null)
         {
-            insert.setNombre(user.getNombre());
+            insert.setNombre(user.getPrimerNombre());
             insert.setUsuario(user.getUsuario());
             insert.setCentro(user.getCentro());
         }

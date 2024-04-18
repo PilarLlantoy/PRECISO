@@ -60,7 +60,7 @@ public class ReportNIC34ConsolController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Reporte NIC34")) {
+        if(userService.validateEndpoint(user.getId(),"Ver Reporte NIC34")) {
 
             int page=params.get("page")==null?0:(Integer.valueOf(params.get("page").toString())-1);
             PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
@@ -278,7 +278,7 @@ public class ReportNIC34ConsolController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver EEFF NIC34 Balance")) {
+        if(userService.validateEndpoint(user.getId(),"Ver EEFF NIC34 Balance")) {
 
             int page=params.get("page")==null?0:(Integer.valueOf(params.get("page").toString())-1);
             PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
@@ -385,7 +385,7 @@ public class ReportNIC34ConsolController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver EEFF NIC34 PYG")) {
+        if(userService.validateEndpoint(user.getId(),"Ver EEFF NIC34 PYG")) {
 
             int page=params.get("page")==null?0:(Integer.valueOf(params.get("page").toString())-1);
             PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
@@ -492,7 +492,7 @@ public class ReportNIC34ConsolController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver EEFF NIC34 Notas")) {
+        if(userService.validateEndpoint(user.getId(),"Ver EEFF NIC34 Notas")) {
 
             int page=params.get("page")==null?0:(Integer.valueOf(params.get("page").toString())-1);
             PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);

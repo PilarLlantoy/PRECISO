@@ -95,7 +95,7 @@ public class InvoicesCcService {
         insert.setComponente("Cuentas Por Cobrar");
         insert.setFecha(today);
         insert.setInput("Informe");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
     }

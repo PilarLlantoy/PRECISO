@@ -69,7 +69,7 @@ public class ReclassificationService {
                 insert.setComponente("Parametricas");
                 insert.setFecha(today);
                 insert.setInput("Reclasificaciones Local");
-                insert.setNombre(user.getNombre());
+                insert.setNombre(user.getPrimerNombre());
                 insert.setUsuario(user.getUsuario());
                 auditRepository.save(insert);
             }else{
@@ -80,7 +80,7 @@ public class ReclassificationService {
                 insert.setComponente("Parametricas");
                 insert.setFecha(today);
                 insert.setInput("Reclasificaciones Local");
-                insert.setNombre(user.getNombre());
+                insert.setNombre(user.getPrimerNombre());
                 insert.setUsuario(user.getUsuario());
                 auditRepository.save(insert);
 
@@ -223,7 +223,7 @@ public class ReclassificationService {
         insert.setComponente("Parametricas");
         insert.setFecha(today);
         insert.setInput("Reclasificaciones Local");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
         return reclassificationRepository.save(toInsert);
@@ -237,7 +237,7 @@ public class ReclassificationService {
         insert.setComponente("Parametricas");
         insert.setFecha(today);
         insert.setInput("Reclasificaciones Local");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
         return reclassificationRepository.save(reclassification);
@@ -251,7 +251,7 @@ public class ReclassificationService {
         insert.setComponente("Parametricas");
         insert.setFecha(today);
         insert.setInput("Reclasificaciones Local");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
         reclassificationRepository.deleteById(id);
@@ -265,7 +265,7 @@ public class ReclassificationService {
         insert.setComponente("Parametricas");
         insert.setFecha(today);
         insert.setInput("Reclasificaciones Local");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
         reclassificationRepository.deleteAll();

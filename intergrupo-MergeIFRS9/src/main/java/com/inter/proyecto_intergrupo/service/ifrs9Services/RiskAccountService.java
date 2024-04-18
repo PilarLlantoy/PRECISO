@@ -736,7 +736,7 @@ public class RiskAccountService {
         insert.setComponente("Riesgos IFRS9");
         insert.setFecha(today);
         insert.setInput("Contabilización Riesgos");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
     }

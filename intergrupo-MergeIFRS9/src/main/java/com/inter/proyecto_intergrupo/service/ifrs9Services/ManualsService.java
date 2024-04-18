@@ -172,7 +172,7 @@ public class ManualsService {
         insert.setComponente("PARAMÉTRICAS");
         insert.setFecha(today);
         insert.setInput("MANUALES (ANEXO8-SICC)");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
 
@@ -229,7 +229,7 @@ public class ManualsService {
         insert.setComponente("PARAMÉTRICAS");
         insert.setFecha(today);
         insert.setInput("MANUALES (ANEXO8-SICC)");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
     }
@@ -269,7 +269,7 @@ public class ManualsService {
         insert.setComponente("PARAMÉTRICAS");
         insert.setFecha(today);
         insert.setInput("MANUALES (ANEXO8-SICC)");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
     }

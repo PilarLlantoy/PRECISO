@@ -466,7 +466,7 @@ public class TaxBaseService {
         insert.setComponente("BASE FISCAL");
         insert.setFecha(today);
         insert.setInput("PETICIONES");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
 
@@ -690,7 +690,7 @@ public class TaxBaseService {
         insert.setComponente("Base Fiscal");
         insert.setFecha(today);
         insert.setInput("Adición de petición");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
         load.setNit(String.format("%15s", load.getNit()).replace(' ', '0'));

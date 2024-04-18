@@ -81,7 +81,7 @@ public class Intergrupo1Service {
         insert.setInput("Versión 1");
         if(user!=null)
         {
-            insert.setNombre(user.getNombre());
+            insert.setNombre(user.getPrimerNombre());
             insert.setUsuario(user.getUsuario());
             insert.setCentro(user.getCentro());
         }

@@ -44,7 +44,7 @@ public class BalfiduciariaIcrvController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Bal Fiduciaria ICRV")){
+        if(userService.validateEndpoint(user.getId(),"Ver Bal Fiduciaria ICRV")){
             int page = params.get("page") != null ? (Integer.parseInt(params.get("page").toString()) - 1) : 0;
             PageRequest pageRequest = PageRequest.of(page, PAGINATIONCOUNT);
             String todayString = "";
@@ -198,7 +198,7 @@ public class BalfiduciariaIcrvController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         Long idTemp = null;
         try{

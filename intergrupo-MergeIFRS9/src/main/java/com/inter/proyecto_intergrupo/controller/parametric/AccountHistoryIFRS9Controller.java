@@ -55,7 +55,7 @@ public class AccountHistoryIFRS9Controller {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Histórico de cuentas IFRS9")) {
+        if(userService.validateEndpoint(user.getId(),"Ver Histórico de cuentas IFRS9")) {
 
         int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
         PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
@@ -76,7 +76,7 @@ public class AccountHistoryIFRS9Controller {
         List<AccountHistoryIFRS9> list = accountHistoryIFRS9Service.findAll();
         modelAndView.addObject("registers",list.size());
 
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         modelAndView.setViewName("parametric/accountHistoryIFRS9");
         }
@@ -146,7 +146,7 @@ public class AccountHistoryIFRS9Controller {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         AccountHistoryIFRS9 toModify = accountHistoryIFRS9Service.findAccountHistoryIFRS9byId(id).get(0);
         modelAndView.addObject("accountHistoryIFRS9Modify",toModify);
@@ -188,7 +188,7 @@ public class AccountHistoryIFRS9Controller {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         AccountHistoryIFRS9 accountHistoryIFRS9 = new AccountHistoryIFRS9();
         modelAndView.addObject("accountHistoryIFRS9", accountHistoryIFRS9);
@@ -297,7 +297,7 @@ public class AccountHistoryIFRS9Controller {
         modelAndView.addObject("directory","searchAccountHistoryIFRS9");
 
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         modelAndView.setViewName("parametric/accountHistoryIFRS9");
         return modelAndView;

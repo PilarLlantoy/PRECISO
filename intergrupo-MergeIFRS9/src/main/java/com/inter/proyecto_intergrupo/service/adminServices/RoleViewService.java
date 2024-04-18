@@ -44,15 +44,15 @@ public class RoleViewService {
     }
 
     public List<View> findViewsVer(int idRol){
-        Query consulta = entityManager.createNativeQuery("select b.* from (SELECT * FROM NEXCO.[dbo].nexco_rol_vista where id_perfil = ? and p_visualizar=1) a\n" +
-                "\t\t inner join NEXCO.[dbo].nexco_vistas b on a.id_vista=b.id_vista ", View.class);
+        Query consulta = entityManager.createNativeQuery("select b.* from (SELECT * FROM nexco_rol_vista where id_perfil = ? and p_visualizar=1) a\n" +
+                "\t\t inner join nexco_vistas b on a.id_vista=b.id_vista ", View.class);
         consulta.setParameter(1,idRol);
         return consulta.getResultList();
     }
 
     public List<View> findViewsModificar(int idRol){
-        Query consulta = entityManager.createNativeQuery("select b.* from (SELECT * FROM NEXCO.[dbo].nexco_rol_vista where id_perfil = ? and p_modificar=1) a\n" +
-                "\t\t inner join NEXCO.[dbo].nexco_vistas b on a.id_vista=b.id_vista ", View.class);
+        Query consulta = entityManager.createNativeQuery("select b.* from (SELECT * FROM nexco_rol_vista where id_perfil = ? and p_modificar=1) a\n" +
+                "\t\t inner join nexco_vistas b on a.id_vista=b.id_vista ", View.class);
         consulta.setParameter(1,idRol);
         return consulta.getResultList();
     }

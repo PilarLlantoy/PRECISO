@@ -81,7 +81,7 @@ public class ContingentesController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Contingentes Contratos")) {
+        if(userService.validateEndpoint(user.getId(),"Ver Contingentes Contratos")) {
             int page = params.get("page") != null ? (Integer.valueOf(params.get("page").toString()) - 1) : 0;
             PageRequest pageRequest = PageRequest.of(page, PAGINATIONCOUNT);
             Page<Contract> pageContract = contractService.getAll(pageRequest);
@@ -98,7 +98,7 @@ public class ContingentesController {
             modelAndView.addObject("directory", "contingentesAvalType");
             modelAndView.addObject("registers",pageContract.getTotalElements());
 
-            modelAndView.addObject("userName", user.getNombre());
+            modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.setViewName("reports/contingentesAvalType");
         }
@@ -132,7 +132,7 @@ public class ContingentesController {
         modelAndView.addObject("registers",pageContract.getTotalPages());
 
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         modelAndView.addObject("button","Query13");
         modelAndView.setViewName("reports/contingentReclassification");
@@ -204,7 +204,7 @@ public class ContingentesController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Contingentes Plantilla")) {
+        if(userService.validateEndpoint(user.getId(),"Ver Contingentes Plantilla")) {
             int page = params.get("page") != null ? (Integer.valueOf(params.get("page").toString()) - 1) : 0;
             PageRequest pageRequest = PageRequest.of(page, PAGINATIONCOUNT);
             String todayString = "";
@@ -281,7 +281,7 @@ public class ContingentesController {
             modelAndView.addObject("directory", "contingentes");
             String button = contingentesService.ShowButton(todayString, user.getCentro());
             modelAndView.addObject("button", button);
-            modelAndView.addObject("userName", user.getNombre());
+            modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.addObject("registers",list.size());
 
@@ -598,7 +598,7 @@ public class ContingentesController {
         modelAndView.addObject("companiesIfrs",companiesIfrs);
         modelAndView.addObject("period",todayString);
 
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
 
         List<Object[]> validateSicc = contingentesService.validateSicc(params.get("period").toString());
@@ -701,7 +701,7 @@ public class ContingentesController {
         modelAndView.addObject("companiesIfrs",companiesIfrs);
         modelAndView.addObject("period",todayString);
 
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
 
         List<Object[]> validateSicc = contingentesService.validateSicc(params.get("period").toString());
@@ -933,7 +933,7 @@ public class ContingentesController {
         modelAndView.addObject("directory","contingentes");
         String button = contingentesService.ShowButton(todayString,user.getCentro());
         modelAndView.addObject("button",button);
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
 
         List<Object[]> validateSicc = contingentesService.validateSicc(todayString);

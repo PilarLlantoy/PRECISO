@@ -51,7 +51,7 @@ public class TypeTemplateController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Tipos Plantillas España")) {
+        if(userService.validateEndpoint(user.getId(),"Ver Tipos Plantillas España")) {
 
         int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
         PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
@@ -72,7 +72,7 @@ public class TypeTemplateController {
         List<TypeTemplate> list = typeTemplateService.findAll();
         modelAndView.addObject("registers",list.size());
 
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         modelAndView.setViewName("parametric/typeTemplateEsp");
         }
@@ -90,7 +90,7 @@ public class TypeTemplateController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         TypeTemplate toModify = typeTemplateService.findTypebyId(id).get(0);
         modelAndView.addObject("typeModify",toModify);
@@ -130,7 +130,7 @@ public class TypeTemplateController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         TypeTemplate type = new TypeTemplate();
         modelAndView.addObject("type", type);
@@ -237,7 +237,7 @@ public class TypeTemplateController {
         modelAndView.addObject("directory","searchType");
 
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         modelAndView.setViewName("parametric/typeTemplate");
         return modelAndView;

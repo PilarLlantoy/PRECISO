@@ -222,7 +222,7 @@ public class RysParametricService {
         insert.setComponente("Paramétricas IFRS9");
         insert.setFecha(today);
         insert.setInput("Parametrica RYS");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
     }

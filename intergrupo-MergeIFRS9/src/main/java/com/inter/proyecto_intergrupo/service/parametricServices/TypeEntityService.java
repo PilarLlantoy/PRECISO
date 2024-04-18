@@ -68,7 +68,7 @@ public class TypeEntityService {
                 insert.setComponente("Paramétricas");
                 insert.setFecha(today);
                 insert.setInput("Tipo de Entidad");
-                insert.setNombre(user.getNombre());
+                insert.setNombre(user.getPrimerNombre());
                 insert.setUsuario(user.getUsuario());
                 auditRepository.save(insert);
             }
@@ -81,7 +81,7 @@ public class TypeEntityService {
                 insert.setComponente("Paramétricas");
                 insert.setFecha(today);
                 insert.setInput("Tipo de Entidad");
-                insert.setNombre(user.getNombre());
+                insert.setNombre(user.getPrimerNombre());
                 insert.setUsuario(user.getUsuario());
                 auditRepository.save(insert);
             }
@@ -204,7 +204,7 @@ public class TypeEntityService {
         insert.setComponente("Paramétricas");
         insert.setFecha(today);
         insert.setInput("Tipo de Entidad");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
 
@@ -220,7 +220,7 @@ public class TypeEntityService {
         insert.setComponente("Paramétricas");
         insert.setFecha(today);
         insert.setInput("Tipo de Entidad");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
 
@@ -236,7 +236,7 @@ public class TypeEntityService {
         insert.setComponente("Historico de Terceros");
         insert.setFecha(today);
         insert.setInput("Historico de Terceros");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
 
@@ -252,7 +252,7 @@ public class TypeEntityService {
         insert.setComponente("Historico de Terceros");
         insert.setFecha(today);
         insert.setInput("Historico de Terceros");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
 

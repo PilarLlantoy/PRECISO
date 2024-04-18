@@ -342,7 +342,7 @@ public class Rp21Service {
 
                     ControlPanel temporal2 = forwardList.get(0);
                     temporal2.setSemaforoInput("PENDING");
-                    temporal2.setUsuarioCarga(user.getNombre());
+                    temporal2.setUsuarioCarga(user.getPrimerNombre());
 
                     Query query7 = entityManager.createNativeQuery("UPDATE nexco_cuadro_mando " +
                             "SET semaforo_input = ?,fecha_carga = ? " +
@@ -363,7 +363,7 @@ public class Rp21Service {
                     insert.setComponente("DERIVADOS");
                     insert.setFecha(today);
                     insert.setInput("FORWARD");
-                    insert.setNombre(user.getNombre());
+                    insert.setNombre(user.getPrimerNombre());
                     insert.setUsuario(user.getUsuario());
                     auditRepository.save(insert);
                 }
@@ -392,7 +392,7 @@ public class Rp21Service {
                     //getRowsSwap(rows1Swap, user);
                     ControlPanel temporal = swapList.get(0);
                     temporal.setSemaforoInput("PENDING");
-                    temporal.setUsuarioCarga(user.getNombre());
+                    temporal.setUsuarioCarga(user.getPrimerNombre());
                     Query query5 = entityManager.createNativeQuery("UPDATE nexco_cuadro_mando SET semaforo_input = ?,fecha_carga = ? " +
                             "WHERE responsable = ? AND input = ? AND componente = ? AND fecha_reporte = ?", ControlPanel.class);
                     query5.setParameter(6, mes);
@@ -410,7 +410,7 @@ public class Rp21Service {
                     insert.setComponente("DERIVADOS");
                     insert.setFecha(today);
                     insert.setInput("SWAP");
-                    insert.setNombre(user.getNombre());
+                    insert.setNombre(user.getPrimerNombre());
                     insert.setUsuario(user.getUsuario());
                     auditRepository.save(insert);
                 }
@@ -440,7 +440,7 @@ public class Rp21Service {
                     //getRowsRYS(rows1Conciliacion, user);
                     ControlPanel temporal = rysList.get(0);
                     temporal.setSemaforoInput("PENDING");
-                    temporal.setUsuarioCarga(user.getNombre());
+                    temporal.setUsuarioCarga(user.getPrimerNombre());
                     Query query5 = entityManager.createNativeQuery("UPDATE nexco_cuadro_mando SET semaforo_input = ?,fecha_carga = ? " +
                             "WHERE responsable = ? AND input = ? AND componente = ? AND fecha_reporte = ?", ControlPanel.class);
                     query5.setParameter(6, mes);
@@ -458,7 +458,7 @@ public class Rp21Service {
                     insert.setComponente("DERIVADOS");
                     insert.setFecha(today);
                     insert.setInput("RYS");
-                    insert.setNombre(user.getNombre());
+                    insert.setNombre(user.getPrimerNombre());
                     insert.setUsuario(user.getUsuario());
                     auditRepository.save(insert);
                 }
@@ -488,7 +488,7 @@ public class Rp21Service {
                     //getRowsOpciones(rows1Opciones, user);
                     ControlPanel temporal = opcionesList.get(0);
                     temporal.setSemaforoInput("PENDING");
-                    temporal.setUsuarioCarga(user.getNombre());
+                    temporal.setUsuarioCarga(user.getPrimerNombre());
                     Query query5 = entityManager.createNativeQuery("UPDATE nexco_cuadro_mando SET semaforo_input = ?,fecha_carga = ? " +
                             "WHERE responsable = ? AND input = ? AND componente = ? AND fecha_reporte = ?", ControlPanel.class);
                     query5.setParameter(6, mes);
@@ -506,7 +506,7 @@ public class Rp21Service {
                     insert.setComponente("DERIVADOS");
                     insert.setFecha(today);
                     insert.setInput("OPCIONES");
-                    insert.setNombre(user.getNombre());
+                    insert.setNombre(user.getPrimerNombre());
                     insert.setUsuario(user.getUsuario());
                     auditRepository.save(insert);
                 }
@@ -536,7 +536,7 @@ public class Rp21Service {
                     //getRowsOpciones(rows1Opciones, user);
                     ControlPanel temporal = futurosList.get(0);
                     temporal.setSemaforoInput("PENDING");
-                    temporal.setUsuarioCarga(user.getNombre());
+                    temporal.setUsuarioCarga(user.getPrimerNombre());
                     Query query5 = entityManager.createNativeQuery("UPDATE nexco_cuadro_mando SET semaforo_input = ?,fecha_carga = ? " +
                             "WHERE responsable = ? AND input = ? AND componente = ? AND fecha_reporte = ?", ControlPanel.class);
                     query5.setParameter(6, mes);
@@ -554,7 +554,7 @@ public class Rp21Service {
                     insert.setComponente("DERIVADOS");
                     insert.setFecha(today);
                     insert.setInput("FUTUROS");
-                    insert.setNombre(user.getNombre());
+                    insert.setNombre(user.getPrimerNombre());
                     insert.setUsuario(user.getUsuario());
                     auditRepository.save(insert);
                 }
@@ -992,7 +992,7 @@ public class Rp21Service {
             insert.setComponente("DERIVADOS");
             insert.setFecha(today);
             insert.setInput("FORWARD");
-            insert.setNombre(user.getNombre());
+            insert.setNombre(user.getPrimerNombre());
             insert.setUsuario(user.getUsuario());
             auditRepository.save(insert);
         }
@@ -1305,7 +1305,7 @@ public class Rp21Service {
             insert.setComponente("DERIVADOS");
             insert.setFecha(today);
             insert.setInput("FORWARD");
-            insert.setNombre(user.getNombre());
+            insert.setNombre(user.getPrimerNombre());
             insert.setUsuario(user.getUsuario());
             auditRepository.save(insert);
         }
@@ -1615,7 +1615,7 @@ public class Rp21Service {
             insert.setComponente("DERIVADOS");
             insert.setFecha(today);
             insert.setInput("FORWARD");
-            insert.setNombre(user.getNombre());
+            insert.setNombre(user.getPrimerNombre());
             insert.setUsuario(user.getUsuario());
             auditRepository.save(insert);
         }
@@ -1948,7 +1948,7 @@ public class Rp21Service {
             insert.setComponente("DERIVADOS");
             insert.setFecha(today);
             insert.setInput("SWAP");
-            insert.setNombre(user.getNombre());
+            insert.setNombre(user.getPrimerNombre());
             insert.setUsuario(user.getUsuario());
             auditRepository.save(insert);
         }
@@ -2262,7 +2262,7 @@ public class Rp21Service {
             insert.setComponente("DERIVADOS");
             insert.setFecha(today);
             insert.setInput("RYS");
-            insert.setNombre(user.getNombre());
+            insert.setNombre(user.getPrimerNombre());
             insert.setUsuario(user.getUsuario());
             auditRepository.save(insert);
         }
@@ -2585,7 +2585,7 @@ public class Rp21Service {
             insert.setComponente("DERIVADOS");
             insert.setFecha(today);
             insert.setInput("OPCIONES");
-            insert.setNombre(user.getNombre());
+            insert.setNombre(user.getPrimerNombre());
             insert.setUsuario(user.getUsuario());
             auditRepository.save(insert);
         }
@@ -2895,7 +2895,7 @@ public class Rp21Service {
             insert.setComponente("DERIVADOS");
             insert.setFecha(today);
             insert.setInput("FUTUROS");
-            insert.setNombre(user.getNombre());
+            insert.setNombre(user.getPrimerNombre());
             insert.setUsuario(user.getUsuario());
             auditRepository.save(insert);
         }

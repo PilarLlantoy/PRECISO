@@ -65,7 +65,7 @@ public class ProvisionsService {
                 insert.setComponente("Parametricas");
                 insert.setFecha(today);
                 insert.setInput("Provisiones");
-                insert.setNombre(user.getNombre());
+                insert.setNombre(user.getPrimerNombre());
                 insert.setUsuario(user.getUsuario());
                 auditRepository.save(insert);
             }else {
@@ -76,7 +76,7 @@ public class ProvisionsService {
                 insert.setComponente("Parametricas");
                 insert.setFecha(today);
                 insert.setInput("Provisiones");
-                insert.setNombre(user.getNombre());
+                insert.setNombre(user.getPrimerNombre());
                 insert.setUsuario(user.getUsuario());
                 auditRepository.save(insert);
 
@@ -309,7 +309,7 @@ public class ProvisionsService {
         insert.setComponente("Parametricas");
         insert.setFecha(today);
         insert.setInput("Provisiones");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
         return provisionsRepository.save(toInsert);
@@ -323,7 +323,7 @@ public class ProvisionsService {
         insert.setComponente("Parametricas");
         insert.setFecha(today);
         insert.setInput("Provisiones");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
         return provisionsRepository.save(provisions);
@@ -337,7 +337,7 @@ public class ProvisionsService {
         insert.setComponente("Parametricas");
         insert.setFecha(today);
         insert.setInput("Provisiones");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
         provisionsRepository.deleteById(id);
@@ -351,7 +351,7 @@ public class ProvisionsService {
         insert.setComponente("Parametricas");
         insert.setFecha(today);
         insert.setInput("Provisiones");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
         provisionsRepository.deleteAll();

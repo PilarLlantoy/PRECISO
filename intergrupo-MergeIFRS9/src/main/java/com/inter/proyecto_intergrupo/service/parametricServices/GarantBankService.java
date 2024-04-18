@@ -75,7 +75,7 @@ public class GarantBankService {
                 insert.setComponente("Parametricas");
                 insert.setFecha(today);
                 insert.setInput("Banco garante");
-                insert.setNombre(user.getNombre());
+                insert.setNombre(user.getPrimerNombre());
                 insert.setUsuario(user.getUsuario());
                 auditRepository.save(insert);
             }else{
@@ -86,7 +86,7 @@ public class GarantBankService {
                 insert.setComponente("Parametricas");
                 insert.setFecha(today);
                 insert.setInput("Banco garante");
-                insert.setNombre(user.getNombre());
+                insert.setNombre(user.getPrimerNombre());
                 insert.setUsuario(user.getUsuario());
                 auditRepository.save(insert);
             }
@@ -168,7 +168,7 @@ public class GarantBankService {
             insert.setComponente("PARAMÉTRICAS");
             insert.setFecha(today);
             insert.setInput("BANCO GARANTE");
-            insert.setNombre(user.getNombre());
+            insert.setNombre(user.getPrimerNombre());
             insert.setUsuario(user.getUsuario());
             auditRepository.save(insert);
         }
@@ -216,7 +216,7 @@ public class GarantBankService {
         insert.setComponente("PARAMÉTRICAS");
         insert.setFecha(today);
         insert.setInput("BANCO GARANTE");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
     }
@@ -244,7 +244,7 @@ public class GarantBankService {
         insert.setComponente("Parametricas");
         insert.setFecha(today);
         insert.setInput("Banco garante");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
         return garantBankRepository.save(toInsert);
@@ -263,7 +263,7 @@ public class GarantBankService {
         insert.setComponente("Parametricas");
         insert.setFecha(today);
         insert.setInput("Banco garante");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
     }
@@ -303,7 +303,7 @@ public class GarantBankService {
         insert.setComponente("Parametricas");
         insert.setFecha(today);
         insert.setInput("Banco garante");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
     }

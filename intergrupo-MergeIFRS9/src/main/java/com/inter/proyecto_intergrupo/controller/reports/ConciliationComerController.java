@@ -45,7 +45,7 @@ public class ConciliationComerController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Conciliación Comer")) {
+        if(userService.validateEndpoint(user.getId(),"Ver Conciliación Comer")) {
 
             String todayString = "";
             if (params.get("period") != null && params.get("period").toString() == "") {

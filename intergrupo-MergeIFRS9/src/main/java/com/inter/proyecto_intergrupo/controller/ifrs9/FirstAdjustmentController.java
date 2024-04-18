@@ -57,7 +57,7 @@ public class FirstAdjustmentController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Ajuste primera vez")) {
+        if(userService.validateEndpoint(user.getId(),"Ver Ajuste primera vez")) {
 
             ArrayList<Object[]> result = firstAdjustmentService.getFirstAdjustment();
 

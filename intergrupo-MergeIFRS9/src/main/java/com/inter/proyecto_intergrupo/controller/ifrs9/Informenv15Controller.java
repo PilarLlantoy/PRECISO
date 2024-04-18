@@ -53,7 +53,7 @@ public class Informenv15Controller {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Informe Nivel 15")) {
+        if(userService.validateEndpoint(user.getId(),"Ver Informe Nivel 15")) {
 
         int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
         PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
@@ -106,7 +106,7 @@ public class Informenv15Controller {
         modelAndView.addObject("directory","informenv15");
         modelAndView.addObject("registers",informenv15List.size());
 
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         modelAndView.setViewName("ifrs/informenv15");
         }
@@ -245,7 +245,7 @@ public class Informenv15Controller {
         modelAndView.addObject("registers",list.size());
 
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         modelAndView.setViewName("ifrs/informenv15");
         return modelAndView;

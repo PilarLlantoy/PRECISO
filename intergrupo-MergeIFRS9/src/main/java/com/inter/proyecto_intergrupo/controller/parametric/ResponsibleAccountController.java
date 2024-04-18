@@ -49,7 +49,7 @@ public class ResponsibleAccountController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Cuenta Responsable")) {
+        if(userService.validateEndpoint(user.getId(),"Ver Cuenta Responsable")) {
 
             int page = params.get("page") != null ? (Integer.valueOf(params.get("page").toString()) - 1) : 0;
             PageRequest pageRequest = PageRequest.of(page, PAGINATIONCOUNT);
@@ -74,7 +74,7 @@ public class ResponsibleAccountController {
             modelAndView.addObject("directory", "responsibleAccount");
             modelAndView.addObject("registers",pageResponsibleAccount.size());
 
-            modelAndView.addObject("userName", user.getNombre());
+            modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.setViewName("parametric/responsibleAccount");
         }
@@ -144,7 +144,7 @@ public class ResponsibleAccountController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         ResponsibleAccount toModify = responsibleAccountService.findResponsibleAccountById(Long.parseLong(id));
         modelAndView.addObject("responsibleAccountModify",toModify);
@@ -210,7 +210,7 @@ public class ResponsibleAccountController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         ResponsibleAccount responsibleAccount = new ResponsibleAccount();
         modelAndView.addObject("responsibleAccount", responsibleAccount);
@@ -331,7 +331,7 @@ public class ResponsibleAccountController {
         modelAndView.addObject("registers",list.size());
 
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         modelAndView.setViewName("parametric/responsibleAccount");
         return modelAndView;
@@ -365,7 +365,7 @@ public class ResponsibleAccountController {
         modelAndView.addObject("directory","costCenter");
 
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         modelAndView.setViewName("parametric/costCenter");
         return modelAndView;

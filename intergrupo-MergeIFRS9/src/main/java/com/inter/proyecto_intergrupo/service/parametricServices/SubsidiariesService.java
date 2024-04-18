@@ -70,7 +70,7 @@ public class SubsidiariesService {
                 insert.setComponente("Histórico Cruce Filiales");
                 insert.setFecha(today);
                 insert.setInput("Histórico Cruce Filiales");
-                insert.setNombre(user.getNombre());
+                insert.setNombre(user.getPrimerNombre());
                 insert.setUsuario(user.getUsuario());
                 auditRepository.save(insert);
             }
@@ -82,7 +82,7 @@ public class SubsidiariesService {
                 insert.setComponente("Histórico Cruce Filiales");
                 insert.setFecha(today);
                 insert.setInput("Histórico Cruce Filiales");
-                insert.setNombre(user.getNombre());
+                insert.setNombre(user.getPrimerNombre());
                 insert.setUsuario(user.getUsuario());
                 auditRepository.save(insert);
             }
@@ -323,7 +323,7 @@ public class SubsidiariesService {
             insert.setComponente("Histórico Cruce Filiales");
             insert.setFecha(today);
             insert.setInput("Histórico Cruce Filiales");
-            insert.setNombre(user.getNombre());
+            insert.setNombre(user.getPrimerNombre());
             insert.setUsuario(user.getUsuario());
             auditRepository.save(insert);
         }catch(Exception e){
@@ -357,7 +357,7 @@ public class SubsidiariesService {
         insert.setComponente("Histórico Cruce Filiales");
         insert.setFecha(today);
         insert.setInput("Histórico Cruce Filiales");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
         query.executeUpdate();
@@ -373,7 +373,7 @@ public class SubsidiariesService {
         insert.setComponente("Histórico Cruce Filiales");
         insert.setFecha(today);
         insert.setInput("Histórico Cruce Filiales");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
         query.executeUpdate();

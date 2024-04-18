@@ -72,7 +72,7 @@ public class ProvisionsAndProductController {
         modelAndView.addObject("registers",list.size());
 
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         modelAndView.setViewName("parametric/provisionsAndProduct");
         return modelAndView;
@@ -136,7 +136,7 @@ public class ProvisionsAndProductController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         ProvisionsAndProduct toModify = provisionsAndProductService.findProvisionsAndProductbyCuenta(cuenta).get(0);
         modelAndView.addObject("provisionsAndProductModify",toModify);
@@ -179,7 +179,7 @@ public class ProvisionsAndProductController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         ProvisionsAndProduct provisionsAndProduct = new ProvisionsAndProduct();
         modelAndView.addObject("provisionsAndProduct", provisionsAndProduct);
@@ -288,7 +288,7 @@ public class ProvisionsAndProductController {
         modelAndView.addObject("directory","searchProvisionsAndProduct");
 
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         modelAndView.setViewName("parametric/provisionsAndProduct");
         return modelAndView;

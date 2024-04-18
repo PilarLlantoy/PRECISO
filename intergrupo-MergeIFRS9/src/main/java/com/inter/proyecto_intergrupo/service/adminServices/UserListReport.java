@@ -85,7 +85,7 @@ public class UserListReport {
                 listRoles = listRoles.substring(0,listRoles.length()-1);
 
             createCell(row,columnCount++,user.getUsuario(),style);
-            createCell(row,columnCount++,user.getNombre(),style);
+            createCell(row,columnCount++,user.getPrimerNombre(),style);
             createCell(row,columnCount++,user.getCorreo(),style);
             createCell(row,columnCount++,user.getCentro(),style);
             createCell(row,columnCount++,user.getCreacion().toString(),style);

@@ -58,7 +58,7 @@ public class VistaFiduciariaEeffConsolidatedController {
         User user = userService.findUserByUserName(auth.getName());
 
 
-        if (userService.validateEndpoint(user.getUsuario(), "Ver EEFF Consolidado Fiduciaria")) {
+        if (userService.validateEndpoint(user.getId(), "Ver EEFF Consolidado Fiduciaria")) {
 
             String todayString = "";
             if (params.get("period") == null || params.get("period").toString() == "") {

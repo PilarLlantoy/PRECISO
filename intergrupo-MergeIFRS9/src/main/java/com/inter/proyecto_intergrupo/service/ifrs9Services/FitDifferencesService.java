@@ -262,7 +262,7 @@ public class FitDifferencesService {
             insert.setComponente("IFRS9");
             insert.setFecha(today);
             insert.setInput("Motor Cuadre Diferencias");
-            insert.setNombre(user.getNombre());
+            insert.setNombre(user.getPrimerNombre());
             insert.setUsuario(user.getUsuario());
             auditRepository.save(insert);
         }
@@ -275,7 +275,7 @@ public class FitDifferencesService {
             insert.setComponente("IFRS9");
             insert.setFecha(today);
             insert.setInput("Motor Cuadre Diferencias");
-            insert.setNombre(user.getNombre());
+            insert.setNombre(user.getPrimerNombre());
             insert.setUsuario(user.getUsuario());
             auditRepository.save(insert);
 

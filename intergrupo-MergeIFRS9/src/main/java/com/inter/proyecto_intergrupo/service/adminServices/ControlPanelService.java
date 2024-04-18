@@ -422,7 +422,7 @@ public class ControlPanelService {
         insert.setComponente("Intergrupo");
         insert.setFecha(today);
         insert.setInput("Cuadro de Mando");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         insert.setCentro(user.getCentro());
         auditRepository.save(insert);

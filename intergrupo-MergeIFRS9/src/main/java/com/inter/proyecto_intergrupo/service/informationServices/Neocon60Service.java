@@ -78,7 +78,7 @@ public class Neocon60Service{
         insert.setComponente("Informacionales");
         insert.setFecha(today);
         insert.setInput("Neocon 60");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
     }

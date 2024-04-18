@@ -59,7 +59,7 @@ public class Rp21Controller {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver RP21")) {
+        if(userService.validateEndpoint(user.getId(),"Ver RP21")) {
             int page = params.get("page") != null ? (Integer.valueOf(params.get("page").toString()) - 1) : 0;
             PageRequest pageRequest = PageRequest.of(page, PAGINATIONCOUNT);
             String todayString = "";
@@ -127,7 +127,7 @@ public class Rp21Controller {
             modelAndView.addObject("directory", "rp21");
             modelAndView.addObject("registers",list.size());
 
-            modelAndView.addObject("userName", user.getNombre());
+            modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.setViewName("reports/rp21");
         }
@@ -251,7 +251,7 @@ public class Rp21Controller {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         Rp21 rp21 = new Rp21();
         modelAndView.addObject("rp21", rp21);
@@ -555,7 +555,7 @@ public class Rp21Controller {
         modelAndView.addObject("companies",companies);
         modelAndView.addObject("noQuery",noQuery);
 
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
 
         return modelAndView;

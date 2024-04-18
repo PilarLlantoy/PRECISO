@@ -75,7 +75,7 @@ public class ReposYSimultaneasController {
         modelAndView.addObject("registers",list.size());
 
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         modelAndView.setViewName("parametric/reposYSimultaneas");
         return modelAndView;
@@ -139,7 +139,7 @@ public class ReposYSimultaneasController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         ReposYSimultaneas toModify = reposYSimultaneasService.findReposYSimultaneasbyId(id).get(0);
         modelAndView.addObject("reposYSimultaneasModify",toModify);
@@ -181,7 +181,7 @@ public class ReposYSimultaneasController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         ReposYSimultaneas reposYSimultaneas = new ReposYSimultaneas();
         modelAndView.addObject("reposYSimultaneas", reposYSimultaneas);
@@ -290,7 +290,7 @@ public class ReposYSimultaneasController {
         modelAndView.addObject("directory","searchReposYSimultaneas");
 
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         modelAndView.setViewName("parametric/reposYSimultaneas");
         return modelAndView;

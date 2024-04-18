@@ -45,7 +45,7 @@ public class QueryController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Query")) {
+        if(userService.validateEndpoint(user.getId(),"Ver Query")) {
 
             Date today = new Date();
             Calendar calendar = Calendar.getInstance();
@@ -106,7 +106,7 @@ public class QueryController {
             modelAndView.addObject("listDatesaP", listProceso);
             modelAndView.addObject("listDatesaPCon", dataLPC);
 
-            modelAndView.addObject("userName", user.getNombre());
+            modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.setViewName("parametric/query");
         }
@@ -150,7 +150,7 @@ public class QueryController {
         modelAndView.addObject("listDatesaP", listProceso);
         modelAndView.addObject("listDatesaPCon", dataLPC);
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         modelAndView.setViewName("parametric/query");
         return  modelAndView;
@@ -186,7 +186,7 @@ public class QueryController {
         modelAndView.addObject("listDatesaP", listProceso);
         modelAndView.addObject("listDatesaPCon", dataLPC);
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         modelAndView.setViewName("parametric/query");
         return  modelAndView;
@@ -221,7 +221,7 @@ public class QueryController {
         modelAndView.addObject("listDatesaP", listProceso);
         modelAndView.addObject("listDatesaPCon", dataLPC);
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         modelAndView.setViewName("parametric/query");
         return  modelAndView;
@@ -258,7 +258,7 @@ public class QueryController {
         modelAndView.addObject("listDatesaP", listProceso);
         modelAndView.addObject("listDatesaPCon", dataLPC);
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         modelAndView.setViewName("parametric/query");
         return  modelAndView;

@@ -60,7 +60,7 @@ public class EeffController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver EEFF Neocon")) {
+        if(userService.validateEndpoint(user.getId(),"Ver EEFF Neocon")) {
         String tipo="";
         String todayString;
         String Id;

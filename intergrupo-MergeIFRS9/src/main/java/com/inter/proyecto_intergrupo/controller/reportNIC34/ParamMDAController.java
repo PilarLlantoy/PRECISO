@@ -53,7 +53,7 @@ public class ParamMDAController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Parametrica Moneda")) {
+        if(userService.validateEndpoint(user.getId(),"Ver Parametrica Moneda")) {
 
             int page=params.get("page")==null?0:(Integer.valueOf(params.get("page").toString())-1);
             PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
@@ -77,7 +77,7 @@ public class ParamMDAController {
             modelAndView.addObject("filterExport", "Original");
             modelAndView.addObject("directory", "mda");
             modelAndView.addObject("registers",pageMda.getTotalElements());
-            modelAndView.addObject("userName", user.getNombre());
+            modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.setViewName("parametric/mda");
         }
@@ -131,7 +131,7 @@ public class ParamMDAController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         Long idTemp = null;
         try{
@@ -169,7 +169,7 @@ public class ParamMDAController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         ParamMDA paramMDA = new ParamMDA();
         modelAndView.addObject("mda", paramMDA);
@@ -265,7 +265,7 @@ public class ParamMDAController {
         modelAndView.addObject("registers",list.size());
 
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         modelAndView.setViewName("parametric/mda");
         return modelAndView;

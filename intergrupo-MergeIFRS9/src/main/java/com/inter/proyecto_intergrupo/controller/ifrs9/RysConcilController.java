@@ -62,7 +62,7 @@ public class RysConcilController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Conciliación RYS")) {
+        if(userService.validateEndpoint(user.getId(),"Ver Conciliación RYS")) {
             int page = params.get("page") != null ? (Integer.valueOf(params.get("page").toString()) - 1) : 0;
             PageRequest pageRequest = PageRequest.of(page, PAGINATIONCOUNT);
             String todayString = "";
@@ -105,7 +105,7 @@ public class RysConcilController {
             modelAndView.addObject("period", todayString);
             modelAndView.addObject("vFilter", todayString);
             modelAndView.addObject("directory", "rysConcil");
-            modelAndView.addObject("userName", user.getNombre());
+            modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.addObject("registers",list.size());
 

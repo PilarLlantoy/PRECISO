@@ -38,7 +38,7 @@ public class VistaPatrimonialesEeffAsientoController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
 
-        if (userService.validateEndpoint(user.getUsuario(), "Ver EEFF Patrimoniales Asiento")) {
+        if (userService.validateEndpoint(user.getId(), "Ver EEFF Patrimoniales Asiento")) {
 
             int page = params.get("page") != null ? (Integer.valueOf(params.get("page").toString()) - 1) : 0;
             PageRequest pageRequest = PageRequest.of(page, PAGINATIONCOUNT);

@@ -59,7 +59,7 @@ public class    ControlPanelController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Cuadro Mando Intergrupo")) {
+        if(userService.validateEndpoint(user.getId(),"Ver Cuadro Mando Intergrupo")) {
             int page = params.get("page") != null ? (Integer.parseInt(params.get("page").toString()) - 1) : 0;
 
             PageRequest pageRequest = PageRequest.of(page, PAGINATIONCOUNT);
@@ -113,7 +113,7 @@ public class    ControlPanelController {
             modelAndView.addObject("directory", "controlPanel");
             modelAndView.addObject("state", this.generalState);
 
-            modelAndView.addObject("userName", user.getNombre());
+            modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.setViewName("admin/controlPanel");
         }
@@ -233,7 +233,7 @@ public class    ControlPanelController {
         controlPanelService.sendEmail(panel,userService.findUserByUserName(panel.getUsuarioCarga()));
 
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         modelAndView.setViewName("admin/controlPanel");
         return modelAndView;
@@ -268,7 +268,7 @@ public class    ControlPanelController {
         modelAndView.addObject("directory","accounts");
 
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         modelAndView.setViewName("admin/accounts");
         return modelAndView;
@@ -316,7 +316,7 @@ public class    ControlPanelController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         modelAndView.addObject("inputs",responsibleAccountService.getComponents());
         modelAndView.addObject("compon",responsibleAccountService.getInputs());

@@ -55,7 +55,7 @@ public class RejectIdP1Controller {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Identificación Cuenta")) {
+        if(userService.validateEndpoint(user.getId(),"Ver Identificación Cuenta")) {
 
             int page = params.get("page") != null ? (Integer.valueOf(params.get("page").toString()) - 1) : 0;
             PageRequest pageRequest = PageRequest.of(page, PAGINATIONCOUNT);
@@ -76,7 +76,7 @@ public class RejectIdP1Controller {
             modelAndView.addObject("directory", "rejectIdP1");
             modelAndView.addObject("registers",pageRejectIdP1.getTotalElements());
 
-            modelAndView.addObject("userName", user.getNombre());
+            modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.setViewName("ifrs/rejectIdP1");
         }
@@ -127,7 +127,7 @@ public class RejectIdP1Controller {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         RejectionIdP1 toModify = rejectIdP1Service.findByInicialCuenta(id);
         modelAndView.addObject("rejectIdP1Modify",toModify);
@@ -166,7 +166,7 @@ public class RejectIdP1Controller {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         RejectionIdP1 rejectIdP1 = new RejectionIdP1();
         modelAndView.addObject("RejectIdP1", rejectIdP1);
@@ -261,7 +261,7 @@ public class RejectIdP1Controller {
         modelAndView.addObject("registers",list.size());
 
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         modelAndView.setViewName("ifrs/rejectIdP1");
         return modelAndView;

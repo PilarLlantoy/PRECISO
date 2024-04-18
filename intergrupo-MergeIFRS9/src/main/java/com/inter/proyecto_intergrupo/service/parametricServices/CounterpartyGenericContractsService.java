@@ -192,7 +192,7 @@ public class CounterpartyGenericContractsService {
                 insert.setComponente("Parametricas");
                 insert.setFecha(today);
                 insert.setInput("Contrapartida y Contratos Genericos");
-                insert.setNombre(user.getNombre());
+                insert.setNombre(user.getPrimerNombre());
                 insert.setUsuario(user.getUsuario());
                 auditRepository.save(insert);
             }
@@ -204,7 +204,7 @@ public class CounterpartyGenericContractsService {
                 insert.setComponente("Parametricas");
                 insert.setFecha(today);
                 insert.setInput("Contrapartida y Contratos Genericos");
-                insert.setNombre(user.getNombre());
+                insert.setNombre(user.getPrimerNombre());
                 insert.setUsuario(user.getUsuario());
                 auditRepository.save(insert);
 

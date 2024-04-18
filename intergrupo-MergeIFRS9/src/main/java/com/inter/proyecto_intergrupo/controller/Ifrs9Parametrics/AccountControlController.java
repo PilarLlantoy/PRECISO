@@ -51,7 +51,7 @@ public class AccountControlController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Control Contable")) {
+        if(userService.validateEndpoint(user.getId(),"Ver Control Contable")) {
 
             int page = params.get("page") != null ? (Integer.valueOf(params.get("page").toString()) - 1) : 0;
             PageRequest pageRequest = PageRequest.of(page, PAGINATIONCOUNT);
@@ -72,7 +72,7 @@ public class AccountControlController {
             modelAndView.addObject("directory", "accountControl");
             modelAndView.addObject("registers",pageAccountControl.getTotalElements());
 
-            modelAndView.addObject("userName", user.getNombre());
+            modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.setViewName("ifrs/accountControl");
         }
@@ -123,7 +123,7 @@ public class AccountControlController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         AccountControl toModify = accountControlService.findByCUENTA(id);
         modelAndView.addObject("accountControlModify",toModify);
@@ -162,7 +162,7 @@ public class AccountControlController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         AccountControl accountControl = new AccountControl();
         modelAndView.addObject("AccountControl", accountControl);
@@ -257,7 +257,7 @@ public class AccountControlController {
         modelAndView.addObject("registers",list.size());
 
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         modelAndView.setViewName("ifrs/accountControl");
         return modelAndView;

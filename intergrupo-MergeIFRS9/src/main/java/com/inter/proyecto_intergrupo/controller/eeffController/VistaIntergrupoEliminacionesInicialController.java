@@ -54,7 +54,7 @@ public class VistaIntergrupoEliminacionesInicialController {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if (userService.validateEndpoint(user.getUsuario(), "Ver EEFF Intergrupo Eliminaciones")) {
+        if (userService.validateEndpoint(user.getId(), "Ver EEFF Intergrupo Eliminaciones")) {
 
             String todayString = "";
             if (params.get("period") == null || params.get("period").toString() == "") {

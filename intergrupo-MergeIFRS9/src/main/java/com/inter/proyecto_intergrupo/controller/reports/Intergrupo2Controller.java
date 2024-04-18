@@ -79,7 +79,7 @@ public class Intergrupo2Controller {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if (userService.validateEndpoint(user.getUsuario(), "Ver Intergrupo 2 Banco")) {
+        if (userService.validateEndpoint(user.getId(), "Ver Intergrupo 2 Banco")) {
             int page = params.get("page") != null ? (Integer.valueOf(params.get("page").toString()) - 1) : 0;
             PageRequest pageRequest = PageRequest.of(page, PAGINATIONCOUNT);
             String todayString = "";
@@ -160,7 +160,7 @@ public class Intergrupo2Controller {
             modelAndView.addObject("vFilter", Vf);
             modelAndView.addObject("directory", "intergroup2");
             modelAndView.addObject("columns", listColumns);
-            modelAndView.addObject("userName", user.getNombre());
+            modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.setViewName("reports/intergroup2");
 
@@ -475,7 +475,7 @@ public class Intergrupo2Controller {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if (userService.validateEndpoint(user.getUsuario(), "Ver Descargable Intergrupo")) {
+        if (userService.validateEndpoint(user.getId(), "Ver Descargable Intergrupo")) {
             int page = params.get("page") != null ? (Integer.valueOf(params.get("page").toString()) - 1) : 0;
             PageRequest pageRequest = PageRequest.of(page, PAGINATIONCOUNT);
             String todayString = "";
@@ -543,7 +543,7 @@ public class Intergrupo2Controller {
             modelAndView.addObject("vFilter", Vf);
             modelAndView.addObject("directory", "intergroupVersions");
             modelAndView.addObject("columns", listColumns);
-            modelAndView.addObject("userName", user.getNombre());
+            modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.setViewName("reports/intergroupVersions");
 
@@ -628,7 +628,7 @@ public class Intergrupo2Controller {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName", user.getNombre());
+        modelAndView.addObject("userName", user.getPrimerNombre());
         modelAndView.addObject("userEmail", user.getCorreo());
 
         String Id;
@@ -716,7 +716,7 @@ public class Intergrupo2Controller {
                     insert.setComponente("INTERGRUPO V2");
                     insert.setFecha(today);
                     insert.setInput("INTERGRUPO V2");
-                    insert.setNombre(user.getNombre());
+                    insert.setNombre(user.getPrimerNombre());
                     insert.setUsuario(user.getUsuario());
                     auditRepository.save(insert);
                     return modelAndView;
@@ -746,7 +746,7 @@ public class Intergrupo2Controller {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName", user.getNombre());
+        modelAndView.addObject("userName", user.getPrimerNombre());
         modelAndView.addObject("userEmail", user.getCorreo());
 
         IntergrupoV2 intergrupoV2 = new IntergrupoV2();

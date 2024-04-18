@@ -307,7 +307,7 @@ public class ValoresEeffConsolidatedService {
         insert.setComponente("EEFF Consolidado");
         insert.setFecha(today);
         insert.setInput("Filiales");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
     }

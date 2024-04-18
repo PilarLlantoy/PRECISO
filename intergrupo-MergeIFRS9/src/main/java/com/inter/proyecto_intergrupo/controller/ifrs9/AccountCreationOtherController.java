@@ -75,7 +75,7 @@ public class AccountCreationOtherController {
         modelAndView.addObject("vFilter", todayString);
         modelAndView.addObject("directory", "accountCreationOther");
 
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Creación de Cuentas Otros (General)")) {
+        if(userService.validateEndpoint(user.getId(),"Ver Creación de Cuentas Otros (General)")) {
 
             List<AccountCreationOther> listData2 = accountCreateOtherService.getAllData2(todayString);
             boolean cargar = accountCreateOtherService.validarCargar(todayString);
@@ -85,7 +85,7 @@ public class AccountCreationOtherController {
             modelAndView.addObject("rol", "GENERAL");
             modelAndView.setViewName("ifrs/accountCreationOther");
         }
-        else if(userService.validateEndpoint(user.getUsuario(),"Ver Creación de Cuentas Otros (Consolidación)")) {
+        else if(userService.validateEndpoint(user.getId(),"Ver Creación de Cuentas Otros (Consolidación)")) {
 
             List<AccountCreationOther> listData2 = accountCreateOtherService.getAllDataConsol(todayString);
             modelAndView.addObject("allRulesData2", listData2);
@@ -93,7 +93,7 @@ public class AccountCreationOtherController {
             modelAndView.addObject("rol", "CONSOLIDACION");
             modelAndView.setViewName("ifrs/accountCreationOther");
         }
-        else if(userService.validateEndpoint(user.getUsuario(),"Ver Creación de Cuentas Otros (Control Contable)")) {
+        else if(userService.validateEndpoint(user.getId(),"Ver Creación de Cuentas Otros (Control Contable)")) {
 
             List<AccountCreationOther> listData2 = accountCreateOtherService.getAllDataControl(todayString);
             modelAndView.addObject("allRulesData2", listData2);
@@ -101,7 +101,7 @@ public class AccountCreationOtherController {
             modelAndView.addObject("rol", "CONTROL CONTABLE");
             modelAndView.setViewName("ifrs/accountCreationOther");
         }
-        else if(userService.validateEndpoint(user.getUsuario(),"Ver Creación de Cuentas Otros (Gestión)")) {
+        else if(userService.validateEndpoint(user.getId(),"Ver Creación de Cuentas Otros (Gestión)")) {
 
             List<AccountCreationOther> listData2 = accountCreateOtherService.getAllDataGestion(todayString);
             modelAndView.addObject("allRulesData2", listData2);
@@ -123,7 +123,7 @@ public class AccountCreationOtherController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
 
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Creación de Cuentas Otros Planos")) {
+        if(userService.validateEndpoint(user.getId(),"Ver Creación de Cuentas Otros Planos")) {
 
             String todayString = "";
             if (params.get("period") == null || ( params.get("period") != null && params.get("period").toString() == "")) {

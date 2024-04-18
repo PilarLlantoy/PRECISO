@@ -586,7 +586,7 @@ public class AccountCreationOtherService {
         insert.setComponente("Creación de Cuentas");
         insert.setFecha(today);
         insert.setInput("Otras Cuentas");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
     }
@@ -1674,7 +1674,7 @@ public class AccountCreationOtherService {
                 "    <div class=\"content\">\n" +
                 "        <h2>Mensaje Nuevo Recibido</h2>\n" +
                 "        <p>Se ha recibido un mensaje del Area "+rol+" con la sigueinte información:</p>\n" +
-                "        <p>Remitente: "+user.getNombre()+".</p>\n" +
+                "        <p>Remitente: "+user.getPrimerNombre()+".</p>\n" +
                 "        <p>Cuenta: "+data.getNucta()+".</p>\n" +
                 "        <p>Empresa: "+data.getEmpresa()+".</p>\n" +
                 "        <p>Periodo: "+data.getPeriodo()+".</p>\n" +

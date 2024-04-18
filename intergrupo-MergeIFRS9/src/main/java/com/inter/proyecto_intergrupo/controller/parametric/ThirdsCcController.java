@@ -51,7 +51,7 @@ public class ThirdsCcController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Parametrica Terceros (CC)")) {
+        if(userService.validateEndpoint(user.getId(),"Ver Parametrica Terceros (CC)")) {
 
             int page = params.get("page") != null ? (Integer.valueOf(params.get("page").toString()) - 1) : 0;
             PageRequest pageRequest = PageRequest.of(page, PAGINATIONCOUNT);
@@ -71,7 +71,7 @@ public class ThirdsCcController {
             modelAndView.addObject("directory", "thirdsCc");
             modelAndView.addObject("registers",pageThirdsCc.getTotalElements());
 
-            modelAndView.addObject("userName", user.getNombre());
+            modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.setViewName("parametric/thirdsCc");
         }
@@ -125,7 +125,7 @@ public class ThirdsCcController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         ThirdsCc toModify = thirdsCcService.findByNit(id);
         modelAndView.addObject("thirdModify",toModify);
@@ -174,7 +174,7 @@ public class ThirdsCcController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         ThirdsCc third = new ThirdsCc();
         modelAndView.addObject("third", third);
@@ -274,7 +274,7 @@ public class ThirdsCcController {
         modelAndView.addObject("registers",list.size());
 
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         modelAndView.setViewName("parametric/thirdsCc");
         return modelAndView;

@@ -468,7 +468,7 @@ public class TemplateBankService {
                 "WHERE input = 'PLANTILLA BANCO' AND fecha_reporte = ? " +
                 "AND responsable IN (SELECT centro FROM nexco_usuarios where usuario = ? " +
                 "GROUP BY centro)");
-        updateMando.setParameter(1,user.getNombre());
+        updateMando.setParameter(1,user.getPrimerNombre());
         updateMando.setParameter(2,new Date());
         updateMando.setParameter(3,period);
         updateMando.setParameter(4,user.getUsuario());

@@ -49,7 +49,7 @@ public class ChangeCurrencyController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Cambio Valor Divisa")) {
+        if(userService.validateEndpoint(user.getId(),"Ver Cambio Valor Divisa")) {
 
             int page=params.get("page")==null?0:(Integer.valueOf(params.get("page").toString())-1);
             PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
@@ -74,7 +74,7 @@ public class ChangeCurrencyController {
             modelAndView.addObject("directory", "changeCurrency");
             modelAndView.addObject("registers",pageChangeCurrency.getTotalElements());
 
-            modelAndView.addObject("userName", user.getNombre());
+            modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.setViewName("parametric/changeCurrency");
         }
@@ -125,7 +125,7 @@ public class ChangeCurrencyController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         SimpleDateFormat formato = new SimpleDateFormat("dd-MM-yyyy");
         Date fecha = formato.parse(id);
@@ -167,7 +167,7 @@ public class ChangeCurrencyController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         modelAndView.setViewName("parametric/addChangeCurrency");
         return modelAndView;
@@ -268,7 +268,7 @@ public class ChangeCurrencyController {
         modelAndView.addObject("registers",list.size());
 
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         modelAndView.setViewName("parametric/changeCurrency");
         return modelAndView;

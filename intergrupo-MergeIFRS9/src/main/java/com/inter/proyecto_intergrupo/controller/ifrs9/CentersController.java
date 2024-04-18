@@ -52,7 +52,7 @@ public class CentersController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Centros de Oficinas")) {
+        if(userService.validateEndpoint(user.getId(),"Ver Centros de Oficinas")) {
 
         int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
         PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
@@ -73,7 +73,7 @@ public class CentersController {
         List<Centers> list = centerService.findAll();
         modelAndView.addObject("registers",list.size());
 
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         modelAndView.setViewName("ifrs/center");
         }
@@ -134,7 +134,7 @@ public class CentersController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName", user.getNombre());
+        modelAndView.addObject("userName", user.getPrimerNombre());
         modelAndView.addObject("userEmail", user.getCorreo());
         Centers toModify = centerService.findCenterbyOficina(oficina).get(0);
         modelAndView.addObject("centerModify", toModify);
@@ -175,7 +175,7 @@ public class CentersController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName", user.getNombre());
+        modelAndView.addObject("userName", user.getPrimerNombre());
         modelAndView.addObject("userEmail", user.getCorreo());
         Centers center = new Centers();
         modelAndView.addObject("center", center);
@@ -281,7 +281,7 @@ public class CentersController {
         modelAndView.addObject("directory","searchCenter");
 
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         modelAndView.setViewName("ifrs/center");
         return modelAndView;

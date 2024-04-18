@@ -92,7 +92,7 @@ public class Intergrupo2Service {
         insert.setInput("Versión 2");
         if(user!=null)
         {
-            insert.setNombre(user.getNombre());
+            insert.setNombre(user.getPrimerNombre());
             insert.setUsuario(user.getUsuario());
             insert.setCentro(user.getCentro());
         }
@@ -288,7 +288,7 @@ public class Intergrupo2Service {
                     insert.setComponente("Intergrupo V2");
                     insert.setFecha(today);
                     insert.setInput("Depósitos - Intergrupo V2");
-                    insert.setNombre(user.getNombre());
+                    insert.setNombre(user.getPrimerNombre());
                     insert.setUsuario(user.getUsuario());
                     auditRepository.save(insert);
                 }
@@ -400,7 +400,7 @@ public class Intergrupo2Service {
             insert.setComponente("Intergrupo V2");
             insert.setFecha(today);
             insert.setInput("Depositos - Intergrupo V2");
-            insert.setNombre(user.getNombre());
+            insert.setNombre(user.getPrimerNombre());
             insert.setUsuario(user.getUsuario());
             auditRepository.save(insert);
         } else {
@@ -1432,7 +1432,7 @@ public class Intergrupo2Service {
         insert.setComponente("Intergrupo");
         insert.setFecha(today);
         insert.setInput("Intergrupo V2 Banco");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
     }

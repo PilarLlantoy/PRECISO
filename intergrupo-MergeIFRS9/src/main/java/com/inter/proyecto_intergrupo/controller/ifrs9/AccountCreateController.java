@@ -62,7 +62,7 @@ public class AccountCreateController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Creación de Cuentas (General)")) {
+        if(userService.validateEndpoint(user.getId(),"Ver Creación de Cuentas (General)")) {
 
             int page = params.get("page") != null ? (Integer.parseInt(params.get("page").toString()) - 1) : 0;
             PageRequest pageRequest = PageRequest.of(page, PAGINATIONCOUNT);
@@ -115,11 +115,11 @@ public class AccountCreateController {
             modelAndView.addObject("directory", "accountCreation");
             modelAndView.addObject("registers",pageAccountCreation.getTotalElements());
 
-            modelAndView.addObject("userName", user.getNombre());
+            modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.setViewName("ifrs/accountCreation");
         }
-        else if(userService.validateEndpoint(user.getUsuario(),"Ver Creación de Cuentas (Gestión)")) {
+        else if(userService.validateEndpoint(user.getId(),"Ver Creación de Cuentas (Gestión)")) {
 
             int page = params.get("page") != null ? (Integer.parseInt(params.get("page").toString()) - 1) : 0;
             PageRequest pageRequest = PageRequest.of(page, PAGINATIONCOUNT);
@@ -157,11 +157,11 @@ public class AccountCreateController {
             modelAndView.addObject("directory", "accountCreation");
             modelAndView.addObject("registers",pageAccountCreation.getTotalElements());
 
-            modelAndView.addObject("userName", user.getNombre());
+            modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.setViewName("ifrs/accountCreation");
         }
-        else if(userService.validateEndpoint(user.getUsuario(),"Ver Creación de Cuentas (Consolidación)")) {
+        else if(userService.validateEndpoint(user.getId(),"Ver Creación de Cuentas (Consolidación)")) {
 
             int page = params.get("page") != null ? (Integer.parseInt(params.get("page").toString()) - 1) : 0;
             PageRequest pageRequest = PageRequest.of(page, PAGINATIONCOUNT);
@@ -200,11 +200,11 @@ public class AccountCreateController {
             modelAndView.addObject("directory", "accountCreation");
             modelAndView.addObject("registers",pageAccountCreation.getTotalElements());
 
-            modelAndView.addObject("userName", user.getNombre());
+            modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.setViewName("ifrs/accountCreation");
         }
-        else if(userService.validateEndpoint(user.getUsuario(),"Ver Creación de Cuentas (Control Contable)")) {
+        else if(userService.validateEndpoint(user.getId(),"Ver Creación de Cuentas (Control Contable)")) {
 
             int page = params.get("page") != null ? (Integer.parseInt(params.get("page").toString()) - 1) : 0;
             PageRequest pageRequest = PageRequest.of(page, PAGINATIONCOUNT);
@@ -243,7 +243,7 @@ public class AccountCreateController {
             modelAndView.addObject("directory", "accountCreation");
             modelAndView.addObject("registers",pageAccountCreation.getTotalElements());
 
-            modelAndView.addObject("userName", user.getNombre());
+            modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.setViewName("ifrs/accountCreation");
         }
@@ -269,19 +269,19 @@ public class AccountCreateController {
         String headerValue = "attachment; filename=LogInserción_" + currentDateTime + ".xlsx";
         response.setHeader(headerKey, headerValue);
 
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Creación de Cuentas (General)"))
+        if(userService.validateEndpoint(user.getId(),"Ver Creación de Cuentas (General)"))
         {
             perfil = "GENERAL";
         }
-        else if(userService.validateEndpoint(user.getUsuario(),"Ver Creación de Cuentas (Gestión)"))
+        else if(userService.validateEndpoint(user.getId(),"Ver Creación de Cuentas (Gestión)"))
         {
             perfil = "GESTION";
         }
-        else if(userService.validateEndpoint(user.getUsuario(),"Ver Creación de Cuentas (Consolidación)"))
+        else if(userService.validateEndpoint(user.getId(),"Ver Creación de Cuentas (Consolidación)"))
         {
             perfil = "CONSOLIDACION";
         }
-        else if(userService.validateEndpoint(user.getUsuario(),"Ver Creación de Cuentas (Control Contable)"))
+        else if(userService.validateEndpoint(user.getId(),"Ver Creación de Cuentas (Control Contable)"))
         {
             perfil = "CONTROL CONTABLE";
         }
@@ -325,15 +325,15 @@ public class AccountCreateController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
         String perfil="";
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Creación de Cuentas (Gestión)"))
+        if(userService.validateEndpoint(user.getId(),"Ver Creación de Cuentas (Gestión)"))
         {
             perfil = "GESTION";
         }
-        else if(userService.validateEndpoint(user.getUsuario(),"Ver Creación de Cuentas (Consolidación)"))
+        else if(userService.validateEndpoint(user.getId(),"Ver Creación de Cuentas (Consolidación)"))
         {
             perfil = "CONSOLIDACION";
         }
-        else if(userService.validateEndpoint(user.getUsuario(),"Ver Creación de Cuentas (Control Contable)"))
+        else if(userService.validateEndpoint(user.getId(),"Ver Creación de Cuentas (Control Contable)"))
         {
             perfil = "CONTROL CONTABLE";
         }
@@ -355,7 +355,7 @@ public class AccountCreateController {
         response.setHeader(headerKey, headerValue);
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Creación de Cuentas (General)"))
+        if(userService.validateEndpoint(user.getId(),"Ver Creación de Cuentas (General)"))
         {
             List<AccountCreation> accountCreateList = accountCreationService.findAll();
             List<String> accountCreateListNOT = accountCreationService.listAccountCreateNOTIN();
@@ -395,19 +395,19 @@ public class AccountCreateController {
         User user = userService.findUserByUserName(auth.getName());
 
         String perfil ="";
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Creación de Cuentas (General)"))
+        if(userService.validateEndpoint(user.getId(),"Ver Creación de Cuentas (General)"))
         {
             perfil = "GENERAL";
         }
-        else if(userService.validateEndpoint(user.getUsuario(),"Ver Creación de Cuentas (Gestión)"))
+        else if(userService.validateEndpoint(user.getId(),"Ver Creación de Cuentas (Gestión)"))
         {
             perfil = "GESTION";
         }
-        else if(userService.validateEndpoint(user.getUsuario(),"Ver Creación de Cuentas (Consolidación)"))
+        else if(userService.validateEndpoint(user.getId(),"Ver Creación de Cuentas (Consolidación)"))
         {
             perfil = "CONSOLIDACION";
         }
-        else if(userService.validateEndpoint(user.getUsuario(),"Ver Creación de Cuentas (Control Contable)"))
+        else if(userService.validateEndpoint(user.getId(),"Ver Creación de Cuentas (Control Contable)"))
         {
             perfil = "CONTROL CONTABLE";
         }
@@ -434,19 +434,19 @@ public class AccountCreateController {
         User user = userService.findUserByUserName(auth.getName());
 
         String perfil ="";
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Creación de Cuentas (General)"))
+        if(userService.validateEndpoint(user.getId(),"Ver Creación de Cuentas (General)"))
         {
             perfil = "GENERAL";
         }
-        else if(userService.validateEndpoint(user.getUsuario(),"Ver Creación de Cuentas (Gestión)"))
+        else if(userService.validateEndpoint(user.getId(),"Ver Creación de Cuentas (Gestión)"))
         {
             perfil = "GESTION";
         }
-        else if(userService.validateEndpoint(user.getUsuario(),"Ver Creación de Cuentas (Consolidación)"))
+        else if(userService.validateEndpoint(user.getId(),"Ver Creación de Cuentas (Consolidación)"))
         {
             perfil = "CONSOLIDACION";
         }
-        else if(userService.validateEndpoint(user.getUsuario(),"Ver Creación de Cuentas (Control Contable)"))
+        else if(userService.validateEndpoint(user.getId(),"Ver Creación de Cuentas (Control Contable)"))
         {
             perfil = "CONTROL CONTABLE";
         }
@@ -473,19 +473,19 @@ public class AccountCreateController {
         User user = userService.findUserByUserName(auth.getName());
 
         String perfil ="";
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Creación de Cuentas (General)"))
+        if(userService.validateEndpoint(user.getId(),"Ver Creación de Cuentas (General)"))
         {
             perfil = "GENERAL";
         }
-        else if(userService.validateEndpoint(user.getUsuario(),"Ver Creación de Cuentas (Gestión)"))
+        else if(userService.validateEndpoint(user.getId(),"Ver Creación de Cuentas (Gestión)"))
         {
             perfil = "GESTION";
         }
-        else if(userService.validateEndpoint(user.getUsuario(),"Ver Creación de Cuentas (Consolidación)"))
+        else if(userService.validateEndpoint(user.getId(),"Ver Creación de Cuentas (Consolidación)"))
         {
             perfil = "CONSOLIDACION";
         }
-        else if(userService.validateEndpoint(user.getUsuario(),"Ver Creación de Cuentas (Control Contable)"))
+        else if(userService.validateEndpoint(user.getId(),"Ver Creación de Cuentas (Control Contable)"))
         {
             perfil = "CONTROL CONTABLE";
         }
@@ -512,19 +512,19 @@ public class AccountCreateController {
         User user = userService.findUserByUserName(auth.getName());
 
         String perfil ="";
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Creación de Cuentas (General)"))
+        if(userService.validateEndpoint(user.getId(),"Ver Creación de Cuentas (General)"))
         {
             perfil = "GENERAL";
         }
-        else if(userService.validateEndpoint(user.getUsuario(),"Ver Creación de Cuentas (Gestión)"))
+        else if(userService.validateEndpoint(user.getId(),"Ver Creación de Cuentas (Gestión)"))
         {
             perfil = "GESTION";
         }
-        else if(userService.validateEndpoint(user.getUsuario(),"Ver Creación de Cuentas (Consolidación)"))
+        else if(userService.validateEndpoint(user.getId(),"Ver Creación de Cuentas (Consolidación)"))
         {
             perfil = "CONSOLIDACION";
         }
-        else if(userService.validateEndpoint(user.getUsuario(),"Ver Creación de Cuentas (Control Contable)"))
+        else if(userService.validateEndpoint(user.getId(),"Ver Creación de Cuentas (Control Contable)"))
         {
             perfil = "CONTROL CONTABLE";
         }

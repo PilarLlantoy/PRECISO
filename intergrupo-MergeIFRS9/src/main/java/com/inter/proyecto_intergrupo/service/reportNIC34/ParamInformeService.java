@@ -55,7 +55,7 @@ public class ParamInformeService {
         insert.setComponente("NIC34");
         insert.setFecha(today);
         insert.setInput("Parametrica Informe Balance y PYG");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
     }

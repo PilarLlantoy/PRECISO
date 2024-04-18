@@ -53,7 +53,7 @@ public class PlaneRistrasController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Plano Ristras")) {
+        if(userService.validateEndpoint(user.getId(),"Ver Plano Ristras")) {
 
             int page = params.get("page") != null ? (Integer.valueOf(params.get("page").toString()) - 1) : 0;
             PageRequest pageRequest = PageRequest.of(page, PAGINATIONCOUNT);
@@ -74,7 +74,7 @@ public class PlaneRistrasController {
             modelAndView.addObject("directory", "planeRistras");
             modelAndView.addObject("registers",pagePlaneRistras.getTotalElements());
 
-            modelAndView.addObject("userName", user.getNombre());
+            modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.setViewName("ifrs/planeRistras");
         }
@@ -125,7 +125,7 @@ public class PlaneRistrasController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         PlaneRistras toModify = planeRistrasService.findByIdPlano(Long.parseLong(id));
         modelAndView.addObject("planeRistrasModify",toModify);
@@ -164,7 +164,7 @@ public class PlaneRistrasController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         PlaneRistras planeRistras = new PlaneRistras();
         modelAndView.addObject("PlaneRistras", planeRistras);
@@ -259,7 +259,7 @@ public class PlaneRistrasController {
         modelAndView.addObject("registers",list.size());
 
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         modelAndView.setViewName("ifrs/planeRistras");
         return modelAndView;

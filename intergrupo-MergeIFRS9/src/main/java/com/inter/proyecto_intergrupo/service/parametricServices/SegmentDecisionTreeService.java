@@ -246,7 +246,7 @@ public class SegmentDecisionTreeService {
                 insert.setComponente("Parametricas");
                 insert.setFecha(today);
                 insert.setInput("Arbol de Decision Segmento");
-                insert.setNombre(user.getNombre());
+                insert.setNombre(user.getPrimerNombre());
                 insert.setUsuario(user.getUsuario());
                 auditRepository.save(insert);
             }
@@ -258,7 +258,7 @@ public class SegmentDecisionTreeService {
                 insert.setComponente("IFRS9");
                 insert.setFecha(today);
                 insert.setInput("Arbol de Decision Segmento");
-                insert.setNombre(user.getNombre());
+                insert.setNombre(user.getPrimerNombre());
                 insert.setUsuario(user.getUsuario());
                 auditRepository.save(insert);
 

@@ -47,7 +47,7 @@ public class AvalTypeController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Tipos de aval")) {
+        if(userService.validateEndpoint(user.getId(),"Ver Tipos de aval")) {
             int page = params.get("page") != null ? (Integer.valueOf(params.get("page").toString()) - 1) : 0;
             PageRequest pageRequest = PageRequest.of(page, PAGINATIONCOUNT);
             Page<AvalTypes> pageAval = avalTypeService.getAll(pageRequest);
@@ -66,7 +66,7 @@ public class AvalTypeController {
             modelAndView.addObject("columns", listColumns);
             modelAndView.addObject("filterExport", "Original");
             modelAndView.addObject("directory", "avalType");
-            modelAndView.addObject("userName", user.getNombre());
+            modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.addObject("registers",pageAval.getTotalElements());
             modelAndView.setViewName("parametric/avalType");
@@ -132,7 +132,7 @@ public class AvalTypeController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String pathList [] = id.split(":");
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName", user.getNombre());
+        modelAndView.addObject("userName", user.getPrimerNombre());
         modelAndView.addObject("userEmail", user.getCorreo());
         AvalTypes toModify = avalTypeService.findAval(pathList[0],pathList[1]).get(0);
         modelAndView.addObject("avalModify", toModify);
@@ -165,7 +165,7 @@ public class AvalTypeController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName", user.getNombre());
+        modelAndView.addObject("userName", user.getPrimerNombre());
         modelAndView.addObject("userEmail", user.getCorreo());
         AvalTypes avalTypes = new AvalTypes();
         modelAndView.addObject("aval", avalTypes);
@@ -287,7 +287,7 @@ public class AvalTypeController {
         modelAndView.addObject("registers", pageAval.getTotalElements());
 
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         modelAndView.setViewName("parametric/avalType");
         return modelAndView;

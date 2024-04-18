@@ -64,7 +64,7 @@ public class PrecioIcrvService {
         insert.setComponente("Portafolio");
         insert.setFecha(today);
         insert.setInput("Precio ICRV");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
     }
@@ -153,7 +153,7 @@ public class PrecioIcrvService {
         }
         User user = new User();
         user.setCentro("");
-        user.setNombre("SYSTEM JOB");
+        user.setPrimerNombre("SYSTEM JOB");
         user.setUsuario("");
 
         if(findAllPrecio(todayString).size()==0)

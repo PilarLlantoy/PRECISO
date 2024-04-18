@@ -59,7 +59,7 @@ public class BaseIcrvService {
         insert.setComponente("Portafolio");
         insert.setFecha(today);
         insert.setInput("Base ICRV");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
     }

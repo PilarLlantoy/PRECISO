@@ -78,8 +78,8 @@ public class ControlPanelJobsController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Cuadro Mando Jobs")) {
-            modelAndView.addObject("userName", user.getNombre());
+        if(userService.validateEndpoint(user.getId(),"Ver Cuadro Mando Jobs")) {
+            modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
 
             int page = params.get("page") != null ? (Integer.valueOf(params.get("page").toString()) - 1) : 0;
@@ -117,8 +117,8 @@ public class ControlPanelJobsController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Cuadro Mando Jobs")) {
-            modelAndView.addObject("userName", user.getNombre());
+        if(userService.validateEndpoint(user.getId(),"Ver Cuadro Mando Jobs")) {
+            modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
 
             int page = params.get("page") != null ? (Integer.valueOf(params.get("page").toString()) - 1) : 0;
@@ -191,7 +191,7 @@ public class ControlPanelJobsController {
         controlPanelJobsService.changeState(controlPanelJobsService.findByIdJob(Integer.parseInt(params.get("id").toString())));
 
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         modelAndView.setViewName("admin/controlPanelJobs");
         return modelAndView;

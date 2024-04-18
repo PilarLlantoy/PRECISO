@@ -57,7 +57,7 @@ public class F351IcrvService {
         insert.setComponente("Portafolio");
         insert.setFecha(today);
         insert.setInput("F351 ICRV");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
     }

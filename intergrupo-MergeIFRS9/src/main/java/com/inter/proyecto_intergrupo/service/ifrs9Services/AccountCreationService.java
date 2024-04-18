@@ -96,7 +96,7 @@ public class AccountCreationService {
         insert.setComponente("CREACIÓN DE CUENTAS");
         insert.setFecha(today);
         insert.setInput("ACTUALIZACIÓN DATA "+perfil);
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
     }
@@ -896,7 +896,7 @@ public class AccountCreationService {
                         "where componente = ? AND input = ?");
                 if (perfil.equals("GENERAL")) {
                     updateAll2.setParameter(3, "STAGES");
-                    updateAll2.setParameter(1, user.getNombre());
+                    updateAll2.setParameter(1, user.getPrimerNombre());
                     updateAll2.setParameter(2, hoy);
                     Query updateAll3 = entityManager.createNativeQuery("update nexco_cuadro_mando_ifrs \n" +
                             "set semaforo_componente = 'PENDING' \n" +
@@ -914,7 +914,7 @@ public class AccountCreationService {
 
                 } else {
                     updateAll2.setParameter(3, "CREACION");
-                    updateAll2.setParameter(1, user.getNombre());
+                    updateAll2.setParameter(1, user.getPrimerNombre());
                     updateAll2.setParameter(2, hoy);
                 }
                 updateAll2.setParameter(4, perfil);

@@ -54,7 +54,7 @@ public class ComerParametricService {
                 insert.setComponente("Metodología Comercializadora");
                 insert.setFecha(today);
                 insert.setInput("Metodología Comercializadora");
-                insert.setNombre(user.getNombre());
+                insert.setNombre(user.getPrimerNombre());
                 insert.setUsuario(user.getUsuario());
                 auditRepository.save(insert);
             }
@@ -67,7 +67,7 @@ public class ComerParametricService {
                 insert.setComponente("Metodología Comercializadora");
                 insert.setFecha(today);
                 insert.setInput("Metodología Comercializadora");
-                insert.setNombre(user.getNombre());
+                insert.setNombre(user.getPrimerNombre());
                 insert.setUsuario(user.getUsuario());
                 auditRepository.save(insert);
 
@@ -188,7 +188,7 @@ public class ComerParametricService {
         insert.setComponente("Metodología Comercializadora");
         insert.setFecha(today);
         insert.setInput("Metodología Comercializadora");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
         clear.executeUpdate();

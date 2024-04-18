@@ -33,7 +33,7 @@ public class CargoController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Roles")) {
+        if(userService.validateEndpoint(user.getId(),"Ver Roles")) {
             List<Cargo> allCargos = cargoService.findAllActiveCargos();
             modelAndView.addObject("cargos", allCargos);
             modelAndView.setViewName("admin/cargos");

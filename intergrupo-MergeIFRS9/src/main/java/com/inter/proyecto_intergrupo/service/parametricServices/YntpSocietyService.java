@@ -92,7 +92,7 @@ public class YntpSocietyService {
                 insert.setComponente("YNTP");
                 insert.setFecha(today);
                 insert.setInput("YNTP Sociedades");
-                insert.setNombre(user.getNombre());
+                insert.setNombre(user.getPrimerNombre());
                 insert.setUsuario(user.getUsuario());
                 auditRepository.save(insert);
             } else {
@@ -103,7 +103,7 @@ public class YntpSocietyService {
                 insert.setComponente("YNTP");
                 insert.setFecha(today);
                 insert.setInput("YNTP Sociedades");
-                insert.setNombre(user.getNombre());
+                insert.setNombre(user.getPrimerNombre());
                 insert.setUsuario(user.getUsuario());
                 auditRepository.save(insert);
             }
@@ -538,7 +538,7 @@ public class YntpSocietyService {
             insert.setComponente("YNTP");
             insert.setFecha(today);
             insert.setInput("YNTP");
-            insert.setNombre(user.getNombre());
+            insert.setNombre(user.getPrimerNombre());
             insert.setUsuario(user.getUsuario());
             auditRepository.save(insert);
             query.executeUpdate();
@@ -553,7 +553,7 @@ public class YntpSocietyService {
             insert.setComponente("YNTP");
             insert.setFecha(today);
             insert.setInput("YNTP");
-            insert.setNombre(user.getNombre());
+            insert.setNombre(user.getPrimerNombre());
             insert.setUsuario(user.getUsuario());
             auditRepository.save(insert);
 

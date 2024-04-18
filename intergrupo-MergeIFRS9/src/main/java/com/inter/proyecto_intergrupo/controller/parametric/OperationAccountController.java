@@ -54,7 +54,7 @@ public class OperationAccountController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Operación y Riesgo de Cuentas"))
+        if(userService.validateEndpoint(user.getId(),"Ver Operación y Riesgo de Cuentas"))
         {
             int page = params.get("page") == null ? 0 : (Integer.valueOf(params.get("page").toString()) - 1);
             PageRequest pageRequest = PageRequest.of(page, PAGINATIONCOUNT);
@@ -80,7 +80,7 @@ public class OperationAccountController {
             modelAndView.addObject("directory", "operationAccount");
             modelAndView.addObject("registers",list.size());
 
-            modelAndView.addObject("userName", user.getNombre());
+            modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.setViewName("parametric/operationAccount");
         }
@@ -122,7 +122,7 @@ public class OperationAccountController {
         modelAndView.addObject("registers",list.size());
 
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         modelAndView.setViewName("parametric/operationAccount");
         return modelAndView;
@@ -206,7 +206,7 @@ public class OperationAccountController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         OperationAccount toModify = responsibleAccountService.findResponsibleAccountById(id);
         modelAndView.addObject("operationAccountModify",toModify);
@@ -276,7 +276,7 @@ public class OperationAccountController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         OperationAccount operation = new OperationAccount();
         modelAndView.addObject("operation", operation);

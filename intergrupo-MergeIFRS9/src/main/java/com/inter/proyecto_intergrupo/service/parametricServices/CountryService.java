@@ -65,7 +65,7 @@ public class CountryService {
         insert.setComponente("Parametricas");
         insert.setFecha(today);
         insert.setInput("Tabla Paises");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
 
@@ -83,7 +83,7 @@ public class CountryService {
         insert.setComponente("Parametricas");
         insert.setFecha(today);
         insert.setInput("Tabla Paises");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
     }
@@ -99,7 +99,7 @@ public class CountryService {
         insert.setComponente("Parametricas");
         insert.setFecha(today);
         insert.setInput("Tabla Paises");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
     }

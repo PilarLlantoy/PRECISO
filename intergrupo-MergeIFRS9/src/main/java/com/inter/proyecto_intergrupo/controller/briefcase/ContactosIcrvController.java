@@ -49,7 +49,7 @@ public class ContactosIcrvController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Contactos ICRV")) {
+        if(userService.validateEndpoint(user.getId(),"Ver Contactos ICRV")) {
 
             int page = params.get("page") != null ? (Integer.valueOf(params.get("page").toString()) - 1) : 0;
             PageRequest pageRequest = PageRequest.of(page, PAGINATIONCOUNT);
@@ -68,7 +68,7 @@ public class ContactosIcrvController {
             modelAndView.addObject("filterExport", "Original");
             modelAndView.addObject("directory", "contactosicrv");
             modelAndView.addObject("registers",pageContactosIcrv.getTotalElements());
-            modelAndView.addObject("userName", user.getNombre());
+            modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.setViewName("briefcase/contactosicrv");
         }
@@ -122,7 +122,7 @@ public class ContactosIcrvController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         Long idTemp = null;
         try{
@@ -160,7 +160,7 @@ public class ContactosIcrvController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         ContactosIcrv contactosicrv = new ContactosIcrv();
         modelAndView.addObject("contactosicrv", contactosicrv);
@@ -256,7 +256,7 @@ public class ContactosIcrvController {
         modelAndView.addObject("registers",list.size());
 
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         modelAndView.setViewName("briefcase/contactosicrv");
         return modelAndView;

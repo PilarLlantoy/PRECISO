@@ -54,7 +54,7 @@ public class SegmentDecisionTreeController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Árbol de decisión de segmento")) {
+        if(userService.validateEndpoint(user.getId(),"Ver Árbol de decisión de segmento")) {
 
         int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
         PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
@@ -75,7 +75,7 @@ public class SegmentDecisionTreeController {
         List<SegmentDecisionTree> list = segmentDecisionTreeService.findAll();
         modelAndView.addObject("registers",list.size());
 
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         modelAndView.setViewName("parametric/segmentDecisionTree");
         }
@@ -145,7 +145,7 @@ public class SegmentDecisionTreeController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         SegmentDecisionTree toModify = segmentDecisionTreeService.findSegmentDecisionTreebyId(id).get(0);
         modelAndView.addObject("segmentDecisionTreeModify",toModify);
@@ -187,7 +187,7 @@ public class SegmentDecisionTreeController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         SegmentDecisionTree segmentDecisionTree = new SegmentDecisionTree();
         modelAndView.addObject("segmentDecisionTree", segmentDecisionTree);
@@ -296,7 +296,7 @@ public class SegmentDecisionTreeController {
         modelAndView.addObject("directory","searchSegmentDecisionTree");
 
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         modelAndView.setViewName("parametric/segmentDecisionTree");
         return modelAndView;

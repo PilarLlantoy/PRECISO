@@ -178,7 +178,7 @@ public class AccountHistoryIFRS9Service {
                 insert.setComponente("Parametricas");
                 insert.setFecha(today);
                 insert.setInput("Historico Cuentas IFRS9");
-                insert.setNombre(user.getNombre());
+                insert.setNombre(user.getPrimerNombre());
                 insert.setUsuario(user.getUsuario());
                 auditRepository.save(insert);
             }
@@ -190,7 +190,7 @@ public class AccountHistoryIFRS9Service {
                 insert.setComponente("Parametricas");
                 insert.setFecha(today);
                 insert.setInput("Historico Cuentas IFRS9");
-                insert.setNombre(user.getNombre());
+                insert.setNombre(user.getPrimerNombre());
                 insert.setUsuario(user.getUsuario());
                 auditRepository.save(insert);
 

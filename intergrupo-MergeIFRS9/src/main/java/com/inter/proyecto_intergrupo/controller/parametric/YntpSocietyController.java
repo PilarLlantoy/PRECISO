@@ -62,7 +62,7 @@ public class YntpSocietyController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Sociedades YNTP")) {
+        if(userService.validateEndpoint(user.getId(),"Ver Sociedades YNTP")) {
 
             int page = params.get("page") != null ? (Integer.valueOf(params.get("page").toString()) - 1) : 0;
             PageRequest pageRequest = PageRequest.of(page, PAGINATIONCOUNT);
@@ -86,7 +86,7 @@ public class YntpSocietyController {
             modelAndView.addObject("directory", "yntp");
             modelAndView.addObject("registers",list.size());
 
-            modelAndView.addObject("userName", user.getNombre());
+            modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.setViewName("parametric/yntp");
         }
@@ -159,7 +159,7 @@ public class YntpSocietyController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         YntpSociety toModify = yntpSocietyService.findYntpByYntp(id);
         modelAndView.addObject("yntpModify",toModify);
@@ -220,7 +220,7 @@ public class YntpSocietyController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         YntpSociety yntp = new YntpSociety();
         modelAndView.addObject("yntp", yntp);
@@ -349,7 +349,7 @@ public class YntpSocietyController {
         modelAndView.addObject("registers",list.size());
 
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         modelAndView.setViewName("parametric/yntp");
         return modelAndView;

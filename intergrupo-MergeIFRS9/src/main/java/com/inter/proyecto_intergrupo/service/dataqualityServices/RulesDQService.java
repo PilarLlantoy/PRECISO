@@ -783,7 +783,7 @@ public class RulesDQService {
         insert.setComponente("Data Quality");
         insert.setFecha(today);
         insert.setInput("Reglas DQ");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
     }

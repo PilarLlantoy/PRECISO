@@ -150,7 +150,7 @@ public class QuotaService {
                 insert.setComponente("Ifrs9");
                 insert.setFecha(today);
                 insert.setInput("Quotas");
-                insert.setNombre(user.getNombre());
+                insert.setNombre(user.getPrimerNombre());
                 insert.setUsuario(user.getUsuario());
                 auditRepository.save(insert);
             }
@@ -162,7 +162,7 @@ public class QuotaService {
                 insert.setComponente("Ifrs9");
                 insert.setFecha(today);
                 insert.setInput("Quotas");
-                insert.setNombre(user.getNombre());
+                insert.setNombre(user.getPrimerNombre());
                 insert.setUsuario(user.getUsuario());
                 auditRepository.save(insert);
 

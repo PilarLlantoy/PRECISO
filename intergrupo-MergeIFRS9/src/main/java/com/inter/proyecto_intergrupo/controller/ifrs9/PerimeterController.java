@@ -294,7 +294,7 @@ public class PerimeterController {
         modelAndView.addObject("registers",perimeterList.size());
 
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         modelAndView.setViewName("ifrs/perimeter");
 

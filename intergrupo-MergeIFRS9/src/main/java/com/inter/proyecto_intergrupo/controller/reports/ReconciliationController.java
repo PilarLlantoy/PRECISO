@@ -57,7 +57,7 @@ public class ReconciliationController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Intergrupo - Query")) {
+        if(userService.validateEndpoint(user.getId(),"Ver Intergrupo - Query")) {
 
             String todayString = "";
 
@@ -99,7 +99,7 @@ public class ReconciliationController {
             modelAndView.addObject("noQuery", noQuery);
             modelAndView.addObject("empty",false);
 
-            modelAndView.addObject("userName", user.getNombre());
+            modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.setViewName("reports/reconciliationV1");
         }
@@ -187,7 +187,7 @@ public class ReconciliationController {
         }
 
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("reconciliation",reconciliation);
         modelAndView.addObject("userEmail",user.getCorreo());
         modelAndView.addObject("period",todayString);
@@ -355,7 +355,7 @@ public class ReconciliationController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Intergrupo Banco - Filiales")) {
+        if(userService.validateEndpoint(user.getId(),"Ver Intergrupo Banco - Filiales")) {
 
             String todayString = "";
             String yntpSelect = "";
@@ -429,7 +429,7 @@ public class ReconciliationController {
             modelAndView.addObject("directory", "reconciliationIntV1Fil");
 
             modelAndView.addObject("period", todayString);
-            modelAndView.addObject("userName", user.getNombre());
+            modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.setViewName("reports/reconciliationV1Fil");
         }
@@ -506,7 +506,7 @@ public class ReconciliationController {
         modelAndView.addObject("resp", "ReconSave");
         modelAndView.addObject("period",todayString);
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
 
         return modelAndView;
@@ -575,7 +575,7 @@ public class ReconciliationController {
         modelAndView.addObject("level", levelSelect);
         modelAndView.addObject("period",todayString);
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
 
         return modelAndView;

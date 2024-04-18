@@ -154,7 +154,7 @@ public class AccountAndByProductService {
                 insert.setComponente("Parametricas");
                 insert.setFecha(today);
                 insert.setInput("Cuenta y Subproductos");
-                insert.setNombre(user.getNombre());
+                insert.setNombre(user.getPrimerNombre());
                 insert.setUsuario(user.getUsuario());
                 auditRepository.save(insert);
             }
@@ -166,7 +166,7 @@ public class AccountAndByProductService {
                 insert.setComponente("Parametricas");
                 insert.setFecha(today);
                 insert.setInput("Cuenta y Subproductos");
-                insert.setNombre(user.getNombre());
+                insert.setNombre(user.getPrimerNombre());
                 insert.setUsuario(user.getUsuario());
                 auditRepository.save(insert);
 

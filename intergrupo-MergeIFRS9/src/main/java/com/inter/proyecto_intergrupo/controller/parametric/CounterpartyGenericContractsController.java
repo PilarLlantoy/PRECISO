@@ -55,7 +55,7 @@ public class CounterpartyGenericContractsController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Contrapartida y Contratos Genéricos")) {
+        if(userService.validateEndpoint(user.getId(),"Ver Contrapartida y Contratos Genéricos")) {
 
         int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
         PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
@@ -76,7 +76,7 @@ public class CounterpartyGenericContractsController {
         List<CounterpartyGenericContracts> list = counterpartyGenericContractsService.findAll();
         modelAndView.addObject("registers",list.size());
 
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         modelAndView.setViewName("parametric/counterpartyGenericContracts");
         }
@@ -146,7 +146,7 @@ public class CounterpartyGenericContractsController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         CounterpartyGenericContracts toModify = counterpartyGenericContractsService.findCounterpartyGenericContractsbyId(id).get(0);
         modelAndView.addObject("counterpartyGenericContractsModify",toModify);
@@ -188,7 +188,7 @@ public class CounterpartyGenericContractsController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         CounterpartyGenericContracts counterpartyGenericContracts = new CounterpartyGenericContracts();
         modelAndView.addObject("counterpartyGenericContracts", counterpartyGenericContracts);
@@ -297,7 +297,7 @@ public class CounterpartyGenericContractsController {
         modelAndView.addObject("directory","searchCounterpartyGenericContracts");
 
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         modelAndView.setViewName("parametric/counterpartyGenericContracts");
         return modelAndView;

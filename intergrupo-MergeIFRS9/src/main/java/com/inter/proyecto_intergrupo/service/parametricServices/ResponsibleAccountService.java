@@ -70,7 +70,7 @@ public class ResponsibleAccountService {
                 insert.setComponente("Parametricas");
                 insert.setFecha(today);
                 insert.setInput("Cuenta resposable");
-                insert.setNombre(user.getNombre());
+                insert.setNombre(user.getPrimerNombre());
                 insert.setUsuario(user.getUsuario());
                 auditRepository.save(insert);
             }
@@ -82,7 +82,7 @@ public class ResponsibleAccountService {
                 insert.setComponente("Parametricas");
                 insert.setFecha(today);
                 insert.setInput("Cuenta resposable");
-                insert.setNombre(user.getNombre());
+                insert.setNombre(user.getPrimerNombre());
                 insert.setUsuario(user.getUsuario());
                 auditRepository.save(insert);
 
@@ -607,7 +607,7 @@ public class ResponsibleAccountService {
         insert.setComponente("Parametricas");
         insert.setFecha(today);
         insert.setInput("Cuenta Responsable");
-        insert.setNombre(userid.getNombre());
+        insert.setNombre(userid.getPrimerNombre());
         insert.setUsuario(userid.getUsuario());
         auditRepository.save(insert);
 
@@ -622,7 +622,7 @@ public class ResponsibleAccountService {
         insert.setComponente("Parametricas");
         insert.setFecha(today);
         insert.setInput("Cuenta Responsable");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
         return responsibleAccountRepository.save(responsibleAccount);
@@ -662,7 +662,7 @@ public class ResponsibleAccountService {
         insert.setComponente("Parametricas");
         insert.setFecha(today);
         insert.setInput("Cuenta Responsable");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
     }
@@ -683,7 +683,7 @@ public class ResponsibleAccountService {
         insert.setComponente("Parametricas");
         insert.setFecha(today);
         insert.setInput("Cuenta Responsable");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
     }

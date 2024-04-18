@@ -91,9 +91,10 @@ public class    UserService {
         }
     }
 
+
     public User modifyUser(User toModify, Date fecha, Set<Role> roles, String id){
         User toInsert = new User();
-        toInsert.setNombre(toModify.getNombre());
+        toInsert.setPrimerNombre(toModify.getPrimerNombre());
         toInsert.setCentro(toModify.getCentro());
         toInsert.setUsuario(id);
         toInsert.setCorreo(toModify.getCorreo());
@@ -106,6 +107,8 @@ public class    UserService {
         userRepository.save(toInsert);
         return toInsert;
     }
+
+
 
     public void updateResetPasswordToken(String token, String username) throws UsernameNotFoundException {
          User user = userRepository.findByUsuario(username);
@@ -148,10 +151,10 @@ public class    UserService {
         return userRepository.findByCentro(centro);
     }
 
-    public boolean validateEndpoint(String usuario,String vista)
+    public boolean validateEndpoint(int usuario,String vista)
     {
         Query validate = entityManager.createNativeQuery("SELECT nv.id_vista FROM nexco_user_rol AS nur, nexco_rol_vista AS nrv, nexco_vistas AS nv\n" +
-                "WHERE nur.id_perfil = nrv.id_perfil AND nrv.id_vista = nv.id_vista AND nur.usuario = ? AND nv.nombre = ? ");
+                "WHERE nur.id_perfil = nrv.id_perfil AND nrv.id_vista = nv.id_vista AND nur.id_usuario = ? AND nv.nombre = ? ");
         validate.setParameter(1,usuario);
         validate.setParameter(2,vista);
 
@@ -230,14 +233,17 @@ public class    UserService {
         return list;
     }
 
+
     public void loadAudit(User user)
     {
         Query query = entityManager.createNativeQuery("DELETE FROM nexco_logueo where usuario = ?; " +
                 "INSERT into nexco_logueo (usuario,nombre,fecha) values(?,?,?);");
         query.setParameter(1, user.getUsuario());
         query.setParameter(2, user.getUsuario());
-        query.setParameter(3, user.getNombre());
+        query.setParameter(3, user.getPrimerNombre());
         query.setParameter(4, new Date());
         query.executeUpdate();
     }
+
+
 }

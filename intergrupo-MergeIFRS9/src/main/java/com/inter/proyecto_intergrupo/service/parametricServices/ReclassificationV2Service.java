@@ -129,7 +129,7 @@ public class ReclassificationV2Service {
                 insert.setComponente("Parametricas");
                 insert.setFecha(today);
                 insert.setInput("Reclasificaciones Intergrupo V2");
-                insert.setNombre(user.getNombre());
+                insert.setNombre(user.getPrimerNombre());
                 insert.setUsuario(user.getUsuario());
                 auditRepository.save(insert);
             }else
@@ -141,7 +141,7 @@ public class ReclassificationV2Service {
                 insert.setComponente("Parametricas");
                 insert.setFecha(today);
                 insert.setInput("Reclasificaciones Intergrupo V2");
-                insert.setNombre(user.getNombre());
+                insert.setNombre(user.getPrimerNombre());
                 insert.setUsuario(user.getUsuario());
                 auditRepository.save(insert);
             }

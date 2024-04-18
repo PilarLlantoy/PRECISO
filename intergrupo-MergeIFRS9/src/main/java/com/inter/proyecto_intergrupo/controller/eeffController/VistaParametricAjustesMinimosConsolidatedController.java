@@ -51,7 +51,7 @@ public class VistaParametricAjustesMinimosConsolidatedController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if (userService.validateEndpoint(user.getUsuario(), "Ver Parametrica Ajustes Minimos EEFF Consolidado")) {
+        if (userService.validateEndpoint(user.getId(), "Ver Parametrica Ajustes Minimos EEFF Consolidado")) {
 
             String todayString = "";
             if (params.get("period") == null || params.get("period").toString() == "") {
@@ -86,7 +86,7 @@ public class VistaParametricAjustesMinimosConsolidatedController {
             modelAndView.addObject("filterExport", "Original");
             modelAndView.addObject("directory", "parametricsConsolidated");
             modelAndView.addObject("registers", pageAccount.getTotalElements());
-            modelAndView.addObject("userName", user.getNombre());
+            modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.setViewName("/eeffConsolidated/parametricsAjustesMinimos");
 
@@ -141,7 +141,7 @@ public class VistaParametricAjustesMinimosConsolidatedController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName", user.getNombre());
+        modelAndView.addObject("userName", user.getPrimerNombre());
         modelAndView.addObject("userEmail", user.getCorreo());
         Long idTemp = null;
         try {
@@ -176,7 +176,7 @@ public class VistaParametricAjustesMinimosConsolidatedController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName", user.getNombre());
+        modelAndView.addObject("userName", user.getPrimerNombre());
         modelAndView.addObject("userEmail", user.getCorreo());
         ParametricAjustesMinimosEEFF accountCc = new ParametricAjustesMinimosEEFF();
         modelAndView.addObject("accountCc", accountCc);
@@ -270,7 +270,7 @@ public class VistaParametricAjustesMinimosConsolidatedController {
         modelAndView.addObject("registers", list.size());
 
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName", user.getNombre());
+        modelAndView.addObject("userName", user.getPrimerNombre());
         modelAndView.addObject("userEmail", user.getCorreo());
         modelAndView.setViewName("/eeffConsolidated/parametricsAjustesMinimos");
         return modelAndView;

@@ -152,7 +152,7 @@ public class CiiuService {
                 insert.setComponente("Parametricas");
                 insert.setFecha(today);
                 insert.setInput("CIIU");
-                insert.setNombre(user.getNombre());
+                insert.setNombre(user.getPrimerNombre());
                 insert.setUsuario(user.getUsuario());
                 auditRepository.save(insert);
             }
@@ -164,7 +164,7 @@ public class CiiuService {
                 insert.setComponente("Parametricas");
                 insert.setFecha(today);
                 insert.setInput("CIIU");
-                insert.setNombre(user.getNombre());
+                insert.setNombre(user.getPrimerNombre());
                 insert.setUsuario(user.getUsuario());
                 auditRepository.save(insert);
 

@@ -56,7 +56,7 @@ public class ParametricEEFFService {
         insert.setComponente("Cuentas por Cobrar");
         insert.setFecha(today);
         insert.setInput("Cuentas");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
     }

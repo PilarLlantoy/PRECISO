@@ -279,7 +279,7 @@ public class RejectionsCcService {
 
                     ControlPanelIfrs temporal2 = cuentaProvList.get(0);
                     temporal2.setSemaforoInput("PENDING");
-                    temporal2.setUsuarioCarga(user.getNombre());
+                    temporal2.setUsuarioCarga(user.getPrimerNombre());
 
                     Query query7 = entityManager.createNativeQuery("UPDATE nexco_cuadro_mando_ifrs SET semaforo_input = ? " +
                             "WHERE input = ? AND componente = ? ", ControlPanelIfrs.class);
@@ -295,7 +295,7 @@ public class RejectionsCcService {
                     insert.setComponente("RECHAZOS");
                     insert.setFecha(today);
                     insert.setInput("CUENTA PROV");
-                    insert.setNombre(user.getNombre());
+                    insert.setNombre(user.getPrimerNombre());
                     insert.setUsuario(user.getUsuario());
                     auditRepository.save(insert);
                 }
@@ -320,7 +320,7 @@ public class RejectionsCcService {
 
                     ControlPanelIfrs temporal2 = cuentaReclaList.get(0);
                     temporal2.setSemaforoInput("PENDING");
-                    temporal2.setUsuarioCarga(user.getNombre());
+                    temporal2.setUsuarioCarga(user.getPrimerNombre());
 
                     Query query7 = entityManager.createNativeQuery("UPDATE nexco_cuadro_mando_ifrs SET semaforo_input = ? " +
                             "WHERE input = ? AND componente = ? ", ControlPanelIfrs.class);
@@ -336,7 +336,7 @@ public class RejectionsCcService {
                     insert.setComponente("RECHAZOS");
                     insert.setFecha(today);
                     insert.setInput("CUENTA RECLASIFICACION");
-                    insert.setNombre(user.getNombre());
+                    insert.setNombre(user.getPrimerNombre());
                     insert.setUsuario(user.getUsuario());
                     auditRepository.save(insert);
                 }
@@ -361,7 +361,7 @@ public class RejectionsCcService {
 
                     ControlPanelIfrs temporal2 = cuentaImpuList.get(0);
                     temporal2.setSemaforoInput("PENDING");
-                    temporal2.setUsuarioCarga(user.getNombre());
+                    temporal2.setUsuarioCarga(user.getPrimerNombre());
 
                     Query query7 = entityManager.createNativeQuery("UPDATE nexco_cuadro_mando_ifrs SET semaforo_input = ? " +
                             "WHERE input = ? AND componente = ? ", ControlPanelIfrs.class);
@@ -377,7 +377,7 @@ public class RejectionsCcService {
                     insert.setComponente("RECHAZOS");
                     insert.setFecha(today);
                     insert.setInput("CUENTA IMPUESTOS");
-                    insert.setNombre(user.getNombre());
+                    insert.setNombre(user.getPrimerNombre());
                     insert.setUsuario(user.getUsuario());
                     auditRepository.save(insert);
                 }
@@ -402,7 +402,7 @@ public class RejectionsCcService {
 
                     ControlPanelIfrs temporal2 = ristrasProvList.get(0);
                     temporal2.setSemaforoInput("PENDING");
-                    temporal2.setUsuarioCarga(user.getNombre());
+                    temporal2.setUsuarioCarga(user.getPrimerNombre());
 
                     Query query7 = entityManager.createNativeQuery("UPDATE nexco_cuadro_mando_ifrs SET semaforo_input = ? " +
                             "WHERE input = ? AND componente = ? ", ControlPanelIfrs.class);
@@ -418,7 +418,7 @@ public class RejectionsCcService {
                     insert.setComponente("RECHAZOS");
                     insert.setFecha(today);
                     insert.setInput("RISTRAS PROV");
-                    insert.setNombre(user.getNombre());
+                    insert.setNombre(user.getPrimerNombre());
                     insert.setUsuario(user.getUsuario());
                     auditRepository.save(insert);
                 }
@@ -443,7 +443,7 @@ public class RejectionsCcService {
 
                     ControlPanelIfrs temporal2 = ristrasReclaList.get(0);
                     temporal2.setSemaforoInput("PENDING");
-                    temporal2.setUsuarioCarga(user.getNombre());
+                    temporal2.setUsuarioCarga(user.getPrimerNombre());
 
                     Query query7 = entityManager.createNativeQuery("UPDATE nexco_cuadro_mando_ifrs SET semaforo_input = ? " +
                             "WHERE input = ? AND componente = ? ", ControlPanelIfrs.class);
@@ -459,7 +459,7 @@ public class RejectionsCcService {
                     insert.setComponente("RECHAZOS");
                     insert.setFecha(today);
                     insert.setInput("RISTRAS RECLASIFICACION");
-                    insert.setNombre(user.getNombre());
+                    insert.setNombre(user.getPrimerNombre());
                     insert.setUsuario(user.getUsuario());
                     auditRepository.save(insert);
                 }
@@ -484,7 +484,7 @@ public class RejectionsCcService {
 
                     ControlPanelIfrs temporal2 = cuentaProvList.get(0);
                     temporal2.setSemaforoInput("PENDING");
-                    temporal2.setUsuarioCarga(user.getNombre());
+                    temporal2.setUsuarioCarga(user.getPrimerNombre());
 
                     Query query7 = entityManager.createNativeQuery("UPDATE nexco_cuadro_mando_ifrs SET semaforo_input = ? " +
                             "WHERE input = ? AND componente = ? ", ControlPanelIfrs.class);
@@ -500,7 +500,7 @@ public class RejectionsCcService {
                     insert.setComponente("RECHAZOS");
                     insert.setFecha(today);
                     insert.setInput("RISTRAS IMPUESTOS");
-                    insert.setNombre(user.getNombre());
+                    insert.setNombre(user.getPrimerNombre());
                     insert.setUsuario(user.getUsuario());
                     auditRepository.save(insert);
                 }
@@ -686,7 +686,7 @@ public class RejectionsCcService {
             insert.setComponente("RECHAZOS");
             insert.setFecha(today);
             insert.setInput(origen);
-            insert.setNombre(user.getNombre());
+            insert.setNombre(user.getPrimerNombre());
             insert.setUsuario(user.getUsuario());
             auditRepository.save(insert);
         }
@@ -844,7 +844,7 @@ public class RejectionsCcService {
             Query updateAll2 = entityManager.createNativeQuery("update nexco_cuadro_mando_ifrs \n" +
                     "set semaforo_input = 'EMPTY' , usuario_carga = ?, fecha_cargue = ?, semaforo_componente = 'EMPTY'\n" +
                     "where input = ? AND componente = ?");
-            updateAll2.setParameter(1,user.getNombre());
+            updateAll2.setParameter(1,user.getPrimerNombre());
             updateAll2.setParameter(2, new Date());
             updateAll2.setParameter(3,inputTableC);
             updateAll2.setParameter(4,"RECHAZOS");
@@ -864,7 +864,7 @@ public class RejectionsCcService {
             Query updateAll2 = entityManager.createNativeQuery("update nexco_cuadro_mando_ifrs \n" +
                     "set semaforo_componente = 'FULL' , usuario_carga = ? , fecha_cargue = ?\n" +
                     "where componente = ?");
-            updateAll2.setParameter(1,user.getNombre());
+            updateAll2.setParameter(1,user.getPrimerNombre());
             updateAll2.setParameter(2,hoy);
             updateAll2.setParameter(3,"RECHAZOS");
             updateAll2.executeUpdate();

@@ -59,7 +59,7 @@ public class RiskAccountController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Contabilización Riesgos")) {
+        if(userService.validateEndpoint(user.getId(),"Ver Contabilización Riesgos")) {
 
             int page = params.get("page") != null ? (Integer.valueOf(params.get("page").toString()) - 1) : 0;
             PageRequest pageRequest = PageRequest.of(page, PAGINATIONCOUNT);
@@ -127,7 +127,7 @@ public class RiskAccountController {
             modelAndView.addObject("directory", "riskAccount");
             modelAndView.addObject("registers",pageRiskAccount.getTotalElements());
 
-            modelAndView.addObject("userName", user.getNombre());
+            modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.setViewName("ifrs/riskAccount");
         }
@@ -144,7 +144,7 @@ public class RiskAccountController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Riesgos Cargue Fichero")) {
+        if(userService.validateEndpoint(user.getId(),"Ver Riesgos Cargue Fichero")) {
 
             int page = params.get("page") != null ? (Integer.valueOf(params.get("page").toString()) - 1) : 0;
             PageRequest pageRequest = PageRequest.of(page, PAGINATIONCOUNT);
@@ -192,7 +192,7 @@ public class RiskAccountController {
             modelAndView.addObject("directory", "riskAccountLoad");
             modelAndView.addObject("registers",pageRiskAccount.getTotalElements());
 
-            modelAndView.addObject("userName", user.getNombre());
+            modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.setViewName("ifrs/riskAccountLoad");
         }
@@ -443,7 +443,7 @@ public class RiskAccountController {
         modelAndView.addObject("registers",list.size());
 
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         modelAndView.setViewName("ifrs/riskAccount");
         return modelAndView;

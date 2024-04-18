@@ -48,7 +48,7 @@ public class VistaEeffVerPTController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
 
-        if (userService.validateEndpoint(user.getUsuario(), "Ver EEFF Eliminaciones Ver PT")) {
+        if (userService.validateEndpoint(user.getId(), "Ver EEFF Eliminaciones Ver PT")) {
 
             int page = params.get("page") != null ? (Integer.valueOf(params.get("page").toString()) - 1) : 0;
             PageRequest pageRequest = PageRequest.of(page, PAGINATIONCOUNT);
@@ -205,7 +205,7 @@ public class VistaEeffVerPTController {
         PageRequest pageRequest = PageRequest.of(page, PAGINATIONCOUNT);
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName", user.getNombre());
+        modelAndView.addObject("userName", user.getPrimerNombre());
         modelAndView.addObject("userEmail", user.getCorreo());
         VerPT accountCc = new VerPT();
         modelAndView.addObject("accountCc", accountCc);
@@ -237,7 +237,7 @@ public class VistaEeffVerPTController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName", user.getNombre());
+        modelAndView.addObject("userName", user.getPrimerNombre());
         modelAndView.addObject("userEmail", user.getCorreo());
         Long idTemp = null;
         try {
@@ -281,7 +281,7 @@ public class VistaEeffVerPTController {
         PageRequest pageRequest = PageRequest.of(page, PAGINATIONCOUNT);
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName", user.getNombre());
+        modelAndView.addObject("userName", user.getPrimerNombre());
         modelAndView.addObject("userEmail", user.getCorreo());
         VerPT1 accountCc = new VerPT1();
         modelAndView.addObject("accountCc", accountCc);
@@ -313,7 +313,7 @@ public class VistaEeffVerPTController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName", user.getNombre());
+        modelAndView.addObject("userName", user.getPrimerNombre());
         modelAndView.addObject("userEmail", user.getCorreo());
         Long idTemp1 = null;
         try {

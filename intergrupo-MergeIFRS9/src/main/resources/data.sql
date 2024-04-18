@@ -1,4 +1,4 @@
-IF NOT EXISTS(SELECT * FROM nexco_usuarios WHERE usuario='NEXADMI') BEGIN INSERT INTO nexco_usuarios(centro,contra,correo,creacion,empresa,estado,nombre,password_token,usuario) VALUES ('0000','$2a$10$Nlz1ECsmJ4r/CBiMPmFYr.guiQ0wO2iR0f6tK94aSFg5HmWiC6nYa','admin@admin.com',GETDATE(),'0013',1,'Administrador Nexco',NULL,'NEXADMI') END
+IF NOT EXISTS(SELECT * FROM nexco_usuarios WHERE codigo_usuario='NEXADMI') BEGIN INSERT INTO nexco_usuarios(centro,contra,correo,creacion,empresa,estado,primer_nombre,password_token,codigo_usuario) VALUES ('0000','$2a$10$Nlz1ECsmJ4r/CBiMPmFYr.guiQ0wO2iR0f6tK94aSFg5HmWiC6nYa','admin@admin.com',GETDATE(),'0013',1,'Administrador Nexco',NULL,'NEXADMI') END
 
 IF NOT EXISTS(SELECT * FROM nexco_perfiles WHERE nombre_perfil = 'ADMIN') BEGIN INSERT INTO nexco_perfiles ( nombre_perfil) VALUES ('ADMIN')END
 IF NOT EXISTS(SELECT * FROM nexco_perfiles WHERE nombre_perfil = 'USER') BEGIN INSERT INTO nexco_perfiles ( nombre_perfil) VALUES ('USER') END
@@ -7,7 +7,7 @@ IF NOT EXISTS(SELECT * FROM nexco_perfiles WHERE nombre_perfil = 'RESPONSABLE') 
 -- Add views to the database
 IF NOT EXISTS(SELECT * FROM nexco_vistas WHERE nombre = 'Ver Usuarios') BEGIN INSERT INTO nexco_vistas (nombre, ruta, unica,menu_principal,sub_menu_p1,sub_menu_p2) VALUES ('Ver Usuarios','/admin/users',1,'Administración','Usuarios','NA') END
 IF NOT EXISTS(SELECT * FROM nexco_vistas WHERE nombre = 'Ver Roles') BEGIN INSERT INTO nexco_vistas (nombre, ruta, unica,menu_principal,sub_menu_p1,sub_menu_p2) VALUES ('Ver Roles','/profile/roles',1,'Administración','Roles','NA') END
-IF NOT EXISTS(SELECT * FROM nexco_vistas WHERE nombre = 'Ver Cargos') BEGIN INSERT INTO nexco_vistas (nombre, ruta, unica,menu_principal,sub_menu_p1,sub_menu_p2) VALUES ('Ver Cargos','/profile/cargos',1,'Administración','Cargos','NA') END
+IF NOT EXISTS(SELECT * FROM nexco_vistas WHERE nombre = 'Ver Cargos') BEGIN INSERT INTO nexco_vistas (nombre, ruta, unica,menu_principal,sub_menu_p1,sub_menu_p2) VALUES ('Ver Cargos','/admin/cargos',1,'Administración','Cargos','NA') END
 IF NOT EXISTS(SELECT * FROM nexco_vistas WHERE nombre = 'Ver Cuadro Mando Jobs') BEGIN INSERT INTO nexco_vistas (nombre, ruta, unica,menu_principal,sub_menu_p1,sub_menu_p2) VALUES ('Ver Cuadro Mando Jobs','/admin/controlPanelJobs',1,'Administración','Cuadro Mando Jobs','NA') END
 IF NOT EXISTS(SELECT * FROM nexco_vistas WHERE nombre = 'Ver Cuadro Mando Intergrupo') BEGIN INSERT INTO nexco_vistas (nombre, ruta, unica,menu_principal,sub_menu_p1,sub_menu_p2) VALUES ('Ver Cuadro Mando Intergrupo','/admin/controlPanel',1,'Administración','Cuadro Mando Intergrupo','NA') END
 IF NOT EXISTS(SELECT * FROM nexco_vistas WHERE nombre = 'Ver Logs') BEGIN INSERT INTO nexco_vistas (nombre, ruta, unica,menu_principal,sub_menu_p1,sub_menu_p2) VALUES ('Ver Logs','/admin/audit',1,'Administración','Log','NA') END
@@ -168,9 +168,9 @@ IF NOT EXISTS(SELECT * FROM nexco_cuadro_mando_jobs WHERE id_job = 6) BEGIN INSE
 IF NOT EXISTS(SELECT * FROM nexco_cuadro_mando_jobs WHERE id_job = 7) BEGIN INSERT INTO nexco_cuadro_mando_jobs (id_job, nombre, estado) VALUES (7,'Desconnv15',0) END
 IF NOT EXISTS(SELECT * FROM nexco_cuadro_mando_jobs WHERE id_job = 8) BEGIN INSERT INTO nexco_cuadro_mando_jobs (id_job, nombre, estado) VALUES (8,'Calculo 1%',0) END
 
-IF NOT EXISTS(SELECT * FROM nexco_user_rol WHERE usuario = 'NEXADMI' AND id_perfil=1) BEGIN INSERT INTO nexco_user_rol (id_perfil,usuario) VALUES (1,'NEXADMI') END
-IF NOT EXISTS(SELECT * FROM nexco_rol_vista AS nrv, nexco_vistas AS nv WHERE nrv.id_perfil = 1 AND nv.nombre = 'Ver Cuadro Mando Intergrupo' AND nv.id_vista = nrv.id_vista) BEGIN INSERT INTO nexco_rol_vista (id_perfil,id_vista) VALUES (1,4) END
-IF NOT EXISTS(SELECT * FROM nexco_rol_vista AS nrv, nexco_vistas AS nv WHERE nrv.id_perfil = 1 AND nv.nombre = 'Ver Roles' AND nv.id_vista = nrv.id_vista) BEGIN INSERT INTO nexco_rol_vista (id_perfil,id_vista) VALUES (1,2) END
+IF NOT EXISTS(SELECT * FROM nexco_user_rol WHERE id_usuario = 1 AND id_perfil=1) BEGIN INSERT INTO nexco_user_rol (id_perfil,id_usuario) VALUES (1,1) END
+-- IF NOT EXISTS(SELECT * FROM nexco_rol_vista AS nrv, nexco_vistas AS nv WHERE nrv.id_perfil = 1 AND nv.nombre = 'Ver Cuadro Mando Intergrupo' AND nv.id_vista = nrv.id_vista) BEGIN INSERT INTO nexco_rol_vista (id_perfil,id_vista) VALUES (1,4) END
+IF NOT EXISTS(SELECT * FROM nexco_rol_vista AS nrv, nexco_vistas AS nv WHERE nrv.id_perfil = 1 AND nv.nombre = 'Ver Roles' AND nv.id_vista = nrv.id_vista) BEGIN INSERT INTO nexco_rol_vista (id_perfil,id_vista) VALUES (1,4) END
 IF NOT EXISTS(SELECT * FROM nexco_operacion_riesgo WHERE cuenta_local='-') BEGIN INSERT INTO nexco_operacion_riesgo (cuenta_local) VALUES ('-') END
 
 -- Add CARGOS

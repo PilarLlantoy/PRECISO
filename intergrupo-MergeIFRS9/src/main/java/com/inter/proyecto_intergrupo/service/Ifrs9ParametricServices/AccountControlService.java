@@ -238,7 +238,7 @@ public class AccountControlService {
         insert.setComponente("Paramétricas IFRS9");
         insert.setFecha(today);
         insert.setInput("Control Contable");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
     }

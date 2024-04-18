@@ -275,7 +275,7 @@ public class RejectIdP1Service {
         insert.setComponente("Paramétricas IFRS9");
         insert.setFecha(today);
         insert.setInput("Identificación Cuenta");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
     }

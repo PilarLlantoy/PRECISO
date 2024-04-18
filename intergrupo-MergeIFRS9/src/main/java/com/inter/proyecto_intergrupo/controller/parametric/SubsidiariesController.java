@@ -58,7 +58,7 @@ public class SubsidiariesController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Cruce Filiales")) {
+        if(userService.validateEndpoint(user.getId(),"Ver Cruce Filiales")) {
 
             int page = params.get("page") != null ? (Integer.valueOf(params.get("page").toString()) - 1) : 0;
             PageRequest pageRequest = PageRequest.of(page, PAGINATIONCOUNT);
@@ -78,7 +78,7 @@ public class SubsidiariesController {
             modelAndView.addObject("directory", "subsidiaries");
             modelAndView.addObject("registers",pageSubsidiaries.getTotalElements());
 
-            modelAndView.addObject("userName", user.getNombre());
+            modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.setViewName("parametric/subsidiaries");
         }
@@ -145,7 +145,7 @@ public class SubsidiariesController {
         if(listPart.length>1 && listPart[1]!=null)
             listPart2 = listPart[1];
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("columns",listColumns);
         modelAndView.addObject("userEmail",user.getCorreo());
         Subsidiaries toModify = subsidiariesService.findSubsidiariesById(id).get(0);
@@ -203,7 +203,7 @@ public class SubsidiariesController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         Subsidiaries subsidiaries = new Subsidiaries();
         modelAndView.addObject("subsidiaries", subsidiaries);
@@ -305,7 +305,7 @@ public class SubsidiariesController {
         modelAndView.addObject("registers",list.size());
 
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         modelAndView.setViewName("parametric/subsidiaries");
         return modelAndView;

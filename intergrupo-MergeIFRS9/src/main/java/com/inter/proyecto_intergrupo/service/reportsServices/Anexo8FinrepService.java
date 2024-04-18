@@ -59,7 +59,7 @@ public class Anexo8FinrepService {
         insert.setComponente("Anexo 8");
         insert.setFecha(today);
         insert.setInput("FINREP");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
     }

@@ -553,7 +553,7 @@ public class OnePercentService {
         insert.setInput("Calculo 1%");
         if(user!=null)
         {
-            insert.setNombre(user.getNombre());
+            insert.setNombre(user.getPrimerNombre());
             insert.setUsuario(user.getUsuario());
             insert.setCentro(user.getCentro());
         }

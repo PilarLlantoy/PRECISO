@@ -56,7 +56,7 @@ public class GarantBankController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Banco Garante")) {
+        if(userService.validateEndpoint(user.getId(),"Ver Banco Garante")) {
 
             int page = params.get("page") != null ? (Integer.valueOf(params.get("page").toString()) - 1) : 0;
             PageRequest pageRequest = PageRequest.of(page, PAGINATIONCOUNT);
@@ -77,7 +77,7 @@ public class GarantBankController {
             modelAndView.addObject("directory", "garantBank");
             modelAndView.addObject("registers",pageGarantBank.getTotalElements());
 
-            modelAndView.addObject("userName", user.getNombre());
+            modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.setViewName("parametric/garantBank");
         }
@@ -128,7 +128,7 @@ public class GarantBankController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         GarantBank toModify = garantBankService.findGarantBankByNombreSmiliar(id);
         modelAndView.addObject("garantBankModify",toModify);
@@ -181,7 +181,7 @@ public class GarantBankController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         GarantBank GarantBank = new GarantBank();
         modelAndView.addObject("GarantBank", GarantBank);
@@ -275,7 +275,7 @@ public class GarantBankController {
         modelAndView.addObject("registers",list.size());
 
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         modelAndView.setViewName("parametric/garantBank");
         return modelAndView;

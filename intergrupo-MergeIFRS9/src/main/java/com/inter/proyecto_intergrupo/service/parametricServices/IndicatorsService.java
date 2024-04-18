@@ -65,7 +65,7 @@ public class IndicatorsService {
                 insert.setComponente("Parametricas");
                 insert.setFecha(today);
                 insert.setInput("Indicadores Intergrupo");
-                insert.setNombre(user.getNombre());
+                insert.setNombre(user.getPrimerNombre());
                 insert.setUsuario(user.getUsuario());
                 auditRepository.save(insert);
             }else{
@@ -76,7 +76,7 @@ public class IndicatorsService {
                 insert.setComponente("Parametricas");
                 insert.setFecha(today);
                 insert.setInput("Indicadores Intergrupo");
-                insert.setNombre(user.getNombre());
+                insert.setNombre(user.getPrimerNombre());
                 insert.setUsuario(user.getUsuario());
                 auditRepository.save(insert);
             }
@@ -206,7 +206,7 @@ public class IndicatorsService {
         insert.setComponente("Parametricas");
         insert.setFecha(today);
         insert.setInput("Indicadores Intergrupo");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
         return indicatorsRepository.save(toInsert);
@@ -230,7 +230,7 @@ public class IndicatorsService {
         insert.setComponente("Parametricas");
         insert.setFecha(today);
         insert.setInput("Indicadores Intergrupo");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
         return indicatorsRepository.save(indicators);
@@ -244,7 +244,7 @@ public class IndicatorsService {
         insert.setComponente("Parametricas");
         insert.setFecha(today);
         insert.setInput("Indicadores Intergrupo");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         indicatorsRepository.deleteById(id);
     }
@@ -257,7 +257,7 @@ public class IndicatorsService {
         insert.setComponente("Parametricas");
         insert.setFecha(today);
         insert.setInput("Indicadores Intergrupo");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         indicatorsRepository.deleteAll();
     }

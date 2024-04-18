@@ -58,7 +58,7 @@ public class TaxBaseController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Base Fiscal")) {
+        if(userService.validateEndpoint(user.getId(),"Ver Base Fiscal")) {
             String todayString;
             String Id;
             String Vf;
@@ -123,7 +123,7 @@ public class TaxBaseController {
             modelAndView.addObject("directory", "taxBase");
             modelAndView.addObject("registers",list.size());
 
-            modelAndView.addObject("userName", user.getNombre());
+            modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.setViewName("bank/taxBase");
         }
@@ -300,7 +300,7 @@ public class TaxBaseController {
         modelAndView.addObject("directory", "taxBaseStateLoads");
 
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName", user.getNombre());
+        modelAndView.addObject("userName", user.getPrimerNombre());
         modelAndView.addObject("userEmail", user.getCorreo());
         modelAndView.setViewName("bank/taxBaseLoad");
         return modelAndView;
@@ -311,7 +311,7 @@ public class TaxBaseController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         TaxBaseLoad load = new TaxBaseLoad();
         modelAndView.addObject("load", load);

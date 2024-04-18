@@ -59,7 +59,7 @@ public class ParamNIC34Service {
         insert.setComponente("NIC34");
         insert.setFecha(today);
         insert.setInput("Parametrica NIC34");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
     }

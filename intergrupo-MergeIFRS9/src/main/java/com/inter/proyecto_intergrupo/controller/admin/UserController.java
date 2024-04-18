@@ -50,6 +50,7 @@ public class UserController {
     SendEmailService sendEmailService;
 
 
+
     @RequestMapping(value="/home")
     public ModelAndView home() {
         ModelAndView modelAndView = new ModelAndView();
@@ -57,19 +58,21 @@ public class UserController {
         User user = userService.findUserByUserName(auth.getName());
         userService.loadAudit(user);
         modelAndView.addObject(user);
-        modelAndView.addObject("userName", user.getNombre());
+        modelAndView.addObject("userName", user.getPrimerNombre());
         modelAndView.addObject("userEmail", user.getCorreo());
         modelAndView.addObject("userComp", user.getEmpresa());
         modelAndView.setViewName("home");
         return modelAndView;
     }
+
+
     @RequestMapping(value="/admin/errorMenu")
     public ModelAndView home1() {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
         modelAndView.addObject(user);
-        modelAndView.addObject("userName", user.getNombre());
+        modelAndView.addObject("userName", user.getPrimerNombre());
         modelAndView.addObject("userEmail", user.getCorreo());
         modelAndView.addObject("userComp", user.getEmpresa());
         modelAndView.setViewName("admin/errorMenu");
@@ -81,7 +84,7 @@ public class UserController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Usuarios")) {
+        if(userService.validateEndpoint(user.getId(),"Ver Usuarios")) {
 
             int page = params.get("page") != null ? (Integer.valueOf(params.get("page").toString()) - 1) : 0;
             PageRequest pageRequest = PageRequest.of(page, PAGINATIONCOUNT);
@@ -320,9 +323,11 @@ public class UserController {
         modelAndView.addObject("registers",list.size());
 
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         modelAndView.setViewName("admin/users");
         return modelAndView;
     }
+
+
 }

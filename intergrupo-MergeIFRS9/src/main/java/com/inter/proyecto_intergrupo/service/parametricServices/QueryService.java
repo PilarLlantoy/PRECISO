@@ -194,7 +194,7 @@ public class QueryService {
             insert.setComponente("Parametricas");
             insert.setFecha(today);
             insert.setInput("Query");
-            insert.setNombre(user.getNombre());
+            insert.setNombre(user.getPrimerNombre());
             insert.setUsuario(user.getUsuario());
             auditRepository.save(insert);
         }else{
@@ -205,7 +205,7 @@ public class QueryService {
             insert.setComponente("Parametricas");
             insert.setFecha(today);
             insert.setInput("Query");
-            insert.setNombre(user.getNombre());
+            insert.setNombre(user.getPrimerNombre());
             insert.setUsuario(user.getUsuario());
             auditRepository.save(insert);
 
@@ -722,7 +722,7 @@ public class QueryService {
         insert.setInput("Query");
         if(user!=null)
         {
-            insert.setNombre(user.getNombre());
+            insert.setNombre(user.getPrimerNombre());
             insert.setUsuario(user.getUsuario());
             insert.setCentro(user.getCentro());
         }

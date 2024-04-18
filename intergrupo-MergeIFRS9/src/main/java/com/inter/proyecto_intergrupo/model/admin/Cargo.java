@@ -38,4 +38,7 @@ public class Cargo {
     @Column(name = "activo_cargo", columnDefinition = "BIT DEFAULT 1")
     private boolean activo = true;
 
+    @OneToMany(mappedBy = "cargo")
+    private List<User> users;
+
 }

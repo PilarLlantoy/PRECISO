@@ -68,7 +68,7 @@ public class Intergrupo1Controller {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Intergrupo 1 Banco")) {
+        if(userService.validateEndpoint(user.getId(),"Ver Intergrupo 1 Banco")) {
 
             int page = params.get("page") != null ? (Integer.valueOf(params.get("page").toString()) - 1) : 0;
             PageRequest pageRequest = PageRequest.of(page, PAGINATIONCOUNT);
@@ -282,7 +282,7 @@ public class Intergrupo1Controller {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName", user.getNombre());
+        modelAndView.addObject("userName", user.getPrimerNombre());
         modelAndView.addObject("userEmail", user.getCorreo());
 
         List<IntergrupoV1> listDef = intergrupo.getAllFromV1FinalAju(params.get("period").toString());
@@ -399,7 +399,7 @@ public class Intergrupo1Controller {
                     insert.setComponente("INTERGRUPO V1");
                     insert.setFecha(today);
                     insert.setInput("INTERGRUPO V1");
-                    insert.setNombre(user.getNombre());
+                    insert.setNombre(user.getPrimerNombre());
                     insert.setUsuario(user.getUsuario());
                     auditRepository.save(insert);
                     return  modelAndView;
@@ -425,7 +425,7 @@ public class Intergrupo1Controller {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
 
         IntergrupoV1 intergrupoV1 = new IntergrupoV1();

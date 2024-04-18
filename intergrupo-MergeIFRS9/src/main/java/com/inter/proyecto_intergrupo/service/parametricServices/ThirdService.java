@@ -73,7 +73,7 @@ public class ThirdService {
                 insert.setComponente("Historico de Terceros");
                 insert.setFecha(today);
                 insert.setInput("Historico de Terceros");
-                insert.setNombre(user.getNombre());
+                insert.setNombre(user.getPrimerNombre());
                 insert.setUsuario(user.getUsuario());
                 auditRepository.save(insert);
             }
@@ -86,7 +86,7 @@ public class ThirdService {
                 insert.setComponente("Historico de Terceros");
                 insert.setFecha(today);
                 insert.setInput("Historico de Terceros");
-                insert.setNombre(user.getNombre());
+                insert.setNombre(user.getPrimerNombre());
                 insert.setUsuario(user.getUsuario());
                 auditRepository.save(insert);
             }
@@ -317,7 +317,7 @@ public class ThirdService {
         insert.setComponente("Historico de Terceros");
         insert.setFecha(today);
         insert.setInput("Historico de Terceros");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
         return thirdRepository.save(toInsert);
@@ -340,7 +340,7 @@ public class ThirdService {
         insert.setComponente("Historico de Terceros");
         insert.setFecha(today);
         insert.setInput("Historico de Terceros");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
         return thirdRepository.save(third);
@@ -355,7 +355,7 @@ public class ThirdService {
         insert.setComponente("Historico de Terceros");
         insert.setFecha(today);
         insert.setInput("Historico de Terceros");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
         thirdRepository.deleteById(id);
@@ -370,7 +370,7 @@ public class ThirdService {
         insert.setComponente("Historico de Terceros");
         insert.setFecha(today);
         insert.setInput("Historico de Terceros");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
         thirdRepository.deleteAll();

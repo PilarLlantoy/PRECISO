@@ -55,7 +55,7 @@ public class ParamInformeNotasService {
         insert.setComponente("NIC34");
         insert.setFecha(today);
         insert.setInput("Parametrica Informe Notas");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
     }

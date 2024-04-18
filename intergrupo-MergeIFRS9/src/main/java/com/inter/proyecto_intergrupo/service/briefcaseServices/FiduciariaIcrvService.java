@@ -39,7 +39,7 @@ public class FiduciariaIcrvService {
         insert.setComponente("Portafolio");
         insert.setFecha(today);
         insert.setInput("Fiduciaria ICRV");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
     }

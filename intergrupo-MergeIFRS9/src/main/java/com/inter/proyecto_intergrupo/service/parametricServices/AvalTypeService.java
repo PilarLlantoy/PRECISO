@@ -131,7 +131,7 @@ public class AvalTypeService {
                 insert.setComponente("Parametricas");
                 insert.setFecha(today);
                 insert.setInput("Tipos de Aval");
-                insert.setNombre(user.getNombre());
+                insert.setNombre(user.getPrimerNombre());
                 insert.setUsuario(user.getUsuario());
                 auditRepository.save(insert);
             }else
@@ -143,7 +143,7 @@ public class AvalTypeService {
                 insert.setComponente("Parametricas");
                 insert.setFecha(today);
                 insert.setInput("Tipos de Aval");
-                insert.setNombre(user.getNombre());
+                insert.setNombre(user.getPrimerNombre());
                 insert.setUsuario(user.getUsuario());
                 auditRepository.save(insert);
             }

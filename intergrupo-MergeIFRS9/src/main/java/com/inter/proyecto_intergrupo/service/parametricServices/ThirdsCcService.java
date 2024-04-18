@@ -60,7 +60,7 @@ public class ThirdsCcService {
         insert.setComponente("Cuentas por Cobrar");
         insert.setFecha(today);
         insert.setInput("Terceros");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
     }

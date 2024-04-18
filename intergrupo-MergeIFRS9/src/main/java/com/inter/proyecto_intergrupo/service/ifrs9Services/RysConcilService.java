@@ -374,7 +374,7 @@ public class RysConcilService {
             insert.setComponente("RYS");
             insert.setFecha(today);
             insert.setInput("RIESGOS MERCADOS");
-            insert.setNombre(user.getNombre());
+            insert.setNombre(user.getPrimerNombre());
             insert.setUsuario(user.getUsuario());
             auditRepository.save(insert);
         }
@@ -390,7 +390,7 @@ public class RysConcilService {
             insert.setComponente("RYS");
             insert.setFecha(today);
             insert.setInput("RIESGOS MERCADOS");
-            insert.setNombre(user.getNombre());
+            insert.setNombre(user.getPrimerNombre());
             insert.setUsuario(user.getUsuario());
             auditRepository.save(insert);
         }
@@ -543,7 +543,7 @@ public class RysConcilService {
                     Query query7 = entityManager.createNativeQuery("UPDATE nexco_cuadro_mando SET semaforo_input = ? , usuario_carga = ? " +
                             "WHERE responsable = ? AND input = ? AND componente = ? AND fecha_reporte = ?", ControlPanel.class);
                     query7.setParameter(1, "PENDING");
-                    query7.setParameter(2, user.getNombre());
+                    query7.setParameter(2, user.getPrimerNombre());
                     query7.setParameter(3, user.getCentro());
                     query7.setParameter(4, "PLANTILLA CONTINGENTES - NEXCO");
                     query7.setParameter(5, "CONTINGENTES");
@@ -559,7 +559,7 @@ public class RysConcilService {
                     insert.setComponente("CONTINGENTES");
                     insert.setFecha(today);
                     insert.setInput("PLANTILLA CONTINGENTES - NEXCO");
-                    insert.setNombre(user.getNombre());
+                    insert.setNombre(user.getPrimerNombre());
                     insert.setUsuario(user.getUsuario());
                     auditRepository.save(insert);
                 } else if (finalList.get(finalList.size() - 1)[3].equals("BANCO")) {
@@ -567,7 +567,7 @@ public class RysConcilService {
                     Query query7 = entityManager.createNativeQuery("UPDATE nexco_cuadro_mando SET semaforo_input = ?, usuario_carga = ? " +
                             "WHERE responsable = ? AND input = ? AND componente = ? AND fecha_reporte = ?", ControlPanel.class);
                     query7.setParameter(1, "EMPTY");
-                    query7.setParameter(2, user.getNombre());
+                    query7.setParameter(2, user.getPrimerNombre());
                     query7.setParameter(3, user.getCentro());
                     query7.setParameter(4, "PLANTILLA CONTINGENTES - NEXCO");
                     query7.setParameter(5, "CONTINGENTES");
@@ -581,7 +581,7 @@ public class RysConcilService {
                     insert.setComponente("CONTINGENTES");
                     insert.setFecha(today);
                     insert.setInput("PLANTILLA CONTINGENTES - NEXCO");
-                    insert.setNombre(user.getNombre());
+                    insert.setNombre(user.getPrimerNombre());
                     insert.setUsuario(user.getUsuario());
                     auditRepository.save(insert);
                 } else if (finalList.get(finalList.size() - 1)[3].equals("CONTRATO")) {
@@ -589,7 +589,7 @@ public class RysConcilService {
                     Query query7 = entityManager.createNativeQuery("UPDATE nexco_cuadro_mando SET semaforo_input = ? , usuario_carga = ? " +
                             "WHERE responsable = ? AND input = ? AND componente = ? AND fecha_reporte = ?", ControlPanel.class);
                     query7.setParameter(1, "PENDING");
-                    query7.setParameter(2, user.getNombre());
+                    query7.setParameter(2, user.getPrimerNombre());
                     query7.setParameter(3, user.getCentro());
                     query7.setParameter(4, "PLANTILLA CONTINGENTES - NEXCO");
                     query7.setParameter(5, "CONTINGENTES");
@@ -605,7 +605,7 @@ public class RysConcilService {
                     insert.setComponente("CONTINGENTES");
                     insert.setFecha(today);
                     insert.setInput("PLANTILLA CONTINGENTES - NEXCO");
-                    insert.setNombre(user.getNombre());
+                    insert.setNombre(user.getPrimerNombre());
                     insert.setUsuario(user.getUsuario());
                     auditRepository.save(insert);
                 }
@@ -874,7 +874,7 @@ public class RysConcilService {
             insert.setComponente("DERIVADOS");
             insert.setFecha(today);
             insert.setInput("Contingentes");
-            insert.setNombre(user.getNombre());
+            insert.setNombre(user.getPrimerNombre());
             insert.setUsuario(user.getUsuario());
             auditRepository.save(insert);
         }
@@ -1746,7 +1746,7 @@ public class RysConcilService {
                 Query query7 = entityManager.createNativeQuery("UPDATE nexco_cuadro_mando SET semaforo_input = ? , usuario_carga = ? " +
                         "WHERE responsable = ? AND input = ? AND componente = ? AND fecha_reporte = ?", ControlPanel.class);
                 query7.setParameter(1, "PENDING");
-                query7.setParameter(2, user.getNombre());
+                query7.setParameter(2, user.getPrimerNombre());
                 query7.setParameter(3, user.getCentro());
                 query7.setParameter(4, "SICC");
                 query7.setParameter(5, "CONTINGENTES");
@@ -1873,7 +1873,7 @@ public class RysConcilService {
                 insert.setComponente("Parametricas");
                 insert.setFecha(today);
                 insert.setInput("Contratos");
-                insert.setNombre(user.getNombre());
+                insert.setNombre(user.getPrimerNombre());
                 insert.setUsuario(user.getUsuario());
                 auditRepository.save(insert);
             }else{
@@ -1884,7 +1884,7 @@ public class RysConcilService {
                 insert.setComponente("Parametricas");
                 insert.setFecha(today);
                 insert.setInput("Contratos");
-                insert.setNombre(user.getNombre());
+                insert.setNombre(user.getPrimerNombre());
                 insert.setUsuario(user.getUsuario());
                 auditRepository.save(insert);
 

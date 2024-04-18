@@ -41,7 +41,7 @@ public class NivelJerarquiaIcrvService {
         insert.setComponente("Portafolio");
         insert.setFecha(today);
         insert.setInput("Nivel Jerarquia ICRV");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
     }

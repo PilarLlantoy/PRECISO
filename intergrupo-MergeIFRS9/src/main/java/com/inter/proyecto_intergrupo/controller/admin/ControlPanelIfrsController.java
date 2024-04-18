@@ -68,7 +68,7 @@ public class ControlPanelIfrsController {
         modelAndView.addObject("directory", "controlPanelIfrs");
         modelAndView.addObject("state", this.generalState);
 
-        modelAndView.addObject("userName", user.getNombre());
+        modelAndView.addObject("userName", user.getPrimerNombre());
         modelAndView.addObject("userEmail", user.getCorreo());
         modelAndView.setViewName("admin/controlPanelIfrs");
         return modelAndView;

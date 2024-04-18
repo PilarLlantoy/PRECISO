@@ -184,7 +184,7 @@ public class RejectIdP2Service {
         insert.setComponente("Paramétricas IFRS9");
         insert.setFecha(today);
         insert.setInput("Identificación Rechazos");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
     }

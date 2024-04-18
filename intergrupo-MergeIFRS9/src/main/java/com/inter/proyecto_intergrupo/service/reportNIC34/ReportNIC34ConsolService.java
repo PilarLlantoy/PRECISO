@@ -62,7 +62,7 @@ public class ReportNIC34ConsolService {
         insert.setComponente("NIC34");
         insert.setFecha(today);
         insert.setInput("Reporte NIC34 Conslidado");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
     }

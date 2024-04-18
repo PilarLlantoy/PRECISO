@@ -69,7 +69,7 @@ public class ReclassificationController {
         modelAndView.addObject("registers",pageReclassification.getTotalElements());
 
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         modelAndView.setViewName("parametric/reclassification");
         return modelAndView;
@@ -133,7 +133,7 @@ public class ReclassificationController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         Reclassification toModify = reclassificationService.findReclassificationByNit(Long.parseLong(id));
         modelAndView.addObject("reclassificationModify",toModify);
@@ -182,7 +182,7 @@ public class ReclassificationController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         Reclassification reclassification = new Reclassification();
         modelAndView.addObject("reclassification", reclassification);
@@ -281,7 +281,7 @@ public class ReclassificationController {
         modelAndView.addObject("registers",list.size());
 
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         modelAndView.setViewName("parametric/reclassification");
         return modelAndView;

@@ -68,7 +68,7 @@ public class NeoconService {
                 insert.setComponente("Parametricas");
                 insert.setFecha(today);
                 insert.setInput("Cuentas Neocon");
-                insert.setNombre(user.getNombre());
+                insert.setNombre(user.getPrimerNombre());
                 insert.setUsuario(user.getUsuario());
                 auditRepository.save(insert);
             }else{
@@ -79,7 +79,7 @@ public class NeoconService {
                 insert.setComponente("Parametricas");
                 insert.setFecha(today);
                 insert.setInput("Cuentas Neocon");
-                insert.setNombre(user.getNombre());
+                insert.setNombre(user.getPrimerNombre());
                 insert.setUsuario(user.getUsuario());
                 auditRepository.save(insert);
 
@@ -318,7 +318,7 @@ public class NeoconService {
         insert.setComponente("Parametricas");
         insert.setFecha(today);
         insert.setInput("Cuentas Neocon");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
 
@@ -335,7 +335,7 @@ public class NeoconService {
         insert.setComponente("Parametricas");
         insert.setFecha(today);
         insert.setInput("Cuentas Neocon");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
         return neoconRepository.save(neocon);
@@ -349,7 +349,7 @@ public class NeoconService {
         insert.setComponente("Parametricas");
         insert.setFecha(today);
         insert.setInput("Cuentas Neocon");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
         neoconRepository.deleteById(id);
@@ -363,7 +363,7 @@ public class NeoconService {
         insert.setComponente("Parametricas");
         insert.setFecha(today);
         insert.setInput("Cuentas Neocon");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
         neoconRepository.deleteAll();

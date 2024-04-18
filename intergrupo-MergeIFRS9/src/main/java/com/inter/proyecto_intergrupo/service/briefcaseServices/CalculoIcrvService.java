@@ -56,7 +56,7 @@ public class CalculoIcrvService {
         insert.setComponente("Portafolio");
         insert.setFecha(today);
         insert.setInput("Cálculo ICRV");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
     }
@@ -146,7 +146,7 @@ public class CalculoIcrvService {
         }
         User user = new User();
         user.setCentro("");
-        user.setNombre("SYSTEM JOB");
+        user.setPrimerNombre("SYSTEM JOB");
         user.setUsuario("");
 
         if(findAllCalculo(todayString).size()==0)

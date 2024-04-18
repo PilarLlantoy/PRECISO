@@ -492,7 +492,7 @@ public class Intergrupo3Service {
         insert.setComponente("Intergrupo");
         insert.setFecha(today);
         insert.setInput("Intergrupo V3 Banco");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
     }
@@ -543,7 +543,7 @@ public class Intergrupo3Service {
         insert.setInput("Versión 3");
         if(user!=null)
         {
-            insert.setNombre(user.getNombre());
+            insert.setNombre(user.getPrimerNombre());
             insert.setUsuario(user.getUsuario());
             insert.setCentro(user.getCentro());
         }

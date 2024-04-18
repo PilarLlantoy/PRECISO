@@ -59,7 +59,7 @@ public class ReclassificationV2Controller {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Reclasificación Intergrupo V2")) {
+        if(userService.validateEndpoint(user.getId(),"Ver Reclasificación Intergrupo V2")) {
             int page = params.get("page") != null ? (Integer.valueOf(params.get("page").toString()) - 1) : 0;
             PageRequest pageRequest = PageRequest.of(page, PAGINATIONCOUNT);
             Page<ReclassificationIntergroup> pageRec = reclassificationV2Service.getAll(pageRequest);
@@ -78,7 +78,7 @@ public class ReclassificationV2Controller {
             modelAndView.addObject("columns", listColumns);
             modelAndView.addObject("filterExport", "Original");
             modelAndView.addObject("directory", "reclassificationV2");
-            modelAndView.addObject("userName", user.getNombre());
+            modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.addObject("registers",pageRec.getTotalElements());
 
@@ -151,7 +151,7 @@ public class ReclassificationV2Controller {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String pathList [] = id.split(":");
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName", user.getNombre());
+        modelAndView.addObject("userName", user.getPrimerNombre());
         modelAndView.addObject("userEmail", user.getCorreo());
         ReclassificationIntergroup toModify = reclassificationV2Service.findRec(id).get(0);
         modelAndView.addObject("recModify", toModify);
@@ -208,7 +208,7 @@ public class ReclassificationV2Controller {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName", user.getNombre());
+        modelAndView.addObject("userName", user.getPrimerNombre());
         modelAndView.addObject("userEmail", user.getCorreo());
         ReclassificationIntergroup rec = new ReclassificationIntergroup();
         modelAndView.addObject("rec", rec);
@@ -291,7 +291,7 @@ public class ReclassificationV2Controller {
         modelAndView.addObject("registers",list.size());
 
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         modelAndView.setViewName("parametric/reclassificationIntergroup");
         return modelAndView;

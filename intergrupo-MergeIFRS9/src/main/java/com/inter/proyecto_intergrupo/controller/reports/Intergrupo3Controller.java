@@ -68,7 +68,7 @@ public class Intergrupo3Controller {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Intergrupo 3 Banco")) {
+        if(userService.validateEndpoint(user.getId(),"Ver Intergrupo 3 Banco")) {
             int page = params.get("page") != null ? (Integer.valueOf(params.get("page").toString()) - 1) : 0;
             PageRequest pageRequest = PageRequest.of(page, PAGINATIONCOUNT);
             String todayString = "";
@@ -204,7 +204,7 @@ public class Intergrupo3Controller {
             modelAndView.addObject("vFilter", Vf);
             modelAndView.addObject("directory", "intergroup3");
             modelAndView.addObject("columns", listColumns);
-            modelAndView.addObject("userName", user.getNombre());
+            modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.setViewName("reports/intergroup3");
 

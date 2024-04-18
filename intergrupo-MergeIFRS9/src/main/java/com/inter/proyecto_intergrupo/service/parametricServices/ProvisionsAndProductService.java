@@ -230,7 +230,7 @@ public class ProvisionsAndProductService {
                 insert.setComponente("Parametricas");
                 insert.setFecha(today);
                 insert.setInput("Provisiones y Producto");
-                insert.setNombre(user.getNombre());
+                insert.setNombre(user.getPrimerNombre());
                 insert.setUsuario(user.getUsuario());
                 auditRepository.save(insert);
             }
@@ -242,7 +242,7 @@ public class ProvisionsAndProductService {
                 insert.setComponente("Parametricas");
                 insert.setFecha(today);
                 insert.setInput("Provisiones y Producto");
-                insert.setNombre(user.getNombre());
+                insert.setNombre(user.getPrimerNombre());
                 insert.setUsuario(user.getUsuario());
                 auditRepository.save(insert);
 

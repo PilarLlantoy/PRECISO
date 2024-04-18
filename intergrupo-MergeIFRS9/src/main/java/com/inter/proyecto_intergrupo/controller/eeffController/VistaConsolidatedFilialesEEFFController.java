@@ -38,7 +38,7 @@ public class VistaConsolidatedFilialesEEFFController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
 
-        if (userService.validateEndpoint(user.getUsuario(), "Ver EEFF Consolidado")) {
+        if (userService.validateEndpoint(user.getId(), "Ver EEFF Consolidado")) {
 
             String todayString = "";
             if (params.get("period") == null || params.get("period").toString() == "") {

@@ -60,7 +60,7 @@ public class ChangeAccountQueryController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Historico Cambio Cuentas")) {
+        if(userService.validateEndpoint(user.getId(),"Ver Historico Cambio Cuentas")) {
 
             String todayString="";
             String markString="IFRS9";
@@ -143,7 +143,7 @@ public class ChangeAccountQueryController {
             modelAndView.addObject("directory", "changeAccountQuery");
             modelAndView.addObject("registers",pageChange.getTotalElements());
 
-            modelAndView.addObject("userName", user.getNombre());
+            modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.setViewName("ifrs/changeAccountQuery");
         }
@@ -161,7 +161,7 @@ public class ChangeAccountQueryController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         ChangeAccountQuery toModify = changeAccountQueryService.findById(Long.parseLong(id));
         modelAndView.addObject("changeModify",toModify);
@@ -304,7 +304,7 @@ public class ChangeAccountQueryController {
         modelAndView.addObject("registers",list.size());
 
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         modelAndView.setViewName("ifrs/changeAccountQuery");
         return modelAndView;

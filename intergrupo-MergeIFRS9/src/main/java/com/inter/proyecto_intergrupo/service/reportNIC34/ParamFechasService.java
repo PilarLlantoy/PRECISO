@@ -60,7 +60,7 @@ public class ParamFechasService {
         insert.setComponente("NIC34");
         insert.setFecha(today);
         insert.setInput("Parametrica Fechas");
-        insert.setNombre(user.getNombre());
+        insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
     }

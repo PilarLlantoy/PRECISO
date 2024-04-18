@@ -47,7 +47,7 @@ public class CountryController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getUsuario(),"Ver Histórico de paises")) {
+        if(userService.validateEndpoint(user.getId(),"Ver Histórico de paises")) {
 
         int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
         PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
@@ -71,7 +71,7 @@ public class CountryController {
         modelAndView.addObject("filterExport","Original");
         modelAndView.addObject("directory","country");
         modelAndView.addObject("registers",countries.size());
-        modelAndView.addObject("userName", user.getNombre());
+        modelAndView.addObject("userName", user.getPrimerNombre());
         modelAndView.addObject("userEmail", user.getCorreo());
 
         modelAndView.setViewName("parametric/country");
@@ -90,7 +90,7 @@ public class CountryController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         Country toModify = countryService.findCountryById(id);
         modelAndView.addObject("countryModify",toModify);
@@ -227,7 +227,7 @@ public class CountryController {
         modelAndView.addObject("registers",list.size());
 
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getNombre());
+        modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
         modelAndView.setViewName("parametric/country");
         return modelAndView;
