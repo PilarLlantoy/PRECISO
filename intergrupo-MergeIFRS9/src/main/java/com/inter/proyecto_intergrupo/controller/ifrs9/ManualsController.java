@@ -56,7 +56,7 @@ public class ManualsController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getId(),"Ver Manuales (ANEXO8 - SICC)")) {
+        if(userService.validateEndpointVer(user.getId(),"Ver Manuales (ANEXO8 - SICC)")) {
 
             int page=params.get("page")==null?0:(Integer.valueOf(params.get("page").toString())-1);
             PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);

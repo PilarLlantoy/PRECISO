@@ -1,9 +1,6 @@
 package com.inter.proyecto_intergrupo.service.adminServices;
 
-import com.inter.proyecto_intergrupo.model.admin.Audit;
-import com.inter.proyecto_intergrupo.model.admin.ControlPanelIfrs;
-import com.inter.proyecto_intergrupo.model.admin.Role;
-import com.inter.proyecto_intergrupo.model.admin.User;
+import com.inter.proyecto_intergrupo.model.admin.*;
 import com.inter.proyecto_intergrupo.model.parametric.TypeEntity;
 import com.inter.proyecto_intergrupo.model.parametric.UserAccount;
 import com.inter.proyecto_intergrupo.repository.admin.AuditRepository;
@@ -64,11 +61,10 @@ public class    UserService {
         user.setRoles(userRoles);
         user.setResetPasswordToken("");
         userRepository.save(user);
-        asociarCentro(user.getCentro(),userRepository.findByUsuario(user.getUsuario()).getUsuario(),1);
         return user;
     }
 
-    public void asociarCentro(String centro, String id, int operacion){
+    public void asociarCentro(String centro, int id, int operacion){
 
         if(operacion==2)
         {
@@ -92,18 +88,30 @@ public class    UserService {
     }
 
 
-    public User modifyUser(User toModify, Date fecha, Set<Role> roles, String id){
+    public User modifyUser(User toModify, Date fecha, Set<Role> roles, int id){
         User toInsert = new User();
+        //Cargo cargo = new Cargo(); PRBLEMAS CON CARGO
         toInsert.setPrimerNombre(toModify.getPrimerNombre());
+        toInsert.setSegundoNombre(toModify.getSegundoNombre());
+        toInsert.setPrimerApellido(toModify.getPrimerApellido());
+        toInsert.setSegundoApellido(toModify.getSegundoApellido());
+        toInsert.setNumeroDocumento(toModify.getNumeroDocumento());
+        toInsert.setTipoDocumento(toModify.getTipoDocumento());
+        toInsert.setCargo(toModify.getCargo());
+        toInsert.setActivo((toModify.isActivo()));
         toInsert.setCentro(toModify.getCentro());
-        toInsert.setUsuario(id);
+        toInsert.setUsuario(toModify.getUsuario());
+        toInsert.setId(id);
         toInsert.setCorreo(toModify.getCorreo());
         toInsert.setContra(toModify.getContra());
         toInsert.setEmpresa(toModify.getEmpresa());
-        toInsert.setEstado(toModify.getEstado());
+        toInsert.setEstado(toModify.isEstado());
         toInsert.setCreacion(fecha);
         toInsert.setRoles(roles);
-        asociarCentro(toModify.getCentro(),toModify.getUsuario(),2);
+        toInsert.setFechaNacimiento(toModify.getFechaNacimiento());
+        toInsert.setInicioInactividad(toModify.getInicioInactividad());
+        toInsert.setFinInactividad(toModify.getFinInactividad());
+        asociarCentro(toModify.getCentro(),toModify.getId(),2);
         userRepository.save(toInsert);
         return toInsert;
     }
@@ -159,6 +167,23 @@ public class    UserService {
         validate.setParameter(2,vista);
 
         return !validate.getResultList().isEmpty();
+    }
+
+    public boolean validateEndpointVer(int usuario,String vista)
+    {
+        Query validate = entityManager.createNativeQuery("SELECT nrv.p_visualizar FROM nexco_user_rol AS nur, nexco_rol_vista AS nrv, nexco_vistas AS nv\n" +
+                "WHERE nur.id_perfil = nrv.id_perfil AND nrv.id_vista = nv.id_vista AND nur.id_usuario = ? AND nv.nombre = ? ");
+        validate.setParameter(1,usuario);
+        validate.setParameter(2,vista);
+        return (boolean) validate.getSingleResult()==true;
+    }
+    public boolean validateEndpointModificar(int usuario,String vista)
+    {
+        Query validate = entityManager.createNativeQuery("SELECT nrv.p_modificar FROM nexco_user_rol AS nur, nexco_rol_vista AS nrv, nexco_vistas AS nv\n" +
+                "WHERE nur.id_perfil = nrv.id_perfil AND nrv.id_vista = nv.id_vista AND nur.id_usuario = ? AND nv.nombre = ? ");
+        validate.setParameter(1,usuario);
+        validate.setParameter(2,vista);
+        return (boolean) validate.getSingleResult()==true;
     }
 
     public List<String> validatePrincipal(String principal)

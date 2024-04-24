@@ -89,7 +89,7 @@ public class UserListReport {
             createCell(row,columnCount++,user.getCorreo(),style);
             createCell(row,columnCount++,user.getCentro(),style);
             createCell(row,columnCount++,user.getCreacion().toString(),style);
-            if(user.getEstado()==true)
+            if(user.isEstado()==true)
             {
                 createCell(row,columnCount++,"Activo",style);
             }

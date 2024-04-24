@@ -81,7 +81,7 @@ public class ContingentesController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getId(),"Ver Contingentes Contratos")) {
+        if(userService.validateEndpointVer(user.getId(),"Ver Contingentes Contratos")) {
             int page = params.get("page") != null ? (Integer.valueOf(params.get("page").toString()) - 1) : 0;
             PageRequest pageRequest = PageRequest.of(page, PAGINATIONCOUNT);
             Page<Contract> pageContract = contractService.getAll(pageRequest);
@@ -204,7 +204,7 @@ public class ContingentesController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getId(),"Ver Contingentes Plantilla")) {
+        if(userService.validateEndpointVer(user.getId(),"Ver Contingentes Plantilla")) {
             int page = params.get("page") != null ? (Integer.valueOf(params.get("page").toString()) - 1) : 0;
             PageRequest pageRequest = PageRequest.of(page, PAGINATIONCOUNT);
             String todayString = "";

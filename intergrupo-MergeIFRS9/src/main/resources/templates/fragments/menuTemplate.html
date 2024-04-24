@@ -44,55 +44,55 @@
         </div>
         <ul class="nav_links">
             <li id="btnIntergrupo">
-                <a>
+                <a th:hidden="true">
                     <i class='bx bxs-group'></i>
                 </a>
                 <span class="tooltip">Intergrupo</span>
             </li>
             <li id="btnIfrs9">
-                <a>
+                <a th:hidden="true">
                     <i class='bx bx-grid-alt'></i>
                 </a>
                 <span class="tooltip">IFRS9</span>
             </li>
             <li id="btnCreacion">
-                <a>
+                <a th:hidden="true">
                     <i class='bx bx-book'></i>
                 </a>
                 <span class="tooltip">Creación de Cuentas</span>
             </li>
             <li id="btnProvisiones">
-                <a>
+                <a th:hidden="true">
                     <i class='bx bxs-bank'></i>
                 </a>
                 <span class="tooltip">Provisiones</span>
             </li>
             <li id="btneeffMenu">
-                <a>
+                <a th:hidden="true">
                     <i class='bx bxs-file-find'></i>
                 </a>
                 <span class="tooltip">EEFF Consolidado</span>
             </li>
             <li id="btnCollectionAccount">
-                <a>
+                <a th:hidden="true">
                     <i class='bx bxs-wallet-alt'></i>
                 </a>
                 <span class="tooltip">Cuentas por Cobrar</span>
             </li>
             <li id="btnReportNIC34">
-                <a>
+                <a th:hidden="true">
                     <i class='bx bxs-report'></i>
                 </a>
                 <span class="tooltip">NIC34</span>
             </li>
             <li id="btnInformacion">
-                <a>
+                <a th:hidden="true">
                     <i class='bx bxs-info-circle'></i>
                 </a>
                 <span class="tooltip">Informacionales</span>
             </li>
             <li id="btnPortafolio">
-                <a>
+                <a th:hidden="true">
                     <i class='bx bxs-briefcase'></i>
                 </a>
                 <span class="tooltip">Portafolio</span>
@@ -104,7 +104,7 @@
                 <span class="tooltip">Administración</span>
             </li>
             <li id="btnDataQuality">
-                <a>
+                <a th:hidden="true">
                     <i class='bx bxs-check-shield'></i>
                 </a>
                 <span class="tooltip">Data Quality</span>
@@ -1079,17 +1079,17 @@
                 </a>
             </li>
             <li>
-                <a th:href="@{/admin/controlPanel?period={period}(period='')}">
+                <a th:href="@{/admin/controlPanel?period={period}(period='')}" th:hidden="true">
                     <span class="links_name">Cuadro Mando Intergrupo</span>
                 </a>
             </li>
             <li>
-                <a th:href="@{/admin/controlPanelJobs}">
+                <a th:href="@{/admin/controlPanelJobs}" th:hidden="true">
                     <span class="links_name">Cuadro Mando Jobs</span>
                 </a>
             </li>
             <li>
-                <a th:href="@{/admin/audit}">
+                <a th:href="@{/admin/audit}" th:hidden="true">
                     <span class="links_name">Logs</span>
                 </a>
             </li>

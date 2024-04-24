@@ -51,7 +51,7 @@ public class DesconValidationController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getId(),"Ver Archivos Descontabilización Host")) {
+        if(userService.validateEndpointVer(user.getId(),"Ver Archivos Descontabilización Host")) {
         String todayString="";
         if (params.get("period") == null || Objects.equals(params.get("period").toString(), "")) {
             Date today = new Date();

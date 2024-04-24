@@ -78,7 +78,7 @@ public class ControlPanelJobsController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getId(),"Ver Cuadro Mando Jobs")) {
+        if(userService.validateEndpointVer(user.getId(),"Ver Cuadro Mando Jobs")) {
             modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
 
@@ -117,7 +117,7 @@ public class ControlPanelJobsController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getId(),"Ver Cuadro Mando Jobs")) {
+        if(userService.validateEndpointVer(user.getId(),"Ver Cuadro Mando Jobs")) {
             modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
 

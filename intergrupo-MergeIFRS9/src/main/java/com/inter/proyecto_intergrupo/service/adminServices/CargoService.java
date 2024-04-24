@@ -40,4 +40,6 @@ public class CargoService {
         return cargoRepository.save(cargo);
     }
 
+    public Cargo findCargoByNombre(String name){return cargoRepository.findByNombre(name);}
+
 }

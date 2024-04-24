@@ -60,7 +60,7 @@ public class ChangeAccountQueryController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getId(),"Ver Historico Cambio Cuentas")) {
+        if(userService.validateEndpointVer(user.getId(),"Ver Historico Cambio Cuentas")) {
 
             String todayString="";
             String markString="IFRS9";

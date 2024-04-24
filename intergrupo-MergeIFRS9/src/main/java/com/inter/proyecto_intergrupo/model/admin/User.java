@@ -7,6 +7,7 @@ import javax.persistence.*;
 import javax.validation.constraints.*;
 
 import org.hibernate.validator.constraints.Length;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 import java.util.List;
@@ -63,17 +64,23 @@ public class User {
     @JoinColumn(name = "id_cargo")
     private Cargo cargo;
 
-    @Column(name = "activo")
-    private Boolean activo;
+    @Column(name = "activo", columnDefinition = "BIT DEFAULT 1")
+    private boolean activo = true;
+
+    @Column(name = "estado", columnDefinition = "BIT DEFAULT 1")
+    private boolean estado = true;
 
     @Column(name = "fecha_nacimiento")
     //@NotNull(message = "Ingrese una fecha de nacimiento")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date fechaNacimiento;
 
     @Column(name = "inicio_inactividad")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date inicioInactividad;
 
     @Column(name = "fin_inactividad")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date finInactividad;
 
     @Column(name = "correo", unique = true)
@@ -84,25 +91,20 @@ public class User {
     @Column(name = "contra")
     private String contra;
 
-    @Column(name = "centro")
-    @NotEmpty(message = "Ingrese el centro")
-    private String centro;
-
-    @Column(name = "estado")
-    private Boolean estado;
-
-    @Column(name = "empresa")
-    @NotEmpty(message = "Ingrese una empresa")
-    private String empresa;
-
     @Column(name = "creacion")
     private Date creacion;
 
     @Column(name = "passwordToken")
     private String resetPasswordToken;
 
-
-
     @OneToMany(mappedBy = "idUsuario", cascade = CascadeType.ALL)
     private List<UserAccount> userAccountList;
+
+    @Column(name = "empresa")
+    //@NotEmpty(message = "Ingrese una empresa")
+    private String empresa;
+
+    @Column(name = "centro")
+    //@NotEmpty(message = "Ingrese el centro")
+    private String centro;
 }

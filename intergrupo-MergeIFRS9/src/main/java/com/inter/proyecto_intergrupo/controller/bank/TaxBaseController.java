@@ -58,7 +58,7 @@ public class TaxBaseController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getId(),"Ver Base Fiscal")) {
+        if(userService.validateEndpointVer(user.getId(),"Ver Base Fiscal")) {
             String todayString;
             String Id;
             String Vf;

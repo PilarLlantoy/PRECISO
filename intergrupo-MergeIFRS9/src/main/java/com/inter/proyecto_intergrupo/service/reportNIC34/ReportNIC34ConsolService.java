@@ -58,7 +58,7 @@ public class ReportNIC34ConsolService {
         Date today=new Date();
         Audit insert = new Audit();
         insert.setAccion(mensaje);
-        insert.setCentro(user.getCentro());
+        // insert.setCentro(user.getCentro());
         insert.setComponente("NIC34");
         insert.setFecha(today);
         insert.setInput("Reporte NIC34 Conslidado");

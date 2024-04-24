@@ -46,7 +46,7 @@ public class Ifrs9ReportsController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getId(),"Ver Vertical De Saldos")) {
+        if(userService.validateEndpointVer(user.getId(),"Ver Vertical De Saldos")) {
 
             String todayString = "";
             if (params.get("period").toString() == null || params.get("period").toString() == "") {

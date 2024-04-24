@@ -57,7 +57,7 @@ public class ReconciliationController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getId(),"Ver Intergrupo - Query")) {
+        if(userService.validateEndpointVer(user.getId(),"Ver Intergrupo - Query")) {
 
             String todayString = "";
 
@@ -355,7 +355,7 @@ public class ReconciliationController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getId(),"Ver Intergrupo Banco - Filiales")) {
+        if(userService.validateEndpointVer(user.getId(),"Ver Intergrupo Banco - Filiales")) {
 
             String todayString = "";
             String yntpSelect = "";

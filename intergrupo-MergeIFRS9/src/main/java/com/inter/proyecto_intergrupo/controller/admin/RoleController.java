@@ -47,9 +47,11 @@ public class RoleController {
         System.out.println("auth"+auth.getName());
         User user = userService.findUserByUserName(auth.getName());
         System.out.println("user"+user.getUsuario()+user.getPrimerNombre());
-        if(userService.validateEndpoint(user.getId(),"Ver Roles")) {
+        Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Roles");
+        if(userService.validateEndpointVer(user.getId(),"Ver Roles")) {
             List<Role> allRoles = roleService.findAllActiveRoles();
             modelAndView.addObject("roles", allRoles);
+            modelAndView.addObject("p_modificar", p_modificar);
             modelAndView.setViewName("profile/roles");
         }
         else
@@ -78,14 +80,11 @@ public class RoleController {
         modelAndView.addObject("role",myRole);
         modelAndView.addObject("allViewsVer",allViewsVer);
         modelAndView.addObject("allViewsModificar",allViewsModificar);
-        System.out.println("AYUUUUUUDAAAAA "+myRole.getNombre());
             for (View view : allViewsVer) {
                 View toAdd = viewService.findViewByName(view.getViewName());
-                System.out.println("ver "+view.getViewName());
             }
         for (View view : allViewsModificar) {
             View toAdd = viewService.findViewByName(view.getViewName());
-            System.out.println("mod "+view.getViewName());
         }
 
         List<View> roleViews = myRole.getVistas();

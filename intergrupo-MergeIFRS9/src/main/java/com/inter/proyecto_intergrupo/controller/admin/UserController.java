@@ -2,9 +2,11 @@ package com.inter.proyecto_intergrupo.controller.admin;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.inter.proyecto_intergrupo.model.admin.Cargo;
 import com.inter.proyecto_intergrupo.model.admin.Role;
 import com.inter.proyecto_intergrupo.model.admin.User;
 import com.inter.proyecto_intergrupo.model.parametric.TypeEntity;
+import com.inter.proyecto_intergrupo.service.adminServices.CargoService;
 import com.inter.proyecto_intergrupo.service.adminServices.RoleService;
 import com.inter.proyecto_intergrupo.service.adminServices.UserListReport;
 import com.inter.proyecto_intergrupo.service.adminServices.UserService;
@@ -29,6 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -45,6 +48,9 @@ public class UserController {
 
     @Autowired
     private RoleService roleService;
+
+    @Autowired
+    private CargoService cargoService;
 
     @Autowired
     SendEmailService sendEmailService;
@@ -84,8 +90,8 @@ public class UserController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getId(),"Ver Usuarios")) {
-
+        Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Usuarios");
+        if(userService.validateEndpointVer(user.getId(),"Ver Usuarios")) {
             int page = params.get("page") != null ? (Integer.valueOf(params.get("page").toString()) - 1) : 0;
             PageRequest pageRequest = PageRequest.of(page, PAGINATIONCOUNT);
             List<User> list = userService.findAll();
@@ -95,6 +101,7 @@ public class UserController {
                 List<Integer> pages = IntStream.rangeClosed(1, totalPage).boxed().collect(Collectors.toList());
                 modelAndView.addObject("pages", pages);
             }
+            modelAndView.addObject("p_modificar", p_modificar);
             modelAndView.addObject("allUsers", pageType.getContent());
             modelAndView.addObject("current", page + 1);
             modelAndView.addObject("next", page + 2);
@@ -148,7 +155,9 @@ public class UserController {
             modelAndView.addObject("userName", user.getUsuario());
             modelAndView.addObject("userEmail", user.getCorreo());
             List<Role> allRoles = roleService.findAll();
+            List<Cargo> allCargos = cargoService.findAll();
             modelAndView.addObject("roles", allRoles);
+            modelAndView.addObject("cargos", allCargos);
             User toModify = userService.findUserByUserName(id);
             modelAndView.addObject("userModify", toModify);
             Set<Role> userRoles = toModify.getRoles();
@@ -162,24 +171,33 @@ public class UserController {
     }
 
     @PostMapping(value = "/admin/modifyUsers")
-    public ModelAndView updateUser(@ModelAttribute User user, @RequestParam(name = "selectedRoles") String[] roles,@RequestParam("newU") String id){
+    public ModelAndView updateUser(
+            @ModelAttribute User user,
+            @RequestParam(name = "selectedRoles") String[] roles,
+            @RequestParam(name = "selectedCargo", required = false) String cargo,
+            @RequestParam("newU") String id){
+        System.out.println("nombre cargo "+cargo);
+
         Set<Role> newRoles = new HashSet<Role>();
         for (String role : roles) {
             Role myRole = roleService.findRole(role);
             newRoles.add(myRole);
         }
+        System.out.println("nombre cargo "+cargo);
+        Cargo newCargo = cargoService.findCargoByNombre(cargo);
+        user.setCargo(newCargo);
+
         User searchUser = userService.findUserByUserName(user.getUsuario());
         User searchUserOld = userService.findUserByUserName(id);
         ModelAndView modelAndView = new ModelAndView("redirect:/admin/users");
         List<Role> allRoles = roleService.findAll();
         modelAndView.addObject("roles", allRoles);
         modelAndView.addObject("message", "Usuario modificado");
-        if(searchUser!=null)
-        {
-            userService.modifyUser(user, searchUser.getCreacion(), newRoles, searchUser.getUsuario());
+
+        if(searchUser!=null) {
+            userService.modifyUser(user, searchUser.getCreacion(), newRoles, searchUser.getId());
         }
-        else
-        {
+        else {
             user.setUsuario(searchUserOld.getUsuario());
             HashSet<Role> userRoles = new HashSet<>();
             for(int i =0; i< roles.length;i++){
@@ -213,6 +231,8 @@ public class UserController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         List <Role> allRoles = roleService.findAll();
         modelAndView.addObject("roles",allRoles);
+
+        //Verifica que no haya usuario y correo repetido
         User userExists = userService.findUserByUserName(user.getUsuario());
         User userByEmail = userService.findUserByEmail(user.getCorreo());
         if (userExists != null) {
@@ -227,7 +247,8 @@ public class UserController {
         }
         if(bindingResult.hasErrors()) {
             modelAndView.setViewName("admin/createUser");
-        }else{
+        }
+        else{
             HashSet<Role> userRoles = new HashSet<>();
             for(int i =0; i< roles.length;i++){
                 try{
@@ -328,6 +349,43 @@ public class UserController {
         modelAndView.setViewName("admin/users");
         return modelAndView;
     }
+
+    /*
+    public void validarBanco(){
+
+        LDAP ldap = new LDAP();
+        String res = ldap.inicializarLDAP(getUsuario(),getClave());
+        if (res.contains("exitosa")){
+            setPerfil((int) valida.get(1));
+            HttpSession session = SessionUtils.getSession();
+            session.setAttribute("usuario", getUsuario());
+            session.setAttribute("perfil",getPerfil());
+            session.setAttribute("area",valida.get(3));
+            setUsuarioLogeado((String) valida.get(2));
+
+            FacesContext context2 = FacesContext.getCurrentInstance();
+            context2.getExternalContext().redirect("/CargasMasivas/faces/Login/Master.xhtml");
+            result = true;
+        } else
+        {
+            String mss="Error. ";
+            if (res.contains("52e")){
+                mss += "Credenciales no válidas.";
+            } else if (res.contains("525")){
+                mss += "Usuario no encontrado";
+            } else if (res.contains("532")){
+                mss += "Contraseña caducada.";
+            } else if (res.contains("773")){
+                mss += "El usuario debe restablecer la contraseña en Intranet.";
+            } else if (res.contains("775")){
+                mss += "Cuenta de usuario bloqueado, restablezca en intranet.";
+            }
+            FacesContext context = FacesContext.getCurrentInstance();
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención", mss));
+            result = false;
+        }
+    }
+    */
 
 
 }

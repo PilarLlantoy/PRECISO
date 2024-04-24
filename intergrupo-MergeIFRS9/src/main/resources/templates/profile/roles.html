@@ -20,7 +20,7 @@
 
         <div class="text-right pr-3 col-md-12 my-3">
             <a class="btn btn-primary mx-1" th:href="@{/profile/roles}"><i class="fas fa-redo-alt"></i></a>
-            <a class="btn btn-primary mx-1" th:href="@{/profile/createRole}">Crear Rol</a>
+            <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1" th:onclick="|window.location.href='@{/profile/createRole}'|">Crear Rol</button>
         </div>
 
         <div class="col-md-12 p-0">
@@ -44,11 +44,13 @@
                         </span>
                         </td>
                         <td>
-                            <input class="big-checkbox" type="checkbox" th:checked="${role.activo}" th:onclick="'seleccionarRole(\'' + ${role.id} + '\'); checkboxChanged(\'' + ${role.activo} + '\');'"/>
+                            <input th:disabled="${!p_modificar}" class="big-checkbox" type="checkbox" th:checked="${role.activo}" th:onclick="'seleccionarRole(\'' + ${role.id} + '\'); checkboxChanged(\'' + ${role.activo} + '\');'"/>
                         </td>
                         <td>
-                            <a th:href="@{/profile/modifyRole/{id}(id=${role.id})}" class="btn btn-primary">Editar</a>
-                            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#eliminarModal" th:onclick="'seleccionarRole(\'' + ${role.id} + '\')'">
+                            <button class="btn btn-primary" th:onclick="|window.location.href='/profile/modifyRole/' + ${role.id}|">
+                                Editar
+                            </button>
+                            <button th:disabled="${!p_modificar}" type="button" class="btn btn-danger" data-toggle="modal" data-target="#eliminarModal" th:onclick="'seleccionarRole(\'' + ${role.id} + '\')'">
                                 Eliminar
                             </button>
                         </td>

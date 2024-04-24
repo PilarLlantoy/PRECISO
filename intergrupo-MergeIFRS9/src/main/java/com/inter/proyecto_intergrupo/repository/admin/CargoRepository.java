@@ -8,8 +8,9 @@ import java.util.List;
 
 @Repository
 public interface CargoRepository extends CrudRepository<Cargo,Integer> {
-    Cargo findByNombre(String nombre);
+
     Cargo findById(int id);
     List<Cargo> findAll();
     List<Cargo> findByEstado(boolean estado);
+    Cargo findByNombre(String nombre);
 }

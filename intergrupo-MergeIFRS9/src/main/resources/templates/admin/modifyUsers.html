@@ -25,15 +25,9 @@
                 </div>
                 <div class="col-md-6">
                     <div class="form-group mb-1">
-                        <label>Usuario</label>
+                        <label>Código Usuario</label>
                         <input class="form-control" maxlength="7" minlength="7" required th:field="*{usuario}"
                                type="text">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group mb-1">
-                        <label>Nombre</label>
-                        <input class="form-control" maxlength="255" required th:field="*{nombre}" type="text">
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -44,28 +38,43 @@
                 </div>
                 <div class="col-md-6">
                     <div class="form-group mb-1">
-                        <label>Centro</label>
-                        <input class="form-control" maxlength="18" required th:field="*{centro}" type="text">
-                        </select>
+                        <label>Primer nombre</label>
+                        <input class="form-control" maxlength="255" required th:field="*{primerNombre}" type="text">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group mb-1">
-                        <label>Empresa</label>
-                        <input class="form-control" maxlength="5" minlength="5" required th:field="*{empresa}"
-                               type="text">
-                        </select>
+                        <label>Segundo nombre</label>
+                        <input class="form-control" maxlength="255" required th:field="*{segundoNombre}" type="text">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group mb-1">
-                        <label>Estado</label>
-                        <select class="form-control" required th:field="*{estado}">
-                            <option th:text="Activo" th:value="true"></option>
-                            <option th:text="Inactivo" th:value="false"></option>
-                        </select>
+                        <label>Primer apellido</label>
+                        <input class="form-control" maxlength="255" required th:field="*{primerApellido}" type="text">
                     </div>
                 </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Segundo apellido</label>
+                        <input class="form-control" maxlength="255" required th:field="*{segundoApellido}" type="text">
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Tipo Documento</label>
+                        <input class="form-control" maxlength="255" required th:field="*{tipoDocumento}" type="text">
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Número de documento</label>
+                        <input class="form-control" maxlength="255" required th:field="*{numeroDocumento}" type="text">
+                    </div>
+                </div>
+
                 <div class="col-md-6">
                     <div class="row">
                         <div class="col-12">
@@ -81,6 +90,57 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Cargo</label>
+                        <select class="form-control" name="selectedCargo" id="selectedCargo" >
+                            <option disabled value="" selected hidden>Seleccione el primer filtro</option>
+                            <option th:each="cargo : ${cargos}" th:value="${cargo.nombre}" th:text="${cargo.nombre}"
+                                    th:selected="${cargo.id == userModify.cargo.id}"></option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Fecha Nacimiento</label>
+                        <input class="form-control" type="date"
+                               th:field="*{fechaNacimiento}">
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Fecha inicio inactividad</label>
+                        <input class="form-control" type="date"
+                               th:field="*{inicioInactividad}" >
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Fecha fin inactividad</label>
+                        <input class="form-control" type="date"
+                               th:field="*{finInactividad}">
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-12">
+                            <p>Activo:</p>
+                        </div>
+                        <div class="form-group col-12">
+                            <div class="form-check form-check-inline">
+                                <input id="fechaNacimientoInput" class="form-check-input " name="activo" th:field="*{activo}" th:id="${activo}"
+                                       th:value="${activo}" type="checkbox">
+                                <label>[[${activo}]]</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
             <div class="row pt-5 py-3">
                 <div class="col-md-12 d-flex align-content-center justify-content-center">
@@ -92,6 +152,7 @@
                     </div>
                 </div>
             </div>
+
         </form>
     </div>
 
@@ -122,7 +183,11 @@
 <script crossorigin="anonymous"
         integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
         src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+
+
 <script type="text/javascript">
+
+
     $(document).ready(function () {
         $('#sidebarCollapse').on('click', function () {
             $('#sidebar').toggleClass('active');

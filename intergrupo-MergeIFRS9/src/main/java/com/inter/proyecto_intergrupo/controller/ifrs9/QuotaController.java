@@ -60,7 +60,7 @@ public class QuotaController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getId(),"Ver Parametría Contingentes Anexo 8")) {
+        if(userService.validateEndpointVer(user.getId(),"Ver Parametría Contingentes Anexo 8")) {
         int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
         PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
         Page<Quotas> pageSubsidiaries=quotaService.getAll(pageRequest);

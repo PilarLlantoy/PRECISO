@@ -33,9 +33,11 @@ public class CargoController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getId(),"Ver Roles")) {
+        Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Cargos");
+        if(userService.validateEndpointVer(user.getId(),"Ver Cargos")) {
             List<Cargo> allCargos = cargoService.findAllActiveCargos();
             modelAndView.addObject("cargos", allCargos);
+            modelAndView.addObject("p_modificar", p_modificar);
             modelAndView.setViewName("admin/cargos");
         }
         else

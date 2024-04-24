@@ -19,7 +19,7 @@
             <div class="row mt-5 pt-5 py-3">
                 <div class="col-md-6">
                     <div class="form-group mb-1">
-                        <label>Usuario</label>
+                        <label>Código   Usuario</label>
                         <input class="form-control" maxlength="7" minlength="7" required th:field="*{usuario}"
                                type="text">
                         <div class="alert alert-warning" th:errors="*{usuario}"
@@ -36,33 +36,40 @@
                 </div>
                 <div class="col-md-6">
                     <div class="form-group mb-1">
-                        <label>Empresa</label>
-                        <input class="form-control" maxlength="5" minlength="5" required th:field="*{empresa}"
-                               type="text">
-                        <div class="alert alert-warning" th:errors="*{empresa}"
-                             th:if="${#fields.hasErrors('empresa')}"></div>
+                        <label>Primer nombre</label>
+                        <input class="form-control" maxlength="255" required th:field="*{primerNombre}" type="text">
+                        <div class="alert alert-warning" th:errors="*{primerNombre}"
+                             th:if="${#fields.hasErrors('primerNombre')}"></div>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group mb-1">
-                        <label>Centro</label>
-                        <input class="form-control" maxlength="18" required th:field="*{centro}" type="text">
-                        <div class="alert alert-warning" th:errors="*{centro}"
-                             th:if="${#fields.hasErrors('centro')}"></div>
+                        <label>Segundo nombre</label>
+                        <input class="form-control" maxlength="255" required th:field="*{segundoNombre}" type="text">
+                        <div class="alert alert-warning" th:errors="*{segundoNombre}"
+                             th:if="${#fields.hasErrors('segundoNombre')}"></div>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group mb-1">
-                        <label>Nombre</label>
-                        <input class="form-control" maxlength="255" required th:field="*{nombre}" type="text">
-                        <div class="alert alert-warning" th:errors="*{nombre}"
-                             th:if="${#fields.hasErrors('nombre')}"></div>
+                        <label>Primer apellido</label>
+                        <input class="form-control" maxlength="255" required th:field="*{primerApellido}" type="text">
+                        <div class="alert alert-warning" th:errors="*{primerApellido}"
+                             th:if="${#fields.hasErrors('primerApellido')}"></div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-1">
+                        <label>Segundo apellido</label>
+                        <input class="form-control" maxlength="255" required th:field="*{segundoApellido}" type="text">
+                        <div class="alert alert-warning" th:errors="*{segundoApellido}"
+                             th:if="${#fields.hasErrors('segundoApellido')}"></div>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="row">
                         <div class="col-12">
-                            <p>Roles:</p>
+                            <p>Perfiles:</p>
                         </div>
                         <div class="form-group col-12">
                             <div class="form-check form-check-inline" th:each="role : ${roles}">
@@ -70,6 +77,14 @@
                                        th:value="${role.nombre}" type="checkbox">
                                 <label>[[${role.nombre}]]</label>
                             </div>
+                            <!--
+                            <div class="col-md-6 px-5 mb-2">
+                                <select class="form-control" name="selectedRoles" id="${role.nombre}" >
+                                    <option disabled value="" selected hidden>Seleccione el perfil</option>
+                                    <option th:each="role : ${roles}" th:value="${role.nombre}" th:text="${role.nombre}"></option>
+                                </select>
+                            </div>
+                             -->
                         </div>
                     </div>
                 </div>

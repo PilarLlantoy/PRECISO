@@ -56,7 +56,7 @@ public class FitDifferencesController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        if(userService.validateEndpoint(user.getId(),"Ver Cuadre Contable Motor CodNeocon")) {
+        if(userService.validateEndpointVer(user.getId(),"Ver Cuadre Contable Motor CodNeocon")) {
 
             String todayString = "";
             if (params.get("period") == null || params.get("period").toString() == "") {
