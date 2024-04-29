@@ -20,7 +20,7 @@
 
         <div class="text-right pr-3 col-md-12 my-3">
             <a class="btn btn-primary mx-1" th:href="@{/admin/cargos}"><i class="fas fa-redo-alt"></i></a>
-            <a class="btn btn-primary mx-1" th:href="@{/admin/createCargo}">Crear Cargo</a>
+            <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1" th:onclick="|window.location.href='@{/admin/createCargo}'|">Crear Cargo</button>
         </div>
 
         <div class="col-md-12 p-0">
@@ -28,6 +28,7 @@
                 <table id="example" class="table table-striped table-hover text-center table-bordered table-sm" width="100%">
                     <thead class="bg-primary">
                     <tr>
+                        <th>Id</th>
                         <th>Nombre Cargo</th>
                         <th>Activo</th>
                         <th></th>
@@ -35,15 +36,21 @@
                     </thead>
                     <tbody>
                     <tr th:each="cargo : ${cargos}">
+                        <td th:text="${cargo.id}"></td>
                         <td th:text="${cargo.nombre}"></td>
+                        <!--
                         <td>
                             <input class="big-checkbox" type="checkbox" th:checked="${cargo.activo}" th:onclick="'seleccionarCargo(\'' + ${cargo.id} + '\'); checkboxChanged(\'' + ${cargo.activo} + '\');'"/>
                         </td>
+                        -->
+                        <td th:if="${cargo.activo == true}">Activo</td>
+                        <td th:if="${cargo.activo == false}">Inactivo</td>
+
                         <td>
-                            <a th:href="@{/admin/modifyCargo/{id}(id=${cargo.id})}" class="btn btn-primary">Editar</a>
-                            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#eliminarModal" th:onclick="'seleccionarCargo(\'' + ${cargo.id} + '\')'">
-                                Eliminar
-                            </button>
+                            <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
+                                    th:onclick="|window.location.href='@{/admin/modifyCargo/{id}(id=${cargo.id})}'|">Editar</button>
+                            <button th:disabled="${!p_modificar}" type="button" class="btn btn-danger" data-toggle="modal" data-target="#eliminarModal"
+                                    th:onclick="'seleccionarCargo(\'' + ${cargo.id} + '\')'">Eliminar</button>
                         </td>
                     </tr>
                     </tbody>

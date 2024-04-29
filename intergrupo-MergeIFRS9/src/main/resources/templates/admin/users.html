@@ -33,17 +33,21 @@
     <div class="row m-0 px-4 mt-5">
         <div class="text-right pr-3 col-md-12 my-3">
             <a class="btn btn-primary mx-1" th:href="@{/admin/users}"><i class="fas fa-redo-alt"></i></a>
-            <a class="btn btn-primary mx-1" th:href="@{/admin/createUser}">Crear Usuarios</a>
+            <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1" th:onclick="|window.location.href='@{/admin/createUser}'|">Crear Usuarios</button>
         </div>
         <div class="col-md-12 p-0">
             <div class="table-responsive rounded border-primary">
                 <table id="example" class="table table-striped table-hover text-center table-bordered table-sm" width="100%">
                     <thead class="bg-primary">
                     <tr>
+                        <th>Id</th>
                         <th>Codigo</th>
                         <th>Documento</th>
                         <th>Tipo documento</th>
-                        <th>Nombre</th>
+                        <th>Primer nombre</th>
+                        <th>Segundo nombre</th>
+                        <th>Primer apellido</th>
+                        <th>Segundo apellido</th>
                         <th>Perfil</th>
                         <th>Cargo</th>
                         <th>Estado</th>
@@ -52,10 +56,18 @@
                     </thead>
                     <tbody>
                     <tr th:each="user : ${allUsers}">
+                        <td th:text="${user.id}"></td>
                         <td th:text="${user.usuario}"></td>
                         <td th:text="${user.numeroDocumento}"></td>
-                        <td th:text="${user.tipoDocumento}"></td>
+                        <td th:if="${user.tipoDocumento != null}" th:text="${user.tipoDocumento.nombre}"></td><td th:if="${user.tipoDocumento == null}"></td>
+
+                        <td th:text="${user.primerNombre}"></td>
+                        <td th:text="${user.segundoNombre}"></td>
+                        <td th:text="${user.primerApellido}"></td>
+                        <td th:text="${user.segundoApellido}"></td>
+                        <!--
                         <td th:text="${user.primerNombre} + ' ' + ${user.segundoNombre}+ ' ' + ${user.primerApellido}+ ' ' + ${user.segundoApellido}"></td>
+                        -->
                         <td>
                             <ul th:if="${not #lists.isEmpty(user.roles)}" th:each="role : ${user.roles}" style="list-style-type: none; margin: 0; padding: 0;">
                                 <li th:text="${role.nombre}" style="list-style: none;"></li>
@@ -64,8 +76,10 @@
                         <td th:if="${user.cargo != null}" th:text="${user.cargo.nombre}"></td><td th:if="${user.cargo == null}"></td>
                         <td th:if="${user.activo == true}">Activo</td>
                         <td th:if="${user.activo == false}">Inactivo</td>
-                        <td><a th:href="@{/admin/modifyUsers/{id}(id=${user.usuario})}"
-                               class="btn btn-primary">Editar</a></td>
+                        <td>
+                            <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
+                                    th:onclick="|window.location.href='@{/admin/modifyUsers/{id}(id=${user.usuario})}'|">Editar</button>
+                        </td>
                     </tr>
                     </tbody>
                 </table>

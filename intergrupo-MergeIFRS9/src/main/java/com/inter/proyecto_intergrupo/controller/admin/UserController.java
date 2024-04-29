@@ -2,14 +2,9 @@ package com.inter.proyecto_intergrupo.controller.admin;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.inter.proyecto_intergrupo.model.admin.Cargo;
-import com.inter.proyecto_intergrupo.model.admin.Role;
-import com.inter.proyecto_intergrupo.model.admin.User;
+import com.inter.proyecto_intergrupo.model.admin.*;
 import com.inter.proyecto_intergrupo.model.parametric.TypeEntity;
-import com.inter.proyecto_intergrupo.service.adminServices.CargoService;
-import com.inter.proyecto_intergrupo.service.adminServices.RoleService;
-import com.inter.proyecto_intergrupo.service.adminServices.UserListReport;
-import com.inter.proyecto_intergrupo.service.adminServices.UserService;
+import com.inter.proyecto_intergrupo.service.adminServices.*;
 import com.inter.proyecto_intergrupo.service.parametricServices.TypeEntityListReport;
 import com.inter.proyecto_intergrupo.service.resourcesServices.SendEmailService;
 import com.inter.proyecto_intergrupo.utility.Utility;
@@ -30,6 +25,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -48,6 +44,9 @@ public class UserController {
 
     @Autowired
     private RoleService roleService;
+
+    @Autowired
+    private TipoDocumentoService tipoDocumentoService;
 
     @Autowired
     private CargoService cargoService;
@@ -157,6 +156,8 @@ public class UserController {
             List<Role> allRoles = roleService.findAll();
             List<Cargo> allCargos = cargoService.findAll();
             modelAndView.addObject("roles", allRoles);
+            List<TipoDocumento> allTipos = tipoDocumentoService.findAll();
+            modelAndView.addObject("tipos", allTipos);
             modelAndView.addObject("cargos", allCargos);
             User toModify = userService.findUserByUserName(id);
             modelAndView.addObject("userModify", toModify);
@@ -173,41 +174,106 @@ public class UserController {
     @PostMapping(value = "/admin/modifyUsers")
     public ModelAndView updateUser(
             @ModelAttribute User user,
-            @RequestParam(name = "selectedRoles") String[] roles,
-            @RequestParam(name = "selectedCargo", required = false) String cargo,
-            @RequestParam("newU") String id){
-        System.out.println("nombre cargo "+cargo);
+            @RequestParam(name = "selectedRoles", defaultValue = "N") String[] roles,
+            @RequestParam(name = "selectedCargo") String cargo,
+            @RequestParam(name = "selectedTipoDoc") String tipodoc,
+            @RequestParam(name = "newU") String id,
+            BindingResult bindingResult){
 
-        Set<Role> newRoles = new HashSet<Role>();
-        for (String role : roles) {
-            Role myRole = roleService.findRole(role);
-            newRoles.add(myRole);
-        }
-        System.out.println("nombre cargo "+cargo);
-        Cargo newCargo = cargoService.findCargoByNombre(cargo);
-        user.setCargo(newCargo);
-
-        User searchUser = userService.findUserByUserName(user.getUsuario());
-        User searchUserOld = userService.findUserByUserName(id);
         ModelAndView modelAndView = new ModelAndView("redirect:/admin/users");
-        List<Role> allRoles = roleService.findAll();
-        modelAndView.addObject("roles", allRoles);
-        modelAndView.addObject("message", "Usuario modificado");
+        //Verifica que no haya usuario y correo repetido
+        User userExists = userService.findUserByUserName(user.getUsuario());
+        User userByEmail = userService.findUserByEmail(user.getCorreo());
 
-        if(searchUser!=null) {
-            userService.modifyUser(user, searchUser.getCreacion(), newRoles, searchUser.getId());
+        if(roles[0].equals("N") || roles.length == 0) {
+            bindingResult
+                    .rejectValue("roles", "error.roles",
+                            "Roles no puede estar vacio");
+        }/*
+        if (userExists != null && userExists.getId()!=user.getId()) {
+            bindingResult
+                    .rejectValue("usuario", "error.usuario",
+                            "El usuario ya se encuentra registrado");
         }
-        else {
-            user.setUsuario(searchUserOld.getUsuario());
-            HashSet<Role> userRoles = new HashSet<>();
-            for(int i =0; i< roles.length;i++){
-                try{
-                    Role myRole = roleService.findRole(roles[i]);
-                    userRoles.add(myRole);
-                }catch(Exception e){}
+        if(userByEmail != null && userExists.getId()!=user.getId()){
+            bindingResult
+                    .rejectValue("correo",
+                            "error.correo",
+                            "El correo ya se encuentra registrado");
+        }*/
+
+        if(bindingResult.hasErrors()) {
+
+            modelAndView.addObject("userName", user.getUsuario());
+            modelAndView.addObject("userEmail", user.getCorreo());
+            List<Role> allRoles = roleService.findAll();
+            List<Cargo> allCargos = cargoService.findAll();
+            List<TipoDocumento> allTipos = tipoDocumentoService.findAll();
+            modelAndView.addObject("roles", allRoles);
+            modelAndView.addObject("tipos", allTipos);
+            modelAndView.addObject("cargos", allCargos);
+            modelAndView.addObject("userModify", user);
+            Set<Role> userRoles = null;
+            if(roles[0].equals("N")){
+                userRoles = userService.findUserByUserName(user.getUsuario()).getRoles();
             }
-            userService.saveUser(user,userRoles);
+            else{
+                userRoles = new HashSet<>();
+                for (String role : roles) {
+                    Role myRole = roleService.findRole(role);
+                    userRoles.add(myRole);
+                }
+            }
+            List<Role> finalRoles = new ArrayList<>(userRoles);
+            Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+            String hasRoles = gson.toJson(finalRoles);
+            modelAndView.addObject("hasRoles", hasRoles);
+
+            Cargo cargoseleccionado = cargoService.findCargoByNombre(cargo);
+            user.setCargo(cargoseleccionado);
+            TipoDocumento tiposeleccionado = tipoDocumentoService.findTipoDocumentoByNombre(tipodoc);
+            user.setTipoDocumento(tiposeleccionado);
+            Set<Role> newRoles = new HashSet<Role>();
+            for (String role : roles) {
+                Role myRole = roleService.findRole(role);
+                newRoles.add(myRole);
+            }
+            user.setRoles(newRoles);
+            modelAndView.addObject("userModify",user);
+            modelAndView.setViewName("admin/modifyUsers");
         }
+        else{
+            Set<Role> newRoles = new HashSet<Role>();
+            for (String role : roles) {
+                Role myRole = roleService.findRole(role);
+                newRoles.add(myRole);
+            }
+            Cargo newCargo = cargoService.findCargoByNombre(cargo);
+            user.setCargo(newCargo);
+            TipoDocumento newTipoDoc = tipoDocumentoService.findTipoDocumentoByNombre(tipodoc);
+            user.setTipoDocumento(newTipoDoc);
+            User searchUser = userService.findUserByUserName(user.getUsuario());
+            User searchUserOld = userService.findUserByUserName(id);
+            List<Role> allRoles = roleService.findAll();
+            modelAndView.addObject("roles", allRoles);
+            modelAndView.addObject("message", "Usuario modificado");
+
+            if(searchUser!=null) {
+                userService.modifyUser(user, searchUser.getCreacion(), newRoles, searchUser.getId());
+            }
+            else {
+                user.setUsuario(searchUserOld.getUsuario());
+                HashSet<Role> userRoles = new HashSet<>();
+                for(int i =0; i< roles.length;i++){
+                    try{
+                        Role myRole = roleService.findRole(roles[i]);
+                        userRoles.add(myRole);
+                    }catch(Exception e){}
+                }
+                userService.saveUser(user,userRoles);
+            }
+        }
+
         return  modelAndView;
     }
 
@@ -218,15 +284,28 @@ public class UserController {
         User user1 = userService.findUserByUserName(auth.getName());
 
         User user = new User();
+        TipoDocumento tipodoc = new TipoDocumento();
+        user.setTipoDocumento(tipodoc);
         modelAndView.addObject("user", user);
+
         List<Role> allRoles = roleService.findAll();
+        List<Cargo> allCargos = cargoService.findAll();
+        List<TipoDocumento> allTipos = tipoDocumentoService.findAll();
+        modelAndView.addObject("tipos", allTipos);
+        modelAndView.addObject("cargos", allCargos);
         modelAndView.addObject("roles", allRoles);
         modelAndView.setViewName("admin/createUser");
         return modelAndView;
     }
 
     @PostMapping(value = "/admin/createUser")
-    public ModelAndView createNewUser(@ModelAttribute User user, @RequestParam("selectedRoles") String[] roles, BindingResult bindingResult, HttpServletRequest request) {
+    public ModelAndView createNewUser(
+            @ModelAttribute User user,
+            @RequestParam(name = "selectedTipoDoc") String tipodoc,
+            @RequestParam(name = "selectedCargo") String cargo,
+            @RequestParam(name = "selectedRoles", defaultValue = "N") String[] roles,
+            BindingResult bindingResult, HttpServletRequest request) {
+
         ModelAndView modelAndView = new ModelAndView("redirect:/admin/users");
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         List <Role> allRoles = roleService.findAll();
@@ -235,6 +314,13 @@ public class UserController {
         //Verifica que no haya usuario y correo repetido
         User userExists = userService.findUserByUserName(user.getUsuario());
         User userByEmail = userService.findUserByEmail(user.getCorreo());
+
+        if(roles[0].equals("N")) {
+            bindingResult
+                    .rejectValue("roles", "error.roles",
+                            "Roles no uede estar vacio");
+        }
+
         if (userExists != null) {
             bindingResult
                     .rejectValue("usuario", "error.usuario",
@@ -242,10 +328,20 @@ public class UserController {
         }
         if(userByEmail != null){
             bindingResult
-                    .rejectValue("correo","error.correo",
+                    .rejectValue("correo",
+                            "error.correo",
                             "El correo ya se encuentra registrado");
         }
         if(bindingResult.hasErrors()) {
+            List<Cargo> allCargos = cargoService.findAll();
+            List<TipoDocumento> allTipos = tipoDocumentoService.findAll();
+            modelAndView.addObject("tipos", allTipos);
+            modelAndView.addObject("cargos", allCargos);
+            Cargo cargoseleccionado = cargoService.findCargoByNombre(cargo);
+            user.setCargo(cargoseleccionado);
+            TipoDocumento tiposeleccionado = tipoDocumentoService.findTipoDocumentoByNombre(tipodoc);
+            user.setTipoDocumento(tiposeleccionado);
+
             modelAndView.setViewName("admin/createUser");
         }
         else{
@@ -256,6 +352,11 @@ public class UserController {
                     userRoles.add(myRole);
                 }catch(Exception e){}
             }
+            TipoDocumento newTipoDoc = tipoDocumentoService.findTipoDocumentoByNombre(tipodoc);
+            user.setTipoDocumento(newTipoDoc);
+            Cargo newCargo = cargoService.findCargoByNombre(cargo);
+            user.setCargo(newCargo);
+
             userService.saveUser(user,userRoles);
 
             String mail = user.getCorreo();
@@ -350,42 +451,31 @@ public class UserController {
         return modelAndView;
     }
 
-    /*
-    public void validarBanco(){
 
+    public boolean validarIngreso(User usuario, String contraseña) throws SQLException {
+
+        User valida;
+        boolean result;
         LDAP ldap = new LDAP();
-        String res = ldap.inicializarLDAP(getUsuario(),getClave());
-        if (res.contains("exitosa")){
-            setPerfil((int) valida.get(1));
-            HttpSession session = SessionUtils.getSession();
-            session.setAttribute("usuario", getUsuario());
-            session.setAttribute("perfil",getPerfil());
-            session.setAttribute("area",valida.get(3));
-            setUsuarioLogeado((String) valida.get(2));
+        valida = userService.findUserByUserName(usuario.getUsuario());
 
-            FacesContext context2 = FacesContext.getCurrentInstance();
-            context2.getExternalContext().redirect("/CargasMasivas/faces/Login/Master.xhtml");
-            result = true;
-        } else
-        {
-            String mss="Error. ";
-            if (res.contains("52e")){
-                mss += "Credenciales no válidas.";
-            } else if (res.contains("525")){
-                mss += "Usuario no encontrado";
-            } else if (res.contains("532")){
-                mss += "Contraseña caducada.";
-            } else if (res.contains("773")){
-                mss += "El usuario debe restablecer la contraseña en Intranet.";
-            } else if (res.contains("775")){
-                mss += "Cuenta de usuario bloqueado, restablezca en intranet.";
+        if (valida == null){ result = false; }
+        else {
+            String res = ldap.inicializarLDAP(usuario.getUsuario(), contraseña);
+            if (res.contains("exitosa")) { result = true; }
+            else {
+                String mss = "Error. ";
+                if (res.contains("52e")) { mss += "Credenciales no válidas."; }
+                if (res.contains("525")) { mss += "Usuario no encontrado"; }
+                if (res.contains("532")) { mss += "Contraseña caducada."; }
+                if (res.contains("773")) { mss += "El usuario debe restablecer la contraseña en Intranet."; }
+                if (res.contains("775")) { mss += "Cuenta de usuario bloqueado, restablezca en intranet."; }
+                result = false;
             }
-            FacesContext context = FacesContext.getCurrentInstance();
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención", mss));
-            result = false;
         }
+        return result;
     }
-    */
+
 
 
 }

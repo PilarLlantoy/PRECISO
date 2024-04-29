@@ -22,6 +22,13 @@
             overflow-y: auto;
         }
 
+        .styled-checkbox {
+            -ms-transform: scale(1.5); /* IE */
+            -moz-transform: scale(1.5); /* FF */
+            -webkit-transform: scale(1.5); /* Safari y Chrome */
+            margin: 10px;
+        }
+
     </style>
     <div class="row m-0 bg-primary fixed-top myNav">
         <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
@@ -32,9 +39,16 @@
         <div class="row mt-5">
                 <form th:object="${role}" th:action="@{/profile/createRole}" method="POST">
                     <div class="col-md-12 px-5 mb-3">
-                        <label>Rol</label>
-                        <input type="text" class="form-control"  th:field="*{nombre}"  required>
-                    </div>
+                        <div class="form-group mb-1">
+                            <label>Nombre role</label>
+                            <input type="text" class="form-control"  th:field="*{nombre}"  required>
+                        </div>
+                        <div class="form-group mb-1">
+                            <label>Estado</label>
+                            <input id="activoInput" name="activo" th:field="*{activo}" th:id="${activo}"
+                                   th:value="${activo}" type="checkbox" class="styled-checkbox">
+                            <label>[[${activo}]]</label>
+                        </div>
                     <div class="row" style="display: flex; justify-content: center;">
                         <span  class="table-wrapper mb-3" style="width:600px" th:each="viewPrincipal : ${viewsPrincipal}" >
                             <table id="example" class="table table-striped table-hover text-center table-bordered table-sm ">
@@ -46,16 +60,16 @@
                                     </tr>
                                 </thead>
                                 <tbody  >
-                                    <tr th:each="view : ${views}" th:if="${view.menuPrincipal == viewPrincipal}">
+                                    <tr th:each="view : ${views}" th:if="${view.menuPrincipal == viewPrincipal}" class="table-row">
                                         <td th:text="${view.viewName}"></td>
                                         <td>
-                                            <input class="big-checkbox" th:value="${view.viewName}" type="checkbox" th:checked="${allViewsVer.contains(view)}" name="selectedViewsVer" onchange="checkModificarCheckbox(event)"/>
+                                            <input class="big-checkbox ver-checkbox" th:value="${view.viewName}" type="checkbox" th:checked="${allViewsVer.contains(view)}" name="selectedViewsVer"/>
                                         </td>
                                         <td>
-                                            <input class="big-checkbox" th:value="${view.viewName}" type="checkbox" th:checked="${allViewsModificar.contains(view)}" name="selectedViewsModificar" onchange="checkVerCheckbox(event)"/>
+                                            <input class="big-checkbox modificar-checkbox" th:value="${view.viewName}" type="checkbox" th:checked="${allViewsModificar.contains(view)}" name="selectedViewsModificar"/>
                                         </td>
-                                    </tr>
-                                </tbody>
+                                </tr>
+                            </tbody>
                             </table>
                         </span>
                     </div>
@@ -79,17 +93,30 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
 <script>
 
-    function checkVerCheckbox(event) {
-        const isChecked = event.target.checked;
-        const relatedCheckbox = document.querySelector('[name="selectedViewsVer"]');
-        if(isChecked) relatedCheckbox.checked = isChecked;
-    }
+    const modificarCheckboxes = document.querySelectorAll('.modificar-checkbox');
 
-    function checkModificarCheckbox(event) {
-        const isChecked = event.target.checked;
-        const relatedCheckbox = document.querySelector('[name="selectedViewsModificar"]');
-        if(!isChecked) relatedCheckbox.checked = isChecked;
-    }
+    modificarCheckboxes.forEach(modificarCheckbox => {
+        modificarCheckbox.addEventListener('change', function(event) {
+            const isChecked = event.target.checked;
+            const verCheckbox = event.target.closest('.table-row').querySelector('.ver-checkbox');
+            if (isChecked && !verCheckbox.checked) {
+                verCheckbox.checked = true;
+            }
+        });
+    });
+
+    const verCheckboxes = document.querySelectorAll('.ver-checkbox');
+
+    verCheckboxes.forEach(verCheckbox => {
+        verCheckbox.addEventListener('change', function(event) {
+            const isChecked = event.target.checked;
+            const modificarCheckbox = event.target.closest('.table-row').querySelector('.modificar-checkbox');
+            if (!isChecked) {
+                modificarCheckbox.checked = false;
+            }
+        });
+    });
+
 
 </script>
 </body>

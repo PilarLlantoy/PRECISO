@@ -85,6 +85,7 @@ public class CargoController {
     @PostMapping(value = "/admin/modifyCargo")
     public ModelAndView updateRole(@ModelAttribute Cargo cargo){
         ModelAndView modelAndView = new ModelAndView("redirect:/admin/cargos");
+        System.out.println("cargo ID"+cargo.getId());
         cargoService.actualizarCargo(cargo);
         return modelAndView;
     }

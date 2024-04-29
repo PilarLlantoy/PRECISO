@@ -37,7 +37,8 @@ public class CargoService {
     }
 
     public Cargo actualizarCargo(Cargo cargo){
-        return cargoRepository.save(cargo);
+        cargoRepository.save(cargo);
+        return cargo;
     }
 
     public Cargo findCargoByNombre(String name){return cargoRepository.findByNombre(name);}

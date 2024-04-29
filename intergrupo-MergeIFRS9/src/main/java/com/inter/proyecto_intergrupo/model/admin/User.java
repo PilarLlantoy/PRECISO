@@ -32,9 +32,9 @@ public class User {
     @NotEmpty(message = "Ingrese un usuario")
     private String usuario;
 
-    @Column(name = "tipo_documento")
-    //@NotEmpty(message = "Ingrese un tipo de documento")
-    private String tipoDocumento;
+    @ManyToOne
+    @JoinColumn(name = "id_tipo_documento")
+    private TipoDocumento tipoDocumento;
 
     @Column(name = "numero_documento")
     //@NotEmpty(message = "Ingrese un número de documento")

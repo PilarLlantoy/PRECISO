@@ -22,6 +22,13 @@
             overflow-y: auto;
         }
 
+        .styled-checkbox {
+            -ms-transform: scale(1.5); /* IE */
+            -moz-transform: scale(1.5); /* FF */
+            -webkit-transform: scale(1.5); /* Safari y Chrome */
+            margin: 10px;
+        }
+
     </style>
     <div class="row m-0 bg-primary fixed-top myNav">
         <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
@@ -32,32 +39,25 @@
         <div class="row mt-5">
             <form th:object="${role}" th:action="@{/profile/modifyRole}" method="POST">
                 <div class="col-md-12 px-5 mb-3">
-                    <label>Rol</label>
-                    <input type="hidden" class="form-control"  th:field="*{id}"  required>
-                    <input type="text" class="form-control"  th:field="*{nombre}"  required>
-                </div>
-                <!--
-                <div class="col-md-12 px-5 mb-2">
-                    <label>Activo</label>
-                    <input class="big-checkbox" type="checkbox" th:checked="*{estado}" name="estado" id="estado"/>
-                </div>
-                -->
-                <!-- CAMBIO:   <div class="col-md-6 px-5 mb-2" th:if="${viewsPrincipal1 != null}">
 
-                <div class="col-md-6 px-5 mb-2">
-                    <label>Menú Principal </label>
-                    <select class="form-control" name="principalSelect" id="principalSelect" >
-                        <option disabled value="" selected hidden>Seleccione el primer filtro</option>
-                        <option th:each="metodo : ${viewsPrincipal}" th:value="${metodo}" th:text="${metodo}"></option>
-                    </select>
-                </div> -->
+                    <div class="form-group mb-1">
+                        <label>Id role</label>
+                        <input type="number" readonly class="form-control"  th:field="*{id}"  required>
+                    </div>
 
-                <!--
-                <div class="col-md-6 px-5 mb-2" id="vistas">
-                    Aqui va los checkbox agregados por js
+                    <div class="form-group mb-1">
+                        <label>Nombre role</label>
+                        <input type="text" class="form-control"  th:field="*{nombre}"  required>
+                    </div>
+
+                    <div class="form-group mb-1">
+                        <label>Estado</label>
+                        <input id="activoInput" name="activo" th:field="*{activo}" th:id="${activo}"
+                               th:value="${activo}" type="checkbox" class="styled-checkbox">
+                        <label>[[${activo}]]</label>
+                    </div>
+
                 </div>
-                <div class="d-none" id="overlay" onclick="hide(event)"></div>
-                <input type="hidden" id="roleViews" th:value="${roleViews}"/> -->
 
                 <!---PROBANDO TABLAS PARA EL LISTADO DE LAS VISTAS POR MODULO-->
                 <div class="row" style="display: flex; justify-content: center;">
@@ -71,13 +71,13 @@
                                 </tr>
                             </thead>
                             <tbody  >
-                                <tr th:each="view : ${views}" th:if="${view.menuPrincipal == viewPrincipal}">
+                                <tr th:each="view : ${views}" th:if="${view.menuPrincipal == viewPrincipal}" class="table-row">
                                     <td th:text="${view.viewName}"></td>
                                     <td>
-                                        <input class="big-checkbox" th:value="${view.viewName}" type="checkbox" th:checked="${allViewsModificar.contains(view)} ? true : (${allViewsVer.contains(view)} ? true : false)" name="selectedViewsVer" onchange="checkModificarCheckbox(event)"/>
+                                        <input class="big-checkbox ver-checkbox" th:value="${view.viewName}" type="checkbox" th:checked="${allViewsVer.contains(view)}" name="selectedViewsVer"/>
                                     </td>
                                     <td>
-                                        <input class="big-checkbox" th:value="${view.viewName}" type="checkbox" th:checked="${allViewsModificar.contains(view)}" name="selectedViewsModificar" onchange="checkVerCheckbox(event)"/>
+                                        <input class="big-checkbox modificar-checkbox" th:value="${view.viewName}" type="checkbox" th:checked="${allViewsModificar.contains(view)}" name="selectedViewsModificar"/>
                                     </td>
                                 </tr>
                             </tbody>
@@ -106,49 +106,29 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
 <script>
 
+    const modificarCheckboxes = document.querySelectorAll('.modificar-checkbox');
 
-
-function checkVerCheckbox(event) {
-    const isChecked = event.target.checked;
-    const relatedCheckbox = document.querySelector('[name="selectedViewsVer"]');
-    if(isChecked) relatedCheckbox.checked = isChecked;
-}
-
-function checkModificarCheckbox(event) {
-    const isChecked = event.target.checked;
-    const relatedCheckbox = document.querySelector('[name="selectedViewsModificar"]');
-    if(!isChecked) relatedCheckbox.checked = isChecked;
-}
-
-/*
-const input = document.querySelector('#roleViews');
-const viewsRoles = JSON.parse(input.value);
-
-//NUEVO
-    $('#principalSelect').change(function() {
-        var seleccion = $(this).val();
-        console.log(viewsRoles);
-        $.get('/profile/buscarRol', { menu: seleccion })
-        .done(function(response) {
-            $('#vistas').empty(); // Limpiar el contenido actual de vistas
-            $.each(response, function(index, view) {
-                var existe = viewsRoles.some(objeto => {
-                    return objeto.id === view.id ;
-                });
-                if(existe) $('#vistas').append('<div><label class="form-check"><input class="big-checkbox" type="checkbox" id="' + view.viewName + '" value="' + view.viewName + '" name="selectedViews" checked>&nbsp;' + view.viewName + '</label></div>');
-                else $('#vistas').append('<div><label class="form-check"><input class="big-checkbox" type="checkbox" id="' + view.viewName + '" value="' + view.viewName + '" name="selectedViews">&nbsp;' + view.viewName + '</label></div>');
-            });
-        })
-        .fail(function(xhr, status, error) {
-            console.error('Error al obtener las vistas:', error);
+    modificarCheckboxes.forEach(modificarCheckbox => {
+        modificarCheckbox.addEventListener('change', function(event) {
+            const isChecked = event.target.checked;
+            const verCheckbox = event.target.closest('.table-row').querySelector('.ver-checkbox');
+            if (isChecked && !verCheckbox.checked) {
+                verCheckbox.checked = true;
+            }
         });
     });
 
+    const verCheckboxes = document.querySelectorAll('.ver-checkbox');
 
-    $('#estado').change(function() {
-        role.setEstado(!role.isEstado);
+    verCheckboxes.forEach(verCheckbox => {
+        verCheckbox.addEventListener('change', function(event) {
+            const isChecked = event.target.checked;
+            const modificarCheckbox = event.target.closest('.table-row').querySelector('.modificar-checkbox');
+            if (!isChecked) {
+                modificarCheckbox.checked = false;
+            }
+        });
     });
-*/
 
 
 </script>

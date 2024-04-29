@@ -20,7 +20,6 @@
             <div class="row pt-5 py-3">
                 <div class="col-md-12">
                     <input class="form-control" required id="newU" name="newU" th:value="${userModify.usuario}" type="hidden">
-                    <input class="form-control" required th:field="*{roles}" type="hidden">
                     <input class="form-control" th:field="*{contra}" type="hidden">
                 </div>
                 <div class="col-md-6">
@@ -28,12 +27,16 @@
                         <label>Código Usuario</label>
                         <input class="form-control" maxlength="7" minlength="7" required th:field="*{usuario}"
                                type="text">
+                        <div class="alert alert-warning" th:errors="*{usuario}"
+                             th:if="${#fields.hasErrors('usuario')}"></div>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group mb-1">
                         <label>Correo</label>
                         <input class="form-control" maxlength="255" required th:field="*{correo}" type="text">
+                        <div class="alert alert-warning" th:errors="*{correo}"
+                             th:if="${#fields.hasErrors('correo')}"></div>
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -64,7 +67,11 @@
                 <div class="col-md-6">
                     <div class="form-group mb-1">
                         <label>Tipo Documento</label>
-                        <input class="form-control" maxlength="255" required th:field="*{tipoDocumento}" type="text">
+                        <select class="form-control" name="selectedTipoDoc" id="selectedTipoDoc" required>
+                            <option disabled value="" selected hidden>Seleccione tipo de documento</option>
+                            <option th:each="tipo : ${tipos}" th:value="${tipo.nombre}" th:text="${tipo.nombre}"
+                                    th:selected="${userModify.tipoDocumento != null and tipo.id == userModify.tipoDocumento.id}"></option>
+                        </select>
                     </div>
                 </div>
 
@@ -78,7 +85,7 @@
                 <div class="col-md-6">
                     <div class="row">
                         <div class="col-12">
-                            <p>Roles:</p>
+                            <p>Perfiles:</p>
                         </div>
                         <div class="form-group col-12">
                             <div class="form-check form-check-inline" th:each="role : ${roles}">
@@ -87,6 +94,8 @@
                                 <input id="userRoles" th:value="${hasRoles}" type="hidden"/>
                                 <label>[[${role.nombre}]]</label>
                             </div>
+                            <div class="alert alert-warning" th:errors="*{roles}"
+                                 th:if="${#fields.hasErrors('roles')}"></div>
                         </div>
                     </div>
                 </div>
@@ -94,10 +103,10 @@
                 <div class="col-md-6">
                     <div class="form-group mb-1">
                         <label>Cargo</label>
-                        <select class="form-control" name="selectedCargo" id="selectedCargo" >
+                        <select class="form-control" name="selectedCargo" id="selectedCargo" required>
                             <option disabled value="" selected hidden>Seleccione el primer filtro</option>
                             <option th:each="cargo : ${cargos}" th:value="${cargo.nombre}" th:text="${cargo.nombre}"
-                                    th:selected="${cargo.id == userModify.cargo.id}"></option>
+                                    th:selected="${userModify.cargo != null and cargo.id == userModify.cargo.id}"></option>
                         </select>
                     </div>
                 </div>
@@ -133,7 +142,7 @@
                         </div>
                         <div class="form-group col-12">
                             <div class="form-check form-check-inline">
-                                <input id="fechaNacimientoInput" class="form-check-input " name="activo" th:field="*{activo}" th:id="${activo}"
+                                <input id="activoInput" class="form-check-input " name="activo" th:field="*{activo}" th:id="${activo}"
                                        th:value="${activo}" type="checkbox">
                                 <label>[[${activo}]]</label>
                             </div>
