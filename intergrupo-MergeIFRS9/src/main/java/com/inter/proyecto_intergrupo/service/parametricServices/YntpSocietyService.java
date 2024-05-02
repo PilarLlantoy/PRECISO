@@ -292,13 +292,13 @@ public class YntpSocietyService {
                     {
                         Country country =new Country();
                             String[] partsText = cellPais.trim().split("-");
-                        country.setId(partsText[0].trim());
+                        country.setId(Integer.valueOf(partsText[0].trim()));
                         country.setNombre(partsText[1].trim());
                         if(partsText.length>2)
                             country.setNombre(country.getNombre()+" "+partsText[2]);
                         listaPais.add(country);
 
-                    logP[0] = country.getId();
+                    logP[0] = country.getId()+"";
                     logP[1] = "País Insertado exitosamente.";
                     listaLogP.add(logP);
 
@@ -317,7 +317,7 @@ public class YntpSocietyService {
                         }
                         else
                         {
-                            logD[0] = country.getId();
+                            logD[0] = country.getId()+"";
                             logD[1] = "Divisa Insertada exitosamente.";
                         }
                         listaLogD.add(logD);
@@ -419,13 +419,13 @@ public class YntpSocietyService {
             {
                 if (yntp[11] == null && !listInsert.contains(yntp[4].toString())) {
                     Country country = new Country();
-                    country.setId(yntp[4].toString());
+                    country.setId(Integer.valueOf(yntp[4].toString()));
                     country.setNombre(yntp[12].toString());
                     listaPais.add(country);
                     listInsert.add(yntp[4].toString());
 
                     String[] logP = new String[4];
-                    logP[0] = country.getId();
+                    logP[0] = country.getId()+"";
                     logP[1] = "País Insertado exitosamente.";
                     listaLogP.add(logP);
                 }
@@ -507,7 +507,7 @@ public class YntpSocietyService {
             toInsert.setYntp(toModify.getYntp());
             toInsert.setSociedadDescripcionLarga(toModify.getSociedadDescripcionLarga());
             toInsert.setSociedadDescripcionCorta(toModify.getSociedadDescripcionCorta());
-            toInsert.setPais(countryRepository.findAllById(pais));
+            toInsert.setPais(countryRepository.findAllById(Integer.valueOf(pais)));
             toInsert.setDivisa(currencyRepository.findAllById(divisa));
             toInsert.setGrupo(consolidationGroupRepository.findAllById(grupo));
             toInsert.setMetodo(consolidationMethodRepository.findAllById(metodo));
@@ -520,7 +520,7 @@ public class YntpSocietyService {
             yntp.setYntp(yntp.getYntp());
             yntp.setSociedadDescripcionLarga(yntp.getSociedadDescripcionLarga());
             yntp.setSociedadDescripcionCorta(yntp.getSociedadDescripcionCorta());
-            yntp.setPais(countryRepository.findAllById(pais));
+            yntp.setPais(countryRepository.findAllById(Integer.valueOf(pais)));
             yntp.setDivisa(currencyRepository.findAllById(divisa));
             yntp.setMetodo(consolidationMethodRepository.findAllById(metodo));
             yntp.setGrupo(consolidationGroupRepository.findAllById(grupo));

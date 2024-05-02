@@ -972,7 +972,7 @@ public class ContingentesService {
                             insert.setTipoAvalOrigen("FINANCIERO");
                             insert.setArchivoEntrada("EXTRANJERO");
                             if (bankNew.size() > 0) {
-                                Country ic = countryRepository.findAllById(bankNew.get(0).getPais());
+                                Country ic = countryRepository.findAllById(Integer.valueOf(bankNew.get(0).getPais()));
                                 insert.setBanco(bankNew.get(0).getNit());
                                 if (ic != null)
                                     insert.setPaisContrato(ic);
@@ -982,7 +982,7 @@ public class ContingentesService {
                         } else {
                             //Contract insertContract = contractRepository.findAllByContrato(fmt.format("%18s",cellContrato).toString());
                             if (bankNew.size() > 0 && bankNew.get(0).getNit()!=null && bankNew.get(0).getPais()!=null) {
-                                Country ic = countryRepository.findAllById(bankNew.get(0).getPais());
+                                Country ic = countryRepository.findAllById(Integer.valueOf(bankNew.get(0).getPais()));
                                 contractNew.get(0).setBanco(bankNew.get(0).getNit());
                                 if (ic != null)
                                     contractNew.get(0).setPaisContrato(ic);
@@ -1120,7 +1120,7 @@ public class ContingentesService {
                 if (item[9]!=null && item[8]!=null && item[4]!=null)
                 {
                     Country ic = new Country();
-                    ic.setId(item[9].toString());
+                    ic.setId(Integer.valueOf(item[9].toString()));
                     //ic.setNombre(item[8].toString());
                     insert.setBanco(item[4].toString());
                     if(ic != null)
@@ -1143,7 +1143,7 @@ public class ContingentesService {
                 if (item[9]!=null && item[8]!=null && item[4]!=null)
                 {
                     Country ic = new Country();
-                    ic.setId(item[9].toString());
+                    ic.setId(Integer.valueOf(item[9].toString()));
                     insert.setBanco(item[4].toString());
                     if(ic != null)
                         insert.setPaisContrato(ic);
@@ -1727,7 +1727,7 @@ public class ContingentesService {
                             insert.setBanco(part[2].toString());
                         if (part[3] != null && part[3].toString() != null) {
                             Country c = new Country();
-                            c.setId(part[3].toString());
+                            c.setId(Integer.valueOf(part[3].toString()));
                             insert.setPaisContrato(c);
                         }
                         insert.setTipoAvalOrigen("FINANCIERO");
@@ -1738,7 +1738,7 @@ public class ContingentesService {
                         Contract insert = contractRepository.findAllByContrato(part[0].toString());
                         insert.setBanco(part[2].toString());
                         Country c = new Country();
-                        c.setId(part[3].toString());
+                        c.setId(Integer.valueOf(part[3].toString()));
                         insert.setPaisContrato(c);
                         listaContratos.add(insert);
                     }

@@ -38,19 +38,18 @@ public class CountryService {
     }
 
     public List <Country> findAll(){return countryRepository.findAllByOrderByNombreAsc();}
-
-    public Country findCountry(String pais){
-        return countryRepository.findAllById(pais);
+    public List<Country> findAllActiveCountries() {
+        return countryRepository.findByEstado(true);
     }
 
-    public Country findCountryById(String id){
+    public Country findCountryById(int id){
         return countryRepository.findAllById(id);
     }
 
     public void modifyCountry(Country toModify,String id, User user){
 
         Country toInsert = new Country();
-        toInsert.setId(toModify.getId().toUpperCase(Locale.ROOT));
+        toInsert.setId(Integer.valueOf((toModify.getId()+"").toUpperCase(Locale.ROOT)));
         toInsert.setNombre(toModify.getNombre().toUpperCase(Locale.ROOT));
         Query query = entityManager.createNativeQuery("UPDATE nexco_paises SET id_pais = ? , nombre_pais = ? " +
                 "WHERE id_pais = ?", Country.class);
@@ -69,6 +68,11 @@ public class CountryService {
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);
 
+    }
+
+    public Country modificarCountry(Country pais){
+       countryRepository.save(pais);
+       return pais;
     }
 
     public void removeCountry(String id, User user){

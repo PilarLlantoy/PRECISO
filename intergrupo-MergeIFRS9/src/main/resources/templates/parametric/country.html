@@ -35,6 +35,7 @@
             </div>
             <div class="text-right pr-3 col-md-6 my-2">
                 <a class="btn btn-primary mx-1" th:href="@{/parametric/country}"><i class="fas fa-redo-alt"></i></a>
+                <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1" th:onclick="|window.location.href='@{/parametric/createCountry}'|">Crear País</button>
             </div>
             <div class="col-md-12">
                 <div class="table-responsive rounded border-primary">
@@ -43,6 +44,8 @@
                         <tr>
                             <th>Código País</th>
                             <th>Nombre País</th>
+                            <th>Sigla</th>
+                            <th>Estado</th>
                             <th COLSPAN="2">Acciones</th>
                         </tr>
                         </thead>
@@ -50,19 +53,48 @@
                         <tr th:each="country : ${allCountry}">
                             <td th:text="${country.id}"></td>
                             <td th:text="${country.nombre}"></td>
-                            <td><a th:href="@{/parametric/modifyCountry/{id}(id=${country.id})}"
-                                   class="btn btn-primary">Editar</a></td>
+                            <td th:text="${country.sigla}"></td>
+                            <td th:if="${country.activo == true}">Activo</td>
+                            <td th:if="${country.activo == false}">Inactivo</td>
                             <td>
-                                <button id="clearTableOne" th:data1="${country.id}"
-                                        th:onclick="'javascript:operationDeleteOne(this.getAttribute(\'data1\'),\'country\')'"
-                                        class="btn btn-danger btn-sm">Eliminar
-                                </button>
+                                <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
+                                        th:onclick="|window.location.href='@{/parametric/modifyCountry/{id}(id=${country.id})}'|">Editar</button>
+                                <button th:disabled="${!p_modificar}" type="button" class="btn btn-danger" data-toggle="modal" data-target="#eliminarModal"
+                                        th:onclick="'seleccionarPais(\'' + ${country.id} + '\')'">Eliminar</button>
                             </td>
                         </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
+
+            <!-- Modal -->
+            <div class="modal fade" id="eliminarModal" tabindex="-1" role="dialog" aria-labelledby="eliminarModal" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Eliminar</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            ¿Estás seguro de eliminar el pais seleccionado?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-danger" th:onclick="borrar()" data-dismiss="modal">
+                                Eliminar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Campo oculto para el token CSRF -->
+            <input type="hidden" id="csrfToken" th:value="${_csrf.token}" />
+
+
         </div>
         <div class="row" th:if="${last != 0}">
             <div class="col-md-4 text-left">
@@ -90,10 +122,12 @@
             <h5><span class="badge badge-pill text-light badge-info py-2 px-5">¡La Tabla se encuentra Filtrada!</span>
             </h5>
         </div>
+        <!--
         <div class="d-flex align-items-center justify-content-center">
             <a th:href="@{/parametric/country/download/?vFilter={vFilter}&vId={vId}(vFilter=${vFilter},vId=${vId})}"
                class="btn btn-primary">Exportar a Excel</a>
         </div>
+        -->
     </div>
 </div>
 
@@ -116,6 +150,28 @@
             $('#sidebar').toggleClass('active');
         });
     });
+    
+    //MODAL DE BORRAR
+    
+    var seleccionado = -1;
+    var csrfToken = $("#csrfToken").val(); // Obtener el token CSRF
+
+    function seleccionarPais(id) {
+        seleccionado=id
+    }
+
+    function borrar(){
+        var url = '/parametric/deleteCountry/' + seleccionado;
+        // Realizar la solicitud POST con el token CSRF
+        $.post(url, {_csrf: csrfToken})
+            .done(function(response) {
+                //console.log("Solicitud POST completada con éxito");
+                location.reload();
+            })
+            .fail(function(xhr, status, error) {
+                console.error("Ocurrió un error al enviar la solicitud POST: " + error);
+            });
+    }
 </script>
 </body>
 

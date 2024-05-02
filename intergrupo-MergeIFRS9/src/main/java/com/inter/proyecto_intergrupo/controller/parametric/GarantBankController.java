@@ -133,7 +133,7 @@ public class GarantBankController {
         GarantBank toModify = garantBankService.findGarantBankByNombreSmiliar(id);
         modelAndView.addObject("garantBankModify",toModify);
         if(toModify!=null && toModify.getPais()!=null)
-            modelAndView.addObject("garantC",countryService.findCountryById(toModify.getPais()).getNombre());
+            modelAndView.addObject("garantC",countryService.findCountryById(Integer.valueOf(toModify.getPais())).getNombre());
         List <Country> allCountry = countryService.findAll();
         modelAndView.addObject("paises",allCountry);
         modelAndView.addObject("nitId",toModify.getNombreSimilar());

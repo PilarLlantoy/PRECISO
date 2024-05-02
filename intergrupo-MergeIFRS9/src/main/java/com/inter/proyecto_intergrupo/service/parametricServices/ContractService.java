@@ -54,6 +54,9 @@ public class ContractService {
     @Autowired
     private final CountryRepository countryRepository;
 
+    @Autowired
+    private CountryService countryService;
+
     @PersistenceContext
     EntityManager entityManager;
 
@@ -311,7 +314,7 @@ public class ContractService {
                             Contract contract = contractRepository.findByContrato(cellContrato);
                             contract.setContrato(cellContrato);
                             contract.setBanco(cellBanco);
-                            contract.setPaisContrato(countryRepository.findAllById(bancoGrante.get(0).getPais()));
+                            contract.setPaisContrato(countryRepository.findAllById(Integer.valueOf(bancoGrante.get(0).getPais())));
                             if(cellTipoProceso.trim().length() >0){
                                 contract.setTipoProceso(cellTipoProceso);
                             }
@@ -343,7 +346,7 @@ public class ContractService {
 
                             List<ContingentTemplate> ajuste = contingentTemplateRepository.findAllByContrato(cellContrato);
                             for (ContingentTemplate template:ajuste) {
-                                template.setPaisBanco(countryRepository.findAllById(bancoGrante.get(0).getPais()).getId());
+                                template.setPaisBanco(countryRepository.findAllById(Integer.valueOf(bancoGrante.get(0).getPais())).getId()+"");
                                 template.setNombreBanco(cellBanco);
                                 contingentTemplateRepository.save(template);
                             }
@@ -416,7 +419,7 @@ public class ContractService {
                             Contract contract = new Contract();
                             contract.setContrato(cellContrato);
                             contract.setBanco(cellBanco);
-                            contract.setPaisContrato(countryRepository.findAllById(bancoGrante.get(0).getPais()));
+                            contract.setPaisContrato(countryRepository.findAllById(Integer.valueOf(bancoGrante.get(0).getPais())));
                             contract.setTipoProceso(cellTipoProceso);
                             contract.setArchivoEntrada(cellArchivoEntrada);
 
@@ -443,7 +446,12 @@ public class ContractService {
 
                             List<ContingentTemplate> ajuste = contingentTemplateRepository.findAllByContrato(cellContrato);
                             for (ContingentTemplate template:ajuste) {
-                                template.setPaisBanco(countryRepository.findAllById(bancoGrante.get(0).getPais()).getId());
+
+                                Integer paisIds;
+                                String paisId = bancoGrante.get(0).getPais();
+                                paisIds=Integer.parseInt(paisId);
+                                template.setPaisBanco(countryRepository.findAllById(paisIds).getId()+"");
+
                                 template.setNombreBanco(cellBanco);
                                 contingentTemplateRepository.save(template);
                             }
@@ -519,7 +527,7 @@ public class ContractService {
         toInsert.setTipoAval(toModify.getTipoAval());
         toInsert.setTipoAvalOrigen(toModify.getTipoAvalOrigen());
         toInsert.setTipoProceso(toModify.getTipoProceso());
-        toInsert.setPaisContrato(countryRepository.findAllById(pais));
+        toInsert.setPaisContrato(countryRepository.findAllById(Integer.valueOf(pais)));
         Query query = entityManager.createNativeQuery("UPDATE nexco_contratos SET id_contrato = ? , archivo_entrada = ? , " +
                 "banco = ? , tipo_aval = ? , tipo_aval_origen = ? , id_pais = ? WHERE id_contrato = ?", Contract.class);
         query.setParameter(1, toInsert.getContrato());

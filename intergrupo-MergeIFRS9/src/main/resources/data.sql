@@ -6,6 +6,11 @@ IF NOT EXISTS(SELECT * FROM nexco_cargos WHERE id_cargo = 4) BEGIN INSERT INTO n
 IF NOT EXISTS(SELECT * FROM nexco_cargos WHERE id_cargo = 5) BEGIN INSERT INTO nexco_cargos (nombre_cargo) VALUES ('Ingeniero') END
 IF NOT EXISTS(SELECT * FROM nexco_cargos WHERE id_cargo = 6) BEGIN INSERT INTO nexco_cargos (nombre_cargo) VALUES ('Consultor') END
 
+-- Add PAISES
+IF NOT EXISTS(SELECT * FROM nexco_paises WHERE id_pais = 1) BEGIN INSERT INTO nexco_paises (nombre_pais, sigla_pais) VALUES ('Colombia', 'CO') END
+IF NOT EXISTS(SELECT * FROM nexco_paises WHERE id_pais = 2) BEGIN INSERT INTO nexco_paises (nombre_pais, sigla_pais) VALUES ('España', 'ES') END
+IF NOT EXISTS(SELECT * FROM nexco_paises WHERE id_pais = 3) BEGIN INSERT INTO nexco_paises (nombre_pais, sigla_pais) VALUES ('Estados Unidos', 'US') END
+
 -- Add TIPO DOCUMENTO
 IF NOT EXISTS(SELECT * FROM nexco_tipo_documento WHERE id_tipo_documento = 1) BEGIN INSERT INTO nexco_tipo_documento (nombre_tipo_documento,codigo_tipo_documento) VALUES ('ACCIONISTA','Z') END
 IF NOT EXISTS(SELECT * FROM nexco_tipo_documento WHERE id_tipo_documento = 2) BEGIN INSERT INTO nexco_tipo_documento (nombre_tipo_documento,codigo_tipo_documento) VALUES ('CARNET DIPLOMATICO','A') END
@@ -180,6 +185,8 @@ IF NOT EXISTS(SELECT * FROM nexco_vistas WHERE nombre = 'Ver F351 ICRV') BEGIN I
 IF NOT EXISTS(SELECT * FROM nexco_vistas WHERE nombre = 'Ver Reporte ICRV') BEGIN INSERT INTO nexco_vistas (nombre, ruta, unica,menu_principal,sub_menu_p1,sub_menu_p2) VALUES ('Ver Reporte ICRV','/briefcase/icrv',1,'Portafolio','ICRV','Reporte') END
 IF NOT EXISTS(SELECT * FROM nexco_vistas WHERE nombre = 'Ver Venta En Corto ICRF') BEGIN INSERT INTO nexco_vistas (nombre, ruta, unica,menu_principal,sub_menu_p1,sub_menu_p2) VALUES ('Ver Venta En Corto ICRF','/briefcase/ventasencortoicrf',1,'Portafolio','ICRF','Ventas En Corto') END
 IF NOT EXISTS(SELECT * FROM nexco_vistas WHERE nombre = 'Ver UVR ICRF') BEGIN INSERT INTO nexco_vistas (nombre, ruta, unica,menu_principal,sub_menu_p1,sub_menu_p2) VALUES ('Ver UVR ICRF','/briefcase/uvricrf',1,'Portafolio','ICRF','UVR') END
+IF NOT EXISTS(SELECT * FROM nexco_vistas WHERE nombre = 'Ver Países') BEGIN INSERT INTO nexco_vistas (nombre, ruta, unica,menu_principal,sub_menu_p1,sub_menu_p2) VALUES ('Ver Países','/parametry/countries',1,'Parametría','Parametros Generales','Países') END
+
 IF NOT EXISTS(SELECT * FROM nexco_parametros_pyg WHERE id_parametros_pyg = 1) BEGIN INSERT INTO nexco_parametros_pyg (aplica_reversion) VALUES (0) END
 
 

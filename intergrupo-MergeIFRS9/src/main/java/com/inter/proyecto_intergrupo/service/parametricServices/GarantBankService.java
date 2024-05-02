@@ -139,7 +139,7 @@ public class GarantBankService {
                     fail++;
                     lista.add(log);
                 }
-                else if(cellPais.length()==0 ||cellPais.length()>255 || countryRepository.findAllById(cellPais)==null)
+                else if(cellPais.length()==0 ||cellPais.length()>255 || countryRepository.findAllById(Integer.valueOf(cellPais))==null)
                 {
                     log[1]=CellReference.convertNumToColString(3)+" - (4)";
                     log[2]="false";

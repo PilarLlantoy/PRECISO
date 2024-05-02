@@ -1366,7 +1366,7 @@ public class Intergrupo2Service {
         toInsert.setYntp(toModify.getYntp());
         toInsert.setValor(toModify.getValor());
 
-        Country country = countryRepository.findAllById(toInsert.getCodPais());
+        Country country = countryRepository.findAllById(Integer.valueOf(toInsert.getCodPais()));
         YntpSociety yntp = yntpSocietyRepository.findByYntp(toInsert.getYntp());
 
         Query query = entityManager.createNativeQuery("UPDATE nexco_intergrupo_v2 SET cod_neocon = ? , cod_pais = ? , contrato = ? , cuenta_local = ? , divisa = ? , nit = ? ,\n" +
