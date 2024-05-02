@@ -97,6 +97,12 @@
                 </a>
                 <span class="tooltip">Portafolio</span>
             </li>
+            <li id="btnParametria">
+                <a >
+                    <i class='bx bxs-briefcase'></i>
+                </a>
+                <span class="tooltip">Parametria</span>
+            </li>
             <li id="btnAdministracion">
                 <a>
                     <i class='bx bxs-id-card'></i>
@@ -1051,6 +1057,118 @@
             <li>
                 <a th:href="@{/briefcase/uvricrf}">
                     <span class="links_name">UVR (ICRF)</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Menu Parametria -->
+
+    <div class="sidenav" id="parametria_menu">
+        <div class="name">
+            <h3>Parametria</h3>
+        </div>
+        <ul class="nav_links">
+            <li>
+                <a id="btnPrFunc">
+                    <span class="links_name">Procesos Funcionales</span>
+                    <i class='bx bxs-right-arrow'></i>
+                </a>
+            </li>
+            <li>
+                <a id="btnPrCont">
+                    <span class="links_name">Procesos Contables</span>
+                    <i class='bx bxs-right-arrow'></i>
+                </a>
+            </li>
+            <li>
+                <a id="btnParamGen">
+                    <span class="links_name">Parametros Generales</span>
+                    <i class='bx bxs-right-arrow'></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="submenu" id="infoPrFunc">
+        <div class="name">
+            <h3>Procesos Funcionales</h3>
+        </div>
+        <ul class="nav_links">
+            <li>
+                <a th:href="@{/briefcase/baseicrv}">
+                    <span class="links_name">Conciliaciones</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/briefcase/priceicrv}">
+                    <span class="links_name">Rutas de Conciliaciones</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/briefcase/pduicrv}">
+                    <span class="links_name">Cargue Inventarios</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/briefcase/calculoicrv}">
+                    <span class="links_name">Matriz Eventos</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/briefcase/valoresicrv}">
+                    <span class="links_name">Plantillas Notas</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="submenu" id="infoPrCont">
+        <div class="name">
+            <h3>Procesos Contables</h3>
+        </div>
+        <ul class="nav_links">
+            <li>
+                <a th:href="@{/briefcase/ventaencortoicrf}">
+                    <span class="links_name">Rutas Contables</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/briefcase/ventaencortoicrf}">
+                    <span class="links_name">Cargue Contable</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="submenu" id="infoParamGen">
+        <div class="name">
+            <h3>Parámetros Generales</h3>
+        </div>
+        <ul class="nav_links">
+            <li>
+                <a th:href="@{/briefcase/balvaloresicrv}">
+                    <span class="links_name">Tipos Eventos</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/briefcase/balfiduciariaicrv}">
+                    <span class="links_name">Países</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/briefcase/contactosicrv}">
+                    <span class="links_name">Centros</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/briefcase/uvricrf}">
+                    <span class="links_name">Divisas</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/briefcase/uvricrf}">
+                    <span class="links_name">Sistemas Fuentes</span>
                 </a>
             </li>
         </ul>

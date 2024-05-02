@@ -6,6 +6,7 @@ const creacion = document.getElementById('btnCreacion')
 const provisiones = document.getElementById('btnProvisiones')
 const informacion = document.getElementById('btnInformacion')
 const portafolio = document.getElementById('btnPortafolio')
+const parametria = document.getElementById('btnParametria')
 const admin = document.getElementById('btnAdministracion')
 const dataquality = document.getElementById('btnDataQuality')
 const eeffMenu = document.getElementById('btneeffMenu')
@@ -93,6 +94,20 @@ portafolio.addEventListener('click', ()=>{
     removeShowMenu()
     removeShowSubmenu()
     let menu = document.getElementById('portafolio_menu')
+
+    if(menu.classList.contains('show_menu')){
+        menu.classList.remove('show_menu')
+        overlay.classList.add('no_overlay')
+    } else{
+        menu.classList.add('show_menu')
+        overlay.classList.remove('no_overlay')
+    }
+})
+
+parametria.addEventListener('click', ()=>{
+    removeShowMenu()
+    removeShowSubmenu()
+    let menu = document.getElementById('parametria_menu')
 
     if(menu.classList.contains('show_menu')){
         menu.classList.remove('show_menu')
@@ -476,6 +491,51 @@ icrf.addEventListener('click', ()=> {
 portaParam.addEventListener('click', ()=> {
     removeShowSubmenu()
     let menu = document.getElementById('infoPortaParam')
+
+    if(menu.classList.contains('show_submenu')){
+        menu.classList.remove('show_submenu')
+        overlay.classList.add('no_overlay')
+    } else{
+        menu.classList.add('show_submenu')
+        overlay.classList.remove('no_overlay')
+    }
+})
+
+//PARAMETRICAS
+
+const paramFuncionales = document.getElementById('btnPrFunc')
+const paramContables = document.getElementById('btnPrCont')
+const paramGenerales = document.getElementById('btnParamGen')
+
+paramFuncionales.addEventListener('click', ()=> {
+    removeShowSubmenu()
+    let menu = document.getElementById('infoPrFunc')
+
+    if(menu.classList.contains('show_submenu')){
+        menu.classList.remove('show_submenu')
+        overlay.classList.add('no_overlay')
+    } else{
+        menu.classList.add('show_submenu')
+        overlay.classList.remove('no_overlay')
+    }
+})
+
+paramContables.addEventListener('click', ()=> {
+    removeShowSubmenu()
+    let menu = document.getElementById('infoPrCont')
+
+    if(menu.classList.contains('show_submenu')){
+        menu.classList.remove('show_submenu')
+        overlay.classList.add('no_overlay')
+    } else{
+        menu.classList.add('show_submenu')
+        overlay.classList.remove('no_overlay')
+    }
+})
+
+paramGenerales.addEventListener('click', ()=> {
+    removeShowSubmenu()
+    let menu = document.getElementById('infoParamGen')
 
     if(menu.classList.contains('show_submenu')){
         menu.classList.remove('show_submenu')

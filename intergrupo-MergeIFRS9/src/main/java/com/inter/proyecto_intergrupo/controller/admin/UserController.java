@@ -203,6 +203,7 @@ public class UserController {
         }*/
 
         if(bindingResult.hasErrors()) {
+            modelAndView.addObject("bindingResult", bindingResult);
 
             modelAndView.addObject("userName", user.getUsuario());
             modelAndView.addObject("userEmail", user.getCorreo());

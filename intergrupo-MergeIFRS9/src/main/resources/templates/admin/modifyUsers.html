@@ -95,7 +95,8 @@
                                 <label>[[${role.nombre}]]</label>
                             </div>
                             <div class="alert alert-warning" th:errors="*{roles}"
-                                 th:if="${#fields.hasErrors('roles')}"></div>
+                                 th:if="${#bindingResult!=null and #bindingResult.hasErrors('roles')}"></div>
+
                         </div>
                     </div>
                 </div>
