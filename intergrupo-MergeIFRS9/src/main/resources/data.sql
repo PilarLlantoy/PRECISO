@@ -11,6 +11,11 @@ IF NOT EXISTS(SELECT * FROM nexco_paises WHERE id_pais = 1) BEGIN INSERT INTO ne
 IF NOT EXISTS(SELECT * FROM nexco_paises WHERE id_pais = 2) BEGIN INSERT INTO nexco_paises (nombre_pais, sigla_pais) VALUES ('España', 'ES') END
 IF NOT EXISTS(SELECT * FROM nexco_paises WHERE id_pais = 3) BEGIN INSERT INTO nexco_paises (nombre_pais, sigla_pais) VALUES ('Estados Unidos', 'US') END
 
+-- Add TIPOS EVENTOS
+IF NOT EXISTS(SELECT * FROM nexco_tipo_evento WHERE id_tipo_evento = 1) BEGIN INSERT INTO nexco_tipo_evento (nombre_tipo_evento) VALUES ('Conciliación') END
+IF NOT EXISTS(SELECT * FROM nexco_tipo_evento WHERE id_tipo_evento = 2) BEGIN INSERT INTO nexco_tipo_evento (nombre_tipo_evento) VALUES ('Notas') END
+IF NOT EXISTS(SELECT * FROM nexco_tipo_evento WHERE id_tipo_evento = 3) BEGIN INSERT INTO nexco_tipo_evento (nombre_tipo_evento) VALUES ('Resultados') END
+
 -- Add TIPO DOCUMENTO
 IF NOT EXISTS(SELECT * FROM nexco_tipo_documento WHERE id_tipo_documento = 1) BEGIN INSERT INTO nexco_tipo_documento (nombre_tipo_documento,codigo_tipo_documento) VALUES ('ACCIONISTA','Z') END
 IF NOT EXISTS(SELECT * FROM nexco_tipo_documento WHERE id_tipo_documento = 2) BEGIN INSERT INTO nexco_tipo_documento (nombre_tipo_documento,codigo_tipo_documento) VALUES ('CARNET DIPLOMATICO','A') END
@@ -186,6 +191,7 @@ IF NOT EXISTS(SELECT * FROM nexco_vistas WHERE nombre = 'Ver Reporte ICRV') BEGI
 IF NOT EXISTS(SELECT * FROM nexco_vistas WHERE nombre = 'Ver Venta En Corto ICRF') BEGIN INSERT INTO nexco_vistas (nombre, ruta, unica,menu_principal,sub_menu_p1,sub_menu_p2) VALUES ('Ver Venta En Corto ICRF','/briefcase/ventasencortoicrf',1,'Portafolio','ICRF','Ventas En Corto') END
 IF NOT EXISTS(SELECT * FROM nexco_vistas WHERE nombre = 'Ver UVR ICRF') BEGIN INSERT INTO nexco_vistas (nombre, ruta, unica,menu_principal,sub_menu_p1,sub_menu_p2) VALUES ('Ver UVR ICRF','/briefcase/uvricrf',1,'Portafolio','ICRF','UVR') END
 IF NOT EXISTS(SELECT * FROM nexco_vistas WHERE nombre = 'Ver Países') BEGIN INSERT INTO nexco_vistas (nombre, ruta, unica,menu_principal,sub_menu_p1,sub_menu_p2) VALUES ('Ver Países','/parametry/countries',1,'Parametría','Parametros Generales','Países') END
+IF NOT EXISTS(SELECT * FROM nexco_vistas WHERE nombre = 'Ver Tipos Eventos') BEGIN INSERT INTO nexco_vistas (nombre, ruta, unica,menu_principal,sub_menu_p1,sub_menu_p2) VALUES ('Ver Tipos Eventos','/parametry/typeEvent',1,'Parametría','Parametros Generales','Tipos Eventos') END
 
 IF NOT EXISTS(SELECT * FROM nexco_parametros_pyg WHERE id_parametros_pyg = 1) BEGIN INSERT INTO nexco_parametros_pyg (aplica_reversion) VALUES (0) END
 
