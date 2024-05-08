@@ -19,12 +19,28 @@ import java.util.List;
 public class Currency {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_divisa")
-    private String id;
+    private int id;
 
     @Column(name = "nombre_divisa")
     @NotEmpty(message = "El nombre no puede estar vacio")
     private String nombre;
+
+    @Column(name = "sigla_divisa")
+    @NotEmpty(message = "El nombre no puede estar vacio")
+    private String sigla;
+
+    @Builder.Default
+    @Column(name = "estado_divisa", columnDefinition = "BIT DEFAULT 1")
+    private boolean estado = true;
+
+    @Builder.Default
+    @Column(name = "activo_divisa", columnDefinition = "BIT DEFAULT 1")
+    private boolean activo = true;
+
+
+    //ELIMINAR
 
     @Column(name = "divisa_neocon")
     private String divisaNeocon;
@@ -34,4 +50,6 @@ public class Currency {
 
     @OneToMany(mappedBy = "divisa",cascade = CascadeType.ALL)
     private List<ContingentTemplate> contingentTemplateList;
+
+
 }

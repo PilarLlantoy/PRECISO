@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+<div class="main-container">
+
+    <style>
+        .big-checkbox {width: 1.5rem; height: 1.5rem;top:0.5rem}
+
+        .scrollable-menu {
+            height: auto;
+            max-height: 300px;
+            overflow-x: hidden;
+        }
+
+        .table-wrapper {
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        input[type=checkbox] {
+            -ms-transform: scale(1.5); /* IE */
+            -moz-transform: scale(1.5); /* FF */
+            -webkit-transform: scale(1.5); /* Safari y Chrome */
+            margin: 10px;
+        }
+
+    </style>
+    <div class="row m-0 bg-primary fixed-top myNav">
+        <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
+            <h3 class="fw-bold text-white mx-4 my-3">Edición de Sistema Fuente</h3>
+        </div>
+    </div>
+    <!-- Cover -->
+    <div id="content">
+        <div class="row mt-5">
+            <form method="POST" th:action="@{/parametric/modifySourceSystem}" th:object="${sf}">
+
+                <div class="col-md-12 px-5 mb-3" >
+                    <div class="form-group mb-1">
+                        <label>Código</label>
+                        <input  readonly class="form-control" id="idNew" maxlength="2"
+                               minlength="2" name="idNew" onkeyup="this.value=this.value.toUpperCase();" required th:field="*{id}" type="text">
+                    </div>
+                    <div class="form-group mb-1">
+                        <label>Nombre</label>
+                        <input class="form-control" maxlength="255" required th:field="*{nombre}" type="text">
+                    </div>
+                    <div class="form-group mb-1">
+                        <label>Sigla</label>
+                        <input class="form-control" maxlength="255" required th:field="*{sigla}" type="text">
+                    </div>
+                    <div class="form-group mb-1">
+                        <label>Aplica Festivo</label>
+                        <input id="festivoInput" name="festivo" th:field="*{festivo}" th:id="${festivo}"
+                               th:value="${festivo}" type="checkbox">
+                        <label>[[${festivo}]]</label>
+                    </div>
+                    <div class="form-group mb-1">
+                        <label>País</label>
+                        <select class="form-control" name="selectedPais" id="selectedPais" required>
+                            <option disabled value="" selected hidden>Seleccione un país</option>
+                            <option th:each="pais : ${paises}" th:value="${pais.nombre}" th:text="${pais.nombre}"
+                                    th:selected="${sf.pais != null and pais.id == sf.pais.id}"></option>
+                        </select>
+                    </div>
+                    <label>Estado</label>
+                    <input id="activoInput" name="activo" th:field="*{activo}" th:id="${activo}"
+                           th:value="${activo}" type="checkbox">
+                    <label>[[${activo}]]</label>
+
+                    <div class="row">
+                        <label>Días de Cierre:</label>
+                        <div class="form-check form-check-inline">
+                            <div style="margin-left:0.75rem">
+                                <label>Lunes:</label>
+                                <input id="lunesInput" name="lunes" th:field="*{lunes}" th:id="${lunes}"
+                                       th:value="${lunes}" type="checkbox">
+                                <label>[[${lunes}]]</label>
+                            </div>
+
+                            <div style="margin-left:0.75rem">
+                                <label>Martes:</label>
+                                <input id="martesInput" name="martes" th:field="*{martes}" th:id="${martes}"
+                                       th:value="${martes}" type="checkbox">
+                                <label>[[${martes}]]</label>
+                            </div>
+
+                            <div style="margin-left:0.75rem">
+                                <label>Miércoles:</label>
+                                <input id="miercolesInput" name="miercoles" th:field="*{miercoles}" th:id="${miercoles}"
+                                       th:value="${miercoles}" type="checkbox">
+                                <label>[[${miercoles}]]</label>
+                            </div>
+
+                            <div style="margin-left:0.75rem">
+                                <label>Jueves:</label>
+                                <input id="juevesInput" name="jueves" th:field="*{jueves}" th:id="${jueves}"
+                                       th:value="${jueves}" type="checkbox">
+                                <label>[[${martes}]]</label>
+                            </div>
+
+                            <div style="margin-left:0.75rem">
+                                <label>Viernes:</label>
+                                <input id="viernesInput" name="viernes" th:field="*{viernes}" th:id="${viernes}"
+                                       th:value="${viernes}" type="checkbox">
+                                <label>[[${viernes}]]</label>
+                            </div>
+
+                            <div style="margin-left:0.75rem">
+                                <label>Sábado:</label>
+                                <input id="sabadoInput" name="sabado" th:field="*{sabado}" th:id="${sabado}"
+                                       th:value="${sabado}" type="checkbox">
+                                <label>[[${sabado}]]</label>
+                            </div>
+
+                            <div style="margin-left:0.75rem">
+                                <label>Domingo:</label>
+                                <input id="domingoInput" name="domingo" th:field="*{domingo}" th:id="${domingo}"
+                                       th:value="${domingo}" type="checkbox">
+                                <label>[[${domingo}]]</label>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row pt-5 py-3">
+                    <div class="col-md-12 d-flex align-content-center justify-content-center">
+                        <div class="d-grid gap-2 col-3">
+                            <button type="submit" class="btn btn-primary">Modificar</button>
+                        </div>
+                        <div class="d-grid gap-2 col-3">
+                            <a class="btn btn-danger" th:href="@{/parametric/sourceSystem}">Cancelar</a>
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+</div>
+<script crossorigin="anonymous"
+        integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
+        src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script crossorigin="anonymous"
+        integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
+        src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#sidebarCollapse').on('click', function () {
+            $('#sidebar').toggleClass('active');
+        });
+    });
+    $("#idNew").change(function () {
+        $.get("/parametric/validateIdCountry/?idNew=" + $("#idNew").val() + "&idT=" + $("#idOld").val(), function (responseText) {
+            if (responseText != 'valid') {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'warning',
+                    title: '¡Validación Código de país Fallo!',
+                    text: 'El Código con valor ' + $("#idNew").val() + ' ingresado en el campo Código País ya se encuentra asociado a otro registro.',
+                    showConfirmButton: true
+                });
+                $("#idNew").val('');
+            }
+        });
+    });
+</script>
+</body>
+</html>

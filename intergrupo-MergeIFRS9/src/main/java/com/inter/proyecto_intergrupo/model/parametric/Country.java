@@ -1,5 +1,6 @@
 package com.inter.proyecto_intergrupo.model.parametric;
 
+import com.inter.proyecto_intergrupo.model.admin.Cargo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -43,5 +44,7 @@ public class Country{
     @OneToMany(mappedBy = "paisContrato", cascade = CascadeType.ALL)
     private List<Contract> contractList;
 
+    @OneToMany(mappedBy = "pais", cascade = CascadeType.ALL)
+    private List<SourceSystem> sistemasFuente;
 
 }

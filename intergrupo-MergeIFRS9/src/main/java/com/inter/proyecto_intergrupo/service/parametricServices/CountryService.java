@@ -46,6 +46,11 @@ public class CountryService {
         return countryRepository.findAllById(id);
     }
 
+    public Country findCountryByName(String nombre){
+        return countryRepository.findAllByNombre(nombre);
+    }
+
+
     public void modifyCountry(Country toModify,String id, User user){
 
         Country toInsert = new Country();

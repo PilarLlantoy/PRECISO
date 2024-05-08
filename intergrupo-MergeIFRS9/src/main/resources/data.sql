@@ -11,6 +11,17 @@ IF NOT EXISTS(SELECT * FROM nexco_paises WHERE id_pais = 1) BEGIN INSERT INTO ne
 IF NOT EXISTS(SELECT * FROM nexco_paises WHERE id_pais = 2) BEGIN INSERT INTO nexco_paises (nombre_pais, sigla_pais) VALUES ('España', 'ES') END
 IF NOT EXISTS(SELECT * FROM nexco_paises WHERE id_pais = 3) BEGIN INSERT INTO nexco_paises (nombre_pais, sigla_pais) VALUES ('Estados Unidos', 'US') END
 
+-- Add DIVISAS
+IF NOT EXISTS(SELECT * FROM nexco_divisas WHERE id_divisa = 1) BEGIN INSERT INTO nexco_divisas (nombre_divisa, sigla_divisa) VALUES ('Peso Colombiano', 'COP') END
+IF NOT EXISTS(SELECT * FROM nexco_divisas WHERE id_divisa = 2) BEGIN INSERT INTO nexco_divisas (nombre_divisa, sigla_divisa) VALUES ('Euro', 'EUR') END
+IF NOT EXISTS(SELECT * FROM nexco_divisas WHERE id_divisa = 3) BEGIN INSERT INTO nexco_divisas (nombre_divisa, sigla_divisa) VALUES ('Dolar', 'USD') END
+
+-- Add SISTEMAS FUENTE
+IF NOT EXISTS(SELECT * FROM nexco_sistema_fuente WHERE id_sf = 1) BEGIN INSERT INTO nexco_sistema_fuente (nombre_sf, sigla_sf, festivo, id_pais, activo) VALUES ('Dialogo', 'DIA', 1, 1, 1) END
+IF NOT EXISTS(SELECT * FROM nexco_sistema_fuente WHERE id_sf = 2) BEGIN INSERT INTO nexco_sistema_fuente (nombre_sf, sigla_sf, festivo, id_pais, activo) VALUES ('Bank Trade', 'EY0', 0, 1, 0) END
+IF NOT EXISTS(SELECT * FROM nexco_sistema_fuente WHERE id_sf = 3) BEGIN INSERT INTO nexco_sistema_fuente (nombre_sf, sigla_sf, festivo, id_pais, activo) VALUES ('Extranjera', 'GA0', 1, 2, 1) END
+
+
 -- Add TIPOS EVENTOS
 IF NOT EXISTS(SELECT * FROM nexco_tipo_evento WHERE id_tipo_evento = 1) BEGIN INSERT INTO nexco_tipo_evento (nombre_tipo_evento) VALUES ('Conciliación') END
 IF NOT EXISTS(SELECT * FROM nexco_tipo_evento WHERE id_tipo_evento = 2) BEGIN INSERT INTO nexco_tipo_evento (nombre_tipo_evento) VALUES ('Notas') END
@@ -216,4 +227,3 @@ IF NOT EXISTS(SELECT NULL FROM nexco_counterparty_generic_contracts) BEGIN INSER
 
 -- Datos predeterminados para Arbol Decisión Segmentos FINREP
 IF NOT EXISTS(SELECT NULL FROM nexco_arbol_decision_segmento) BEGIN INSERT INTO nexco_arbol_decision_segmento (codigo_ifrs9, descripcion_sectorizacion, corasu_op, corasu, sub_corasu_op, sub_corasu, ciiu_op, ciiu, numero_empleados_op, numero_empleados, total_activos_op, total_activos, total_ventas_op, total_ventas, verificacion_contratos, otros_criterios) VALUES ('001','Bancos Centrales','=','G','=','00','','','','','','','','','',''), ('002','Administraciones Públicas','=','G','<>','00','','','','','','','','','',''), ('003','Entidades de Crédito','=','M','IN','20,21,22,23,24,25,26','=','6412','','','','','','','',''), ('004','Otras instituciones financieras','=','M','IN','21,22,23,24,25,26','IN','CIIU','','','','','','','',''), ('005','Sociedades no Financieras Mayoristas','=','M','IN','00,01,10,12','','','>','250','>','50000000','>','43000000','','Que cumpla los criterios de sociedad no financiera'), ('005','Sociedades no Financieras Mayoristas','=','M','=','20','<>','6412','>','250','>','50000000','>','43000000','','Que cumpla los criterios de sociedad no financiera'), ('005','Sociedades no Financieras Mayoristas','=','M','IN','21,22,23,24,25,26','NOT IN','CIIU','>','250','>','50000000','>','43000000','','Que cumpla los criterios de sociedad no financiera'), ('006','Sociedades no Financieras Minorista','=','M','IN','00,01,10,12','','','','','','','','','','Sociedades no Financieras no Mayoristas'), ('006','Sociedades no Financieras Minorista','=','M','=','20','<>','6412','','','','','','','','Sociedades no Financieras no Mayoristas'), ('006','Sociedades no Financieras Minorista','=','M','IN','21,22,23,24,25,26','NOT IN','CIIU','','','','','','','','Sociedades no Financieras no Mayoristas'), ('007','Hogares','=','F','IN','00,10','=','10','','','','','','','',''), ('007','Hogares','=','F','','','','','','','','','','','Tiene producto(s) de Libranza',''), ('007','Hogares','=','F','','','','','','','','','','','Tiene producto(s) de Adelanto de Nómina',''), ('007','Hogares','=','F','=','17','','','','','','','','','',''), ('008','Autónomos','=','F','','','','','','','','','','','','No incluidas en hogares') END
-

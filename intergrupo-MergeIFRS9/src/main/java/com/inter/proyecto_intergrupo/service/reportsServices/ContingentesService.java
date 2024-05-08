@@ -941,8 +941,8 @@ public class ContingentesService {
                         ContingentTemplate contingentTemplate = new ContingentTemplate();
                         contingentTemplate.setFechaCierre(fechaDateC);
                         contingentTemplate.setCuentaContable(cellCuentaContable);
-                        contingentTemplate.setDivisa(currencyRepository.findAllById(cellDivisa));
-                        List<Object> tasaExtract=getSaldoTasa(period,contingentTemplate.getDivisa().getId());
+                        contingentTemplate.setDivisa(currencyRepository.findAllById(Integer.valueOf(cellDivisa)));
+                        List<Object> tasaExtract=getSaldoTasa(period, String.valueOf(contingentTemplate.getDivisa().getId()));
                         contingentTemplate.setSaldoDivisa(Double.parseDouble(cellSaldoDivisa));
                         contingentTemplate.setFechaAlta(fechaDateA);
                         contingentTemplate.setFechaVenciemiento(fechaDateV);

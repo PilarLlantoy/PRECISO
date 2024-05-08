@@ -10,7 +10,7 @@
     <!-- Cover -->
     <div class="row m-0 bg-primary fixed-top myNav">
         <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
-            <h3 class="fw-bold text-white mx-4 my-3">Transformación de Divisas</h3>
+            <h3 class="fw-bold text-white mx-4 my-3">Administración de Divisas</h3>
         </div>
         <div class="col-md-6 d-flex align-items-center justify-content-end pe-5">
             <form class="form-inline" method="get" th:action="@{/parametric/searchCurrency}">
@@ -34,6 +34,7 @@
     <div id="content">
         <div class="row mt-5">
             <div class="text-left col-md-6">
+            <!--
                 <form enctype="multipart/form-data" id="fileUploadForm" method="post"
                       th:action="@{/parametric/currency}">
                     <div class="form-group">
@@ -41,23 +42,24 @@
                                                                name="file" required type="file">
                         <button class="btn btn-primary" type="submit">Cargar</button>
                     </div>
-                </form>
+                </form>-->
             </div>
             <div class="text-right col-md-6">
                 <a class="btn btn-primary mx-1" th:href="@{/parametric/currency}"><i class="fas fa-redo-alt"></i></a>
                 <a class="btn btn-primary mx-1" th:href="@{/parametric/addCurrency}">Agregar Divisa</a>
+                <!--
                 <button class="btn btn-primary" id="clearTable" th:onclick="operationDelete('currency');">Limpiar
                     Tabla
-                </button>
+                </button> -->
             </div>
             <div class="col-md-12">
                 <div class="table-responsive rounded border-primary">
                     <table class="table table-sm table-striped table-hover text-center table-bordered" id="example" width="100%">
                         <thead class="bg-primary">
                         <tr>
-                            <th>Divisa Local</th>
-                            <th>Nombre Divisa</th>
-                            <th>Divisa Neocon</th>
+                            <th>Id</th>
+                            <th>Nombre</th>
+                            <th>Estado</th>
                             <th COLSPAN="2">Acciones</th>
                         </tr>
                         </thead>
@@ -65,10 +67,10 @@
                         <tr th:each="c : ${allCurrencies}">
                             <td th:text="${c.id}"></td>
                             <td th:text="${c.nombre}"></td>
-                            <td th:text="${c.divisaNeocon}"></td>
-                            <td><a class="btn btn-primary" th:href="@{/parametric/modifyCurrencies/{id}(id=${c.id})}">Editar</a>
-                            </td>
+                            <td th:if="${c.activo == true}">Activo</td>
+                            <td th:if="${c.activo == false}">Inactivo</td>
                             <td>
+                                <a class="btn btn-primary" th:href="@{/parametric/modifyCurrencies/{id}(id=${c.id})}">Editar</a>
                                 <button class="btn btn-danger btn-sm" id="clearTableOne"
                                         th:data1="${c.id}"
                                         th:onclick="'javascript:operationDeleteOne(this.getAttribute(\'data1\'),\'currency\')'">Eliminar

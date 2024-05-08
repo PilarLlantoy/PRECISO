@@ -160,10 +160,10 @@ public class CurrencyService {
                 {
                     break;
                 }
-                else if(currencyRepository.findAllById(cellCodigoDivisa)!=null)
+                else if(currencyRepository.findAllById(Integer.valueOf(cellCodigoDivisa))!=null)
                 {
-                    Currency currency = currencyRepository.findAllById(cellCodigoDivisa);
-                    currency.setId(cellCodigoDivisa);
+                    Currency currency = currencyRepository.findAllById(Integer.valueOf(cellCodigoDivisa));
+                    currency.setId(Integer.valueOf(cellCodigoDivisa));
                     currency.setNombre(cellNombreDivisa);
                     currency.setDivisaNeocon(cellNeocon);
                     currencyRepository.save(currency);
@@ -185,18 +185,18 @@ public class CurrencyService {
 
     public List<Currency> findAll(){return currencyRepository.findAll();}
     public Currency findCurrency(String divisa){
-        return currencyRepository.findAllById(divisa);
+        return currencyRepository.findAllById(Integer.valueOf(divisa));
     }
 
 
     public Currency findCurrencyById(String id){
-        return currencyRepository.findAllById(id);
+        return currencyRepository.findAllById(Integer.valueOf(id));
     }
 
     public void modifyCurrencies(Currency toModify,String id, User user){
 
         Currency toInsert = new Currency();
-        toInsert.setId(toModify.getId().toUpperCase(Locale.ROOT));
+        toInsert.setId(Integer.parseInt((toModify.getId()+"").toUpperCase(Locale.ROOT)));
         toInsert.setNombre(toModify.getNombre().toUpperCase(Locale.ROOT));
         toInsert.setDivisaNeocon(toModify.getDivisaNeocon().toUpperCase(Locale.ROOT));
         Query query = entityManager.createNativeQuery("UPDATE nexco_divisas SET id_divisa = ? , nombre_divisa = ? , divisa_neocon = ? " +
@@ -220,7 +220,7 @@ public class CurrencyService {
     }
 
     public Currency saveCurrency(Currency currency, User user){
-        currency.setId(currency.getId().toUpperCase(Locale.ROOT));
+        currency.setId(Integer.parseInt((currency.getId()+"").toUpperCase(Locale.ROOT)));
         currency.setNombre(currency.getNombre().toUpperCase(Locale.ROOT));
         currency.setDivisaNeocon(currency.getDivisaNeocon().toUpperCase(Locale.ROOT));
         Date today = new Date();

@@ -155,7 +155,7 @@ public class CurrencyController {
         User user = userService.findUserByUserName(auth.getName());
         ModelAndView modelAndView = new ModelAndView("redirect:/parametric/currency");
         try {
-            Currency searchCurrency = currencyService.findCurrencyById(currency.getId());
+            Currency searchCurrency = currencyService.findCurrencyById(currency.getId()+"");
             if (searchCurrency==null||idOld.equals(currency.getId()))
             {
                 currencyService.modifyCurrencies(currency, idOld,user );
@@ -203,7 +203,7 @@ public class CurrencyController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
         try {
-            if (currencyService.findCurrencyById(currency.getId()) == null) {
+            if (currencyService.findCurrencyById(currency.getId()+"") == null) {
                 currencyService.saveCurrency(currency,user);
                 modelAndView.addObject("resp", "Add1");
             } else {
@@ -226,7 +226,7 @@ public class CurrencyController {
         boolean response=false;
         try {
             Currency toRemove = currencyService.findCurrencyById(id);
-            currencyService.removeCurrency(toRemove.getId(),user);
+            currencyService.removeCurrency(toRemove.getId()+"",user);
             response=true;
         }
         catch (Exception e)

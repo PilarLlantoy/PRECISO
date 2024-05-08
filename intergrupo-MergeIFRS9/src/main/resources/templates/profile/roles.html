@@ -30,7 +30,7 @@
                     <tr>
                         <th>Id</th>
                         <th>Nombre Rol</th>
-                        <th>Vistas</th>
+                        <!-- <th>Vistas</th> -->
                         <th>Estado</th>
                         <th></th>
                     </tr>
@@ -39,12 +39,12 @@
                     <tr th:each="role : ${roles}">
                         <td th:text="${role.id}"></td>
                         <td th:text="${role.nombre}"></td>
-                        <td width="50%">
-                        <span th:each="vista, iterStat : ${role.vistas}">
+                        <!-- <td width="50%">
+                            <span th:each="vista, iterStat : ${role.vistas}">
                             <span th:text="${vista.viewName}"></span>
                             <span th:if="${!iterStat.last}">,</span>
-                        </span>
-                        </td>
+                            </span>
+                        </td>-->
                         <!--
                         <td>
                             <input th:disabled="${!p_modificar}" class="big-checkbox" type="checkbox" th:checked="${role.activo}" th:onclick="'seleccionarRole(\'' + ${role.id} + '\'); checkboxChanged(\'' + ${role.activo} + '\');'"/>
