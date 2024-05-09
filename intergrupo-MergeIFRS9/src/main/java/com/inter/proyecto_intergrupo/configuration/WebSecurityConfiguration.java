@@ -33,12 +33,25 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Autowired
     private ViewService viewService;
 
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth
                 .userDetailsService(userDetailsService)
                 .passwordEncoder(bCryptPasswordEncoder);
     }
+/*
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth
+                .ldapAuthentication()
+                .userDnPatterns("uid={0},ou=people") // Patrón para buscar usuarios en LDAP
+                .groupSearchBase("ou=groups") // Base para buscar grupos en LDAP
+                .contextSource() // Configuración del contexto LDAP
+                .url("ldap://ldap.example.com:389/dc=example,dc=com") // URL del servidor LDAP
+                .managerDn("cn=admin,dc=example,dc=com") // Usuario administrador LDAP
+                .managerPassword("password"); // Contraseña del usuario administrador LDAP
+    }*/
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {

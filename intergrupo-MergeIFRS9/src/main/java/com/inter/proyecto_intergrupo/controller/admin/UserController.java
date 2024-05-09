@@ -452,7 +452,7 @@ public class UserController {
         return modelAndView;
     }
 
-
+    //LDAP PARA INICIO DE SESION
     public boolean validarIngreso(User usuario, String contraseña) throws SQLException {
 
         User valida;
