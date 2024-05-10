@@ -32,26 +32,16 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     private RoleService roleService;
     @Autowired
     private ViewService viewService;
-
+    @Autowired
+    private LdapAuthenticationProvider ldapAuthenticationProvider;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth
+                //.authenticationProvider(ldapAuthenticationProvider);
                 .userDetailsService(userDetailsService)
                 .passwordEncoder(bCryptPasswordEncoder);
     }
-/*
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth
-                .ldapAuthentication()
-                .userDnPatterns("uid={0},ou=people") // Patrón para buscar usuarios en LDAP
-                .groupSearchBase("ou=groups") // Base para buscar grupos en LDAP
-                .contextSource() // Configuración del contexto LDAP
-                .url("ldap://ldap.example.com:389/dc=example,dc=com") // URL del servidor LDAP
-                .managerDn("cn=admin,dc=example,dc=com") // Usuario administrador LDAP
-                .managerPassword("password"); // Contraseña del usuario administrador LDAP
-    }*/
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -60,25 +50,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         String logoutPage = "/logout";
 
         http.authorizeRequests().antMatchers("/", loginPage,"/password/**").permitAll();
-
-        /*List<View> vistas = viewService.findAll();
-        for(View view: vistas){
-            List<String> paths = new ArrayList<>();
-            List<String> pathRoles = new ArrayList<>();
-            paths.add(view.getPath());
-            if(!view.getUnique()){
-                String path = view.getPath() + "/**";
-                paths.add(path);
-            }
-            Set<Role> roles = view.getRoles();
-            roles.forEach(role -> {
-                pathRoles.add(role.getNombre());
-            });
-            String[] finalPaths = paths.toArray(new String[0]);
-            String[] finalRoles = pathRoles.toArray(new String[0]);
-            http.authorizeRequests().mvcMatchers(finalPaths).hasAnyAuthority(finalRoles);
-
-        }*/
 
         http.formLogin()
                 .loginPage(loginPage)

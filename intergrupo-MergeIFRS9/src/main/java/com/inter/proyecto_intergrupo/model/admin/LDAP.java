@@ -16,12 +16,10 @@ import javax.servlet.http.HttpSession;
 public class LDAP {
 
     private Hashtable<String,String> env;
-    //private final DAO dao;
     private HashMap<String,String> Ldapurls;
 
 
-    public LDAP() throws SQLException {
-        //this.dao = new DAO();
+    public LDAP() {
         setLdapUrls();
     }
 
@@ -36,26 +34,14 @@ public class LDAP {
     }
 
 
-    public String inicializarLDAP(String user, String password) throws SQLException {
+    public String inicializarLDAP(String user, String password) {
         this.env = new Hashtable();
         String res="Error,data 52e";
-        //List<paramLDAP> params = dao.listarParamLDAP("1", "", "");
 
         env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-
-        /*params.forEach(p -> {
-            if (p.getTipoparam().contains("AUTHENTICATION")){
-                env.put(Context.SECURITY_AUTHENTICATION, p.getValorparam());
-            } else if (p.getTipoparam().contains("TIMEOUT")){
-                env.put("com.sun.jndi.ldap.read.timeout", p.getValorparam());
-                env.put("com.sun.jndi.ldap.connect.timeout", p.getValorparam());
-            }
-        });*/
-
         env.put(Context.SECURITY_AUTHENTICATION, "simple");
         env.put("com.sun.jndi.ldap.read.timeout", "40000");
         env.put("com.sun.jndi.ldap.connect.timeout", "40000");
-
         env.put(Context.SECURITY_CREDENTIALS, password);
 
         for(Map.Entry<String,String> k : Ldapurls.entrySet()){
@@ -66,7 +52,7 @@ public class LDAP {
             try {
                 DirContext context = new InitialLdapContext(env, null);
                 // Autenticación exitosa
-                res="Autenticación exitosa";
+                res="exitosa";
                 System.out.println(res);
                 context.close();
                 return res;
