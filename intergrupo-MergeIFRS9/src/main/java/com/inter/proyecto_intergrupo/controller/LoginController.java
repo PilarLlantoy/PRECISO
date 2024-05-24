@@ -1,5 +1,6 @@
 package com.inter.proyecto_intergrupo.controller;
 
+
 import com.inter.proyecto_intergrupo.model.admin.LDAP;
 import com.inter.proyecto_intergrupo.service.adminServices.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +17,8 @@ import java.sql.SQLException;
 @CrossOrigin(origins = "*", methods = {RequestMethod.GET,RequestMethod.POST})
 public class LoginController {
 
-    @Autowired
-    private LDAP ldap;
+    //@Autowired
+    //private LDAP ldap;
 
     @GetMapping(value={"/", "/login"})
     public ModelAndView login(){

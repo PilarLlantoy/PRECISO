@@ -7,6 +7,8 @@ const provisiones = document.getElementById('btnProvisiones')
 const informacion = document.getElementById('btnInformacion')
 const portafolio = document.getElementById('btnPortafolio')
 const parametria = document.getElementById('btnParametria')
+const procesos = document.getElementById('btnProcesos')
+const reportes = document.getElementById('btnReportes')
 const admin = document.getElementById('btnAdministracion')
 const dataquality = document.getElementById('btnDataQuality')
 const eeffMenu = document.getElementById('btneeffMenu')
@@ -108,6 +110,34 @@ parametria.addEventListener('click', ()=>{
     removeShowMenu()
     removeShowSubmenu()
     let menu = document.getElementById('parametria_menu')
+
+    if(menu.classList.contains('show_menu')){
+        menu.classList.remove('show_menu')
+        overlay.classList.add('no_overlay')
+    } else{
+        menu.classList.add('show_menu')
+        overlay.classList.remove('no_overlay')
+    }
+})
+
+procesos.addEventListener('click', ()=>{
+    removeShowMenu()
+    removeShowSubmenu()
+    let menu = document.getElementById('procesos_menu')
+
+    if(menu.classList.contains('show_menu')){
+        menu.classList.remove('show_menu')
+        overlay.classList.add('no_overlay')
+    } else{
+        menu.classList.add('show_menu')
+        overlay.classList.remove('no_overlay')
+    }
+})
+
+reportes.addEventListener('click', ()=>{
+    removeShowMenu()
+    removeShowSubmenu()
+    let menu = document.getElementById('reportes_menu')
 
     if(menu.classList.contains('show_menu')){
         menu.classList.remove('show_menu')
@@ -545,6 +575,40 @@ paramGenerales.addEventListener('click', ()=> {
         overlay.classList.remove('no_overlay')
     }
 })
+
+//PROCESOS
+
+const paramCruceInformacion = document.getElementById('btnCruceInformacion')
+const paramProcesoConciliaciones = document.getElementById('btnProcesoConciliaciones')
+const paramCargaMasiva = document.getElementById('btnCargaMasiva')
+const paramEstadisticas = document.getElementById('btnEstadisticas')
+
+paramCruceInformacion.addEventListener('click', ()=> {
+    removeShowSubmenu()
+    let menu = document.getElementById('infoCruceInformacion')
+
+    if(menu.classList.contains('show_submenu')){
+        menu.classList.remove('show_submenu')
+        overlay.classList.add('no_overlay')
+    } else{
+        menu.classList.add('show_submenu')
+        overlay.classList.remove('no_overlay')
+    }
+})
+
+paramProcesoConciliaciones.addEventListener('click', ()=> {
+    removeShowSubmenu()
+    let menu = document.getElementById('infoProcesoConciliaciones')
+
+    if(menu.classList.contains('show_submenu')){
+        menu.classList.remove('show_submenu')
+        overlay.classList.add('no_overlay')
+    } else{
+        menu.classList.add('show_submenu')
+        overlay.classList.remove('no_overlay')
+    }
+})
+
 
 //Creacion de cuentas
 

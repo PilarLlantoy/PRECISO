@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+
+<div class="main-container">
+    <div class="row m-0 bg-primary fixed-top myNav">
+        <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
+            <h3 class="fw-bold text-white mx-4 my-3">Módulo de Conciliaciones</h3>
+        </div>
+        <div class="col-md-6 d-flex align-items-center justify-content-end pe-5">
+            <form class="form-inline" method="get" th:action="@{/parametric/searchConciliation}">
+                <div class="input-group">
+                    <input class="form-control text-dark" placeholder="Buscar..." required th:name="vId" type="text">
+                    <div class="input-group-append">
+                        <select class="form-control" required th:name="vFilter">
+                            <option disabled hidden selected value="">Seleccione un filtro</option>
+                            <option th:each="item : ${columns}" th:text="${item}" th:value="${item}"></option>
+                        </select>
+                    </div>
+                    <div class="input-group-append d-flex align-items-center">
+                        <button class="btn btn-secondary" type="submit"><i class="fa fa-search"></i></button>
+                        <a class="btn btn-secondary" th:href="@{/parametric/conciliation}"><i class="fas fa-window-close"></i></a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row m-0 px-4 mt-5">
+        <div class="text-right pr-3 col-md-12 my-3">
+            <a class="btn btn-primary mx-1" th:href="@{/parametric/conciliation}"><i class="fas fa-redo-alt"></i></a>
+            <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1" th:onclick="|window.location.href='@{/parametric/createConciliation}'|">Crear Conciliacion</button>
+        </div>
+        <div class="col-md-12 p-0">
+            <div class="table-responsive rounded border-primary">
+                <table id="example" class="table table-striped table-hover text-center table-bordered table-sm" width="100%">
+                    <thead class="bg-primary">
+                    <tr>
+                        <th>Codigo</th>
+                        <th>Nombre</th>
+                        <th>Periodicidad</th>
+                        <th>Sistema Fuente</th>
+                        <th>Activo</th>
+                        <th>Apl. Fest.</th>
+                        <th>Fuente contable</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="concil : ${allConcils}">
+                        <td th:text="${concil.id}"></td>
+                        <td th:text="${concil.nombre}"></td>
+                        <td th:text="${concil.periodicidad}"></td>
+                        <td th:text="${concil.sistemaFuente}"></td>
+                        <td th:if="${concil.activo == true}">Activo</td>
+                        <td th:if="${concil.activo == false}">Inactivo</td>
+                        <td th:if="${concil.fest == true}">Activo</td>
+                        <td th:if="${concil.fest == false}">Inactivo</td>
+                        <td th:text="${concil.fuenteContable}"></td>
+                        <td>
+                            <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
+                                    th:onclick="|window.location.href='@{/admin/modifyUsers/{id}(id=${concil.id})}'|">Editar</button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="row" th:if="${last != 0}">
+                <div class="col-md-4 text-left">
+                    <nav arial-label="Pagination">
+                        <ul class="pagination">
+                            <li class="page-item" th:classappend="${prev == 0 ? 'disabled' : ''}">
+                                <a class="page-link"
+                                   th:href="@{/admin/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${prev},dir=${directory},vId=${vId})}">Anterior</a>
+                            </li>
+                            <li class="page-item" th:classappend="${current == last ? 'disabled' : ''}">
+                                <a class="page-link"
+                                   th:href="@{/admin/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${next},dir=${directory},vId=${vId})}">Siguiente</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="col-md-4 text-center">
+                    <h6 th:utext="${registers} + ' Registros Encontrados'"></h6>
+                </div>
+                <div class="col-md-4 text-right">
+                    <h6 class="mx-1" th:utext="'Página ' + ${current} + ' de ' + ${last}"></h6>
+                </div>
+            </div>
+            <div class="d-flex align-items-center justify-content-center" th:if="${filterExport != 'Original'}">
+                <h5><span class="badge badge-pill text-light badge-info py-2 px-5">¡La Tabla se encuentra Filtrada!</span>
+                </h5>
+            </div>
+            <!--
+            <div class="d-flex align-items-center justify-content-center">
+                <a th:href="@{/admin/users/download/?vFilter={vFilter}&vId={vId}(vFilter=${vFilter},vId=${vId})}" class="btn btn-primary">Exportar a Excel</a>
+            </div>
+            -->
+        </div>
+
+    </div>
+</div>
+</div>
+</body>
+</html>

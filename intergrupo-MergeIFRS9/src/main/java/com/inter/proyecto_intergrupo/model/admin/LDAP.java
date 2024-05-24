@@ -1,6 +1,8 @@
 package com.inter.proyecto_intergrupo.model.admin;
 //import admin.paramLDAP;
 //import DAO.DAO;
+import org.springframework.stereotype.Component;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,7 +14,7 @@ import javax.naming.directory.DirContext;
 import javax.naming.ldap.InitialLdapContext;
 import javax.servlet.http.HttpSession;
 
-
+@Component
 public class LDAP {
 
     private Hashtable<String,String> env;

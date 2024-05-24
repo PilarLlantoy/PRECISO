@@ -103,6 +103,18 @@
                 </a>
                 <span class="tooltip">Parametria</span>
             </li>
+            <li id="btnProcesos">
+                <a >
+                    <i class='bx bxs-check-shield'></i>
+                </a>
+                <span class="tooltip">Procesos</span>
+            </li>
+            <li id="btnReportes">
+                <a>
+                    <i class='bx bxs-report'></i>
+                </a>
+                <span class="tooltip">Reportes</span>
+            </li>
             <li id="btnAdministracion">
                 <a>
                     <i class='bx bxs-id-card'></i>
@@ -1096,12 +1108,12 @@
         </div>
         <ul class="nav_links">
             <li>
-                <a th:href="@{/briefcase/baseicrv}">
+                <a th:href="@{/parametric/conciliation}">
                     <span class="links_name">Conciliaciones</span>
                 </a>
             </li>
             <li>
-                <a th:href="@{/briefcase/priceicrv}">
+                <a th:href="@{/parametric/conciliationRoutes}">
                     <span class="links_name">Rutas de Conciliaciones</span>
                 </a>
             </li>
@@ -1134,7 +1146,11 @@
                 </a>
             </li>
             <li>
-                <a th:href="@{/briefcase/ventaencortoicrf}">
+                <!-- <a th:href="@{/briefcase/ventaencortoicrf}">
+                    <span class="links_name">Cargue Contable</span>
+                    aun falta modificar toda su implementacion
+                </a> -->
+                <a th:href="@{/parametric/accountingLoad?period={period}&order={order}(period='',order='')}">
                     <span class="links_name">Cargue Contable</span>
                 </a>
             </li>
@@ -1157,7 +1173,7 @@
                 </a>
             </li>
             <li>
-                <a th:href="@{/briefcase/contactosicrv}">
+                <a th:href="@{/parametric/offices}">
                     <span class="links_name">Centros</span>
                 </a>
             </li>
@@ -1173,6 +1189,92 @@
             </li>
         </ul>
     </div>
+
+
+
+    <!-- Menu Procesos -->
+
+    <div class="sidenav" id="procesos_menu">
+        <div class="name">
+            <h3>Procesos</h3>
+        </div>
+        <ul class="nav_links">
+            <li>
+                <a id="btnCruceInformacion">
+                    <span class="links_name">Cruce Información</span>
+                    <i class='bx bxs-right-arrow'></i>
+                </a>
+            </li>
+            <li>
+                <a id="btnProcesoConciliaciones">
+                    <span class="links_name">Proceso Conciliaciones</span>
+                    <i class='bx bxs-right-arrow'></i>
+                </a>
+            </li>
+            <li>
+                <a id="btnCargaMasiva">
+                    <span class="links_name">Carga Masiva</span></a>
+            </li>
+            <li>
+                <a id="btnEstadisticas">
+                    <span class="links_name">Estadísticas</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="submenu" id="infoCruceInformacion">
+        <div class="name">
+            <h3>Cruce Información</h3>
+        </div>
+        <ul class="nav_links">
+            <li>
+                <a th:href="@{/admin/InventoryControlPanel}">
+                    <span class="links_name">Cuadro Mando Inventarios</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/admin/informationCross}">
+                    <span class="links_name">Cruce Información</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="submenu" id="infoProcesoConciliaciones">
+        <div class="name">
+            <h3>Proceso Conciliaciones</h3>
+        </div>
+        <ul class="nav_links">
+            <li>
+                <a th:href="@{/admin/generateConciliation}">
+                    <span class="links_name">Generar Conciliación</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+
+    <!-- Menu Reportes -->
+
+    <div class="sidenav" id="reportes_menu">
+        <div class="name">
+            <h3>Reportes</h3>
+        </div>
+        <ul class="nav_links">
+            <li>
+                <a th:href="@{/admin/parametrosReportes}">
+                    <span class="links_name">Parámetros Reportes</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/profile/reportesConciliaciones}">
+                    <span class="links_name">Reportes Conciliaciones</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
 
     <!-- Menu Administracion -->
 
