@@ -1,10 +1,17 @@
 package com.inter.proyecto_intergrupo.controller.parametric;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.inter.proyecto_intergrupo.model.admin.Role;
+import com.inter.proyecto_intergrupo.model.admin.TipoDocumento;
 import com.inter.proyecto_intergrupo.model.admin.User;
-import com.inter.proyecto_intergrupo.model.parametric.Conciliation;
-import com.inter.proyecto_intergrupo.model.parametric.ConciliationRoute;
+import com.inter.proyecto_intergrupo.model.admin.View;
+import com.inter.proyecto_intergrupo.model.parametric.AccountingRoute;
+import com.inter.proyecto_intergrupo.model.parametric.SourceSystem;
 import com.inter.proyecto_intergrupo.service.adminServices.UserService;
-import com.inter.proyecto_intergrupo.service.parametricServices.ConciliationService;
+import com.inter.proyecto_intergrupo.service.parametricServices.AccountingRouteService;
+import com.inter.proyecto_intergrupo.service.parametricServices.CountryService;
+import com.inter.proyecto_intergrupo.service.parametricServices.SourceSystemService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +21,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
@@ -24,17 +31,24 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Controller
-public class ConciliationRoutesController {
+public class AccountingRoutesController {
     private static final int PAGINATIONCOUNT=12;
     Logger logger = LogManager.getLogger(LogManager.ROOT_LOGGER_NAME);
+
     @Autowired
     private UserService userService;
 
     @Autowired
-    private ConciliationService conciliationService;
+    private AccountingRouteService conciliationService;
 
-    @GetMapping(value="/parametric/conciliationRoutes")
-    public ModelAndView showConciliation(@RequestParam Map<String, Object> params) {
+    @Autowired
+    private AccountingRouteService accountingRouteService;
+
+    @Autowired
+    private SourceSystemService sourceSystemService;
+
+    @GetMapping(value="/parametric/accountingRoutes")
+    public ModelAndView showAccountingRoutes(@RequestParam Map<String, Object> params) {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
@@ -44,28 +58,28 @@ public class ConciliationRoutesController {
             int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
             PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
 
-            List<Conciliation> conciliations = conciliationService.findAllActive();
+            List<AccountingRoute> aroutes = conciliationService.findAllActive();
             int start = (int) pageRequest.getOffset();
-            int end = Math.min((start + pageRequest.getPageSize()), conciliations.size());
-            Page<Conciliation> pageConciliation = new PageImpl<>(conciliations.subList(start, end), pageRequest, conciliations.size());
+            int end = Math.min((start + pageRequest.getPageSize()), aroutes.size());
+            Page<AccountingRoute> pageAR= new PageImpl<>(aroutes.subList(start, end), pageRequest, aroutes.size());
 
-            int totalPage=pageConciliation.getTotalPages();
+            int totalPage=pageAR.getTotalPages();
             if(totalPage>0){
                 List<Integer> pages = IntStream.rangeClosed(1, totalPage).boxed().collect(Collectors.toList());
                 modelAndView.addObject("pages",pages);
             }
-            modelAndView.addObject("allCountry",pageConciliation.getContent());
+            modelAndView.addObject("allRCs",pageAR.getContent());
             modelAndView.addObject("current",page+1);
             modelAndView.addObject("next",page+2);
             modelAndView.addObject("prev",page);
             modelAndView.addObject("last",totalPage);
             modelAndView.addObject("filterExport","Original");
             modelAndView.addObject("directory","country");
-            modelAndView.addObject("registers",conciliations.size());
+            modelAndView.addObject("registers",aroutes.size());
             modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.addObject("p_modificar", p_modificar);
-            modelAndView.setViewName("parametric/conciliationRoutes");
+            modelAndView.setViewName("parametric/accountingRoutes");
         }
         else
         {
@@ -75,12 +89,15 @@ public class ConciliationRoutesController {
         return modelAndView;
     }
 
-    @GetMapping(value = "/parametric/createConciliationRoute")
-    public ModelAndView showCreateConcilitionRoute(){
+
+    @GetMapping(value = "/parametric/createAccountingRoute")
+    public ModelAndView showCreateAccountingRoute(){
         ModelAndView modelAndView = new ModelAndView();
-        ConciliationRoute croute = new ConciliationRoute();
-        modelAndView.addObject("croute",croute);
-        modelAndView.setViewName("/parametric/createConciliationRoute");
+        AccountingRoute aroute = new AccountingRoute();
+        List<SourceSystem> allSFs = sourceSystemService.findAll();
+        modelAndView.addObject("allSFs", allSFs);
+        modelAndView.addObject("aroute",aroute);
+        modelAndView.setViewName("/parametric/createAccountingRoute");
         return modelAndView;
     }
 
@@ -124,31 +141,6 @@ public class ConciliationRoutesController {
 */
 
     /*
-            @PostMapping(value = "/parametric/modifyCountry")
-            @ResponseBody
-            public ModelAndView updateCountry(@ModelAttribute Country country,@RequestParam String idOld){
-                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-                User user = userService.findUserByUserName(auth.getName());
-                ModelAndView modelAndView = new ModelAndView("redirect:/parametric/country");
-                try {
-                    Country searchCountry = countryService.findCountryById(country.getId()+"");
-                    if (searchCountry==null||idOld.equals(country.getId()))
-                    {
-                        countryService.modifyCountry(country, idOld,user);
-                        modelAndView.addObject("resp", "Modify1");
-                    }
-                    else
-                    {
-                        modelAndView.addObject("resp", "Modify0");
-                    }
-                }
-                catch(Exception e){
-                    e.printStackTrace();
-                    modelAndView.addObject("resp", "UpdateCascade-1");
-                }
-                return  modelAndView;
-
-            }
 
             @GetMapping(value = "/parametric/validateIdCountry")
             @ResponseBody
@@ -221,64 +213,66 @@ public class ConciliationRoutesController {
                 listReport.export(response);
             }
 
-            @GetMapping(value = "/parametric/searchCountry")
-            @ResponseBody
-            public ModelAndView searchCountry(@RequestParam Map<String, Object> params) {
-                ModelAndView modelAndView = new ModelAndView();
-                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-                int page=params.get("page")==null?0:(Integer.valueOf(params.get("page").toString())-1);
-                PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
-                List<Country> list=countryService.findByFilter(params.get("vId").toString(),params.get("vFilter").toString());
-
-                int start = (int)pageRequest.getOffset();
-                int end = Math.min((start + pageRequest.getPageSize()), list.size());
-                Page<Country> pageCountry = new PageImpl<>(list.subList(start, end), pageRequest, list.size());
-
-                int totalPage=pageCountry.getTotalPages();
-                if(totalPage>0){
-                    List<Integer> pages = IntStream.rangeClosed(1, totalPage).boxed().collect(Collectors.toList());
-                    modelAndView.addObject("pages",pages);
-                }
-                modelAndView.addObject("allCountry",pageCountry.getContent());
-                modelAndView.addObject("current",page+1);
-                modelAndView.addObject("next",page+2);
-                modelAndView.addObject("prev",page);
-                modelAndView.addObject("vId",params.get("vId").toString());
-                modelAndView.addObject("last",totalPage);
-                modelAndView.addObject("vFilter",params.get("vFilter").toString());
-                modelAndView.addObject("columns",listColumns);
-                modelAndView.addObject("directory","searchCountry");
-                modelAndView.addObject("registers",list.size());
-
-                User user = userService.findUserByUserName(auth.getName());
-                modelAndView.addObject("userName",user.getPrimerNombre());
-                modelAndView.addObject("userEmail",user.getCorreo());
-                modelAndView.setViewName("parametric/country");
-                return modelAndView;
-            }
         */
 
 
-    /*
-    @PostMapping(value = "/parametric/createCountry")
-    public ModelAndView createCountry(@ModelAttribute Country pais, BindingResult bindingResult){
-        ModelAndView modelAndView = new ModelAndView("redirect:/parametric/country");
-        Country paisExists = countryService.findCountryById(pais.getId());
-        if(paisExists != null){
+
+
+    @PostMapping(value = "/parametric/createAccountingRoute")
+    public ModelAndView createAccountingRoute(
+            @ModelAttribute AccountingRoute aroute,
+            @RequestParam(name = "selectedSF") String sistFuente,
+            @RequestParam(name = "selectedTipoArchivo") String tipoArch,
+            @RequestParam(name = "selectedFormatoFecha") String formFecha,
+            @RequestParam(name = "selectedIdiomaFecha") String idiomFecha,
+
+            BindingResult bindingResult){
+        ModelAndView modelAndView = new ModelAndView("redirect:/parametric/accountingRoutes");
+        AccountingRoute arouteExists = accountingRouteService.findById(aroute.getId());
+        if(arouteExists != null){
             bindingResult
                     .rejectValue("pais", "error.pais",
                             "El pais ya se ha registrado");
         }
         if(bindingResult.hasErrors()){
-            modelAndView.setViewName("parametric/createCountry");
+            modelAndView.setViewName("parametric/createAccountingRoute");
         }else{
-            countryService.modificarCountry(pais);
+            SourceSystem SF = sourceSystemService.findByNombre(sistFuente);
+            aroute.setSfrc(SF);
+            aroute.setTipoArchivo(tipoArch);
+            aroute.setFormatoFecha(formFecha);
+            aroute.setIdiomaFecha(idiomFecha);
+            accountingRouteService.modificar(aroute);
         }
         return modelAndView;
 
     }
 
-    */
+    @GetMapping(value = "/parametric/modifyAccountingRoute/{id}")
+    public ModelAndView modifyAccountingRoute(@PathVariable int id){
+        ModelAndView modelAndView = new ModelAndView();
+        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+        AccountingRoute aroute = accountingRouteService.findById(id);
+        List<SourceSystem> allSFs = sourceSystemService.findAll();
+        modelAndView.addObject("allSFs", allSFs);
+        modelAndView.addObject("aroute",aroute);
+        modelAndView.setViewName("parametric/modifyAccountingRoute");
+        return modelAndView;
+    }
+
+    @GetMapping(value = "/parametric/cargueCampos/{id}")
+    public ModelAndView cargueCampos(@PathVariable int id){
+        ModelAndView modelAndView = new ModelAndView();
+        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+        AccountingRoute aroute = accountingRouteService.findById(id);
+        List<SourceSystem> allSFs = sourceSystemService.findAll();
+        modelAndView.addObject("allSFs", allSFs);
+        modelAndView.addObject("aroute",aroute);
+        modelAndView.setViewName("parametric/modifyAccountingRoute");
+        return modelAndView;
+    }
+
+
+
 
 }

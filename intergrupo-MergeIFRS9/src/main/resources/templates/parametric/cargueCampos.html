@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+
+<div class="main-container">
+    <style>
+        .big-checkbox {width: 1.5rem; height: 1.5rem;top:0.5rem}
+
+        .scrollable-menu {
+            height: auto;
+            max-height: 300px;
+            overflow-x: hidden;
+        }
+
+        .table-wrapper {
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        input[type=checkbox] {
+            -ms-transform: scale(1.5); /* IE */
+            -moz-transform: scale(1.5); /* FF */
+            -webkit-transform: scale(1.5); /* Safari y Chrome */
+            margin: 10px;
+        }
+
+    </style>
+    <div class="row m-0 bg-primary fixed-top myNav">
+        <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
+            <h3 class="fw-bold text-white mx-4 my-3">Cargue de Campos</h3>
+        </div>
+    </div>
+    <div id="content">
+        <div class="row mt-5">
+            <form th:object="${campo}" th:action="@{/parametric/cargueCampos}" method="POST">
+                <div class="row pt-5 py-3">
+
+                    <div class="col-md-5">
+                        <div class="form-group mb-1">
+                            <label>Detalle Campo:</label>
+                            <input type="text" class="form-control"  th:field="*{nombre}"  required>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <label>Campo Primario:</label>
+                            <input id="activoPrimario" name="primario" th:field="*{primario}" th:id="${primario}"
+                                   th:value="${primario}" type="checkbox" class="styled-checkbox">
+                            <label>[[${primario}]]</label>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <label>Seleccionado Visualizacion?:</label>
+                            <input id="activoVisualizacion" name="visualizacion" th:field="*{visualizacion}" th:id="${visualizacion}"
+                                   th:value="${visualizacion}" type="checkbox" class="styled-checkbox">
+                            <label>[[${visualizacion}]]</label>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="form-group mb-1">
+                            <label>Tipo Campo:</label>
+                            <select class="form-control" name="selectedTipoCampo" id="tipoCampo" required>
+                                <option disabled value="" selected hidden>Seleccione un Tipo de Campo</option>
+                                <option th:value="VARCHAR">VARCHAR</option>
+                                <option th:value="FECHA">FECHA</option>
+                                <option th:value="DOUBLE">DOUBLE</option>
+                                <option th:value="ENTERO">ENTERO</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="form-group mb-1">
+                            <label>Longitud de Campo:</label>
+                            <input type="text" class="form-control"  th:field="*{longitud}"  required>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <label>Nulo a Moneda?:</label>
+                            <input id="activoNuloMoneda" name="nuloMoneda" th:field="*{nuloMoneda}" th:id="${nuloMoneda}"
+                                   th:value="${nuloMoneda}" type="checkbox" class="styled-checkbox">
+                            <label>[[${nuloMoneda}]]</label>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="form-group mb-1">
+                            <label>Formato Fecha:</label>
+                            <select class="form-control" name="selectedFormatoFecha" id="formatoFecha" required>
+                                <option disabled value="" selected hidden>Seleccione formato</option>
+                                <option th:value="YYYYMMDD">AÑO MES DIA CORTA (YYYYMMDD)</option>
+                                <option th:value="YYMMDD">AÑO MES DIA RED (YYMMDD)</option>
+                                <option th:value="DDMMMMYYYY">DIA MES AÑO COM. (DDMMMMYYYY)</option>
+                                <option th:value="DDMMYYYY">DIA MES AÑO CORTA (DDMMYYYY)</option>
+                                <option th:value="DDMMYY">DIA MES AÑO RED. (DDMMYY)</option>
+                                <option th:value="DDMMMMYYYY">DIA MES AÑO SIMPLE (DDMMMMYYYY)</option>
+                                <option th:value="MMDDYY">MES DIA AÑO (MMDDYY)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="form-group mb-1">
+                            <label>Idioma Campo:</label>
+                            <select class="form-control" name="selectedIdiomaCampo" id="idiomaCampo" required>
+                                <option disabled value="" selected hidden>Seleccione formato</option>
+                                <option th:value="EspañolColombia">Español - Colombia</option>
+                                <option th:value="EspañolEspaña">Español - España</option>
+                                <option th:value="InglésUSA">Inglés - USA</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <label>Separador:</label>
+                            <input type="text" class="form-control"  th:field="*{Separador}"  required>
+
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row pt-5 py-3">
+                    <div class="col-md-12 d-flex align-content-center justify-content-center">
+                        <div class="d-grid gap-2 col-3">
+                            <button type="submit" class="btn btn-primary">Agregar</button>
+                        </div>
+                        <div class="d-grid gap-2 col-3">
+                            <a class="btn btn-danger" th:href="@{/parametric/accountingRoutes}">Cancelar</a>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+            </form>
+        </div>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+<script>
+    function updateFilePath() {
+        var fileInput = document.getElementById('file');
+        var filePath = document.getElementById('filePath');
+        var fakePath = fileInput.value;  // "ruta virtual"
+        filePath.value = fakePath;
+    }
+</script>
+</body>
+</html>

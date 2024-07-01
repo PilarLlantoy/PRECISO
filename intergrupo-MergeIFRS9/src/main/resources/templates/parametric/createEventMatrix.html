@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+
+<div class="main-container">
+    <style>
+        .big-checkbox {width: 1.5rem; height: 1.5rem;top:0.5rem}
+
+        .scrollable-menu {
+            height: auto;
+            max-height: 300px;
+            overflow-x: hidden;
+        }
+
+        .table-wrapper {
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        input[type=checkbox] {
+            -ms-transform: scale(1.5); /* IE */
+            -moz-transform: scale(1.5); /* FF */
+            -webkit-transform: scale(1.5); /* Safari y Chrome */
+            margin: 10px;
+        }
+
+    </style>
+    <div class="row m-0 bg-primary fixed-top myNav">
+        <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
+            <h3 class="fw-bold text-white mx-4 my-3">Creación de Matriz de Eventos</h3>
+        </div>
+    </div>
+    <div id="content">
+        <div class="row mt-5">
+            <form th:object="${eventMatrix}" th:action="@{/parametric/createEventMatrix}" method="POST">
+                <div class="row pt-5 py-3">
+
+                    <div class="col-md-5">
+                        <div class="form-group mb-1">
+                            <label>Conciliacion:</label>
+                            <input type="text" class="form-control"  th:field="*{conciliacion}"  required>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="form-group mb-1">
+                            <label>Inventario Conciliacion:</label>
+                            <input type="text" class="form-control"  th:field="*{inventarioConciliacion}"  required>
+                        </div>
+                    </div>
+
+                    <div class="col-md-5">
+                        <label>Tipo Evento:</label>
+                        <select class="form-control" name="selectedTipoEvento" id="selectedTipoEvento" required>
+                            <option disabled value="" selected hidden>Seleccione una tipo de Evento</option>
+                            <option th:each="tipoEvento : ${tipoEventos}" th:value="${tipoEvento.nombre}" th:text="${tipoEvento.nombre}"
+                                    th:selected="${concil.tipoEvento != null and tipoEvento.id == concil.tipoEvento.id}"></option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-5">
+                        <div class="form-group mb-1">
+                            <label>Campo Operacion:</label>
+                            <input type="text" class="form-control"  th:field="*{operacion}"  required>
+                        </div>
+                    </div>
+
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <label>Aplica Conversion PYG:</label>
+                            <input id="PYG" name="PYG" th:field="*{PYG}" th:id="${PYG}"
+                                   th:value="${PYG}" type="checkbox" class="styled-checkbox">
+                            <label>[[${PYG}]]</label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <label>Aplica Centro Contable:</label>
+                            <input id="manejaCC" name="manejaCC" th:field="*{manejaCC}" th:id="${manejaCC}"
+                                   th:value="${manejaCC}" type="checkbox" class="styled-checkbox">
+                            <label>[[${manejaCC}]]</label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-5">
+                        <div class="form-group mb-1">
+                            <label>Campo Centro Contable:</label>
+                            <input type="text" class="form-control"  th:field="*{campoCC}"  required>
+                        </div>
+                    </div>
+
+                    <div class="col-md-5">
+                        <div class="form-group mb-1">
+                            <label>Centro Contable:</label>
+                            <input type="text" class="form-control"  th:field="*{centroContable}"  required>
+                        </div>
+                    </div>
+
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <label>Aplica Homologacion de Centro:</label>
+                            <input id="homCntros" name="homCntros" th:field="*{homCntros}" th:id="${homCntros}"
+                                   th:value="${homCntros}" type="checkbox" class="styled-checkbox">
+                            <label>[[${homCntros}]]</label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <label>Activo:</label>
+                            <input id="activo" name="activo" th:field="*{activo}" th:id="${activo}"
+                                   th:value="${activo}" type="checkbox" class="styled-checkbox">
+                            <label>[[${activo}]]</label>
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <div class="row pt-5 py-3">
+                    <div class="col-md-12 d-flex align-content-center justify-content-center">
+                        <div class="d-grid gap-2 col-3">
+                            <button type="submit" class="btn btn-primary">Agregar</button>
+                        </div>
+                        <div class="d-grid gap-2 col-3">
+                            <a class="btn btn-danger" th:href="@{/parametric/accountingRoutes}">Cancelar</a>
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+<script>
+    function updateFilePath() {
+        var fileInput = document.getElementById('file');
+        var filePath = document.getElementById('filePath');
+        var fakePath = fileInput.value;  // "ruta virtual"
+        filePath.value = fakePath;
+    }
+</script>
+</body>
+</html>

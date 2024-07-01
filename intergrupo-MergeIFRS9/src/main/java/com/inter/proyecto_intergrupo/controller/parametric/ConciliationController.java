@@ -2,8 +2,14 @@ package com.inter.proyecto_intergrupo.controller.parametric;
 
 import com.inter.proyecto_intergrupo.model.admin.User;
 import com.inter.proyecto_intergrupo.model.parametric.Conciliation;
+import com.inter.proyecto_intergrupo.model.parametric.Country;
+import com.inter.proyecto_intergrupo.model.parametric.Currency;
+import com.inter.proyecto_intergrupo.model.parametric.SourceSystem;
 import com.inter.proyecto_intergrupo.service.adminServices.UserService;
 import com.inter.proyecto_intergrupo.service.parametricServices.ConciliationService;
+import com.inter.proyecto_intergrupo.service.parametricServices.CountryService;
+import com.inter.proyecto_intergrupo.service.parametricServices.CurrencyService;
+import com.inter.proyecto_intergrupo.service.parametricServices.SourceSystemService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +19,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -31,6 +36,15 @@ public class ConciliationController {
 
     @Autowired
     private ConciliationService conciliationService;
+
+    @Autowired
+    private CountryService countryService;
+
+    @Autowired
+    private CurrencyService currencyService;
+
+    @Autowired
+    private SourceSystemService sourceSystemService;
 
     @GetMapping(value="/parametric/conciliation")
     public ModelAndView showConciliation(@RequestParam Map<String, Object> params) {
@@ -78,6 +92,17 @@ public class ConciliationController {
     public ModelAndView showCreateConciliation(){
         ModelAndView modelAndView = new ModelAndView();
         Conciliation concil = new Conciliation();
+
+        List<Country> allCountries = countryService.findAll();
+        List<SourceSystem> allSFs = sourceSystemService.findAll();
+        List<SourceSystem> allSFCs = allSFs;
+        List<Currency> allDivisas = currencyService.findAll();
+
+        modelAndView.addObject("paises", allCountries);
+        modelAndView.addObject("sfs", allSFs);
+        modelAndView.addObject("divisas", allDivisas);
+
+
         modelAndView.addObject("concil",concil);
         modelAndView.setViewName("/parametric/createConciliation");
         return modelAndView;

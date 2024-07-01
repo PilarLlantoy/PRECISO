@@ -1,6 +1,7 @@
 package com.inter.proyecto_intergrupo.service.parametricServices;
 
 import com.inter.proyecto_intergrupo.model.admin.Audit;
+import com.inter.proyecto_intergrupo.model.admin.TipoDocumento;
 import com.inter.proyecto_intergrupo.model.admin.User;
 import com.inter.proyecto_intergrupo.model.parametric.SourceSystem;
 import com.inter.proyecto_intergrupo.repository.admin.AuditRepository;
@@ -50,6 +51,7 @@ public class SourceSystemService {
        sourceSystemRepository.save(sf);
        return sf;
     }
+    public SourceSystem findByNombre(String name){return sourceSystemRepository.findAllByNombre(name);}
 
 
     public Page<SourceSystem> getAll(Pageable pageable){

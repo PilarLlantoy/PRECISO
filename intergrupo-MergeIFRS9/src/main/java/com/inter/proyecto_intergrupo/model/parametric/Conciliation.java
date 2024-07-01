@@ -26,11 +26,13 @@ public class Conciliation {
     @Column(name = "periodicidad")
     private String periodicidad;
 
-    @Column(name = "pais")
-    private String pais;
+    @ManyToOne
+    @JoinColumn(name = "id_pais", nullable = false)
+    private Country pais;
 
-    @Column(name = "sistema_fuente")
-    private String sistemaFuente;
+    @ManyToOne
+    @JoinColumn(name = "id_sf", nullable = false)
+    private SourceSystem sf;
 
     @Column(name = "activo", columnDefinition = "BIT DEFAULT 1")
     private boolean activo = true;
@@ -41,9 +43,9 @@ public class Conciliation {
     @Column(name = "festivo")
     private boolean festivo;
 
-
-    @Column(name = "sistema_fuente_contable")
-    private String sistemaFuenteContable;
+    @ManyToOne
+    @JoinColumn(name = "id_sfc", nullable = false)
+    private SourceSystem sfc;
 
     @Column(name = "ruta_contable")
     private String rutaContable;
@@ -54,8 +56,9 @@ public class Conciliation {
     @Column(name = "cuenta")
     private String cuenta;
 
-    @Column(name = "divisa")
-    private String divisa;
+    @ManyToOne
+    @JoinColumn(name = "id_divisa", nullable = false)
+    private Currency divisa;
 
     @Column(name = "saldo")
     private String saldo;

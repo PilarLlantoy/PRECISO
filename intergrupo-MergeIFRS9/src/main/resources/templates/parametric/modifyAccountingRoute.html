@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+
+<div class="main-container">
+    <style>
+        .big-checkbox {width: 1.5rem; height: 1.5rem;top:0.5rem}
+
+        .scrollable-menu {
+            height: auto;
+            max-height: 300px;
+            overflow-x: hidden;
+        }
+
+        .table-wrapper {
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        input[type=checkbox] {
+            -ms-transform: scale(1.5); /* IE */
+            -moz-transform: scale(1.5); /* FF */
+            -webkit-transform: scale(1.5); /* Safari y Chrome */
+            margin: 10px;
+        }
+
+    </style>
+    <div class="row m-0 bg-primary fixed-top myNav">
+        <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
+            <h3 class="fw-bold text-white mx-4 my-3">Edición de Ruta Contable</h3>
+        </div>
+    </div>
+    <div id="content">
+        <div class="row mt-5">
+            <form th:object="${aroute}" th:action="@{/parametric/modifyAccountingRoute}" method="POST">
+                <div class="row pt-5 py-3">
+
+                    <div class="col-md-5">
+                        <div class="form-group mb-1">
+                            <label>Detalle:</label>
+                            <input type="text" class="form-control"  th:field="*{nombre}"  required>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="form-group mb-1">
+                            <label>Nombre Archivo:</label>
+                            <input type="text" class="form-control"  th:field="*{nombreArchivo}"  required>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <label>Activo:</label>
+                            <input id="activoInput" name="activo" th:field="*{activo}" th:id="${activo}"
+                                   th:value="${activo}" type="checkbox" class="styled-checkbox">
+                            <label>[[${activo}]]</label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-5">
+                        <div class="form-group mb-1">
+                            <label>Tipo Archivo:</label>
+                            <select class="form-control" name="selectedTipoArchivo" id="tipoArchivo" required>
+                                <option disabled value="" selected hidden>Seleccione formato</option>
+                                <option th:value="CRCC" th:selected="${aroute.tipoArchivo == 'CRCC'}">ARCHIVO CRCC</option>
+                                <option th:value="CRCC_CUIF" th:selected="${aroute.tipoArchivo == 'CRCC_CUIF'}">ARCHIVO CRCC_CUIF</option>
+                                <option th:value="CRCC_NIIF" th:selected="${aroute.tipoArchivo == 'CRCC_NIIF'}">ARCHIVO CRCC_NIIF</option>
+                                <option th:value="DIALOGO" th:selected="${aroute.tipoArchivo == 'DIALOGO'}">ARCHIVO DIALOGO</option>
+                                <option th:value="DIALOGO_CUIF" th:selected="${aroute.tipoArchivo == 'DIALOGO_CUIF'}">ARCHIVO DIALOGO_CUIF</option>
+                                <option th:value="DIALOGO_NIIF" th:selected="${aroute.tipoArchivo == 'DIALOGO_NIIF'}">ARCHIVO DIALOGO_NIIF</option>
+                                <option th:value="XLS" th:selected="${aroute.tipoArchivo == 'XLS'}">ARCHIVO EXCEL XLS</option>
+                                <option th:value="XLSX" th:selected="${aroute.tipoArchivo == 'XLSX'}">ARCHIVO EXCEL XLSX</option>
+                                <option th:value="CSV" th:selected="${aroute.tipoArchivo == 'CSV'}">ARCHIVO PLANO CSV</option>
+                                <option th:value="TXT" th:selected="${aroute.tipoArchivo == 'TXT'}">ARCHIVO PLANO TXT</option>
+                                <option th:value="TXT_SINDEL" th:selected="${aroute.tipoArchivo == 'TXT_SINDEL'}">ARCHIVO PLANO TXT SIN DEL.</option>
+                            </select>
+
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="form-group mb-1">
+                            <label>Complemento Archivo:</label>
+                            <input type="text" class="form-control"  th:field="*{complementoArchivo}"  required>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <label>Delimitador:</label>
+                            <input type="text" class="form-control"  th:field="*{delimitador}"  required>
+
+                        </div>
+                    </div>
+
+                    <div class="col-md-10">
+                        <!-- <form enctype="multipart/form-data" id="fileUploadForm" method="post" th:action="@{/parametric/currency}"> -->
+                            <div class="form-group">
+                                <label>Ruta: </label>
+                                <input accept=".xls,.xlsx,.xlsm" class="custom-file-control" id="file" name="file" required type="file" onchange="updateFilePath()">
+                                <input type="text" id="filePath" class="form-control mt-2" readonly placeholder="Ruta del archivo" th:field="*{ruta}">
+                                <button class="btn btn-primary mt-2 d-none" type="submit">Cargar</button>
+                            </div>
+                        <!-- </form> -->
+                    </div>
+
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <label>Aplica Cargue Diario:</label>
+                            <input id="cargueDiarioInput" name="cargueDiario" th:field="*{cargueDiario}" th:id="${cargueDiario}"
+                                   th:value="${cargueDiario}" type="checkbox" class="styled-checkbox">
+                            <label>[[${cargueDiario}]]</label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-5">
+                        <div class="form-group mb-1">
+                            <label>Formato Fecha:</label>
+                            <select class="form-control" name="selectedFormatoFecha" id="formatoFecha" required>
+                                <option disabled value="" selected hidden>Seleccione formato</option>
+                                <option th:value="YYYYMMDD" th:selected="${aroute.formatoFecha == 'YYYYMMDD'}">AÑO MES DIA CORTA (YYYYMMDD)</option>
+                                <option th:value="YYMMDD" th:selected="${aroute.formatoFecha == 'YYMMDD'}">AÑO MES DIA RED (YYMMDD)</option>
+                                <option th:value="DDMMMMYYYY" th:selected="${aroute.formatoFecha == 'DDMMMMYYYY'}">DIA MES AÑO COM. (DDMMMMYYYY)</option>
+                                <option th:value="DDMMYYYY" th:selected="${aroute.formatoFecha == 'DDMMYYYY'}">DIA MES AÑO CORTA (DDMMYYYY)</option>
+                                <option th:value="DDMMYY" th:selected="${aroute.formatoFecha == 'DDMMYY'}">DIA MES AÑO RED. (DDMMYY)</option>
+                                <option th:value="DDMMMMYYYY" th:selected="${aroute.formatoFecha == 'DDMMMMYYYY'}">DIA MES AÑO SIMPLE (DDMMMMYYYY)</option>
+                                <option th:value="MMDDYY" th:selected="${aroute.formatoFecha == 'MMDDYY'}">MES DIA AÑO (MMDDYY)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="form-group mb-1">
+                            <label>Idioma Fecha:</label>
+                            <select class="form-control" name="selectedIdiomaFecha" id="idiomaFecha" required>
+                                <option disabled value="" selected hidden>Seleccione formato</option>
+                                <option th:value="EspañolColombia" th:selected="${aroute.idiomaFecha == 'EspañolColombia'}">Español - Colombia</option>
+                                <option th:value="EspañolEspaña" th:selected="${aroute.idiomaFecha == 'EspañolEspaña'}">Español - España</option>
+                                <option th:value="InglésUSA" th:selected="${aroute.idiomaFecha == 'InglésUSA'}">Inglés - USA</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <label>Maneja Siglas de Fechas:</label>
+                            <input id="siglasFechasInput" name="siglasFechas" th:field="*{siglasFechas}" th:id="${activo}"
+                                   th:value="${siglasFechas}" type="checkbox" class="styled-checkbox">
+                            <label>[[${siglasFechas}]]</label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-5">
+                        <div class="form-group mb-1">
+                            <label>Sistema Fuente:</label>
+                                <select class="form-control" required th:name="selectedSF">
+                                    <option disabled hidden selected value="">Seleccione un filtro</option>
+                                    <option th:each="sfrc : ${allSFs}" th:text="${sfrc.nombre}" th:value="${sfrc.nombre}"
+                                            th:selected="${aroute.sfrc != null and sfrc.id == aroute.sfrc.id}"></option>
+                                </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <label>Filas Omitidas:</label>
+                            <input type="text" class="form-control"  th:field="*{filasOmitidas}"  required>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row pt-5 py-3">
+                    <div class="col-md-12 d-flex align-content-center justify-content-center">
+                        <div class="d-grid gap-2 col-3">
+                            <button type="submit" class="btn btn-primary">Agregar</button>
+                        </div>
+                        <div class="d-grid gap-2 col-3">
+                            <a class="btn btn-danger" th:href="@{/parametric/accountingRoutes}">Cancelar</a>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+            </form>
+        </div>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+<script>
+    function updateFilePath() {
+        var fileInput = document.getElementById('file');
+        var filePath = document.getElementById('filePath');
+        var fakePath = fileInput.value;  // "ruta virtual"
+        filePath.value = fakePath;
+    }
+
+</script>
+</body>
+</html>

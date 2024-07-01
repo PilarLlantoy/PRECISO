@@ -1,10 +1,12 @@
 package com.inter.proyecto_intergrupo.controller.parametric;
 
 import com.inter.proyecto_intergrupo.model.admin.User;
-import com.inter.proyecto_intergrupo.model.parametric.Conciliation;
-import com.inter.proyecto_intergrupo.model.parametric.ConciliationRoute;
+import com.inter.proyecto_intergrupo.model.parametric.*;
 import com.inter.proyecto_intergrupo.service.adminServices.UserService;
 import com.inter.proyecto_intergrupo.service.parametricServices.ConciliationService;
+import com.inter.proyecto_intergrupo.service.parametricServices.CountryService;
+import com.inter.proyecto_intergrupo.service.parametricServices.CurrencyService;
+import com.inter.proyecto_intergrupo.service.parametricServices.SourceSystemService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +26,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Controller
-public class ConciliationRoutesController {
+public class CampoController {
     private static final int PAGINATIONCOUNT=12;
     Logger logger = LogManager.getLogger(LogManager.ROOT_LOGGER_NAME);
     @Autowired
@@ -33,13 +35,22 @@ public class ConciliationRoutesController {
     @Autowired
     private ConciliationService conciliationService;
 
-    @GetMapping(value="/parametric/conciliationRoutes")
-    public ModelAndView showConciliation(@RequestParam Map<String, Object> params) {
+    @Autowired
+    private CountryService countryService;
+
+    @Autowired
+    private CurrencyService currencyService;
+
+    @Autowired
+    private SourceSystemService sourceSystemService;
+
+    @GetMapping(value="/parametric/mostrarCampos")
+    public ModelAndView mostrarCampos(@RequestParam Map<String, Object> params) {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
         Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Países");
-        if(userService.validateEndpoint(user.getId(),"Ver Países")) { //CAMBIAR A VER Conciliaciones
+        if(userService.validateEndpoint(user.getId(),"Ver Países")) { //CAMBIAR A VER CargueCampos
 
             int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
             PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
@@ -65,7 +76,7 @@ public class ConciliationRoutesController {
             modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.addObject("p_modificar", p_modificar);
-            modelAndView.setViewName("parametric/conciliationRoutes");
+            modelAndView.setViewName("parametric/conciliation");
         }
         else
         {
@@ -75,16 +86,18 @@ public class ConciliationRoutesController {
         return modelAndView;
     }
 
-    @GetMapping(value = "/parametric/createConciliationRoute")
-    public ModelAndView showCreateConcilitionRoute(){
+    @GetMapping(value = "/parametric/cargueCampos")
+    public ModelAndView cargueCampos(){
         ModelAndView modelAndView = new ModelAndView();
-        ConciliationRoute croute = new ConciliationRoute();
-        modelAndView.addObject("croute",croute);
-        modelAndView.setViewName("/parametric/createConciliationRoute");
+        Campo campo = new Campo();
+
+
+        modelAndView.addObject("campo",campo);
+        modelAndView.setViewName("/parametric/cargueCampos");
         return modelAndView;
     }
+/*
 
-    /*
     @GetMapping(value = "/parametric/modifyCountry/{id}")
     @ResponseBody
     public ModelAndView modifyCountry(@PathVariable int id){
@@ -200,67 +213,12 @@ public class ConciliationRoutesController {
                 return  response;
             }
 
-            @GetMapping(value = "/parametric/country/download")
-            @ResponseBody
-            public void exportToExcel(HttpServletResponse response, RedirectAttributes redirectAttrs,@RequestParam Map<String, Object> params) throws IOException {
-                response.setContentType("application/octet-stream");
-                DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
-                String currentDateTime = dateFormatter.format(new Date());
 
-                String headerKey = "Content-Disposition";
-                String headerValue = "attachment; filename=País_" + currentDateTime + ".xlsx";
-                response.setHeader(headerKey, headerValue);
-                List<Country> countryList= new ArrayList<Country>();
-                if((params.get("vFilter").toString()).equals("Original") ||params.get("vFilter")==null||(params.get("vFilter").toString()).equals("")) {
-                    countryList = countryService.findAll();
-                }
-                else{
-                    countryList = countryService.findByFilter(params.get("vId").toString(),params.get("vFilter").toString());
-                }
-                CountryListReport listReport = new CountryListReport(countryList);
-                listReport.export(response);
-            }
-
-            @GetMapping(value = "/parametric/searchCountry")
-            @ResponseBody
-            public ModelAndView searchCountry(@RequestParam Map<String, Object> params) {
-                ModelAndView modelAndView = new ModelAndView();
-                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-                int page=params.get("page")==null?0:(Integer.valueOf(params.get("page").toString())-1);
-                PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
-                List<Country> list=countryService.findByFilter(params.get("vId").toString(),params.get("vFilter").toString());
-
-                int start = (int)pageRequest.getOffset();
-                int end = Math.min((start + pageRequest.getPageSize()), list.size());
-                Page<Country> pageCountry = new PageImpl<>(list.subList(start, end), pageRequest, list.size());
-
-                int totalPage=pageCountry.getTotalPages();
-                if(totalPage>0){
-                    List<Integer> pages = IntStream.rangeClosed(1, totalPage).boxed().collect(Collectors.toList());
-                    modelAndView.addObject("pages",pages);
-                }
-                modelAndView.addObject("allCountry",pageCountry.getContent());
-                modelAndView.addObject("current",page+1);
-                modelAndView.addObject("next",page+2);
-                modelAndView.addObject("prev",page);
-                modelAndView.addObject("vId",params.get("vId").toString());
-                modelAndView.addObject("last",totalPage);
-                modelAndView.addObject("vFilter",params.get("vFilter").toString());
-                modelAndView.addObject("columns",listColumns);
-                modelAndView.addObject("directory","searchCountry");
-                modelAndView.addObject("registers",list.size());
-
-                User user = userService.findUserByUserName(auth.getName());
-                modelAndView.addObject("userName",user.getPrimerNombre());
-                modelAndView.addObject("userEmail",user.getCorreo());
-                modelAndView.setViewName("parametric/country");
-                return modelAndView;
-            }
         */
 
-
     /*
+
+
     @PostMapping(value = "/parametric/createCountry")
     public ModelAndView createCountry(@ModelAttribute Country pais, BindingResult bindingResult){
         ModelAndView modelAndView = new ModelAndView("redirect:/parametric/country");

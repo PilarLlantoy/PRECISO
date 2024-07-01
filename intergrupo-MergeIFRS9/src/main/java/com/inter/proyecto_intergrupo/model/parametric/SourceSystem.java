@@ -74,5 +74,16 @@ public class SourceSystem {
     @Column(name = "aplica_domingo", columnDefinition = "BIT DEFAULT 0")
     private boolean domingo = false;
 
+    @OneToMany(mappedBy = "sf", cascade = CascadeType.ALL)
+    private List<Conciliation> conciliaciones;
+
+    @OneToMany(mappedBy = "sfc", cascade = CascadeType.ALL)
+    private List<Conciliation> conciliacionesContables;
+
+
+    /*
+    @OneToMany(mappedBy = "sfrc", cascade = CascadeType.ALL)
+    private List<AccountingRoute> rutasContables;
+    */
 
 }

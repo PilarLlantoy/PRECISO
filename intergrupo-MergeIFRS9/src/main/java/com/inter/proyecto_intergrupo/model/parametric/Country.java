@@ -47,4 +47,7 @@ public class Country{
     @OneToMany(mappedBy = "pais", cascade = CascadeType.ALL)
     private List<SourceSystem> sistemasFuente;
 
+    @OneToMany(mappedBy = "pais", cascade = CascadeType.ALL)
+    private List<Conciliation> conciliaciones;
+
 }
