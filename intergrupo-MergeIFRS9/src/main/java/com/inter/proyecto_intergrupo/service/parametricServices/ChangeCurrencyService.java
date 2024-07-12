@@ -191,7 +191,7 @@ public class ChangeCurrencyService {
 
                 List<ChangeCurrency> insert = new ArrayList<ChangeCurrency>();
                 try{
-                    Query query = entityManager.createNativeQuery("delete from nexco_divisas_valor where MONTH(fecha) = ? AND YEAR(fecha) = ? AND divisa = ?", ChangeCurrency.class);
+                    Query query = entityManager.createNativeQuery("delete from preciso_divisas_valor where MONTH(fecha) = ? AND YEAR(fecha) = ? AND divisa = ?", ChangeCurrency.class);
                     query.setParameter(1,loadDate[1]);
                     query.setParameter(2,loadDate[0]);
                     query.setParameter(3,cellDivisa);
@@ -222,12 +222,12 @@ public class ChangeCurrencyService {
     }
 
     public List<ChangeCurrency> findAll(){
-        Query query = entityManager.createNativeQuery("select * from nexco_divisas_valor ORDER BY fecha desc, divisa ", ChangeCurrency.class);
+        Query query = entityManager.createNativeQuery("select * from preciso_divisas_valor ORDER BY fecha desc, divisa ", ChangeCurrency.class);
         return query.getResultList();
     }
 
     public List<ChangeCurrency> findChangeCurrencyByDivisaYFecha(String year,String month, String divisa){
-        Query query = entityManager.createNativeQuery("select * from nexco_divisas_valor where MONTH(fecha) = ? AND YEAR(fecha) = ? AND divisa = ?", ChangeCurrency.class);
+        Query query = entityManager.createNativeQuery("select * from preciso_divisas_valor where MONTH(fecha) = ? AND YEAR(fecha) = ? AND divisa = ?", ChangeCurrency.class);
         query.setParameter(1,month);
         query.setParameter(2,year);
         query.setParameter(3,divisa);
@@ -241,7 +241,7 @@ public class ChangeCurrencyService {
         toInsert.setValor(toModify.getValor());
         //if(toModify.getFecha()!=fecha ||toModify.getDivisa()!=id)
         {
-            Query query = entityManager.createNativeQuery("delete from nexco_divisas_valor where fecha = ? AND divisa = ?", ChangeCurrency.class);
+            Query query = entityManager.createNativeQuery("delete from preciso_divisas_valor where fecha = ? AND divisa = ?", ChangeCurrency.class);
             query.setParameter(1,fecha);
             query.setParameter(2,id);
             query.executeUpdate();
@@ -262,7 +262,7 @@ public class ChangeCurrencyService {
     }
 
     public void saveChangeCurrency(ChangeCurrency toInsert){
-        Query query = entityManager.createNativeQuery("INSERT INTO nexco_divisas_valor (fecha, divisa, valor) VALUES (?,?,?)", ChangeCurrency.class);
+        Query query = entityManager.createNativeQuery("INSERT INTO preciso_divisas_valor (fecha, divisa, valor) VALUES (?,?,?)", ChangeCurrency.class);
         query.setParameter(1,toInsert.getFecha());
         query.setParameter(2,toInsert.getDivisa());
         query.setParameter(3,toInsert.getValor());
@@ -271,7 +271,7 @@ public class ChangeCurrencyService {
 
     public void removeChangeCurrency(Date fecha,String divisa, User user){
 
-        Query query = entityManager.createNativeQuery("delete from nexco_divisas_valor where fecha = ? AND divisa = ?", ChangeCurrency.class);
+        Query query = entityManager.createNativeQuery("delete from preciso_divisas_valor where fecha = ? AND divisa = ?", ChangeCurrency.class);
         query.setParameter(1,fecha);
         query.setParameter(2,divisa);
         query.executeUpdate();
@@ -291,7 +291,7 @@ public class ChangeCurrencyService {
     public boolean insertChangeCurrency(ChangeCurrency toInsert){
 
         boolean state = false;
-        Query verify = entityManager.createNativeQuery("SELECT * FROM nexco_divisas_valor WHERE fecha = ? AND divisa = ?");
+        Query verify = entityManager.createNativeQuery("SELECT * FROM preciso_divisas_valor WHERE fecha = ? AND divisa = ?");
         verify.setParameter(1,toInsert.getFecha());
         verify.setParameter(2,toInsert.getDivisa());
 
@@ -309,7 +309,7 @@ public class ChangeCurrencyService {
     }
 
     public void clearChangeCurrency(User user){
-        Query query = entityManager.createNativeQuery("delete from nexco_divisas_valor", ChangeCurrency.class);
+        Query query = entityManager.createNativeQuery("delete from preciso_divisas_valor", ChangeCurrency.class);
         query.executeUpdate();
 
         Date today = new Date();
@@ -332,7 +332,7 @@ public class ChangeCurrencyService {
                 if(value.contains("-") && !value.contains("%"))
                 {
                     String[] v = value.split("-");
-                    Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_divisas_valor as em " +
+                    Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_divisas_valor as em " +
                             "WHERE YEAR(em.fecha) LIKE ? AND MONTH(em.fecha) LIKE ? ORDER BY fecha desc, divisa", ChangeCurrency.class);
                     query.setParameter(1, v[0]);
                     if(!v[1].equals("10"))
@@ -342,7 +342,7 @@ public class ChangeCurrencyService {
                     list= query.getResultList();
                 }
                 else {
-                    Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_divisas_valor as em " +
+                    Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_divisas_valor as em " +
                             "WHERE em.fecha LIKE ? ORDER BY fecha desc, divisa", ChangeCurrency.class);
                     query.setParameter(1, value);
                     list= query.getResultList();
@@ -350,14 +350,14 @@ public class ChangeCurrencyService {
 
                 break;
             case "Divisa":
-                Query query0 = entityManager.createNativeQuery("SELECT em.* FROM nexco_divisas_valor as em " +
+                Query query0 = entityManager.createNativeQuery("SELECT em.* FROM preciso_divisas_valor as em " +
                         "WHERE em.divisa LIKE ? ORDER BY fecha desc, divisa", ChangeCurrency.class);
                 query0.setParameter(1, value);
 
                 list= query0.getResultList();
                 break;
             case "Valor":
-                Query query1 = entityManager.createNativeQuery("SELECT em.* FROM nexco_divisas_valor as em " +
+                Query query1 = entityManager.createNativeQuery("SELECT em.* FROM preciso_divisas_valor as em " +
                         "WHERE em.valor LIKE ? ORDER BY fecha desc, divisa", ChangeCurrency.class);
                 query1.setParameter(1, value);
 

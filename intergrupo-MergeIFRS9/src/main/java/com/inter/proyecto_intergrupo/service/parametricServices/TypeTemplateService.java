@@ -49,12 +49,12 @@ public class TypeTemplateService {
     }
 
     public List<TypeTemplate> findAll(){
-        Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_tipo_plantilla_esp as em ", TypeTemplate.class);
+        Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_tipo_plantilla_esp as em ", TypeTemplate.class);
         return query.getResultList();
     }
 
     public List<TypeTemplate> findTypebyId(Integer id){
-        Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_tipo_plantilla_esp as em " +
+        Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_tipo_plantilla_esp as em " +
                 "WHERE em.id = ?",TypeTemplate.class);
 
         query.setParameter(1, id);
@@ -69,7 +69,7 @@ public class TypeTemplateService {
         toInsert.setDescripcion(toModify.getDescripcion());
         toInsert.setTipoAsiento(toModify.getTipoAsiento());
         toInsert.setReferencia(toModify.getReferencia());
-        Query query = entityManager.createNativeQuery("UPDATE nexco_tipo_plantilla_esp SET nombre_archivo = ? , tipo_proceso = ?, descripcion = ?, tipo_asiento = ?, referencia = ? " +
+        Query query = entityManager.createNativeQuery("UPDATE preciso_tipo_plantilla_esp SET nombre_archivo = ? , tipo_proceso = ?, descripcion = ?, tipo_asiento = ?, referencia = ? " +
                 "WHERE id = ? ", TypeTemplate.class);
         query.setParameter(1,toInsert.getNombreArchivo());
         query.setParameter(2,toInsert.getTipoProceso());
@@ -85,7 +85,7 @@ public class TypeTemplateService {
     }
 
     public void saveType(TypeTemplate type){
-        Query query = entityManager.createNativeQuery("INSERT INTO nexco_tipo_plantilla_esp (nombre_archivo,tipo_proceso,descripcion, tipo_asiento, referencia) VALUES (?,?,?,?,?)", TypeTemplate.class);
+        Query query = entityManager.createNativeQuery("INSERT INTO preciso_tipo_plantilla_esp (nombre_archivo,tipo_proceso,descripcion, tipo_asiento, referencia) VALUES (?,?,?,?,?)", TypeTemplate.class);
         query.setParameter(1, type.getNombreArchivo());
         query.setParameter(2, type.getTipoProceso());
         query.setParameter(3, type.getDescripcion() );
@@ -95,13 +95,13 @@ public class TypeTemplateService {
     }
 
     public void removeType(Integer id){
-        Query query = entityManager.createNativeQuery("DELETE FROM nexco_tipo_plantilla_esp WHERE id = ? ", TypeTemplate.class);
+        Query query = entityManager.createNativeQuery("DELETE FROM preciso_tipo_plantilla_esp WHERE id = ? ", TypeTemplate.class);
         query.setParameter(1, id);
         query.executeUpdate();
     }
 
     public void clearType(User user){
-        Query query = entityManager.createNativeQuery("DELETE FROM nexco_tipo_plantilla_esp", TypeTemplate.class);
+        Query query = entityManager.createNativeQuery("DELETE FROM preciso_tipo_plantilla_esp", TypeTemplate.class);
         query.executeUpdate();
     }
 
@@ -118,7 +118,7 @@ public class TypeTemplateService {
         switch (filter)
         {
             case "Nombre Archivo":
-                Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_tipo_plantilla_esp as em " +
+                Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_tipo_plantilla_esp as em " +
                         "WHERE em.nombre_archivo LIKE ?", TypeTemplate.class);
                 query.setParameter(1, value );
 
@@ -126,7 +126,7 @@ public class TypeTemplateService {
 
                 break;
             case "Tipo Proceso":
-                Query query0 = entityManager.createNativeQuery("SELECT em.* FROM nexco_tipo_plantilla_esp as em " +
+                Query query0 = entityManager.createNativeQuery("SELECT em.* FROM preciso_tipo_plantilla_esp as em " +
                         "WHERE em.tipo_proceso LIKE ?", TypeTemplate.class);
                 query0.setParameter(1, value);
 

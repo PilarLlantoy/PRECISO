@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "nexco_sistema_fuente")
+@Table(name = "preciso_sistema_fuente")
 public class SourceSystem {
 
     @Id

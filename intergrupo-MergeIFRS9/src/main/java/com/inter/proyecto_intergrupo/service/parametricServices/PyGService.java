@@ -46,12 +46,12 @@ public class PyGService {
     }
 
     public List<PyG> findAll(){
-        Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_parametria_pyg as em ", PyG.class);
+        Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_parametria_pyg as em ", PyG.class);
         return query.getResultList();
     }
 
     public List<PyG> findPyGbyId(Integer id){
-        Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_parametria_pyg as em " +
+        Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_parametria_pyg as em " +
                 "WHERE em.id = ?",PyG.class);
         query.setParameter(1, id);
         return query.getResultList();
@@ -60,7 +60,7 @@ public class PyGService {
 
     public void modifyPyG(PyG toModify,Integer id){
 
-        Query query = entityManager.createNativeQuery("UPDATE nexco_parametria_pyg SET anio=?, descripcion=?, cuenta=?, tipo=?, stage=?, divisa=?, valor=?, naturaleza=?, cuenta_h=? " +
+        Query query = entityManager.createNativeQuery("UPDATE preciso_parametria_pyg SET anio=?, descripcion=?, cuenta=?, tipo=?, stage=?, divisa=?, valor=?, naturaleza=?, cuenta_h=? " +
                 "WHERE id = ? ", PyG.class);
         query.setParameter(1, toModify.getAnio());
         query.setParameter(2, toModify.getDescripcion());
@@ -82,7 +82,7 @@ public class PyGService {
     }
 
     public void savePyG(PyG pyg){
-        Query query = entityManager.createNativeQuery("INSERT INTO nexco_parametria_pyg (anio, descripcion, cuenta, tipo, stage, divisa, valor, naturaleza, cuenta_h) " +
+        Query query = entityManager.createNativeQuery("INSERT INTO preciso_parametria_pyg (anio, descripcion, cuenta, tipo, stage, divisa, valor, naturaleza, cuenta_h) " +
                 "VALUES (?,?,?,?,?,?,?,?,?)", PyG.class);
         query.setParameter(1, pyg.getAnio());
         query.setParameter(2, pyg.getDescripcion());
@@ -98,13 +98,13 @@ public class PyGService {
     }
 
     public void removePyG(Integer id){
-        Query query = entityManager.createNativeQuery("DELETE FROM nexco_parametria_pyg WHERE id = ? ", PyG.class);
+        Query query = entityManager.createNativeQuery("DELETE FROM preciso_parametria_pyg WHERE id = ? ", PyG.class);
         query.setParameter(1, id);
         query.executeUpdate();
     }
 
     public void clearPyG(User user){
-        Query query = entityManager.createNativeQuery("DELETE FROM nexco_parametria_pyg", PyG.class);
+        Query query = entityManager.createNativeQuery("DELETE FROM preciso_parametria_pyg", PyG.class);
         query.executeUpdate();
     }
 
@@ -121,63 +121,63 @@ public class PyGService {
         switch (filter)
         {
             case "Año":
-                Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_parametria_pyg as em " +
+                Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_parametria_pyg as em " +
                         "WHERE em.anio LIKE ?", PyG.class);
                 query.setParameter(1, value);
                 list= query.getResultList();
                 break;
 
             case "Descripción":
-                Query query0 = entityManager.createNativeQuery("SELECT em.* FROM nexco_parametria_pyg as em " +
+                Query query0 = entityManager.createNativeQuery("SELECT em.* FROM preciso_parametria_pyg as em " +
                         "WHERE em.descripcion LIKE ?", PyG.class);
                 query0.setParameter(1, value);
                 list= query0.getResultList();
                 break;
 
             case "Cuenta D":
-                Query query1 = entityManager.createNativeQuery("SELECT em.* FROM nexco_parametria_pyg as em " +
+                Query query1 = entityManager.createNativeQuery("SELECT em.* FROM preciso_parametria_pyg as em " +
                         "WHERE em.cuenta LIKE ?", PyG.class);
                 query1.setParameter(1, value);
                 list= query1.getResultList();
                 break;
 
             case "Cuenta H":
-                Query query11 = entityManager.createNativeQuery("SELECT em.* FROM nexco_parametria_pyg as em " +
+                Query query11 = entityManager.createNativeQuery("SELECT em.* FROM preciso_parametria_pyg as em " +
                         "WHERE em.cuenta_h LIKE ?", PyG.class);
                 query11.setParameter(1, value);
                 list= query11.getResultList();
                 break;
 
             case "Nombre Cuenta D":
-                Query query2 = entityManager.createNativeQuery("SELECT em.* FROM nexco_parametria_pyg as em " +
+                Query query2 = entityManager.createNativeQuery("SELECT em.* FROM preciso_parametria_pyg as em " +
                         "WHERE em.nombre_cuenta LIKE ?", PyG.class);
                 query2.setParameter(1, value );
                 list= query2.getResultList();
                 break;
 
             case "Nombre Cuenta H":
-                Query query22 = entityManager.createNativeQuery("SELECT em.* FROM nexco_parametria_pyg as em " +
+                Query query22 = entityManager.createNativeQuery("SELECT em.* FROM preciso_parametria_pyg as em " +
                         "WHERE em.nombre_cuenta LIKE ?", PyG.class);
                 query22.setParameter(1, value );
                 list= query22.getResultList();
                 break;
 
             case "Tipo":
-                Query query3 = entityManager.createNativeQuery("SELECT em.* FROM nexco_parametria_pyg as em " +
+                Query query3 = entityManager.createNativeQuery("SELECT em.* FROM preciso_parametria_pyg as em " +
                         "WHERE em.tipo LIKE ?", PyG.class);
                 query3.setParameter(1, value);
                 list= query3.getResultList();
                 break;
 
             case "Stage":
-                Query query4 = entityManager.createNativeQuery("SELECT em.* FROM nexco_parametria_pyg as em " +
+                Query query4 = entityManager.createNativeQuery("SELECT em.* FROM preciso_parametria_pyg as em " +
                         "WHERE em.stage LIKE ?", PyG.class);
                 query4.setParameter(1, value);
                 list= query4.getResultList();
                 break;
 
             case "Divisa":
-                Query query5 = entityManager.createNativeQuery("SELECT em.* FROM nexco_parametria_pyg as em " +
+                Query query5 = entityManager.createNativeQuery("SELECT em.* FROM preciso_parametria_pyg as em " +
                         "WHERE em.divisa LIKE ?", PyG.class);
                 query5.setParameter(1, value);
                 list= query5.getResultList();
@@ -404,7 +404,7 @@ public class PyGService {
                     break;
                 } else {
 
-                    Query queryValidate = entityManager.createNativeQuery("SELECT em.* FROM nexco_parametria_pyg as em WHERE em.cuenta = ? AND em.tipo = ? and em.stage = ? and em.divisa = ? and em.cuenta_h = ?", PyG.class);
+                    Query queryValidate = entityManager.createNativeQuery("SELECT em.* FROM preciso_parametria_pyg as em WHERE em.cuenta = ? AND em.tipo = ? and em.stage = ? and em.divisa = ? and em.cuenta_h = ?", PyG.class);
                     queryValidate.setParameter(1, cellAnio);
                     queryValidate.setParameter(2, cellCuenta);
                     queryValidate.setParameter(3, cellTipo);
@@ -413,7 +413,7 @@ public class PyGService {
 
                     if(queryValidate.getResultList().isEmpty()) {
 
-                        Query query = entityManager.createNativeQuery("INSERT INTO nexco_parametria_pyg(anio, descripcion, cuenta, tipo, stage, divisa, valor, naturaleza, cuenta_h)" +
+                        Query query = entityManager.createNativeQuery("INSERT INTO preciso_parametria_pyg(anio, descripcion, cuenta, tipo, stage, divisa, valor, naturaleza, cuenta_h)" +
                                 " VALUES (?,?,?,?,?,?,?,?,?)", PyG.class);
                         query.setParameter(1, cellAnio);
                         query.setParameter(2, cellDescripcion);
@@ -435,7 +435,7 @@ public class PyGService {
 
                     } else
                     {
-                        Query query = entityManager.createNativeQuery("UPDATE nexco_parametria_pyg SET descripcion=?,divisa=?,valor=?,naturaleza=? " +
+                        Query query = entityManager.createNativeQuery("UPDATE preciso_parametria_pyg SET descripcion=?,divisa=?,valor=?,naturaleza=? " +
                                 "WHERE anio=? AND cuenta=? AND tipo=? AND stage=? and cuenta_h=? ", PyG.class);
                         query.setParameter(1, cellDescripcion);
                         query.setParameter(2, cellDivisa);
@@ -460,15 +460,15 @@ public class PyGService {
             }
         }
 
-        Query query2 = entityManager.createNativeQuery("UPDATE nexco_parametria_pyg \n" +
+        Query query2 = entityManager.createNativeQuery("UPDATE preciso_parametria_pyg \n" +
                 "SET nombre_cuenta = b.descripcion\n" +
-                "FROM nexco_parametria_pyg a, nexco_cuentas_neocon b\n" +
+                "FROM preciso_parametria_pyg a, preciso_cuentas_neocon b\n" +
                 "WHERE a.cuenta = b.cuenta and a.nombre_cuenta IS NULL");
         query2.executeUpdate();
 
-        Query query3 = entityManager.createNativeQuery("UPDATE nexco_parametria_pyg \n" +
+        Query query3 = entityManager.createNativeQuery("UPDATE preciso_parametria_pyg \n" +
                 "SET nombre_cuenta_h = b.descripcion\n" +
-                "FROM nexco_parametria_pyg a, nexco_cuentas_neocon b\n" +
+                "FROM preciso_parametria_pyg a, preciso_cuentas_neocon b\n" +
                 "WHERE a.cuenta_h = b.cuenta and a.nombre_cuenta_h IS NULL");
         query3.executeUpdate();
 

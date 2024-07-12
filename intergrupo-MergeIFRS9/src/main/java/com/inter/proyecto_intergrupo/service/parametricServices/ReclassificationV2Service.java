@@ -39,7 +39,7 @@ public class ReclassificationV2Service {
     private AuditRepository auditRepository;
 
     public List<ReclassificationIntergroup> findAll() {
-        Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_reclasificacion_intergrupo_v2 as em ", ReclassificationIntergroup.class);
+        Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_reclasificacion_intergrupo_v2 as em ", ReclassificationIntergroup.class);
         return query.getResultList();
     }
 
@@ -52,7 +52,7 @@ public class ReclassificationV2Service {
     }
 
     public List<ReclassificationIntergroup> findRec(String idRec) {
-        Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_reclasificacion_intergrupo_v2 as em " +
+        Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_reclasificacion_intergrupo_v2 as em " +
                 "WHERE em.id = ?", ReclassificationIntergroup.class);
         query.setParameter(1, idRec);
 
@@ -60,7 +60,7 @@ public class ReclassificationV2Service {
     }
 
     public void saveRecla(ReclassificationIntergroup recla) {
-        Query query = entityManager.createNativeQuery("INSERT INTO nexco_reclasificacion_intergrupo_v2(concepto, codicons, tipo_sociedad, segmento, producto, tipo, stage, cuenta, cuenta_contrapartida)" +
+        Query query = entityManager.createNativeQuery("INSERT INTO preciso_reclasificacion_intergrupo_v2(concepto, codicons, tipo_sociedad, segmento, producto, tipo, stage, cuenta, cuenta_contrapartida)" +
                 "VALUES (?,?,?,?,?,?,?,?,?)", ReclassificationIntergroup.class);
         query.setParameter(1, recla.getConcepto());
         query.setParameter(2, recla.getCodicons());
@@ -75,7 +75,7 @@ public class ReclassificationV2Service {
     }
 
     public void removeRec(String id) {
-        Query query = entityManager.createNativeQuery("DELETE FROM nexco_reclasificacion_intergrupo_v2 WHERE id = ?");
+        Query query = entityManager.createNativeQuery("DELETE FROM preciso_reclasificacion_intergrupo_v2 WHERE id = ?");
         query.setParameter(1, id);
         query.executeUpdate();
     }
@@ -91,7 +91,7 @@ public class ReclassificationV2Service {
         toModify.setStage(rec.getStage());
         toModify.setCuenta(rec.getCuenta());
         toModify.setCuentaContrapartida(rec.getCuentaContrapartida());
-        Query query = entityManager.createNativeQuery("UPDATE nexco_reclasificacion_intergrupo_v2 \n" +
+        Query query = entityManager.createNativeQuery("UPDATE preciso_reclasificacion_intergrupo_v2 \n" +
                 "SET concepto = ?, codicons = ?, tipo_sociedad = ?, segmento = ?, producto = ?, tipo = ?, stage = ?, cuenta = ?, cuenta_contrapartida = ? \n" +
                 "where id = ?", ReclassificationIntergroup.class);
         query.setParameter(1,toModify.getConcepto());
@@ -269,7 +269,7 @@ public class ReclassificationV2Service {
                     rec.setCuenta(cellCuenta);
                     rec.setCuentaContrapartida(cellCuentaContra);
 
-                    Query query1 = entityManager.createNativeQuery("SELECT em.* FROM nexco_reclasificacion_intergrupo_v2 as em \n" +
+                    Query query1 = entityManager.createNativeQuery("SELECT em.* FROM preciso_reclasificacion_intergrupo_v2 as em \n" +
                             "WHERE em.concepto = ? and em.codicons = ? AND em.segmento = ? and em.producto = ? and tipo = ? and stage = ?", ReclassificationIntergroup.class);
                     query1.setParameter(1, cellConcepto);
                     query1.setParameter(2, cellCodicons);
@@ -281,7 +281,7 @@ public class ReclassificationV2Service {
                     logger.warn(query1.getResultList().isEmpty());
 
                     if(query1.getResultList().isEmpty()) {
-                        Query query = entityManager.createNativeQuery("INSERT INTO nexco_reclasificacion_intergrupo_v2(concepto, codicons, tipo_sociedad, segmento, producto, tipo, stage, cuenta, cuenta_contrapartida)" +
+                        Query query = entityManager.createNativeQuery("INSERT INTO preciso_reclasificacion_intergrupo_v2(concepto, codicons, tipo_sociedad, segmento, producto, tipo, stage, cuenta, cuenta_contrapartida)" +
                                 "VALUES (?,?,?,?,?,?,?,?,?)", ReclassificationIntergroup.class);
                         query.setParameter(1, rec.getConcepto());
                         query.setParameter(2, rec.getCodicons());
@@ -295,7 +295,7 @@ public class ReclassificationV2Service {
                         query.executeUpdate();
                         log[1] = "Registro insertado exitosamente.";
                     } else {
-                        Query query = entityManager.createNativeQuery("UPDATE nexco_reclasificacion_intergrupo_v2 \n" +
+                        Query query = entityManager.createNativeQuery("UPDATE preciso_reclasificacion_intergrupo_v2 \n" +
                                 "SET tipo_sociedad = ?, cuenta = ?, cuenta_contrapartida = ? \n" +
                                 "WHERE concepto = ? and codicons = ? AND segmento = ? and producto = ? and tipo = ? and stage = ?", ReclassificationIntergroup.class);
                         query.setParameter(1, rec.getTipoSociedad());
@@ -326,7 +326,7 @@ public class ReclassificationV2Service {
         List<ReclassificationIntergroup> list = new ArrayList<ReclassificationIntergroup>();
         switch (filter) {
             case "Concepto":
-                Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_reclasificacion_intergrupo_v2 as em " +
+                Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_reclasificacion_intergrupo_v2 as em " +
                         "WHERE em.concepto = ? ", ReclassificationIntergroup.class);
                 query.setParameter(1, value);
 
@@ -334,56 +334,56 @@ public class ReclassificationV2Service {
 
                 break;
             case "Código Consolidación":
-                Query query1 = entityManager.createNativeQuery("SELECT em.* FROM nexco_reclasificacion_intergrupo_v2 as em " +
+                Query query1 = entityManager.createNativeQuery("SELECT em.* FROM preciso_reclasificacion_intergrupo_v2 as em " +
                         "WHERE em.codicons LIKE ?", ReclassificationIntergroup.class);
                 query1.setParameter(1, value);
 
                 list = query1.getResultList();
                 break;
             case "Tipo Sociedad":
-                Query query2 = entityManager.createNativeQuery("SELECT em.* FROM nexco_reclasificacion_intergrupo_v2 as em " +
+                Query query2 = entityManager.createNativeQuery("SELECT em.* FROM preciso_reclasificacion_intergrupo_v2 as em " +
                         "WHERE em.tipo_sociedad LIKE ?", ReclassificationIntergroup.class);
                 query2.setParameter(1, value);
 
                 list = query2.getResultList();
                 break;
             case "Segmento":
-                Query query3 = entityManager.createNativeQuery("SELECT em.* FROM nexco_reclasificacion_intergrupo_v2 as em " +
+                Query query3 = entityManager.createNativeQuery("SELECT em.* FROM preciso_reclasificacion_intergrupo_v2 as em " +
                         "WHERE em.segmento LIKE ?", ReclassificationIntergroup.class);
                 query3.setParameter(1, value);
 
                 list = query3.getResultList();
                 break;
             case "Producto":
-                Query query0 = entityManager.createNativeQuery("SELECT em.* FROM nexco_reclasificacion_intergrupo_v2 as em " +
+                Query query0 = entityManager.createNativeQuery("SELECT em.* FROM preciso_reclasificacion_intergrupo_v2 as em " +
                         "WHERE em.producto LIKE ?", ReclassificationIntergroup.class);
                 query0.setParameter(1, value);
 
                 list = query0.getResultList();
                 break;
             case "Tipo":
-                Query query4 = entityManager.createNativeQuery("SELECT em.* FROM nexco_reclasificacion_intergrupo_v2 as em " +
+                Query query4 = entityManager.createNativeQuery("SELECT em.* FROM preciso_reclasificacion_intergrupo_v2 as em " +
                         "WHERE em.tipo LIKE ?", ReclassificationIntergroup.class);
                 query4.setParameter(1, value);
 
                 list = query4.getResultList();
                 break;
             case "Stage":
-                Query query5 = entityManager.createNativeQuery("SELECT em.* FROM nexco_reclasificacion_intergrupo_v2 as em " +
+                Query query5 = entityManager.createNativeQuery("SELECT em.* FROM preciso_reclasificacion_intergrupo_v2 as em " +
                         "WHERE em.stage LIKE ?", ReclassificationIntergroup.class);
                 query5.setParameter(1, value);
 
                 list = query5.getResultList();
                 break;
             case "Cuenta":
-                Query query6 = entityManager.createNativeQuery("SELECT em.* FROM nexco_reclasificacion_intergrupo_v2 as em " +
+                Query query6 = entityManager.createNativeQuery("SELECT em.* FROM preciso_reclasificacion_intergrupo_v2 as em " +
                         "WHERE em.cuenta LIKE ?", ReclassificationIntergroup.class);
                 query6.setParameter(1, value);
 
                 list = query6.getResultList();
                 break;
             case "Cuenta Contrapartida":
-                Query query7 = entityManager.createNativeQuery("SELECT em.* FROM nexco_reclasificacion_intergrupo_v2 as em " +
+                Query query7 = entityManager.createNativeQuery("SELECT em.* FROM preciso_reclasificacion_intergrupo_v2 as em " +
                         "WHERE em.cuenta_contrapartida LIKE ?", ReclassificationIntergroup.class);
                 query7.setParameter(1, value);
 

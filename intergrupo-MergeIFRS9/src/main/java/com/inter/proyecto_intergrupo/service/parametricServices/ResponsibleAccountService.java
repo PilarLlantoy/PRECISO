@@ -296,7 +296,7 @@ public class ResponsibleAccountService {
 
                         for (int i=0;i<listCenter.size();i++)
                         {
-                            Query query = entityManager.createNativeQuery("INSERT INTO nexco_user_account VALUES (?,?)", UserAccount.class);
+                            Query query = entityManager.createNativeQuery("INSERT INTO preciso_user_account VALUES (?,?)", UserAccount.class);
                             query.setParameter(1, listCenter.get(i).getUsuario());
                             query.setParameter(2, Long.parseLong(cellCuentaLocal));
                             query.executeUpdate();
@@ -354,19 +354,19 @@ public class ResponsibleAccountService {
                     responsibleAccount.setCentro(cellCentro);
                     responsibleAccountRepository.save(responsibleAccount);
 
-                    Query queryD = entityManager.createNativeQuery("DELETE FROM nexco_user_account WHERE cuenta_local= ?", UserAccount.class);
+                    Query queryD = entityManager.createNativeQuery("DELETE FROM preciso_user_account WHERE cuenta_local= ?", UserAccount.class);
                     queryD.setParameter(1, Long.parseLong(cellCuentaLocal));
                     queryD.executeUpdate();
 
                     for (int i = 0; i < listCenter.size(); i++) {
 
-                        Query query1 = entityManager.createNativeQuery("INSERT INTO nexco_user_account(id_usuario,cuenta_local) VALUES (?,?)", UserAccount.class);
+                        Query query1 = entityManager.createNativeQuery("INSERT INTO preciso_user_account(id_usuario,cuenta_local) VALUES (?,?)", UserAccount.class);
                         query1.setParameter(1, listCenter.get(i).getUsuario());
                         query1.setParameter(2, Long.parseLong(cellCuentaLocal));
                         query1.executeUpdate();
                     }
 
-                    /*Query querySearch = entityManager.createNativeQuery("SELECT * FROM nexco_cuentas_responsables where input = ? AND componente = ? AND cuenta_local = ?", ResponsibleAccount.class);
+                    /*Query querySearch = entityManager.createNativeQuery("SELECT * FROM preciso_cuentas_responsables where input = ? AND componente = ? AND cuenta_local = ?", ResponsibleAccount.class);
                     querySearch.setParameter(1, cellInput);
                     querySearch.setParameter(2, cellComponente);
                     querySearch.setParameter(3, cellCuentaLocal);
@@ -413,7 +413,7 @@ public class ResponsibleAccountService {
 
                         if(!validate.getResultList().isEmpty())
                         {
-                            Query validate2 = entityManager.createNativeQuery("SELECT * FROM nexco_cuentas_responsables WHERE centro = ? AND input = ? AND componente = ?");
+                            Query validate2 = entityManager.createNativeQuery("SELECT * FROM preciso_cuentas_responsables WHERE centro = ? AND input = ? AND componente = ?");
                             validate2.setParameter(1, result.get(0).getCentro());
                             validate2.setParameter(2, cellInput);
                             validate2.setParameter(3, cellComponente);
@@ -431,7 +431,7 @@ public class ResponsibleAccountService {
                         }
                         else
                         {
-                            Query validate2 = entityManager.createNativeQuery("SELECT * FROM nexco_cuentas_responsables WHERE centro = ? AND input = ? AND componente = ?");
+                            Query validate2 = entityManager.createNativeQuery("SELECT * FROM preciso_cuentas_responsables WHERE centro = ? AND input = ? AND componente = ?");
                             validate2.setParameter(1, result.get(0).getCentro());
                             validate2.setParameter(2, cellInput);
                             validate2.setParameter(3, cellComponente);
@@ -523,14 +523,14 @@ public class ResponsibleAccountService {
 
         entityManager.clear();
 
-        Query queryD = entityManager.createNativeQuery("DELETE FROM nexco_user_account WHERE cuenta_local = ? OR cuenta_local = ?");
+        Query queryD = entityManager.createNativeQuery("DELETE FROM preciso_user_account WHERE cuenta_local = ? OR cuenta_local = ?");
         queryD.setParameter(1, id);
         queryD.setParameter(2, toModify.getCuentaLocal());
         queryD.executeUpdate();
 
         entityManager.clear();
 
-        Query queryDR = entityManager.createNativeQuery("DELETE FROM nexco_cuentas_responsables WHERE (cuenta_local = ? OR cuenta_local = ?) AND input = ? AND componente = ? AND centro = ?");
+        Query queryDR = entityManager.createNativeQuery("DELETE FROM preciso_cuentas_responsables WHERE (cuenta_local = ? OR cuenta_local = ?) AND input = ? AND componente = ? AND centro = ?");
         queryDR.setParameter(1, id);
         queryDR.setParameter(2, toModify.getCuentaLocal());
         queryDR.setParameter(3, toModify.getEntrada());
@@ -540,7 +540,7 @@ public class ResponsibleAccountService {
 
         entityManager.clear();
 
-        Query query = entityManager.createNativeQuery("INSERT INTO nexco_cuentas_responsables (input,componente,aplica_sicc,aplica_base_fiscal,aplica_metodologia,aplica_mis,cuenta_local,centro) " +
+        Query query = entityManager.createNativeQuery("INSERT INTO preciso_cuentas_responsables (input,componente,aplica_sicc,aplica_base_fiscal,aplica_metodologia,aplica_mis,cuenta_local,centro) " +
                 " VALUES (?,?,?,?,?,?,?,?)", ResponsibleAccount.class);
         query.setParameter(1, toModify.getEntrada());
         query.setParameter(2, toModify.getComponente());
@@ -561,7 +561,7 @@ public class ResponsibleAccountService {
         if(listUser.size()>0)
         {
             for (User user:listUser) {
-                Query queryI = entityManager.createNativeQuery("INSERT INTO nexco_user_account (cuenta_local,id_usuario) VALUES (?,?)");
+                Query queryI = entityManager.createNativeQuery("INSERT INTO preciso_user_account (cuenta_local,id_usuario) VALUES (?,?)");
                 queryI.setParameter(1, toModify.getCuentaLocal());
                 queryI.setParameter(2, user.getUsuario());
                 queryI.executeUpdate();
@@ -629,12 +629,12 @@ public class ResponsibleAccountService {
     }
 
     public void removeResponsibleAccount(ResponsibleAccount cuenta, User user){
-        Query query1 = entityManager.createNativeQuery("DELETE from nexco_user_account " +
+        Query query1 = entityManager.createNativeQuery("DELETE from preciso_user_account " +
                 "WHERE cuenta_local = ?");
         query1.setParameter(1, cuenta.getCuentaLocal() );
         query1.executeUpdate();
 
-        Query queryS = entityManager.createNativeQuery("SELECT * from nexco_cuentas_responsables " +
+        Query queryS = entityManager.createNativeQuery("SELECT * from preciso_cuentas_responsables " +
                 "WHERE componente = ? AND input = ? AND centro = ?");
         queryS.setParameter(1, cuenta.getComponente() );
         queryS.setParameter(2, cuenta.getEntrada() );
@@ -650,7 +650,7 @@ public class ResponsibleAccountService {
             query2.executeUpdate();
         }
 
-        Query query = entityManager.createNativeQuery("DELETE from nexco_cuentas_responsables " +
+        Query query = entityManager.createNativeQuery("DELETE from preciso_cuentas_responsables " +
                 "WHERE cuenta_local = ?", ResponsibleAccount.class);
         query.setParameter(1, cuenta.getCuentaLocal() );
         query.executeUpdate();
@@ -670,9 +670,9 @@ public class ResponsibleAccountService {
     public void clearResponsibleAccount(User user){
         //currencyRepository.deleteAll();
 
-        Query query = entityManager.createNativeQuery("DELETE from nexco_user_account");
+        Query query = entityManager.createNativeQuery("DELETE from preciso_user_account");
         query.executeUpdate();
-        Query query1 = entityManager.createNativeQuery("DELETE from nexco_cuentas_responsables", ResponsibleAccount.class);
+        Query query1 = entityManager.createNativeQuery("DELETE from preciso_cuentas_responsables", ResponsibleAccount.class);
         query1.executeUpdate();
         Query queryCuadroDelete = entityManager.createNativeQuery("DELETE FROM preciso_administracion_cuadro_mando");
         queryCuadroDelete.executeUpdate();
@@ -689,12 +689,12 @@ public class ResponsibleAccountService {
     }
 
     public List<ResponsibleAccount> getAll(){
-        Query query = entityManager.createNativeQuery("SELECT ncr.* FROM nexco_cuentas_responsables as ncr order by ncr.cuenta_local",ResponsibleAccount.class);
+        Query query = entityManager.createNativeQuery("SELECT ncr.* FROM preciso_cuentas_responsables as ncr order by ncr.cuenta_local",ResponsibleAccount.class);
         return query.getResultList();
     }
 
     public List<UserAccount> getCostCenterUser(String value){
-        Query query = entityManager.createNativeQuery("SELECT em.cuenta_local, us.nombre, us.centro FROM nexco_user_account as em, preciso_administracion_usuarios as us " +
+        Query query = entityManager.createNativeQuery("SELECT em.cuenta_local, us.nombre, us.centro FROM preciso_user_account as em, preciso_administracion_usuarios as us " +
                 "WHERE em.cuenta_local = ? AND us.usuario = em.id_usuario");
         query.setParameter(1, Long.parseLong(value));
         return query.getResultList();
@@ -705,7 +705,7 @@ public class ResponsibleAccountService {
         switch (filter)
         {
             case "Cuenta Local":
-                Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuentas_responsables as em " +
+                Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_cuentas_responsables as em " +
                         "WHERE em.cuenta_local LIKE ?", ResponsibleAccount.class);
                 query.setParameter(1, value );
 
@@ -713,28 +713,28 @@ public class ResponsibleAccountService {
 
                 break;
             case "Usuario":
-                Query query0 = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuentas_responsables as em, preciso_administracion_usuarios as us " +
+                Query query0 = entityManager.createNativeQuery("SELECT em.* FROM preciso_cuentas_responsables as em, preciso_administracion_usuarios as us " +
                         "WHERE us.usuario LIKE ?", ResponsibleAccount.class);
                 query0.setParameter(1, value);
 
                 list= query0.getResultList();
                 break;
             case "Input":
-                Query query1 = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuentas_responsables as em " +
+                Query query1 = entityManager.createNativeQuery("SELECT em.* FROM preciso_cuentas_responsables as em " +
                         "WHERE em.input LIKE ?", ResponsibleAccount.class);
                 query1.setParameter(1, value.toUpperCase());
 
                 list= query1.getResultList();
                 break;
             case "Componente":
-                Query query3 = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuentas_responsables as em " +
+                Query query3 = entityManager.createNativeQuery("SELECT em.* FROM preciso_cuentas_responsables as em " +
                         "WHERE em.componente LIKE ?", ResponsibleAccount.class);
                 query3.setParameter(1, value.toUpperCase());
 
                 list= query3.getResultList();
                 break;
             case "Aplica SICC":
-                Query query4 = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuentas_responsables as em " +
+                Query query4 = entityManager.createNativeQuery("SELECT em.* FROM preciso_cuentas_responsables as em " +
                         "WHERE em.aplica_sicc LIKE ?", ResponsibleAccount.class);
                 if(value.toUpperCase(Locale.ROOT).equals("TRUE")||value.toUpperCase(Locale.ROOT).equals("VERDADERO"))
                 {
@@ -749,7 +749,7 @@ public class ResponsibleAccountService {
                 list= query4.getResultList();
                 break;
             case "Aplica Base Fiscal":
-                Query query5 = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuentas_responsables as em " +
+                Query query5 = entityManager.createNativeQuery("SELECT em.* FROM preciso_cuentas_responsables as em " +
                         "WHERE em.aplica_base_fiscal LIKE ?", ResponsibleAccount.class);
                 if(value.toUpperCase(Locale.ROOT).equals("TRUE")||value.toUpperCase(Locale.ROOT).equals("VERDADERO"))
                 {
@@ -764,7 +764,7 @@ public class ResponsibleAccountService {
                 list= query5.getResultList();
                 break;
             case "Aplica Metodología":
-                Query query6 = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuentas_responsables as em " +
+                Query query6 = entityManager.createNativeQuery("SELECT em.* FROM preciso_cuentas_responsables as em " +
                         "WHERE em.aplica_metodologia LIKE ?", ResponsibleAccount.class);
                 if(value.toUpperCase(Locale.ROOT).equals("TRUE")||value.toUpperCase(Locale.ROOT).equals("VERDADERO"))
                 {
@@ -779,7 +779,7 @@ public class ResponsibleAccountService {
                 list= query6.getResultList();
                 break;
         case "Aplica MIS":
-            Query query9 = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuentas_responsables as em " +
+            Query query9 = entityManager.createNativeQuery("SELECT em.* FROM preciso_cuentas_responsables as em " +
                     "WHERE em.aplica_mis LIKE ?", ResponsibleAccount.class);
             if(value.toUpperCase(Locale.ROOT).equals("TRUE")||value.toUpperCase(Locale.ROOT).equals("VERDADERO"))
             {
@@ -794,7 +794,7 @@ public class ResponsibleAccountService {
             list= query9.getResultList();
             break;
             case "Centro":
-                Query query10 = entityManager.createNativeQuery("SELECT ncr.* FROM nexco_cuentas_responsables as ncr " +
+                Query query10 = entityManager.createNativeQuery("SELECT ncr.* FROM preciso_cuentas_responsables as ncr " +
                         "WHERE ncr.centro like ?", ResponsibleAccount.class);
                 query10.setParameter(1, value);
                 list= query10.getResultList();
@@ -806,14 +806,14 @@ public class ResponsibleAccountService {
     }
 
     public List<String> getComponents(){
-        Query query = entityManager.createNativeQuery("SELECT em.componente FROM nexco_cuentas_responsables as em " +
+        Query query = entityManager.createNativeQuery("SELECT em.componente FROM preciso_cuentas_responsables as em " +
                 "group by em.componente");
 
         return query.getResultList();
     }
 
     public List<String> getInputs(){
-        Query query = entityManager.createNativeQuery("SELECT em.input FROM nexco_cuentas_responsables as em " +
+        Query query = entityManager.createNativeQuery("SELECT em.input FROM preciso_cuentas_responsables as em " +
                 "group by em.input");
 
         return query.getResultList();

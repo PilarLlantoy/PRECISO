@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "nexco_contratos")
+@Table(name = "preciso_contratos")
 public class Contract {
 
     @Id

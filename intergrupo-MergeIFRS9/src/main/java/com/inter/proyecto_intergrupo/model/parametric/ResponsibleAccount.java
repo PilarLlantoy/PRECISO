@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "nexco_cuentas_responsables")
+@Table(name = "preciso_cuentas_responsables")
 public class ResponsibleAccount {
 
     @Id

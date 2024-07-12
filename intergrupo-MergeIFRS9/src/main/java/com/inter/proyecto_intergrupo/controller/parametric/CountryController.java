@@ -1,7 +1,5 @@
 package com.inter.proyecto_intergrupo.controller.parametric;
 
-import com.inter.proyecto_intergrupo.model.admin.Cargo;
-import com.inter.proyecto_intergrupo.model.information.Sicc;
 import com.inter.proyecto_intergrupo.model.parametric.Country;
 import com.inter.proyecto_intergrupo.model.admin.User;
 import com.inter.proyecto_intergrupo.service.adminServices.UserService;

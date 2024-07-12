@@ -12,7 +12,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "nexco_historico_cuentas_ifrs9")
+@Table(name = "preciso_historico_cuentas_ifrs9")
 public class AccountHistoryIFRS9 {
 
     @Id

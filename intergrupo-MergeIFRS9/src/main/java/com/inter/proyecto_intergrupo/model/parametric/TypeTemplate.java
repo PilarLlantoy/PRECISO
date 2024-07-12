@@ -12,7 +12,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "nexco_tipo_plantilla_esp")
+@Table(name = "preciso_tipo_plantilla_esp")
 public class TypeTemplate {
 
     @Id

@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "nexco_tipo_evento")
+@Table(name = "preciso_tipo_evento")
 public class EventType {
 
     @Id

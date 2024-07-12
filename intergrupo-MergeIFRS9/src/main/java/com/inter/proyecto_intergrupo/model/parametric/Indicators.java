@@ -15,7 +15,7 @@ import javax.persistence.Table;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "nexco_indicadores")
+@Table(name = "preciso_indicadores")
 public class Indicators {
 
     @Id

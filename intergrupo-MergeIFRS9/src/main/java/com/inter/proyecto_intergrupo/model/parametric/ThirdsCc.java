@@ -13,7 +13,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "nexco_terceros_cc")
+@Table(name = "preciso_terceros_cc")
 public class ThirdsCc implements Serializable{
 
     @Id

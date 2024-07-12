@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "nexco_operacion_riesgo")
+@Table(name = "preciso_operacion_riesgo")
 public class OperationAccount {
 
     @Id

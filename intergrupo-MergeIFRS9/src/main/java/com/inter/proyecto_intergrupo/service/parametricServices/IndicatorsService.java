@@ -271,7 +271,7 @@ public class IndicatorsService {
         switch (filter)
         {
             case "Cuenta Neocon":
-                Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_indicadores as em " +
+                Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_indicadores as em " +
                         "WHERE em.cuenta_neocon LIKE ?", Indicators.class);
                 query.setParameter(1, value );
 
@@ -279,7 +279,7 @@ public class IndicatorsService {
 
                 break;
             case "Signo":
-                Query query0 = entityManager.createNativeQuery("SELECT em.* FROM nexco_indicadores as em " +
+                Query query0 = entityManager.createNativeQuery("SELECT em.* FROM preciso_indicadores as em " +
                         "WHERE em.signo LIKE ?", Indicators.class);
                 query0.setParameter(1, value);
 

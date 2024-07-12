@@ -57,7 +57,7 @@ public class ConciliationService {
 /*
     public void clearConciliacion(User user){
         //currencyRepository.deleteAll();
-        Query query = entityManager.createNativeQuery("DELETE from nexco_paises", Country.class);
+        Query query = entityManager.createNativeQuery("DELETE from preciso_paises", Country.class);
         query.executeUpdate();
         Date today = new Date();
         Audit insert = new Audit();

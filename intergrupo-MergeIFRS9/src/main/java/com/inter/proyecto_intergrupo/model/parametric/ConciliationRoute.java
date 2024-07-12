@@ -9,7 +9,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "nexco_rutas_conciliaciones")
+@Table(name = "preciso_rutas_conciliaciones")
 public class ConciliationRoute {
 
     @Id

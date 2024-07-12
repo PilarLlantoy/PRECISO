@@ -56,7 +56,7 @@ public class CountryService {
         Country toInsert = new Country();
         toInsert.setId(Integer.valueOf((toModify.getId()+"").toUpperCase(Locale.ROOT)));
         toInsert.setNombre(toModify.getNombre().toUpperCase(Locale.ROOT));
-        Query query = entityManager.createNativeQuery("UPDATE nexco_paises SET id_pais = ? , nombre_pais = ? " +
+        Query query = entityManager.createNativeQuery("UPDATE preciso_paises SET id_pais = ? , nombre_pais = ? " +
                 "WHERE id_pais = ?", Country.class);
         query.setParameter(1, toInsert.getId() );
         query.setParameter(2, toInsert.getNombre());
@@ -81,7 +81,7 @@ public class CountryService {
     }
 
     public void removeCountry(String id, User user){
-        Query query = entityManager.createNativeQuery("DELETE from nexco_paises " +
+        Query query = entityManager.createNativeQuery("DELETE from preciso_paises " +
                 "WHERE id_pais = ?", Country.class);
         query.setParameter(1, id );
         query.executeUpdate();
@@ -99,7 +99,7 @@ public class CountryService {
 
     public void clearCountry(User user){
         //currencyRepository.deleteAll();
-        Query query = entityManager.createNativeQuery("DELETE from nexco_paises", Country.class);
+        Query query = entityManager.createNativeQuery("DELETE from preciso_paises", Country.class);
         query.executeUpdate();
         Date today = new Date();
         Audit insert = new Audit();
@@ -123,7 +123,7 @@ public class CountryService {
         switch (filter)
         {
             case "Código País":
-                Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_paises as em " +
+                Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_paises as em " +
                         "WHERE em.id_pais LIKE ?", Country.class);
                 query.setParameter(1, value );
 
@@ -131,7 +131,7 @@ public class CountryService {
 
                 break;
             case "Nombre País":
-                Query query0 = entityManager.createNativeQuery("SELECT em.* FROM nexco_paises as em " +
+                Query query0 = entityManager.createNativeQuery("SELECT em.* FROM preciso_paises as em " +
                         "WHERE em.nombre_pais LIKE ?", Country.class);
                 query0.setParameter(1, value);
 

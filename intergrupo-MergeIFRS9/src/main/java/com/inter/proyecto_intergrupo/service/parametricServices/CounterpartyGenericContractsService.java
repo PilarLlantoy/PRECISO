@@ -46,12 +46,12 @@ public class CounterpartyGenericContractsService {
 
 
     public List<CounterpartyGenericContracts> findAll(){
-        Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_counterparty_generic_contracts as em ", CounterpartyGenericContracts.class);
+        Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_counterparty_generic_contracts as em ", CounterpartyGenericContracts.class);
         return query.getResultList();
     }
 
     public List<CounterpartyGenericContracts> findCounterpartyGenericContractsbyId(Integer id){
-        Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_counterparty_generic_contracts as em " +
+        Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_counterparty_generic_contracts as em " +
                 "WHERE em.id = ?",CounterpartyGenericContracts.class);
         query.setParameter(1, id);
         return query.getResultList();
@@ -79,7 +79,7 @@ public class CounterpartyGenericContractsService {
         toInsert.setContrato(toModify.getContrato());
         toInsert.setFuenteInformacion(toModify.getFuenteInformacion());
         toInsert.setSaldo(toModify.getSaldo());
-        Query query = entityManager.createNativeQuery("UPDATE nexco_counterparty_generic_contracts SET cuenta = ? , concepto = ? , contrato = ?  , fuente_informacion = ?, saldo = ? " +
+        Query query = entityManager.createNativeQuery("UPDATE preciso_counterparty_generic_contracts SET cuenta = ? , concepto = ? , contrato = ?  , fuente_informacion = ?, saldo = ? " +
                 "WHERE id = ? ", CounterpartyGenericContracts.class);
         query.setParameter(1, toInsert.getCuenta());
         query.setParameter(2, toInsert.getConcepto());
@@ -95,7 +95,7 @@ public class CounterpartyGenericContractsService {
     }
 
     public void saveCounterpartyGenericContracts(CounterpartyGenericContracts CounterpartyGenericContractss){
-        Query query = entityManager.createNativeQuery("INSERT INTO nexco_counterparty_generic_contracts (cuenta,concepto,contrato,fuente_informacion,saldo) VALUES (?,?,?,?,?)", CounterpartyGenericContracts.class);
+        Query query = entityManager.createNativeQuery("INSERT INTO preciso_counterparty_generic_contracts (cuenta,concepto,contrato,fuente_informacion,saldo) VALUES (?,?,?,?,?)", CounterpartyGenericContracts.class);
         query.setParameter(1, CounterpartyGenericContractss.getCuenta());
         query.setParameter(2, CounterpartyGenericContractss.getConcepto());
         query.setParameter(3, CounterpartyGenericContractss.getContrato());
@@ -105,13 +105,13 @@ public class CounterpartyGenericContractsService {
     }
 
     public void removeCounterpartyGenericContracts(Integer id){
-        Query query = entityManager.createNativeQuery("DELETE FROM nexco_counterparty_generic_contracts WHERE id = ? ", CounterpartyGenericContracts.class);
+        Query query = entityManager.createNativeQuery("DELETE FROM preciso_counterparty_generic_contracts WHERE id = ? ", CounterpartyGenericContracts.class);
         query.setParameter(1, id);
         query.executeUpdate();
     }
 
     public void clearCounterpartyGenericContracts(User user){
-        Query query = entityManager.createNativeQuery("DELETE FROM nexco_counterparty_generic_contracts", CounterpartyGenericContracts.class);
+        Query query = entityManager.createNativeQuery("DELETE FROM preciso_counterparty_generic_contracts", CounterpartyGenericContracts.class);
         query.executeUpdate();
     }
 
@@ -128,7 +128,7 @@ public class CounterpartyGenericContractsService {
         switch (filter)
         {
             case "Cuenta":
-                Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_counterparty_generic_contracts as em " +
+                Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_counterparty_generic_contracts as em " +
                         "WHERE em.cuenta LIKE ?", CounterpartyGenericContracts.class);
                 query.setParameter(1, value );
 
@@ -136,28 +136,28 @@ public class CounterpartyGenericContractsService {
 
                 break;
             case "Concepto":
-                Query query0 = entityManager.createNativeQuery("SELECT em.* FROM nexco_counterparty_generic_contracts as em " +
+                Query query0 = entityManager.createNativeQuery("SELECT em.* FROM preciso_counterparty_generic_contracts as em " +
                         "WHERE em.concepto LIKE ?", CounterpartyGenericContracts.class);
                 query0.setParameter(1, value);
 
                 list= query0.getResultList();
                 break;
             case "Contrato":
-                Query query1 = entityManager.createNativeQuery("SELECT em.* FROM nexco_counterparty_generic_contracts as em " +
+                Query query1 = entityManager.createNativeQuery("SELECT em.* FROM preciso_counterparty_generic_contracts as em " +
                         "WHERE em.contrato LIKE ?", CounterpartyGenericContracts.class);
                 query1.setParameter(1, value);
 
                 list= query1.getResultList();
                 break;
             case "FuenteInformacion":
-                Query query2 = entityManager.createNativeQuery("SELECT em.* FROM nexco_counterparty_generic_contracts as em " +
+                Query query2 = entityManager.createNativeQuery("SELECT em.* FROM preciso_counterparty_generic_contracts as em " +
                         "WHERE em.fuente_informacion LIKE ?", CounterpartyGenericContracts.class);
                 query2.setParameter(1, value);
 
                 list= query2.getResultList();
                 break;
             case "Saldo":
-                Query query3 = entityManager.createNativeQuery("SELECT em.* FROM nexco_counterparty_generic_contracts as em " +
+                Query query3 = entityManager.createNativeQuery("SELECT em.* FROM preciso_counterparty_generic_contracts as em " +
                         "WHERE em.saldo LIKE ?", CounterpartyGenericContracts.class);
                 query3.setParameter(1, value);
 

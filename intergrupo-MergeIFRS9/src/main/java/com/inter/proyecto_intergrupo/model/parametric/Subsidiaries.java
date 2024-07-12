@@ -14,7 +14,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "nexco_filiales")
+@Table(name = "preciso_filiales")
 public class Subsidiaries implements Serializable{
 
     @Id

@@ -13,7 +13,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "nexco_banco_garante")
+@Table(name = "preciso_banco_garante")
 public class GarantBank {
 
     @Column(name = "nit")

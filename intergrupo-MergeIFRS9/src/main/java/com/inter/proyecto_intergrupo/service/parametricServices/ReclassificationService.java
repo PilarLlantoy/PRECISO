@@ -280,7 +280,7 @@ public class ReclassificationService {
         switch (filter)
         {
             case "NIT Contraparte":
-                Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_reclasificaciones as em " +
+                Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_reclasificaciones as em " +
                         "WHERE em.nit_contraparte LIKE ?", Reclassification.class);
                 query.setParameter(1, value );
 
@@ -288,14 +288,14 @@ public class ReclassificationService {
 
                 break;
             case "Cuenta Local":
-                Query query0 = entityManager.createNativeQuery("SELECT em.* FROM nexco_reclasificaciones as em " +
+                Query query0 = entityManager.createNativeQuery("SELECT em.* FROM preciso_reclasificaciones as em " +
                         "WHERE em.cuenta_local LIKE ?", Reclassification.class);
                 query0.setParameter(1, value);
 
                 list= query0.getResultList();
                 break;
             case "Cuenta Local Reclasificada":
-                Query query1 = entityManager.createNativeQuery("SELECT em.* FROM nexco_reclasificaciones as em " +
+                Query query1 = entityManager.createNativeQuery("SELECT em.* FROM preciso_reclasificaciones as em " +
                         "WHERE em.cuenta_local_reclasificada LIKE ?", Reclassification.class);
                 query1.setParameter(1, value);
 

@@ -7,25 +7,25 @@ IF NOT EXISTS(SELECT * FROM preciso_administracion_cargos WHERE id_cargo = 5) BE
 IF NOT EXISTS(SELECT * FROM preciso_administracion_cargos WHERE id_cargo = 6) BEGIN INSERT INTO preciso_administracion_cargos (nombre_cargo) VALUES ('Consultor') END
 
 -- Add PAISES
-IF NOT EXISTS(SELECT * FROM nexco_paises WHERE id_pais = 1) BEGIN INSERT INTO nexco_paises (nombre_pais, sigla_pais) VALUES ('Colombia', 'CO') END
-IF NOT EXISTS(SELECT * FROM nexco_paises WHERE id_pais = 2) BEGIN INSERT INTO nexco_paises (nombre_pais, sigla_pais) VALUES ('España', 'ES') END
-IF NOT EXISTS(SELECT * FROM nexco_paises WHERE id_pais = 3) BEGIN INSERT INTO nexco_paises (nombre_pais, sigla_pais) VALUES ('Estados Unidos', 'US') END
+IF NOT EXISTS(SELECT * FROM preciso_paises WHERE id_pais = 1) BEGIN INSERT INTO preciso_paises (nombre_pais, sigla_pais) VALUES ('Colombia', 'CO') END
+IF NOT EXISTS(SELECT * FROM preciso_paises WHERE id_pais = 2) BEGIN INSERT INTO preciso_paises (nombre_pais, sigla_pais) VALUES ('España', 'ES') END
+IF NOT EXISTS(SELECT * FROM preciso_paises WHERE id_pais = 3) BEGIN INSERT INTO preciso_paises (nombre_pais, sigla_pais) VALUES ('Estados Unidos', 'US') END
 
 -- Add DIVISAS
-IF NOT EXISTS(SELECT * FROM nexco_divisas WHERE id_divisa = 1) BEGIN INSERT INTO nexco_divisas (nombre_divisa, sigla_divisa) VALUES ('Peso Colombiano', 'COP') END
-IF NOT EXISTS(SELECT * FROM nexco_divisas WHERE id_divisa = 2) BEGIN INSERT INTO nexco_divisas (nombre_divisa, sigla_divisa) VALUES ('Euro', 'EUR') END
-IF NOT EXISTS(SELECT * FROM nexco_divisas WHERE id_divisa = 3) BEGIN INSERT INTO nexco_divisas (nombre_divisa, sigla_divisa) VALUES ('Dolar', 'USD') END
+IF NOT EXISTS(SELECT * FROM preciso_divisas WHERE id_divisa = 1) BEGIN INSERT INTO preciso_divisas (nombre_divisa, sigla_divisa) VALUES ('Peso Colombiano', 'COP') END
+IF NOT EXISTS(SELECT * FROM preciso_divisas WHERE id_divisa = 2) BEGIN INSERT INTO preciso_divisas (nombre_divisa, sigla_divisa) VALUES ('Euro', 'EUR') END
+IF NOT EXISTS(SELECT * FROM preciso_divisas WHERE id_divisa = 3) BEGIN INSERT INTO preciso_divisas (nombre_divisa, sigla_divisa) VALUES ('Dolar', 'USD') END
 
 -- Add SISTEMAS FUENTE
-IF NOT EXISTS(SELECT * FROM nexco_sistema_fuente WHERE id_sf = 1) BEGIN INSERT INTO nexco_sistema_fuente (nombre_sf, sigla_sf, festivo, id_pais, activo) VALUES ('Dialogo', 'DIA', 1, 1, 1) END
-IF NOT EXISTS(SELECT * FROM nexco_sistema_fuente WHERE id_sf = 2) BEGIN INSERT INTO nexco_sistema_fuente (nombre_sf, sigla_sf, festivo, id_pais, activo) VALUES ('Bank Trade', 'EY0', 0, 1, 0) END
-IF NOT EXISTS(SELECT * FROM nexco_sistema_fuente WHERE id_sf = 3) BEGIN INSERT INTO nexco_sistema_fuente (nombre_sf, sigla_sf, festivo, id_pais, activo) VALUES ('Extranjera', 'GA0', 1, 2, 1) END
+IF NOT EXISTS(SELECT * FROM preciso_sistema_fuente WHERE id_sf = 1) BEGIN INSERT INTO preciso_sistema_fuente (nombre_sf, sigla_sf, festivo, id_pais, activo) VALUES ('Dialogo', 'DIA', 1, 1, 1) END
+IF NOT EXISTS(SELECT * FROM preciso_sistema_fuente WHERE id_sf = 2) BEGIN INSERT INTO preciso_sistema_fuente (nombre_sf, sigla_sf, festivo, id_pais, activo) VALUES ('Bank Trade', 'EY0', 0, 1, 0) END
+IF NOT EXISTS(SELECT * FROM preciso_sistema_fuente WHERE id_sf = 3) BEGIN INSERT INTO preciso_sistema_fuente (nombre_sf, sigla_sf, festivo, id_pais, activo) VALUES ('Extranjera', 'GA0', 1, 2, 1) END
 
 
 -- Add TIPOS EVENTOS
-IF NOT EXISTS(SELECT * FROM nexco_tipo_evento WHERE id_tipo_evento = 1) BEGIN INSERT INTO nexco_tipo_evento (nombre_tipo_evento) VALUES ('Conciliación') END
-IF NOT EXISTS(SELECT * FROM nexco_tipo_evento WHERE id_tipo_evento = 2) BEGIN INSERT INTO nexco_tipo_evento (nombre_tipo_evento) VALUES ('Notas') END
-IF NOT EXISTS(SELECT * FROM nexco_tipo_evento WHERE id_tipo_evento = 3) BEGIN INSERT INTO nexco_tipo_evento (nombre_tipo_evento) VALUES ('Resultados') END
+IF NOT EXISTS(SELECT * FROM preciso_tipo_evento WHERE id_tipo_evento = 1) BEGIN INSERT INTO preciso_tipo_evento (nombre_tipo_evento) VALUES ('Conciliación') END
+IF NOT EXISTS(SELECT * FROM preciso_tipo_evento WHERE id_tipo_evento = 2) BEGIN INSERT INTO preciso_tipo_evento (nombre_tipo_evento) VALUES ('Notas') END
+IF NOT EXISTS(SELECT * FROM preciso_tipo_evento WHERE id_tipo_evento = 3) BEGIN INSERT INTO preciso_tipo_evento (nombre_tipo_evento) VALUES ('Resultados') END
 
 -- Add TIPO DOCUMENTO
 IF NOT EXISTS(SELECT * FROM preciso_administracion_tipo_documento WHERE id_tipo_documento = 1) BEGIN INSERT INTO preciso_administracion_tipo_documento (nombre_tipo_documento,codigo_tipo_documento) VALUES ('ACCIONISTA','Z') END
@@ -74,8 +74,6 @@ IF NOT EXISTS(SELECT * FROM preciso_administracion_vistas WHERE nombre = 'Ver Si
 
 --IF NOT EXISTS(SELECT * FROM preciso_administracion_vistas WHERE nombre = 'Ver Tipos Eventos') BEGIN INSERT INTO preciso_administracion_vistas (nombre, ruta, unica,menu_principal,sub_menu_p1,sub_menu_p2) VALUES ('Ver Tipos Eventos','/parametry/typeEvent',1,'Parametría','Parametros Generales','Tipos Eventos') END
 
-IF NOT EXISTS(SELECT * FROM nexco_parametros_pyg WHERE id_parametros_pyg = 1) BEGIN INSERT INTO nexco_parametros_pyg (aplica_reversion) VALUES (0) END
-
 
 -- Add JOBS
 IF NOT EXISTS(SELECT * FROM preciso_administracion_cuadro_mando_jobs WHERE id_job = 1) BEGIN INSERT INTO preciso_administracion_cuadro_mando_jobs (id_job, nombre, estado) VALUES (1,'GOF Base Fiscal',0) END
@@ -106,11 +104,3 @@ IF NOT EXISTS(SELECT * FROM preciso_administracion_user_rol WHERE id_usuario = 1
 --IF NOT EXISTS(SELECT * FROM preciso_administracion_rol_vista AS nrv, preciso_administracion_vistas AS nv WHERE nrv.id_perfil = 1 AND nv.nombre = 'Ver Roles' AND nv.id_vista = nrv.id_vista) BEGIN INSERT INTO preciso_administracion_rol_vista (id_perfil,id_vista) VALUES (1,4) END
 
 IF NOT EXISTS(SELECT * FROM preciso_administracion_rol_vista AS nrv, preciso_administracion_vistas AS nv WHERE nrv.id_perfil = 1 AND nv.nombre = 'Ver Roles' AND nv.id_vista = nrv.id_vista) BEGIN INSERT INTO preciso_administracion_rol_vista (id_perfil,id_vista, p_modificar, p_visualizar) VALUES (1,(SELECT id_vista FROM preciso_administracion_vistas WHERE nombre = 'Ver Roles'),1,1) END
-
-IF NOT EXISTS(SELECT * FROM nexco_operacion_riesgo WHERE cuenta_local='-') BEGIN INSERT INTO nexco_operacion_riesgo (cuenta_local) VALUES ('-') END
-
--- Datos predeterminados para Contrapartida y Contratos genericos
-IF NOT EXISTS(SELECT NULL FROM nexco_counterparty_generic_contracts) BEGIN INSERT INTO nexco_counterparty_generic_contracts (concepto, cuenta, contrato, fuente_informacion,saldo) VALUES (' 2-DESCONT_DESC_CONCIL','196095999','001302039000000101', 'Diferencias conciliación',-1), ('1-DESCONT_CTAS_MANUALES','196095999','001302039000000102','Manuales (Anexos 8)',-1), ('1-DESCONTAB_PROV_GENERAL','196095999','001302039000000103','Provisión general Capitales',-1), ('1-DESCONTAB_PROV_GENERICA_INTERESES','196095999','001302039000000103','Provisión general Intereses',-1), ('2-DESCONT_SIN_SCOPE','196095999','001302039000000104','Rechazos descontabilización',1), ('1-DESCONT_CTAS_RENTA_FIJA','196095999','001302039000000105','Anexos 8 - Renta fija',-1) END
-
--- Datos predeterminados para Arbol Decisión Segmentos FINREP
-IF NOT EXISTS(SELECT NULL FROM nexco_arbol_decision_segmento) BEGIN INSERT INTO nexco_arbol_decision_segmento (codigo_ifrs9, descripcion_sectorizacion, corasu_op, corasu, sub_corasu_op, sub_corasu, ciiu_op, ciiu, numero_empleados_op, numero_empleados, total_activos_op, total_activos, total_ventas_op, total_ventas, verificacion_contratos, otros_criterios) VALUES ('001','Bancos Centrales','=','G','=','00','','','','','','','','','',''), ('002','Administraciones Públicas','=','G','<>','00','','','','','','','','','',''), ('003','Entidades de Crédito','=','M','IN','20,21,22,23,24,25,26','=','6412','','','','','','','',''), ('004','Otras instituciones financieras','=','M','IN','21,22,23,24,25,26','IN','CIIU','','','','','','','',''), ('005','Sociedades no Financieras Mayoristas','=','M','IN','00,01,10,12','','','>','250','>','50000000','>','43000000','','Que cumpla los criterios de sociedad no financiera'), ('005','Sociedades no Financieras Mayoristas','=','M','=','20','<>','6412','>','250','>','50000000','>','43000000','','Que cumpla los criterios de sociedad no financiera'), ('005','Sociedades no Financieras Mayoristas','=','M','IN','21,22,23,24,25,26','NOT IN','CIIU','>','250','>','50000000','>','43000000','','Que cumpla los criterios de sociedad no financiera'), ('006','Sociedades no Financieras Minorista','=','M','IN','00,01,10,12','','','','','','','','','','Sociedades no Financieras no Mayoristas'), ('006','Sociedades no Financieras Minorista','=','M','=','20','<>','6412','','','','','','','','Sociedades no Financieras no Mayoristas'), ('006','Sociedades no Financieras Minorista','=','M','IN','21,22,23,24,25,26','NOT IN','CIIU','','','','','','','','Sociedades no Financieras no Mayoristas'), ('007','Hogares','=','F','IN','00,10','=','10','','','','','','','',''), ('007','Hogares','=','F','','','','','','','','','','','Tiene producto(s) de Libranza',''), ('007','Hogares','=','F','','','','','','','','','','','Tiene producto(s) de Adelanto de Nómina',''), ('007','Hogares','=','F','=','17','','','','','','','','','',''), ('008','Autónomos','=','F','','','','','','','','','','','','No incluidas en hogares') END

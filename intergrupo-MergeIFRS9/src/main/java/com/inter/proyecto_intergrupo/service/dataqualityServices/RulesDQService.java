@@ -64,27 +64,27 @@ public class RulesDQService {
 
     public List<String[]> getAllData1(String periodo){
         Query consulta = entityManager.createNativeQuery("select count(porcentaje_cumplimiento) as conteo,avg(porcentaje_cumplimiento) as porce " +
-                "from nexco_puntuacion_validacion_dq where periodo = ? ");
+                "from preciso_puntuacion_validacion_dq where periodo = ? ");
         consulta.setParameter(1,periodo);
         return consulta.getResultList();
     }
 
     public List<String[]> getAllDataFallidos(String periodo){
         Query consulta = entityManager.createNativeQuery("select count(porcentaje_cumplimiento) as conteo,avg(porcentaje_cumplimiento) as porce " +
-                "from nexco_puntuacion_validacion_dq where periodo = ? and porcentaje_cumplimiento < porcentaje_umbral_minimo");
+                "from preciso_puntuacion_validacion_dq where periodo = ? and porcentaje_cumplimiento < porcentaje_umbral_minimo");
         consulta.setParameter(1,periodo);
         return consulta.getResultList();
     }
 
     public List<String[]> getAllDataCumplidos(String periodo){
         Query consulta = entityManager.createNativeQuery("select count(porcentaje_cumplimiento) as conteo,avg(porcentaje_cumplimiento) as porce " +
-                "from nexco_puntuacion_validacion_dq where periodo = ? and porcentaje_cumplimiento >= porcentaje_umbral_minimo");
+                "from preciso_puntuacion_validacion_dq where periodo = ? and porcentaje_cumplimiento >= porcentaje_umbral_minimo");
         consulta.setParameter(1,periodo);
         return consulta.getResultList();
     }
     public List<String[]> getAllData2(String periodo){
         Query consulta = entityManager.createNativeQuery("select tipo_principio,tipo_regla,identificador_secuencial_legacy,nombre_data_system,nombre_fisico_objeto,nombre_fisico_campo,avg(porcentaje_cumplimiento) as porce " +
-                "from nexco_puntuacion_validacion_dq where periodo = ? and porcentaje_cumplimiento < porcentaje_umbral_minimo group by tipo_principio,tipo_regla,identificador_secuencial_legacy,nombre_data_system,nombre_fisico_objeto,nombre_fisico_campo");
+                "from preciso_puntuacion_validacion_dq where periodo = ? and porcentaje_cumplimiento < porcentaje_umbral_minimo group by tipo_principio,tipo_regla,identificador_secuencial_legacy,nombre_data_system,nombre_fisico_objeto,nombre_fisico_campo");
         consulta.setParameter(1,periodo);
         return consulta.getResultList();
     }
@@ -98,13 +98,13 @@ public class RulesDQService {
     }
 
     public List<PointRulesDQ> getAllListPoint(String periodo){
-        Query consulta = entityManager.createNativeQuery("select * from nexco_puntuacion_validacion_dq where periodo = ?",PointRulesDQ.class);
+        Query consulta = entityManager.createNativeQuery("select * from preciso_puntuacion_validacion_dq where periodo = ?",PointRulesDQ.class);
         consulta.setParameter(1,periodo);
         return consulta.getResultList();
     }
 
     public List<PointRulesDQ> getAllListPointIns(String periodo){
-        Query consulta = entityManager.createNativeQuery("select * from nexco_puntuacion_validacion_dq where periodo = ? and porcentaje_cumplimiento < porcentaje_umbral_minimo",PointRulesDQ.class);
+        Query consulta = entityManager.createNativeQuery("select * from preciso_puntuacion_validacion_dq where periodo = ? and porcentaje_cumplimiento < porcentaje_umbral_minimo",PointRulesDQ.class);
         consulta.setParameter(1,periodo);
         return consulta.getResultList();
     }
@@ -342,7 +342,7 @@ public class RulesDQService {
         lista.add(log2);
         String[] temp = lista.get(0);
         if (temp[2].equals("SUCCESS")) {
-            Query delete = entityManager.createNativeQuery("TRUNCATE TABLE nexco_reglasdq");
+            Query delete = entityManager.createNativeQuery("TRUNCATE TABLE preciso_reglasdq");
             delete.executeUpdate();
             rulesDQRepository.saveAll(toInsert);
         }
@@ -632,7 +632,7 @@ public class RulesDQService {
                 consulta1.setParameter(1, periodo);
                 numerador = consulta1.getResultList().size();
             }
-            else if(rule.getContraparte().trim().equals("nexco_cuentas_neocon"))
+            else if(rule.getContraparte().trim().equals("preciso_cuentas_neocon"))
             {
                 Query consulta1 = entityManager.createNativeQuery("SELECT * FROM "+rule.getTabla()+" as a \n" +
                         "inner join (select "+rule.getCampo()+" from "+rule.getContraparte()+" where entrada ='S') as b\n" +
@@ -790,7 +790,7 @@ public class RulesDQService {
 
     public List<Object[]> getFolders()
     {
-        Query folders = entityManager.createNativeQuery("select distinct fichero from nexco_reglasdq");
+        Query folders = entityManager.createNativeQuery("select distinct fichero from preciso_reglasdq");
         return folders.getResultList();
     }
 
@@ -799,13 +799,13 @@ public class RulesDQService {
         if(folder.equals("ALL"))
         {
             pointRulesDQRepository.deleteByPeriodo(periodo);
-            Query folders = entityManager.createNativeQuery("select * from nexco_reglasdq", RulesDQ.class);
+            Query folders = entityManager.createNativeQuery("select * from preciso_reglasdq", RulesDQ.class);
             return folders.getResultList();
         }
         else
         {
             pointRulesDQRepository.deleteByPeriodoAndNombreFisicoObjeto(periodo,folder);
-            Query folders = entityManager.createNativeQuery("select * from nexco_reglasdq where fichero = ? ", RulesDQ.class);
+            Query folders = entityManager.createNativeQuery("select * from preciso_reglasdq where fichero = ? ", RulesDQ.class);
             folders.setParameter(1, folder);
             return folders.getResultList();
         }

@@ -12,7 +12,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "nexco_arbol_decision_segmento")
+@Table(name = "preciso_arbol_decision_segmento")
 public class SegmentDecisionTree {
 
     @Id

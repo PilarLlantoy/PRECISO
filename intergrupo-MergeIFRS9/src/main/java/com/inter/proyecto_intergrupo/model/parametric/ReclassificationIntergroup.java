@@ -13,7 +13,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "nexco_reclasificacion_intergrupo_v2")
+@Table(name = "preciso_reclasificacion_intergrupo_v2")
 public class ReclassificationIntergroup implements Serializable{
 
     @Id

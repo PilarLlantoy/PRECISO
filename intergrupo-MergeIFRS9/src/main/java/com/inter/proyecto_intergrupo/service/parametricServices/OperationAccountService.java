@@ -49,7 +49,7 @@ public class OperationAccountService {
         OperationAccount toInsert = operation;
         toInsert.setOperacion(toModify.getOperacion());
         toInsert.setRiesgo(toModify.getRiesgo());
-        Query query = entityManager.createNativeQuery("UPDATE nexco_operacion_riesgo SET tipo_operacion = ? , tipo_riesgo = ? " +
+        Query query = entityManager.createNativeQuery("UPDATE preciso_operacion_riesgo SET tipo_operacion = ? , tipo_riesgo = ? " +
                 "WHERE cuenta_local = ?", OperationAccount.class);
         query.setParameter(1, toInsert.getOperacion());
         query.setParameter(2, toInsert.getRiesgo());
@@ -69,7 +69,7 @@ public class OperationAccountService {
     }
 
     public List<OperationAccount> getExceptEmpty() {
-        Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_operacion_riesgo as em ", OperationAccount.class);
+        Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_operacion_riesgo as em ", OperationAccount.class);
 
         return query.getResultList();
     }
@@ -78,7 +78,7 @@ public class OperationAccountService {
         List<OperationAccount> list = new ArrayList<OperationAccount>();
         switch (filter) {
             case "Cuenta Local":
-                Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_operacion_riesgo as em " +
+                Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_operacion_riesgo as em " +
                         "WHERE em.cuenta_local LIKE ?", OperationAccount.class);
                 query.setParameter(1, value);
 
@@ -86,7 +86,7 @@ public class OperationAccountService {
 
                 break;
             case "Tipo Operación":
-                Query query7 = entityManager.createNativeQuery("SELECT em.* FROM nexco_operacion_riesgo as em " +
+                Query query7 = entityManager.createNativeQuery("SELECT em.* FROM preciso_operacion_riesgo as em " +
                         "WHERE em.tipo_operacion LIKE ?", OperationAccount.class);
 
                 query7.setParameter(1, value);
@@ -94,7 +94,7 @@ public class OperationAccountService {
                 list = query7.getResultList();
                 break;
             case "Tipo Riesgo":
-                Query query8 = entityManager.createNativeQuery("SELECT em.* FROM nexco_operacion_riesgo as em " +
+                Query query8 = entityManager.createNativeQuery("SELECT em.* FROM preciso_operacion_riesgo as em " +
                         "WHERE em.tipo_riesgo LIKE ?", OperationAccount.class);
 
                 query8.setParameter(1, value);
@@ -263,7 +263,7 @@ public class OperationAccountService {
     }
 
     public void clearOperation(User user){
-        Query query = entityManager.createNativeQuery("DELETE from nexco_operacion_riesgo", OperationAccount.class);
+        Query query = entityManager.createNativeQuery("DELETE from preciso_operacion_riesgo", OperationAccount.class);
         query.executeUpdate();
         Date today = new Date();
         Audit insert = new Audit();

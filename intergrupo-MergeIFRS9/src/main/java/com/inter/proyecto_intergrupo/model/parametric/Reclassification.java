@@ -15,7 +15,7 @@ import javax.persistence.Table;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "nexco_reclasificaciones")
+@Table(name = "preciso_reclasificaciones")
 public class Reclassification {
 
     @Id

@@ -68,7 +68,7 @@ public class SignatureService {
     }
 
     public List<Signature> findAllFirma(){
-        Query consulta = entityManager.createNativeQuery("select * from nexco_firmas where firma is not null",Signature.class);
+        Query consulta = entityManager.createNativeQuery("select * from preciso_firmas where firma is not null",Signature.class);
         return consulta.getResultList();
     }
 

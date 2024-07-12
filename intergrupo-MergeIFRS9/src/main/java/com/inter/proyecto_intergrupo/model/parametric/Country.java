@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "nexco_paises")
+@Table(name = "preciso_paises")
 public class Country{
 
     @Id

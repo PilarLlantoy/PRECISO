@@ -272,12 +272,12 @@ public class GarantBankService {
 
         boolean state = false;
 
-        Query verify = entityManager.createNativeQuery("SELECT * FROM nexco_banco_garante WHERE nombre_similar = ?");
+        Query verify = entityManager.createNativeQuery("SELECT * FROM preciso_banco_garante WHERE nombre_similar = ?");
         verify.setParameter(1,toInsert.getNombreSimilar());
 
         if(verify.getResultList().isEmpty()){
             try {
-                Query insertGB = entityManager.createNativeQuery("INSERT INTO nexco_banco_garante (nombre_similar,nit,nombre_banco_real,pais) VALUES (?,?,?,?)");
+                Query insertGB = entityManager.createNativeQuery("INSERT INTO preciso_banco_garante (nombre_similar,nit,nombre_banco_real,pais) VALUES (?,?,?,?)");
                 insertGB.setParameter(1, toInsert.getNombreSimilar());
                 insertGB.setParameter(2, toInsert.getNit());
                 insertGB.setParameter(3, toInsert.getNombreBancoReal());
@@ -317,7 +317,7 @@ public class GarantBankService {
         switch (filter)
         {
             case "NIT":
-                Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_banco_garante as em " +
+                Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_banco_garante as em " +
                         "WHERE em.nit LIKE ?", GarantBank.class);
                 query.setParameter(1, value );
 
@@ -325,21 +325,21 @@ public class GarantBankService {
 
                 break;
             case "Nombre Banco Real":
-                Query query0 = entityManager.createNativeQuery("SELECT em.* FROM nexco_banco_garante as em " +
+                Query query0 = entityManager.createNativeQuery("SELECT em.* FROM preciso_banco_garante as em " +
                         "WHERE em.nombre_banco_real LIKE ?", GarantBank.class);
                 query0.setParameter(1, value);
 
                 list= query0.getResultList();
                 break;
             case "Nombre Similar":
-                Query query1 = entityManager.createNativeQuery("SELECT em.* FROM nexco_banco_garante as em " +
+                Query query1 = entityManager.createNativeQuery("SELECT em.* FROM preciso_banco_garante as em " +
                         "WHERE em.nombre_similar LIKE ?", GarantBank.class);
                 query1.setParameter(1, value);
 
                 list= query1.getResultList();
                 break;
             case "País":
-                Query query2 = entityManager.createNativeQuery("SELECT em.* FROM nexco_banco_garante as em " +
+                Query query2 = entityManager.createNativeQuery("SELECT em.* FROM preciso_banco_garante as em " +
                         "WHERE em.pais LIKE ?", GarantBank.class);
                 query2.setParameter(1, value);
 

@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "nexco_status_info")
+@Table(name = "preciso_status_info")
 public class StatusInfo {
 
     @Id

@@ -1,11 +1,6 @@
 package com.inter.proyecto_intergrupo.service.resourcesServices;
 
-import com.inter.proyecto_intergrupo.model.bank.TaxBaseComplete;
-import com.inter.proyecto_intergrupo.model.briefcase.CalculoIcrv;
-import com.inter.proyecto_intergrupo.model.briefcase.ReportIcrv;
 import com.inter.proyecto_intergrupo.model.dataquality.PointRulesDQ;
-import com.inter.proyecto_intergrupo.model.ifrs9.*;
-import com.inter.proyecto_intergrupo.model.parametric.MarcacionConcil;
 
 import java.io.PrintWriter;
 import java.math.BigDecimal;
@@ -71,7 +66,7 @@ public class CsvService {
                     String.format("%1$-" + 27 + "s", formato3.format(dq.getImporteDenominador())).replace(",",".").replace("0.00","    "));
         }
     }
-
+/*
     public static void downloadTxtReportIcrv(PrintWriter writer, List<ReportIcrv> data) {
         SimpleDateFormat formato1= new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat formato2= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -615,7 +610,7 @@ public class CsvService {
             );
         }
 
-    }
+    }*/
 
 
 }

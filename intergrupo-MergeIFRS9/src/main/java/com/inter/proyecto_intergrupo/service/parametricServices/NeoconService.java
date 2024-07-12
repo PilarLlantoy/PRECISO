@@ -378,7 +378,7 @@ public class NeoconService {
         switch (filter)
         {
             case "Cuenta Neocon":
-                Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuentas_neocon as em " +
+                Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_cuentas_neocon as em " +
                         "WHERE em.cuenta LIKE ?", Neocon.class);
                 query.setParameter(1, value );
 
@@ -386,154 +386,154 @@ public class NeoconService {
 
                 break;
             case "Plan De Cuentas":
-                Query query0 = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuentas_neocon as em " +
+                Query query0 = entityManager.createNativeQuery("SELECT em.* FROM preciso_cuentas_neocon as em " +
                         "WHERE em.plan_cuentas LIKE ?", Neocon.class);
                 query0.setParameter(1, value);
 
                 list= query0.getResultList();
                 break;
             case "Código Jerarquico":
-                Query query2 = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuentas_neocon as em " +
+                Query query2 = entityManager.createNativeQuery("SELECT em.* FROM preciso_cuentas_neocon as em " +
                         "WHERE em.codigo_jerarquico LIKE ?", Neocon.class);
                 query2.setParameter(1, value);
 
                 list= query2.getResultList();
                 break;
             case "Descripción":
-                Query query3 = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuentas_neocon as em " +
+                Query query3 = entityManager.createNativeQuery("SELECT em.* FROM preciso_cuentas_neocon as em " +
                         "WHERE em.descripcion LIKE ?", Neocon.class);
                 query3.setParameter(1, value);
 
                 list= query3.getResultList();
                 break;
             case "Entrada":
-                Query query4 = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuentas_neocon as em " +
+                Query query4 = entityManager.createNativeQuery("SELECT em.* FROM preciso_cuentas_neocon as em " +
                         "WHERE em.entrada LIKE ?", Neocon.class);
                 query4.setParameter(1, value);
 
                 list= query4.getResultList();
                 break;
             case "Mínimo":
-                Query query5 = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuentas_neocon as em " +
+                Query query5 = entityManager.createNativeQuery("SELECT em.* FROM preciso_cuentas_neocon as em " +
                         "WHERE em.minimo LIKE ?", Neocon.class);
                 query5.setParameter(1, value);
 
                 list= query5.getResultList();
                 break;
             case "Naturaleza":
-                Query query6 = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuentas_neocon as em " +
+                Query query6 = entityManager.createNativeQuery("SELECT em.* FROM preciso_cuentas_neocon as em " +
                         "WHERE em.naturaleza LIKE ?", Neocon.class);
                 query6.setParameter(1, value);
 
                 list= query6.getResultList();
                 break;
             case "Intergrupo":
-                Query query7 = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuentas_neocon as em " +
+                Query query7 = entityManager.createNativeQuery("SELECT em.* FROM preciso_cuentas_neocon as em " +
                         "WHERE em.intergupo LIKE ?", Neocon.class);
                 query7.setParameter(1, value);
 
                 list= query7.getResultList();
                 break;
             case "GrScIng":
-                Query query8 = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuentas_neocon as em " +
+                Query query8 = entityManager.createNativeQuery("SELECT em.* FROM preciso_cuentas_neocon as em " +
                         "WHERE em.grscing LIKE ?", Neocon.class);
                 query8.setParameter(1, value);
 
                 list= query8.getResultList();
                 break;
             case "Epigraf":
-                Query query9 = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuentas_neocon as em " +
+                Query query9 = entityManager.createNativeQuery("SELECT em.* FROM preciso_cuentas_neocon as em " +
                         "WHERE em.epigraf LIKE ?", Neocon.class);
                 query9.setParameter(1, value);
 
                 list= query9.getResultList();
                 break;
             case "Residencia":
-                Query query10 = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuentas_neocon as em " +
+                Query query10 = entityManager.createNativeQuery("SELECT em.* FROM preciso_cuentas_neocon as em " +
                         "WHERE em.residencia LIKE ?", Neocon.class);
                 query10.setParameter(1, value);
 
                 list= query10.getResultList();
                 break;
             case "Bancaria":
-                Query query11 = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuentas_neocon as em " +
+                Query query11 = entityManager.createNativeQuery("SELECT em.* FROM preciso_cuentas_neocon as em " +
                         "WHERE em.bancaria LIKE ?", Neocon.class);
                 query11.setParameter(1, value);
 
                 list= query11.getResultList();
                 break;
             case "Form":
-                Query query12 = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuentas_neocon as em " +
+                Query query12 = entityManager.createNativeQuery("SELECT em.* FROM preciso_cuentas_neocon as em " +
                         "WHERE em.form LIKE ?", Neocon.class);
                 query12.setParameter(1, value);
 
                 list= query12.getResultList();
                 break;
             case "Tdes":
-                Query query13 = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuentas_neocon as em " +
+                Query query13 = entityManager.createNativeQuery("SELECT em.* FROM preciso_cuentas_neocon as em " +
                         "WHERE em.tdes LIKE ?", Neocon.class);
                 query13.setParameter(1, value);
 
                 list= query13.getResultList();
                 break;
             case "Soporte/Derivada":
-                Query query14 = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuentas_neocon as em " +
+                Query query14 = entityManager.createNativeQuery("SELECT em.* FROM preciso_cuentas_neocon as em " +
                         "WHERE em.soporte_derivada LIKE ?", Neocon.class);
                 query14.setParameter(1, value);
 
                 list= query14.getResultList();
                 break;
             case "Unid":
-                Query query15 = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuentas_neocon as em " +
+                Query query15 = entityManager.createNativeQuery("SELECT em.* FROM preciso_cuentas_neocon as em " +
                         "WHERE em.unid LIKE ?", Neocon.class);
                 query15.setParameter(1, value);
 
                 list= query15.getResultList();
                 break;
             case "Tipo Cambio":
-                Query query16 = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuentas_neocon as em " +
+                Query query16 = entityManager.createNativeQuery("SELECT em.* FROM preciso_cuentas_neocon as em " +
                         "WHERE em.tipo_cambio LIKE ?", Neocon.class);
                 query16.setParameter(1, value);
 
                 list= query16.getResultList();
                 break;
             case "Agregación":
-                Query query17 = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuentas_neocon as em " +
+                Query query17 = entityManager.createNativeQuery("SELECT em.* FROM preciso_cuentas_neocon as em " +
                         "WHERE em.agregacion LIKE ?", Neocon.class);
                 query17.setParameter(1, value);
 
                 list= query17.getResultList();
                 break;
             case "Tipo Divisa":
-                Query query18 = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuentas_neocon as em " +
+                Query query18 = entityManager.createNativeQuery("SELECT em.* FROM preciso_cuentas_neocon as em " +
                         "WHERE em.tipo_divisa LIKE ?", Neocon.class);
                 query18.setParameter(1, value);
 
                 list= query18.getResultList();
                 break;
             case "Tipo País":
-                Query query19 = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuentas_neocon as em " +
+                Query query19 = entityManager.createNativeQuery("SELECT em.* FROM preciso_cuentas_neocon as em " +
                         "WHERE em.tipo_pais LIKE ?", Neocon.class);
                 query19.setParameter(1, value);
 
                 list= query19.getResultList();
                 break;
             case "Contrap":
-                Query query20 = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuentas_neocon as em " +
+                Query query20 = entityManager.createNativeQuery("SELECT em.* FROM preciso_cuentas_neocon as em " +
                         "WHERE em.contrap LIKE ?", Neocon.class);
                 query20.setParameter(1, value);
 
                 list= query20.getResultList();
                 break;
             case "Timp":
-                Query query21 = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuentas_neocon as em " +
+                Query query21 = entityManager.createNativeQuery("SELECT em.* FROM preciso_cuentas_neocon as em " +
                         "WHERE em.timp LIKE ?", Neocon.class);
                 query21.setParameter(1, value);
 
                 list= query21.getResultList();
                 break;
             case "Conciliación":
-                Query query22 = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuentas_neocon as em " +
+                Query query22 = entityManager.createNativeQuery("SELECT em.* FROM preciso_cuentas_neocon as em " +
                         "WHERE em.conciliacion LIKE ?", Neocon.class);
                 query22.setParameter(1, value);
 

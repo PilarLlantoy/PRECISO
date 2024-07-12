@@ -15,7 +15,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "nexco_terceros")
+@Table(name = "preciso_terceros")
 public class Third {
 
     @Id

@@ -46,12 +46,12 @@ public class ReposYSimultaneasService {
 
 
     public List<ReposYSimultaneas> findAll(){
-        Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_repos_simultaneas as em ", ReposYSimultaneas.class);
+        Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_repos_simultaneas as em ", ReposYSimultaneas.class);
         return query.getResultList();
     }
 
     public List<ReposYSimultaneas> findReposYSimultaneasbyId(Integer id){
-        Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_repos_simultaneas as em " +
+        Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_repos_simultaneas as em " +
                 "WHERE em.id = ?",ReposYSimultaneas.class);
 
         query.setParameter(1, id);
@@ -67,7 +67,7 @@ public class ReposYSimultaneasService {
         toInsert.setDescripcion(toModify.getDescripcion());
         toInsert.setCuentaPyG(toModify.getCuentaPyG());
         toInsert.setDescripcionCuentaPyG(toModify.getDescripcionCuentaPyG());
-        Query query = entityManager.createNativeQuery("UPDATE nexco_repos_simultaneas SET cuenta = ? , cod_nombre = ? , codigo = ?  , descripcion = ? , cuenta_pyg = ? , descripcion_cuenta_pyg = ? " +
+        Query query = entityManager.createNativeQuery("UPDATE preciso_repos_simultaneas SET cuenta = ? , cod_nombre = ? , codigo = ?  , descripcion = ? , cuenta_pyg = ? , descripcion_cuenta_pyg = ? " +
                 "WHERE id = ? ", ReposYSimultaneas.class);
         query.setParameter(1,toInsert.getCuenta());
         query.setParameter(2, toInsert.getCodNombre());
@@ -84,7 +84,7 @@ public class ReposYSimultaneasService {
     }
 
     public void saveReposYSimultaneas(ReposYSimultaneas ReposYSimultaneass){
-        Query query = entityManager.createNativeQuery("INSERT INTO nexco_repos_simultaneas (cuenta,cod_nombre,codigo,descripcion,cuenta_pyg,descripcion_cuenta_pyg) VALUES (?,?,?,?,?,?)", ReposYSimultaneas.class);
+        Query query = entityManager.createNativeQuery("INSERT INTO preciso_repos_simultaneas (cuenta,cod_nombre,codigo,descripcion,cuenta_pyg,descripcion_cuenta_pyg) VALUES (?,?,?,?,?,?)", ReposYSimultaneas.class);
         query.setParameter(1, ReposYSimultaneass.getCuenta());
         query.setParameter(2, ReposYSimultaneass.getCodNombre() );
         query.setParameter(3, ReposYSimultaneass.getCodigo());
@@ -95,13 +95,13 @@ public class ReposYSimultaneasService {
     }
 
     public void removeReposYSimultaneas(Integer id){
-        Query query = entityManager.createNativeQuery("DELETE FROM nexco_repos_simultaneas WHERE id = ? ", ReposYSimultaneas.class);
+        Query query = entityManager.createNativeQuery("DELETE FROM preciso_repos_simultaneas WHERE id = ? ", ReposYSimultaneas.class);
         query.setParameter(1, id);
         query.executeUpdate();
     }
 
     public void clearReposYSimultaneas(User user){
-        Query query = entityManager.createNativeQuery("DELETE FROM nexco_repos_simultaneas", ReposYSimultaneas.class);
+        Query query = entityManager.createNativeQuery("DELETE FROM preciso_repos_simultaneas", ReposYSimultaneas.class);
         query.executeUpdate();
     }
 
@@ -118,7 +118,7 @@ public class ReposYSimultaneasService {
         switch (filter)
         {
             case "Cuenta":
-                Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_repos_simultaneas as em " +
+                Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_repos_simultaneas as em " +
                         "WHERE em.cuenta LIKE ?", ReposYSimultaneas.class);
                 query.setParameter(1, value );
 
@@ -126,35 +126,35 @@ public class ReposYSimultaneasService {
 
                 break;
             case "CodNombre":
-                Query query0 = entityManager.createNativeQuery("SELECT em.* FROM nexco_repos_simultaneas as em " +
+                Query query0 = entityManager.createNativeQuery("SELECT em.* FROM preciso_repos_simultaneas as em " +
                         "WHERE em.cod_nombre LIKE ?", ReposYSimultaneas.class);
                 query0.setParameter(1, value);
 
                 list= query0.getResultList();
                 break;
             case "Codigo":
-                Query query1 = entityManager.createNativeQuery("SELECT em.* FROM nexco_repos_simultaneas as em " +
+                Query query1 = entityManager.createNativeQuery("SELECT em.* FROM preciso_repos_simultaneas as em " +
                         "WHERE em.codigo LIKE ?", ReposYSimultaneas.class);
                 query1.setParameter(1, value);
 
                 list= query1.getResultList();
                 break;
             case "Descripcion":
-                Query query2 = entityManager.createNativeQuery("SELECT em.* FROM nexco_repos_simultaneas as em " +
+                Query query2 = entityManager.createNativeQuery("SELECT em.* FROM preciso_repos_simultaneas as em " +
                         "WHERE em.descripcion LIKE ?", ReposYSimultaneas.class);
                 query2.setParameter(1, value);
 
                 list= query2.getResultList();
                 break;
             case "CuentaPyG":
-                Query query3 = entityManager.createNativeQuery("SELECT em.* FROM nexco_repos_simultaneas as em " +
+                Query query3 = entityManager.createNativeQuery("SELECT em.* FROM preciso_repos_simultaneas as em " +
                         "WHERE em.cuenta_pyg LIKE ?", ReposYSimultaneas.class);
                 query3.setParameter(1, value);
 
                 list= query3.getResultList();
                 break;
             case "DescripcionCuentaPyG":
-                Query query4 = entityManager.createNativeQuery("SELECT em.* FROM nexco_repos_simultaneas as em " +
+                Query query4 = entityManager.createNativeQuery("SELECT em.* FROM preciso_repos_simultaneas as em " +
                         "WHERE em.descripcion_cuenta_pyg LIKE ?", ReposYSimultaneas.class);
                 query4.setParameter(1, value);
 

@@ -14,7 +14,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "nexco_facturas_cc")
+@Table(name = "preciso_facturas_cc")
 public class InvoicesCc implements Serializable{
 
     @Id

@@ -9,7 +9,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "nexco_matriz_eventos")
+@Table(name = "preciso_matriz_eventos")
 public class EventMatrix {
 
     @Id

@@ -68,19 +68,19 @@ public class    UserService {
 
         if(operacion==2)
         {
-            Query query1 = entityManager.createNativeQuery("DELETE FROM nexco_user_account WHERE id_usuario = ?");
+            Query query1 = entityManager.createNativeQuery("DELETE FROM preciso_user_account WHERE id_usuario = ?");
             query1.setParameter(1, id);
             query1.executeUpdate();
         }
 
-        //Query query = entityManager.createNativeQuery("SELECT nua.cuenta_local FROM nexco_user_account AS nua, preciso_administracion_usuarios AS nu WHERE nua.id_usuario=nu.usuario AND nu.centro = ? GROUP BY nua.cuenta_local");
-        Query query = entityManager.createNativeQuery("SELECT ncr.cuenta_local FROM nexco_cuentas_responsables AS ncr WHERE ncr.centro = ? GROUP BY ncr.cuenta_local");
+        //Query query = entityManager.createNativeQuery("SELECT nua.cuenta_local FROM preciso_user_account AS nua, preciso_administracion_usuarios AS nu WHERE nua.id_usuario=nu.usuario AND nu.centro = ? GROUP BY nua.cuenta_local");
+        Query query = entityManager.createNativeQuery("SELECT ncr.cuenta_local FROM preciso_cuentas_responsables AS ncr WHERE ncr.centro = ? GROUP BY ncr.cuenta_local");
         query.setParameter(1,centro);
         List<Object> list =query.getResultList();
 
         for (Object account : list) {
 
-            Query query1 = entityManager.createNativeQuery("INSERT INTO nexco_user_account (id_usuario,cuenta_local) VALUES (?,?)");
+            Query query1 = entityManager.createNativeQuery("INSERT INTO preciso_user_account (id_usuario,cuenta_local) VALUES (?,?)");
             query1.setParameter(1, id);
             query1.setParameter(2, account.toString());
             query1.executeUpdate();
@@ -140,7 +140,7 @@ public class    UserService {
 
     public List<Object[]> findUserByCentroAccount(Long cuenta)
     {
-        Query getCentro = entityManager.createNativeQuery("SELECT nu.centro FROM nexco_user_account AS nua, preciso_administracion_usuarios AS nu WHERE nua.cuenta_local = ? AND nu.usuario = nua.id_usuario");
+        Query getCentro = entityManager.createNativeQuery("SELECT nu.centro FROM preciso_user_account AS nua, preciso_administracion_usuarios AS nu WHERE nua.cuenta_local = ? AND nu.usuario = nua.id_usuario");
         getCentro.setParameter(1,cuenta);
 
         return getCentro.getResultList();
@@ -148,7 +148,7 @@ public class    UserService {
 
     public List<String> findUserByCentroAccount2(Long cuenta)
     {
-        Query getCentro = entityManager.createNativeQuery("SELECT nu.centro FROM nexco_user_account AS nua, preciso_administracion_usuarios AS nu WHERE nua.cuenta_local = ? AND nu.usuario = nua.id_usuario");
+        Query getCentro = entityManager.createNativeQuery("SELECT nu.centro FROM preciso_user_account AS nua, preciso_administracion_usuarios AS nu WHERE nua.cuenta_local = ? AND nu.usuario = nua.id_usuario");
         getCentro.setParameter(1,cuenta);
 
         return getCentro.getResultList();

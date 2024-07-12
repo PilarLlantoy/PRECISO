@@ -12,7 +12,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "nexco_counterparty_generic_contracts")
+@Table(name = "preciso_counterparty_generic_contracts")
 public class CounterpartyGenericContracts {
 
     @Id

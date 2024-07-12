@@ -44,12 +44,12 @@ public class SegmentDecisionTreeService {
     }
 
     public List<SegmentDecisionTree> findAll(){
-        Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_arbol_decision_segmento as em ", SegmentDecisionTree.class);
+        Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_arbol_decision_segmento as em ", SegmentDecisionTree.class);
         return query.getResultList();
     }
 
     public List<SegmentDecisionTree> findSegmentDecisionTreebyId(Integer id){
-        Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_arbol_decision_segmento as em " +
+        Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_arbol_decision_segmento as em " +
                 "WHERE em.id = ?",SegmentDecisionTree.class);
 
         query.setParameter(1, id);
@@ -75,7 +75,7 @@ public class SegmentDecisionTreeService {
         toInsert.setTotalVentas(toModify.getTotalVentas());
         toInsert.setVerificacionContratos(toModify.getVerificacionContratos());
         toInsert.setOtrosCriterios(toModify.getOtrosCriterios());
-        Query query = entityManager.createNativeQuery("UPDATE nexco_arbol_decision_segmento SET codigo_ifrs9 = ? , descripcion_sectorizacion = ? , corasu_op = ? , corasu = ? , sub_corasu_op = ? , sub_corasu = ? , ciiu_op = ? , ciiu = ? , numero_empleados_op = ? , numero_empleados = ? , total_activos_op = ? , total_activos = ?  , total_ventas_op = ?  , total_ventas = ? , verificacion_contratos = ? , otros_criterios = ? " +
+        Query query = entityManager.createNativeQuery("UPDATE preciso_arbol_decision_segmento SET codigo_ifrs9 = ? , descripcion_sectorizacion = ? , corasu_op = ? , corasu = ? , sub_corasu_op = ? , sub_corasu = ? , ciiu_op = ? , ciiu = ? , numero_empleados_op = ? , numero_empleados = ? , total_activos_op = ? , total_activos = ?  , total_ventas_op = ?  , total_ventas = ? , verificacion_contratos = ? , otros_criterios = ? " +
                 "WHERE id = ? ", SegmentDecisionTree.class);
         query.setParameter(1, toInsert.getCodigoIFRS9());
         query.setParameter(2, toInsert.getDescripcionSectorizacion());
@@ -102,7 +102,7 @@ public class SegmentDecisionTreeService {
     }
 
     public void saveSegmentDecisionTree(SegmentDecisionTree SegmentDecisionTree){
-        Query query = entityManager.createNativeQuery("INSERT INTO nexco_arbol_decision_segmento (codigo_ifrs9,descripcion_sectorizacion,corasu_op,corasu,sub_corasu_op,sub_corasu,ciiu_op,ciiu,numero_empleados_op,numero_empleados,total_activos_op,total_activos,total_ventas_op,total_ventas,verificacion_contratos,otros_criterios) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", SegmentDecisionTree.class);
+        Query query = entityManager.createNativeQuery("INSERT INTO preciso_arbol_decision_segmento (codigo_ifrs9,descripcion_sectorizacion,corasu_op,corasu,sub_corasu_op,sub_corasu,ciiu_op,ciiu,numero_empleados_op,numero_empleados,total_activos_op,total_activos,total_ventas_op,total_ventas,verificacion_contratos,otros_criterios) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", SegmentDecisionTree.class);
         query.setParameter(1, SegmentDecisionTree.getCodigoIFRS9());
         query.setParameter(2, SegmentDecisionTree.getDescripcionSectorizacion());
         query.setParameter(3, SegmentDecisionTree.getCorasuOp());
@@ -123,13 +123,13 @@ public class SegmentDecisionTreeService {
     }
 
     public void removeSegmentDecisionTree(Integer id){
-        Query query = entityManager.createNativeQuery("DELETE FROM nexco_arbol_decision_segmento WHERE id = ? ", SegmentDecisionTree.class);
+        Query query = entityManager.createNativeQuery("DELETE FROM preciso_arbol_decision_segmento WHERE id = ? ", SegmentDecisionTree.class);
         query.setParameter(1, id);
         query.executeUpdate();
     }
 
     public void clearSegmentDecisionTree(User user){
-        Query query = entityManager.createNativeQuery("DELETE FROM nexco_arbol_decision_segmento", SegmentDecisionTree.class);
+        Query query = entityManager.createNativeQuery("DELETE FROM preciso_arbol_decision_segmento", SegmentDecisionTree.class);
         query.executeUpdate();
     }
 
@@ -147,70 +147,70 @@ public class SegmentDecisionTreeService {
         {
 
             case "CodigoIFRS9":
-                Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_arbol_decision_segmento as em " +
+                Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_arbol_decision_segmento as em " +
                         "WHERE em.codigo_ifrs9 LIKE ?", SegmentDecisionTree.class);
                 query.setParameter(1, value);
                 list= query.getResultList();
                 break;
 
             case "DescripcionSectorizacion":
-                Query query0 = entityManager.createNativeQuery("SELECT em.* FROM nexco_arbol_decision_segmento as em " +
+                Query query0 = entityManager.createNativeQuery("SELECT em.* FROM preciso_arbol_decision_segmento as em " +
                         "WHERE em.descripcion_sectorizacion LIKE ?", SegmentDecisionTree.class);
                 query0.setParameter(1, value);
                 list= query0.getResultList();
                 break;
 
             case "Corasu":
-                Query query1 = entityManager.createNativeQuery("SELECT em.* FROM nexco_arbol_decision_segmento as em " +
+                Query query1 = entityManager.createNativeQuery("SELECT em.* FROM preciso_arbol_decision_segmento as em " +
                         "WHERE em.corasu LIKE ?", SegmentDecisionTree.class);
                 query1.setParameter(1, value);
                 list= query1.getResultList();
                 break;
 
             case "SubCorasu":
-                Query query2 = entityManager.createNativeQuery("SELECT em.* FROM nexco_arbol_decision_segmento as em " +
+                Query query2 = entityManager.createNativeQuery("SELECT em.* FROM preciso_arbol_decision_segmento as em " +
                         "WHERE em.sub_corasu LIKE ?", SegmentDecisionTree.class);
                 query2.setParameter(1, value );
                 list= query2.getResultList();
                 break;
 
             case "CIIU":
-                Query query3 = entityManager.createNativeQuery("SELECT em.* FROM nexco_arbol_decision_segmento as em " +
+                Query query3 = entityManager.createNativeQuery("SELECT em.* FROM preciso_arbol_decision_segmento as em " +
                         "WHERE em.ciiu LIKE ?", SegmentDecisionTree.class);
                 query3.setParameter(1, value);
                 list= query3.getResultList();
                 break;
 
             case "NumeroEmpleados":
-                Query query4 = entityManager.createNativeQuery("SELECT em.* FROM nexco_arbol_decision_segmento as em " +
+                Query query4 = entityManager.createNativeQuery("SELECT em.* FROM preciso_arbol_decision_segmento as em " +
                         "WHERE em.numero_empleados LIKE ?", SegmentDecisionTree.class);
                 query4.setParameter(1, value);
                 list= query4.getResultList();
                 break;
 
             case "TotalActivos":
-                Query query5 = entityManager.createNativeQuery("SELECT em.* FROM nexco_arbol_decision_segmento as em " +
+                Query query5 = entityManager.createNativeQuery("SELECT em.* FROM preciso_arbol_decision_segmento as em " +
                         "WHERE em.total_activos LIKE ?", SegmentDecisionTree.class);
                 query5.setParameter(1, value);
                 list= query5.getResultList();
                 break;
 
             case "TotalVentas":
-                Query query6 = entityManager.createNativeQuery("SELECT em.* FROM nexco_arbol_decision_segmento as em " +
+                Query query6 = entityManager.createNativeQuery("SELECT em.* FROM preciso_arbol_decision_segmento as em " +
                         "WHERE em.total_ventas LIKE ?", SegmentDecisionTree.class);
                 query6.setParameter(1, value);
                 list= query6.getResultList();
                 break;
 
             case "VerificacionContratos":
-                Query query7 = entityManager.createNativeQuery("SELECT em.* FROM nexco_arbol_decision_segmento as em " +
+                Query query7 = entityManager.createNativeQuery("SELECT em.* FROM preciso_arbol_decision_segmento as em " +
                         "WHERE em.verificacion_contratos LIKE ?", SegmentDecisionTree.class);
                 query7.setParameter(1, value);
                 list= query7.getResultList();
                 break;
 
             case "OtrosCriterios":
-                Query query8 = entityManager.createNativeQuery("SELECT em.* FROM nexco_arbol_decision_segmento as em " +
+                Query query8 = entityManager.createNativeQuery("SELECT em.* FROM preciso_arbol_decision_segmento as em " +
                         "WHERE em.otros_criterios LIKE ?", SegmentDecisionTree.class);
                 query8.setParameter(1, value);
                 list= query8.getResultList();

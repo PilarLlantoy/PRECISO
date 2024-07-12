@@ -46,12 +46,12 @@ public class AccountHistoryIFRS9Service {
 
 
     public List<AccountHistoryIFRS9> findAll(){
-        Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_historico_cuentas_ifrs9 as em ", AccountHistoryIFRS9.class);
+        Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_historico_cuentas_ifrs9 as em ", AccountHistoryIFRS9.class);
         return query.getResultList();
     }
 
     public List<AccountHistoryIFRS9> findAccountHistoryIFRS9byId(Integer id){
-        Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_historico_cuentas_ifrs9 as em " +
+        Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_historico_cuentas_ifrs9 as em " +
                 "WHERE em.id = ?",AccountHistoryIFRS9.class);
         query.setParameter(1, id);
         return query.getResultList();
@@ -65,7 +65,7 @@ public class AccountHistoryIFRS9Service {
         toInsert.setCodCons(toModify.getCodCons());
         toInsert.setDivisa(toModify.getDivisa());
         toInsert.setObservaciones(toModify.getObservaciones());
-        Query query = entityManager.createNativeQuery("UPDATE nexco_historico_cuentas_ifrs9 SET cuenta = ? , empresa = ? , cod_cons = ?  , observaciones = ? , divisa = ? " +
+        Query query = entityManager.createNativeQuery("UPDATE preciso_historico_cuentas_ifrs9 SET cuenta = ? , empresa = ? , cod_cons = ?  , observaciones = ? , divisa = ? " +
                 "WHERE id = ? ", AccountHistoryIFRS9.class);
         query.setParameter(1,toInsert.getCuenta());
         query.setParameter(2, toInsert.getEmpresa());
@@ -81,7 +81,7 @@ public class AccountHistoryIFRS9Service {
     }
 
     public void saveAccountHistoryIFRS9(AccountHistoryIFRS9 AccountHistoryIFRS9s){
-        Query query = entityManager.createNativeQuery("INSERT INTO nexco_historico_cuentas_ifrs9 (cuenta,empresa,cod_cons,observaciones,divisa) VALUES (?,?,?,?,?)", AccountHistoryIFRS9.class);
+        Query query = entityManager.createNativeQuery("INSERT INTO preciso_historico_cuentas_ifrs9 (cuenta,empresa,cod_cons,observaciones,divisa) VALUES (?,?,?,?,?)", AccountHistoryIFRS9.class);
         query.setParameter(1, AccountHistoryIFRS9s.getCuenta());
         query.setParameter(2, AccountHistoryIFRS9s.getEmpresa() );
         query.setParameter(3, AccountHistoryIFRS9s.getCodCons());
@@ -91,13 +91,13 @@ public class AccountHistoryIFRS9Service {
     }
 
     public void removeAccountHistoryIFRS9(Integer id){
-        Query query = entityManager.createNativeQuery("DELETE FROM nexco_historico_cuentas_ifrs9 WHERE id = ? ", AccountHistoryIFRS9.class);
+        Query query = entityManager.createNativeQuery("DELETE FROM preciso_historico_cuentas_ifrs9 WHERE id = ? ", AccountHistoryIFRS9.class);
         query.setParameter(1, id);
         query.executeUpdate();
     }
 
     public void clearAccountHistoryIFRS9(User user){
-        Query query = entityManager.createNativeQuery("DELETE FROM nexco_historico_cuentas_ifrs9", AccountHistoryIFRS9.class);
+        Query query = entityManager.createNativeQuery("DELETE FROM preciso_historico_cuentas_ifrs9", AccountHistoryIFRS9.class);
         query.executeUpdate();
     }
 
@@ -114,7 +114,7 @@ public class AccountHistoryIFRS9Service {
         switch (filter)
         {
             case "Cuenta":
-                Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_historico_cuentas_ifrs9 as em " +
+                Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_historico_cuentas_ifrs9 as em " +
                         "WHERE em.cuenta LIKE ?", AccountHistoryIFRS9.class);
                 query.setParameter(1, value );
 
@@ -122,28 +122,28 @@ public class AccountHistoryIFRS9Service {
 
                 break;
             case "Empresa":
-                Query query0 = entityManager.createNativeQuery("SELECT em.* FROM nexco_historico_cuentas_ifrs9 as em " +
+                Query query0 = entityManager.createNativeQuery("SELECT em.* FROM preciso_historico_cuentas_ifrs9 as em " +
                         "WHERE em.empresa LIKE ?", AccountHistoryIFRS9.class);
                 query0.setParameter(1, value);
 
                 list= query0.getResultList();
                 break;
             case "CodCons":
-                Query query1 = entityManager.createNativeQuery("SELECT em.* FROM nexco_historico_cuentas_ifrs9 as em " +
+                Query query1 = entityManager.createNativeQuery("SELECT em.* FROM preciso_historico_cuentas_ifrs9 as em " +
                         "WHERE em.cod_cons LIKE ?", AccountHistoryIFRS9.class);
                 query1.setParameter(1, value);
 
                 list= query1.getResultList();
                 break;
             case "Observaciones":
-                Query query2 = entityManager.createNativeQuery("SELECT em.* FROM nexco_historico_cuentas_ifrs9 as em " +
+                Query query2 = entityManager.createNativeQuery("SELECT em.* FROM preciso_historico_cuentas_ifrs9 as em " +
                         "WHERE em.observaciones LIKE ?", AccountHistoryIFRS9.class);
                 query2.setParameter(1, value);
 
                 list= query2.getResultList();
                 break;
             case "Divisa":
-                Query query3 = entityManager.createNativeQuery("SELECT em.* FROM nexco_historico_cuentas_ifrs9 as em " +
+                Query query3 = entityManager.createNativeQuery("SELECT em.* FROM preciso_historico_cuentas_ifrs9 as em " +
                         "WHERE em.divisa LIKE ?", AccountHistoryIFRS9.class);
                 query3.setParameter(1, value);
 

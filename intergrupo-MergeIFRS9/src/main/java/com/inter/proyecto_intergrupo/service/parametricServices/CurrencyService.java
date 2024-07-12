@@ -199,7 +199,7 @@ public class CurrencyService {
         toInsert.setId(Integer.parseInt((toModify.getId()+"").toUpperCase(Locale.ROOT)));
         toInsert.setNombre(toModify.getNombre().toUpperCase(Locale.ROOT));
         toInsert.setDivisaNeocon(toModify.getDivisaNeocon().toUpperCase(Locale.ROOT));
-        Query query = entityManager.createNativeQuery("UPDATE nexco_divisas SET id_divisa = ? , nombre_divisa = ? , divisa_neocon = ? " +
+        Query query = entityManager.createNativeQuery("UPDATE preciso_divisas SET id_divisa = ? , nombre_divisa = ? , divisa_neocon = ? " +
                 "WHERE id_divisa = ?", Currency.class);
         query.setParameter(1, toInsert.getId() );
         query.setParameter(2, toInsert.getNombre());
@@ -237,7 +237,7 @@ public class CurrencyService {
     }
 
     public void removeCurrency(String id, User user){
-        Query query = entityManager.createNativeQuery("DELETE from nexco_divisas " +
+        Query query = entityManager.createNativeQuery("DELETE from preciso_divisas " +
                 "WHERE id_divisa = ?", Currency.class);
         query.setParameter(1, id );
         query.executeUpdate();
@@ -256,7 +256,7 @@ public class CurrencyService {
 
     public void clearCurrency(User user){
         //currencyRepository.deleteAll();
-        Query query = entityManager.createNativeQuery("DELETE from nexco_divisas", Currency.class);
+        Query query = entityManager.createNativeQuery("DELETE from preciso_divisas", Currency.class);
         query.executeUpdate();
         Date today = new Date();
         Audit insert = new Audit();
@@ -279,7 +279,7 @@ public class CurrencyService {
         switch (filter)
         {
             case "Código Divisa":
-                Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_divisas as em " +
+                Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_divisas as em " +
                         "WHERE em.id_divisa LIKE ?", Currency.class);
                 query.setParameter(1, value );
 
@@ -287,14 +287,14 @@ public class CurrencyService {
 
                 break;
             case "Nombre Divisa":
-                Query query0 = entityManager.createNativeQuery("SELECT em.* FROM nexco_divisas as em " +
+                Query query0 = entityManager.createNativeQuery("SELECT em.* FROM preciso_divisas as em " +
                         "WHERE em.nombre_divisa LIKE ?", Currency.class);
                 query0.setParameter(1, value);
 
                 list= query0.getResultList();
                 break;
             case "Divisa Neocon":
-                Query query1 = entityManager.createNativeQuery("SELECT em.* FROM nexco_divisas as em " +
+                Query query1 = entityManager.createNativeQuery("SELECT em.* FROM preciso_divisas as em " +
                         "WHERE em.divisa_neocon LIKE ?", Currency.class);
                 query1.setParameter(1, value);
 

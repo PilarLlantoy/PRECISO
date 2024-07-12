@@ -18,7 +18,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "nexco_query_marcados")
+@Table(name = "preciso_query_marcados")
 public class QueryMark implements Serializable {
 
     @Id

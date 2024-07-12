@@ -15,7 +15,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "nexco_query")
+@Table(name = "preciso_query")
 public class Query implements Serializable {
 
     @Id

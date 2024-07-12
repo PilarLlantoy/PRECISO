@@ -239,13 +239,13 @@ public class InvoicesCcService {
         if (temp[2].equals("SUCCESS"))
         {
             invoicesCcRepository.saveAll(toInsert);
-            Query consulta = entityManager.createNativeQuery("select tercero from nexco_facturas_cc where periodo = ? group by tercero");
+            Query consulta = entityManager.createNativeQuery("select tercero from preciso_facturas_cc where periodo = ? group by tercero");
             consulta.setParameter(1,periodo);
             List<String> listTemp = consulta.getResultList();
             for (int i = 0; i < listTemp.size();i++)
             {
                 int conse=i+1;
-                Query update = entityManager.createNativeQuery("update nexco_facturas_cc set lote = ? where periodo = ? and tercero = ? and estado = 'Pendiente'");
+                Query update = entityManager.createNativeQuery("update preciso_facturas_cc set lote = ? where periodo = ? and tercero = ? and estado = 'Pendiente'");
                 update.setParameter(1,"P"+conse);
                 update.setParameter(2,periodo);
                 update.setParameter(3,listTemp.get(i));
@@ -257,21 +257,21 @@ public class InvoicesCcService {
     }
 
     public List<String[]> getAllData1(String periodo){
-        Query consulta = entityManager.createNativeQuery("select estado,count(estado) from nexco_facturas_cc group by estado");
+        Query consulta = entityManager.createNativeQuery("select estado,count(estado) from preciso_facturas_cc group by estado");
         return consulta.getResultList();
     }
     public List<String[]> getAllData3(String periodo){
-        Query consulta = entityManager.createNativeQuery("select case when pago = 1 then 'Pagado' when pago = 0 then 'Pendiente' end as estado,count(pago) as conteo from nexco_facturas_cc where pago is not null group by pago");
+        Query consulta = entityManager.createNativeQuery("select case when pago = 1 then 'Pagado' when pago = 0 then 'Pendiente' end as estado,count(pago) as conteo from preciso_facturas_cc where pago is not null group by pago");
         return consulta.getResultList();
     }
 
     public List<InvoicesCc> getInvoicePending(){
-        Query consulta = entityManager.createNativeQuery("select * from nexco_facturas_cc ",InvoicesCc.class);
+        Query consulta = entityManager.createNativeQuery("select * from preciso_facturas_cc ",InvoicesCc.class);
         return consulta.getResultList();
     }
 
     public boolean validateThird(String nit){
-        Query consulta = entityManager.createNativeQuery("select * from nexco_terceros_cc where nit = ?");
+        Query consulta = entityManager.createNativeQuery("select * from preciso_terceros_cc where nit = ?");
         consulta.setParameter(1,nit);
         if(consulta.getResultList().isEmpty())
             return true;
@@ -281,7 +281,7 @@ public class InvoicesCcService {
 
     public boolean validateConcept(String concepto, String evento){
         if(evento.equals("CAUSACIÓN")) {
-            Query consulta = entityManager.createNativeQuery("select d.impuesto from nexco_cuentas_cc d where d.concepto = ? and d.evento = ? \n" +
+            Query consulta = entityManager.createNativeQuery("select d.impuesto from preciso_cuentas_cc d where d.concepto = ? and d.evento = ? \n" +
                     "and d.impuesto IN ('SIN IMPUESTO','IVA','RETEFUENTE','CUENTA POR COBRAR')");
             consulta.setParameter(1, concepto);
             consulta.setParameter(2, evento);
@@ -293,7 +293,7 @@ public class InvoicesCcService {
         }
         else
         {
-            Query consulta = entityManager.createNativeQuery("select d.impuesto from nexco_cuentas_cc d where d.concepto = ? and d.evento = ? \n" +
+            Query consulta = entityManager.createNativeQuery("select d.impuesto from preciso_cuentas_cc d where d.concepto = ? and d.evento = ? \n" +
                     "and d.impuesto IN ('PAGO','CUENTA POR COBRAR')");
             consulta.setParameter(1, concepto);
             consulta.setParameter(2, evento);
@@ -306,7 +306,7 @@ public class InvoicesCcService {
     }
 
     public String sequenceMax(){
-        Query consulta = entityManager.createNativeQuery("select top 1 lote from nexco_facturas_cc where estado = 'Completado' order by lote desc");
+        Query consulta = entityManager.createNativeQuery("select top 1 lote from preciso_facturas_cc where estado = 'Completado' order by lote desc");
         List<String> list = consulta.getResultList();
         if(list.isEmpty())
             return "0";
@@ -316,17 +316,17 @@ public class InvoicesCcService {
 
     public boolean procesarData(String periodo, int consecutivo, String firma){
 
-        Query consulta = entityManager.createNativeQuery("select lote from nexco_facturas_cc where estado = 'Pendiente' and periodo = ? group by lote");
+        Query consulta = entityManager.createNativeQuery("select lote from preciso_facturas_cc where estado = 'Pendiente' and periodo = ? group by lote");
         consulta.setParameter(1,periodo);
         List<String> listFinal=consulta.getResultList();
         if(!listFinal.isEmpty())
         {
             String[] fechaPartida= periodo.split("-");
-            Query cFirma = entityManager.createNativeQuery("select * from nexco_firmas where id_firma = ?", Signature.class);
+            Query cFirma = entityManager.createNativeQuery("select * from preciso_firmas where id_firma = ?", Signature.class);
             cFirma.setParameter(1,Long.parseLong(firma));
             Signature tempFirma = (Signature) cFirma.getResultList().get(0);
 
-            Query update1 = entityManager.createNativeQuery("update nexco_facturas_cc set firma = ? where estado = 'Pendiente' and periodo = ?");
+            Query update1 = entityManager.createNativeQuery("update preciso_facturas_cc set firma = ? where estado = 'Pendiente' and periodo = ?");
             update1.setParameter(1,Long.parseLong(firma));
             update1.setParameter(2,periodo);
             update1.executeUpdate();
@@ -338,7 +338,7 @@ public class InvoicesCcService {
                     consecutivo++;
                 }
                 String nuevoLote =consecutivo+"-"+fechaPartida[0];
-                Query update2 = entityManager.createNativeQuery("update nexco_facturas_cc set lote = ? where estado = 'Pendiente' and periodo = ? and lote = ?");
+                Query update2 = entityManager.createNativeQuery("update preciso_facturas_cc set lote = ? where estado = 'Pendiente' and periodo = ? and lote = ?");
                 update2.setParameter(1,nuevoLote);
                 update2.setParameter(2,periodo);
                 update2.setParameter(3,parte);
@@ -346,8 +346,8 @@ public class InvoicesCcService {
                 XWPFDocument data = generateFactura(nuevoLote,periodo);
                 String htmlFinal = convertVarbinaryToHTML(data);
 
-                Query cTercero = entityManager.createNativeQuery("select concat(correo,concat(';',concat(correo_alterno,concat(';',correo_alterno2)))) as correos, concat(correo_copia1,concat(';',correo_copia2)) as copias from (select * from nexco_facturas_cc where lote=?) a\n" +
-                        "left join nexco_terceros_cc b on a.tercero=b.nit");
+                Query cTercero = entityManager.createNativeQuery("select concat(correo,concat(';',concat(correo_alterno,concat(';',correo_alterno2)))) as correos, concat(correo_copia1,concat(';',correo_copia2)) as copias from (select * from preciso_facturas_cc where lote=?) a\n" +
+                        "left join preciso_terceros_cc b on a.tercero=b.nit");
                 cTercero.setParameter(1,nuevoLote);
                 List<Object[]> tempThird = cTercero.getResultList();
                 sendEmailInvoice(tempThird.get(0)[0].toString(),tempFirma.getCorreo()+";"+tempThird.get(0)[1].toString(),nuevoLote,htmlFinal);
@@ -355,7 +355,7 @@ public class InvoicesCcService {
 
             }
 
-            Query update = entityManager.createNativeQuery("update nexco_facturas_cc set estado = 'Completado', pago = ? where estado = 'Pendiente' and periodo = ?");
+            Query update = entityManager.createNativeQuery("update preciso_facturas_cc set estado = 'Completado', pago = ? where estado = 'Pendiente' and periodo = ?");
             update.setParameter(1,false);
             update.setParameter(2,periodo);
             update.executeUpdate();
@@ -447,20 +447,20 @@ public class InvoicesCcService {
 
 
     public void anularFactura(Long id){
-        Query consulta = entityManager.createNativeQuery("update nexco_facturas_cc set estado = 'Anulado', lote = 'XX' where id_factura = ?");
+        Query consulta = entityManager.createNativeQuery("update preciso_facturas_cc set estado = 'Anulado', lote = 'XX' where id_factura = ?");
         consulta.setParameter(1,id);
         consulta.executeUpdate();
     }
 
     public List<InvoicesCc> getLote(String lote,String periodo){
-        Query consulta = entityManager.createNativeQuery("select * from nexco_facturas_cc where lote = ? and periodo = ?",InvoicesCc.class);
+        Query consulta = entityManager.createNativeQuery("select * from preciso_facturas_cc where lote = ? and periodo = ?",InvoicesCc.class);
         consulta.setParameter(1,lote);
         consulta.setParameter(2,periodo);
         return consulta.getResultList();
     }
 
     public boolean validateLote(String lote){
-        Query consulta = entityManager.createNativeQuery("select * from nexco_facturas_cc where lote = ?");
+        Query consulta = entityManager.createNativeQuery("select * from preciso_facturas_cc where lote = ?");
         consulta.setParameter(1,lote);
         if(!consulta.getResultList().isEmpty()){
             return true;
@@ -472,13 +472,13 @@ public class InvoicesCcService {
     }
 
     public ThirdsCc getImpuesto(Long id){
-        Query consulta = entityManager.createNativeQuery("select distinct b.* from nexco_facturas_cc a, nexco_terceros_cc b where a.tercero = b.nit AND a.id_factura = ? ",ThirdsCc.class);
+        Query consulta = entityManager.createNativeQuery("select distinct b.* from preciso_facturas_cc a, preciso_terceros_cc b where a.tercero = b.nit AND a.id_factura = ? ",ThirdsCc.class);
         consulta.setParameter(1,id);
         return (ThirdsCc) consulta.getResultList().get(0);
     }
 
     public List<InvoicesCc> getAllData2(String periodo){
-        Query consulta = entityManager.createNativeQuery("select * from nexco_facturas_cc where periodo = ? order by tercero,lote,estado",InvoicesCc.class);
+        Query consulta = entityManager.createNativeQuery("select * from preciso_facturas_cc where periodo = ? order by tercero,lote,estado",InvoicesCc.class);
         consulta.setParameter(1,periodo);
         return consulta.getResultList();
     }
@@ -891,7 +891,7 @@ public class InvoicesCcService {
     }
 
     public void sendEmailInvoice(String recipientEmail,String recipientCopyEmail,String lote,String data) {
-        String subject = "Notificaciones Nexco Consolidación";
+        String subject = "Notificaciones Preciso Consolidación";
 
         String content = "<!DOCTYPE html>\n" +
                 "<html lang=\"en\">\n" +
@@ -951,7 +951,7 @@ public class InvoicesCcService {
                 data+
                 "    </div>\n" +
                 "    <footer>\n" +
-                "        Nexco Consolidación.\n" +
+                "        Preciso Consolidación.\n" +
                 "    </footer>\n" +
                 "</body>\n" +
                 "</html>";;
@@ -961,40 +961,40 @@ public class InvoicesCcService {
 
     public List<Object[]> generateMassiveCharge(String periodo) throws ParseException {
 
-        Query temporal = entityManager.createNativeQuery("drop table nexco_carga_masiva_cc_temp;\n" +
+        Query temporal = entityManager.createNativeQuery("drop table preciso_carga_masiva_cc_temp;\n" +
                 "\n" +
-                "select z.* into nexco_carga_masiva_cc_temp from\n" +
+                "select z.* into preciso_carga_masiva_cc_temp from\n" +
                 "(select c.centro,c.cuenta, 'COP' as divisa, '' as contr, a.fecha as ref, case when c.naturaleza ='H' then abs(a.valor)*-1 else abs(a.valor) end as valor,CONCAT(a.concepto,CONCAT(' ',a.periodo)) as descr, replace(a.periodo,'-','') as fechas,SUBSTRING(a.tercero,1,1) as td, SUBSTRING(a.tercero,2,len(a.tercero)-3) as numero ,SUBSTRING(a.tercero,len(a.tercero),len(a.tercero)) as dv,\n" +
                 "'' as tipo_perdida,'' as clase_riesgo,'' as tipo_mov,'' as produc,'' as proces,'' as linea_ope, 0 as tbas, a.concepto,a.periodo,a.tercero,a.fecha\n" +
-                "from (select e.* from nexco_facturas_cc e where e.periodo = :periodo and e.carga_masiva is null) as a\n" +
-                "left join (select f.impuesto,f.nit from nexco_terceros_cc f) as b on a.tercero = b.nit\n" +
-                "left join (select d.concepto,d.centro,d.cuenta,d.naturaleza from nexco_cuentas_cc d where d.evento = 'CAUSACIÓN' and d.impuesto='SIN IMPUESTO') as c on a.concepto = c.concepto \n" +
+                "from (select e.* from preciso_facturas_cc e where e.periodo = :periodo and e.carga_masiva is null) as a\n" +
+                "left join (select f.impuesto,f.nit from preciso_terceros_cc f) as b on a.tercero = b.nit\n" +
+                "left join (select d.concepto,d.centro,d.cuenta,d.naturaleza from preciso_cuentas_cc d where d.evento = 'CAUSACIÓN' and d.impuesto='SIN IMPUESTO') as c on a.concepto = c.concepto \n" +
                 "union all\n" +
                 "select c.centro,c.cuenta, 'COP' as divisa, '' as contr, a.fecha as ref, case when c.naturaleza ='H' then abs(a.valor*0.11)*-1 else abs(a.valor*0.11) end as valor,CONCAT(a.concepto,CONCAT(' ',a.periodo)) as descr, replace(a.periodo,'-','') as fechas,SUBSTRING(a.tercero,1,1) as td, SUBSTRING(a.tercero,2,len(a.tercero)-3) as numero ,SUBSTRING(a.tercero,len(a.tercero),len(a.tercero)) as dv,\n" +
                 "'' as tipo_perdida,'' as clase_riesgo,'' as tipo_mov,'' as produc,'' as proces,'' as linea_ope, a.valor as tbas, a.concepto,a.periodo,a.tercero,a.fecha\n" +
-                "from (select e.* from nexco_facturas_cc e where e.periodo = :periodo and e.carga_masiva is null) as a\n" +
-                "left join (select f.impuesto,f.nit from nexco_terceros_cc f) as b on a.tercero = b.nit\n" +
-                "left join (select d.concepto,d.centro,d.cuenta,d.naturaleza from nexco_cuentas_cc d where d.evento = 'CAUSACIÓN' and d.impuesto='RETEFUENTE') as c on a.concepto = c.concepto\n" +
+                "from (select e.* from preciso_facturas_cc e where e.periodo = :periodo and e.carga_masiva is null) as a\n" +
+                "left join (select f.impuesto,f.nit from preciso_terceros_cc f) as b on a.tercero = b.nit\n" +
+                "left join (select d.concepto,d.centro,d.cuenta,d.naturaleza from preciso_cuentas_cc d where d.evento = 'CAUSACIÓN' and d.impuesto='RETEFUENTE') as c on a.concepto = c.concepto\n" +
                 "where b.impuesto = 'RETEFUENTE'\n" +
                 "union all\n" +
                 "select c.centro,c.cuenta, 'COP' as divisa, '' as contr, a.fecha as ref, case when c.naturaleza ='H' then abs(a.valor*0.19)*-1 else abs(a.valor*0.19) end as valor,CONCAT(a.concepto,CONCAT(' ',a.periodo)) as descr, replace(a.periodo,'-','') as fechas,SUBSTRING(a.tercero,1,1) as td, SUBSTRING(a.tercero,2,len(a.tercero)-3) as numero ,SUBSTRING(a.tercero,len(a.tercero),len(a.tercero)) as dv,\n" +
                 "'' as tipo_perdida,'' as clase_riesgo,'' as tipo_mov,'' as produc,'' as proces,'' as linea_ope, a.valor as tbas, a.concepto,a.periodo,a.tercero,a.fecha\n" +
-                "from (select e.* from nexco_facturas_cc e where e.periodo = :periodo and e.carga_masiva is null) as a\n" +
-                "left join (select f.impuesto,f.nit from nexco_terceros_cc f) as b on a.tercero = b.nit\n" +
-                "left join (select d.concepto,d.centro,d.cuenta,d.naturaleza from nexco_cuentas_cc d where d.evento = 'CAUSACIÓN' and d.impuesto='IVA') as c on a.concepto = c.concepto\n" +
+                "from (select e.* from preciso_facturas_cc e where e.periodo = :periodo and e.carga_masiva is null) as a\n" +
+                "left join (select f.impuesto,f.nit from preciso_terceros_cc f) as b on a.tercero = b.nit\n" +
+                "left join (select d.concepto,d.centro,d.cuenta,d.naturaleza from preciso_cuentas_cc d where d.evento = 'CAUSACIÓN' and d.impuesto='IVA') as c on a.concepto = c.concepto\n" +
                 "where b.impuesto = 'IVA') z;" +
                 "\n" +
-                "update nexco_facturas_cc set carga_masiva = 'X'  where periodo = :periodo and carga_masiva is null;");
+                "update preciso_facturas_cc set carga_masiva = 'X'  where periodo = :periodo and carga_masiva is null;");
         temporal.setParameter("periodo", periodo);
         temporal.executeUpdate();
 
         Query consulta = entityManager.createNativeQuery("select z.centro,z.cuenta,z.divisa,z.contr,z.ref,sum(z.valor),z.descr,z.fechas,z.td,z.numero,z.dv,z.tipo_perdida,z.clase_riesgo,z.tipo_mov,z.produc,z.proces,z.linea_ope,z.tbas \n" +
-                "from nexco_carga_masiva_cc_temp as z group by z.centro,z.cuenta,z.divisa,z.contr,z.ref,z.descr,z.fechas,z.td,z.numero,z.dv,z.tipo_perdida,z.clase_riesgo,z.tipo_mov,z.produc,z.proces,z.linea_ope,z.tbas " +
+                "from preciso_carga_masiva_cc_temp as z group by z.centro,z.cuenta,z.divisa,z.contr,z.ref,z.descr,z.fechas,z.td,z.numero,z.dv,z.tipo_perdida,z.clase_riesgo,z.tipo_mov,z.produc,z.proces,z.linea_ope,z.tbas " +
                 "union all\n" +
                 "select c.centro,c.cuenta, 'COP' as divisa, '' as contr, a.fecha as ref, a.valor*-1 as valor, CONCAT(a.concepto,CONCAT(' ',a.periodo)) as descr, replace(a.periodo,'-','') as fechas,SUBSTRING(a.tercero,1,1) as td, SUBSTRING(a.tercero,2,len(a.tercero)-3) as numero ,SUBSTRING(a.tercero,len(a.tercero),len(a.tercero)) as dv,\n" +
                 "'' as tipo_perdida,'' as clase_riesgo,'' as tipo_mov,'' as produc,'' as proces,'' as linea_ope, 0 as tbas\n" +
-                "from (select concepto,periodo,tercero,fecha,sum(valor) as valor from nexco_carga_masiva_cc_temp group by concepto,periodo,tercero,fecha) as a\n" +
-                "left join (select d.concepto,d.centro,d.cuenta,d.naturaleza from nexco_cuentas_cc d where d.evento = 'CAUSACIÓN' and d.impuesto='CUENTA POR COBRAR') as c on a.concepto = c.concepto ");
+                "from (select concepto,periodo,tercero,fecha,sum(valor) as valor from preciso_carga_masiva_cc_temp group by concepto,periodo,tercero,fecha) as a\n" +
+                "left join (select d.concepto,d.centro,d.cuenta,d.naturaleza from preciso_cuentas_cc d where d.evento = 'CAUSACIÓN' and d.impuesto='CUENTA POR COBRAR') as c on a.concepto = c.concepto ");
         return consulta.getResultList();
     }
 
@@ -1004,22 +1004,22 @@ public class InvoicesCcService {
         Query consulta = entityManager.createNativeQuery("select z.centro,z.cuenta,z.divisa,z.contr,z.ref,sum(z.valor),z.descr,z.fechas,z.td,z.numero,z.dv,z.tipo_perdida,z.clase_riesgo,z.tipo_mov,z.produc,z.proces,z.linea_ope,z.tbas from " +
                 "(select b.impuesto,c.centro,c.cuenta, 'COP' as divisa, '' as contr, a.fecha as ref, case when c.naturaleza ='H' then abs(case when b.impuesto='RETEFUENTE' then a.valor-(a.valor*0.11) when b.impuesto='IVA' then a.valor-(a.valor*0.19) else a.valor end)*-1 else abs(case when b.impuesto='RETEFUENTE' then a.valor-(a.valor*0.11) when b.impuesto='IVA' then a.valor-(a.valor*0.19) else a.valor end) end as valor,CONCAT(a.concepto,CONCAT(' ',a.periodo)) as descr, replace(a.periodo,'-','') as fechas,SUBSTRING(a.tercero,1,1) as td, SUBSTRING(a.tercero,2,len(a.tercero)-3) as numero ,SUBSTRING(a.tercero,len(a.tercero),len(a.tercero)) as dv,\n" +
                 "'' as tipo_perdida,'' as clase_riesgo,'' as tipo_mov,'' as produc,'' as proces,'' as linea_ope, 0 as tbas\n" +
-                "from (select e.* from nexco_facturas_cc e where e.periodo = :periodo and e.id_factura in (:valores) and estado = 'Completado' and pago = :pago) as a\n" +
-                "left join (select f.impuesto,f.nit from nexco_terceros_cc f) as b on a.tercero = b.nit\n" +
-                "left join (select d.impuesto,d.concepto,d.centro,d.cuenta,d.naturaleza from nexco_cuentas_cc d where d.evento = 'PAGO' and d.impuesto='CUENTA POR COBRAR') as c on a.concepto = c.concepto\n" +
+                "from (select e.* from preciso_facturas_cc e where e.periodo = :periodo and e.id_factura in (:valores) and estado = 'Completado' and pago = :pago) as a\n" +
+                "left join (select f.impuesto,f.nit from preciso_terceros_cc f) as b on a.tercero = b.nit\n" +
+                "left join (select d.impuesto,d.concepto,d.centro,d.cuenta,d.naturaleza from preciso_cuentas_cc d where d.evento = 'PAGO' and d.impuesto='CUENTA POR COBRAR') as c on a.concepto = c.concepto\n" +
                 "union all\n" +
                 "select b.impuesto,c.centro,c.cuenta, 'COP' as divisa, '' as contr, a.fecha as ref, case when c.naturaleza ='H' then abs(case when b.impuesto='RETEFUENTE' then a.valor-(a.valor*0.11) when b.impuesto='IVA' then a.valor-(a.valor*0.19) else a.valor end)*-1 else abs(case when b.impuesto='RETEFUENTE' then a.valor-(a.valor*0.11) when b.impuesto='IVA' then a.valor-(a.valor*0.19) else a.valor end) end as valor,CONCAT(a.concepto,CONCAT(' ',a.periodo)) as descr, replace(a.periodo,'-','') as fechas,SUBSTRING(a.tercero,1,1) as td, SUBSTRING(a.tercero,2,len(a.tercero)-3) as numero ,SUBSTRING(a.tercero,len(a.tercero),len(a.tercero)) as dv,\n" +
                 "'' as tipo_perdida,'' as clase_riesgo,'' as tipo_mov,'' as produc,'' as proces,'' as linea_ope, 0 as tbas\n" +
-                "from (select e.* from nexco_facturas_cc e where e.periodo = :periodo and e.id_factura in (:valores) and estado = 'Completado' and pago = :pago) as a\n" +
-                "left join (select f.impuesto,f.nit from nexco_terceros_cc f) as b on a.tercero = b.nit\n" +
-                "left join (select d.impuesto,d.concepto,d.centro,d.cuenta,d.naturaleza from nexco_cuentas_cc d where d.evento = 'PAGO' and d.impuesto='PAGO') as c on a.concepto = c.concepto) z " +
+                "from (select e.* from preciso_facturas_cc e where e.periodo = :periodo and e.id_factura in (:valores) and estado = 'Completado' and pago = :pago) as a\n" +
+                "left join (select f.impuesto,f.nit from preciso_terceros_cc f) as b on a.tercero = b.nit\n" +
+                "left join (select d.impuesto,d.concepto,d.centro,d.cuenta,d.naturaleza from preciso_cuentas_cc d where d.evento = 'PAGO' and d.impuesto='PAGO') as c on a.concepto = c.concepto) z " +
                 "group by z.centro,z.cuenta,z.divisa,z.contr,z.ref,z.descr,z.fechas,z.td,z.numero,z.dv,z.tipo_perdida,z.clase_riesgo,z.tipo_mov,z.produc,z.proces,z.linea_ope,z.tbas ");
         consulta.setParameter("periodo",periodo);
         consulta.setParameter("valores",useList);
         consulta.setParameter("pago",false);
         List<Object[]>  result = consulta.getResultList();
 
-        Query update = entityManager.createNativeQuery("update nexco_facturas_cc set pago = :pago where id_factura in (:valores) ");
+        Query update = entityManager.createNativeQuery("update preciso_facturas_cc set pago = :pago where id_factura in (:valores) ");
         update.setParameter("valores",useList);
         update.setParameter("pago",true);
         update.executeUpdate();

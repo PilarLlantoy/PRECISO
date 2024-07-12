@@ -389,10 +389,10 @@ public class UserController {
     }
 
     public void sendEmail(String recipientEmail, String link, String username) {
-        String subject = "Nuevo usuario Nexco";
+        String subject = "Nuevo usuario Preciso";
 
         String content = "<p>Hola,</p>"
-                + "<p>Bienvenido al aplicativo BBVA Nexco</p>"
+                + "<p>Bienvenido al aplicativo BBVA Preciso</p>"
                 + "<p>Tu usuario: \""+username+"\" </p>"
                 + "<p>Ingresa al siguiente enlace para asignar tu contraseña:</p>"
                 + "<p><a href=\"" + link + "\">Cambiar mi contraseña</a></p>"

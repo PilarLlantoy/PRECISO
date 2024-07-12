@@ -13,7 +13,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "nexco_reglasdq")
+@Table(name = "preciso_reglasdq")
 public class RulesDQ implements Serializable{
 
     @Id

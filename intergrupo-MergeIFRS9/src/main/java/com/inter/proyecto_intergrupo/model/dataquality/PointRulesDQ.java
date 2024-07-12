@@ -14,7 +14,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "nexco_puntuacion_validacion_dq")
+@Table(name = "preciso_puntuacion_validacion_dq")
 public class PointRulesDQ implements Serializable{
 
     @Id

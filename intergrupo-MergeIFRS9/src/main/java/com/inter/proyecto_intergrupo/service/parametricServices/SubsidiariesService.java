@@ -208,7 +208,7 @@ public class SubsidiariesService {
                     subsidiaries.setObservacionReportante("");
                     subsidiaries.setConceptos(cellConceptos);
 
-                    Query query1 = entityManager.createNativeQuery("SELECT em.* FROM nexco_filiales as em \n" +
+                    Query query1 = entityManager.createNativeQuery("SELECT em.* FROM preciso_filiales as em \n" +
                             "WHERE em.yntp_empresa = ? AND em.cuenta_filial = ? and em.cuenta_local = ? and em.yntp_local = ? and em.contrato_banco = ? \n" +
                             "and em.conceptos = ? and em.contrato_filial = ?", Subsidiaries.class);
                     query1.setParameter(1, String.format("%5s", subsidiaries.getYntpEmpresa()).replace(' ', '0'));
@@ -220,7 +220,7 @@ public class SubsidiariesService {
                     query1.setParameter(7, subsidiaries.getContratoFilial());
 
                     if(query1.getResultList().size()==0) {
-                        Query query = entityManager.createNativeQuery("INSERT INTO nexco_filiales (yntp_empresa,cuenta_filial,cuenta_local,yntp_local,divisa,contrato_banco,observacion_reportante,conceptos, contrato_filial) VALUES (?,?,?,?,?,?,?,?,?)", Subsidiaries.class);
+                        Query query = entityManager.createNativeQuery("INSERT INTO preciso_filiales (yntp_empresa,cuenta_filial,cuenta_local,yntp_local,divisa,contrato_banco,observacion_reportante,conceptos, contrato_filial) VALUES (?,?,?,?,?,?,?,?,?)", Subsidiaries.class);
                         query.setParameter(1, String.format("%5s", subsidiaries.getYntpEmpresa()).replace(' ', '0'));
                         query.setParameter(2, subsidiaries.getCuentaFilial());
                         query.setParameter(3, subsidiaries.getCuentaLocal());
@@ -235,7 +235,7 @@ public class SubsidiariesService {
                     }
                     else
                     {
-                        Query query = entityManager.createNativeQuery("UPDATE nexco_filiales SET cuenta_local = ? , yntp_local = ?, divisa = ?, contrato_banco = ?, observacion_reportante = ?, conceptos = ?, contrato_filial = ? " +
+                        Query query = entityManager.createNativeQuery("UPDATE preciso_filiales SET cuenta_local = ? , yntp_local = ?, divisa = ?, contrato_banco = ?, observacion_reportante = ?, conceptos = ?, contrato_filial = ? " +
                                 "WHERE yntp_empresa = ? AND cuenta_filial = ?", Subsidiaries.class);
 
                         query.setParameter(1, subsidiaries.getCuentaLocal() );
@@ -264,12 +264,12 @@ public class SubsidiariesService {
     }
 
     public List<Subsidiaries> findAll(){
-        Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_filiales as em ", Subsidiaries.class);
+        Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_filiales as em ", Subsidiaries.class);
         return query.getResultList();
     }
 
     public List<Subsidiaries> findSubsidiariesByYntpCuenta(String yntp,String cuenta){
-        Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_filiales as em " +
+        Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_filiales as em " +
                 "WHERE em.yntp_empresa = ? AND em.cuenta_filial = ?", Subsidiaries.class);
 
         query.setParameter(1, String.format("%5s", yntp).replace(' ', '0'));
@@ -278,7 +278,7 @@ public class SubsidiariesService {
     }
 
     public List<Subsidiaries> findSubsidiariesById(String id){
-        Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_filiales as em " +
+        Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_filiales as em " +
                 "WHERE em.id = ? ", Subsidiaries.class);
         query.setParameter(1, id );
         return query.getResultList();
@@ -296,7 +296,7 @@ public class SubsidiariesService {
         toInsert.setContratoFilial(toModify.getContratoFilial());
         toInsert.setObservacionReportante(toModify.getObservacionReportante());*/
 
-        Query query = entityManager.createNativeQuery("UPDATE nexco_filiales SET yntp_empresa = ? , cuenta_filial = ? , cuenta_local = ? , yntp_local = ?, divisa = ?, contrato_banco = ?, observacion_reportante = ?, conceptos = ?, contrato_filial= ? " +
+        Query query = entityManager.createNativeQuery("UPDATE preciso_filiales SET yntp_empresa = ? , cuenta_filial = ? , cuenta_local = ? , yntp_local = ?, divisa = ?, contrato_banco = ?, observacion_reportante = ?, conceptos = ?, contrato_filial= ? " +
                 "WHERE id = ? ", Subsidiaries.class);
         query.setParameter(1, String.format("%5s", toModify.getYntpEmpresa()).replace(' ', '0'));
         query.setParameter(2, toModify.getCuentaFilial() );
@@ -332,7 +332,7 @@ public class SubsidiariesService {
     }
 
     public void saveSubsidiaries(Subsidiaries subsidiaries, User user){
-        Query query = entityManager.createNativeQuery("INSERT INTO nexco_filiales (yntp_empresa,cuenta_filial,cuenta_local,yntp_local,divisa,contrato_banco,observacion_reportante,conceptos,contrato_filial) VALUES (?,?,?,?,?,?,?,?,?)", Subsidiaries.class);
+        Query query = entityManager.createNativeQuery("INSERT INTO preciso_filiales (yntp_empresa,cuenta_filial,cuenta_local,yntp_local,divisa,contrato_banco,observacion_reportante,conceptos,contrato_filial) VALUES (?,?,?,?,?,?,?,?,?)", Subsidiaries.class);
         query.setParameter(1, String.format("%5s", subsidiaries.getYntpEmpresa()).replace(' ', '0'));
         query.setParameter(2, subsidiaries.getCuentaFilial() );
         query.setParameter(3, subsidiaries.getCuentaLocal() );
@@ -346,7 +346,7 @@ public class SubsidiariesService {
     }
 
     public void removeSubsidiaries(String id,String cuenta, User user){
-        Query query = entityManager.createNativeQuery("DELETE FROM nexco_filiales WHERE yntp_empresa = ? AND cuenta_filial = ?", Subsidiaries.class);
+        Query query = entityManager.createNativeQuery("DELETE FROM preciso_filiales WHERE yntp_empresa = ? AND cuenta_filial = ?", Subsidiaries.class);
         query.setParameter(1, String.format("%5s", id).replace(' ', '0'));
         query.setParameter(2, cuenta);
 
@@ -364,7 +364,7 @@ public class SubsidiariesService {
     }
 
     public void clearSubsidiaries(User user){
-        Query query = entityManager.createNativeQuery("DELETE FROM nexco_filiales", Subsidiaries.class);
+        Query query = entityManager.createNativeQuery("DELETE FROM preciso_filiales", Subsidiaries.class);
 
         Date today = new Date();
         Audit insert = new Audit();
@@ -392,7 +392,7 @@ public class SubsidiariesService {
         switch (filter)
         {
             case "Yntp Empresa Reportante":
-                Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_filiales as em " +
+                Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_filiales as em " +
                         "WHERE em.yntp_empresa LIKE ?", Subsidiaries.class);
                 query.setParameter(1, value );
 
@@ -400,21 +400,21 @@ public class SubsidiariesService {
 
                 break;
             case "Cuenta Local":
-                Query query0 = entityManager.createNativeQuery("SELECT em.* FROM nexco_filiales as em " +
+                Query query0 = entityManager.createNativeQuery("SELECT em.* FROM preciso_filiales as em " +
                         "WHERE em.cuenta_local LIKE ?", Subsidiaries.class);
                 query0.setParameter(1, value);
 
                 list= query0.getResultList();
                 break;
             case "Cuenta Reportante":
-                Query query1 = entityManager.createNativeQuery("SELECT em.* FROM nexco_filiales as em " +
+                Query query1 = entityManager.createNativeQuery("SELECT em.* FROM preciso_filiales as em " +
                         "WHERE em.cuenta_filial LIKE ?", Subsidiaries.class);
                 query1.setParameter(1, value);
 
                 list= query1.getResultList();
                 break;
             case "Yntp Local":
-                Query query2 = entityManager.createNativeQuery("SELECT em.* FROM nexco_filiales as em " +
+                Query query2 = entityManager.createNativeQuery("SELECT em.* FROM preciso_filiales as em " +
                         "WHERE em.yntp_local LIKE ?", Subsidiaries.class);
                 query2.setParameter(1, value);
 

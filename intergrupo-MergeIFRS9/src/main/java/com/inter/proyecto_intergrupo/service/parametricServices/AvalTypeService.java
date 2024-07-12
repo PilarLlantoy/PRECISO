@@ -39,12 +39,12 @@ public class AvalTypeService {
     private AuditRepository auditRepository;
 
     public List<AvalTypes> findAll() {
-        Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_tipo_aval as em ", AvalTypes.class);
+        Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_tipo_aval as em ", AvalTypes.class);
         return query.getResultList();
     }
 
     public List<Object[]> findAllDistinct() {
-        Query query = entityManager.createNativeQuery("SELECT distinct em.aval_origen, em.id_tipo_aval FROM nexco_tipo_aval as em order by 2 asc");
+        Query query = entityManager.createNativeQuery("SELECT distinct em.aval_origen, em.id_tipo_aval FROM preciso_tipo_aval as em order by 2 asc");
         return query.getResultList();
     }
 
@@ -57,7 +57,7 @@ public class AvalTypeService {
     }
 
     public List<AvalTypes> findAval(String avalOrigen, String cuenta13) {
-        Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_tipo_aval as em " +
+        Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_tipo_aval as em " +
                 "WHERE em.aval_origen = ? AND em.cuenta_contable_13 = ?", AvalTypes.class);
         query.setParameter(1, avalOrigen);
         query.setParameter(2, cuenta13);
@@ -66,7 +66,7 @@ public class AvalTypeService {
     }
 
     public void saveAval(AvalTypes avalTypes) {
-        Query query = entityManager.createNativeQuery("INSERT INTO nexco_tipo_aval(id_tipo_aval,aval_origen,tipo_archivo,cuenta_contable_13,cuenta_contable_60,contrapartida_generica)" +
+        Query query = entityManager.createNativeQuery("INSERT INTO preciso_tipo_aval(id_tipo_aval,aval_origen,tipo_archivo,cuenta_contable_13,cuenta_contable_60,contrapartida_generica)" +
                 "VALUES (?,?,?,?,?,?)", AvalTypes.class);
         query.setParameter(1, avalTypes.getTipoAval());
         query.setParameter(2, avalTypes.getAvalOrigen());
@@ -78,14 +78,14 @@ public class AvalTypeService {
     }
 
     public void removeAval(String avalOrigen, String cuenta13) {
-        Query query = entityManager.createNativeQuery("DELETE FROM nexco_tipo_aval WHERE aval_origen = ? AND cuenta_contable_13 = ?");
+        Query query = entityManager.createNativeQuery("DELETE FROM preciso_tipo_aval WHERE aval_origen = ? AND cuenta_contable_13 = ?");
         query.setParameter(1, avalOrigen);
         query.setParameter(2, cuenta13);
         query.executeUpdate();
     }
 
     public void clearAval() {
-        Query query = entityManager.createNativeQuery("DELETE FROM nexco_tipo_aval");
+        Query query = entityManager.createNativeQuery("DELETE FROM preciso_tipo_aval");
         query.executeUpdate();
     }
 
@@ -99,7 +99,7 @@ public class AvalTypeService {
         toModify.setTipoArchivo(avalTypes.getTipoArchivo());
         if (toModify.getAvalOrigen().equals(avalOrigen) && toModify.getCuentaContable13().equals(cuenta13))
             removeAval(avalOrigen, cuenta13);
-        Query query = entityManager.createNativeQuery("INSERT INTO [dbo].[nexco_tipo_aval]([cuenta_contable_13],[aval_origen],[contrapartida_generica],[cuenta_contable_60],[tipo_archivo],[id_tipo_aval])VALUES(?,?,?,?,?,?)", AvalTypes.class);
+        Query query = entityManager.createNativeQuery("INSERT INTO [dbo].[preciso_tipo_aval]([cuenta_contable_13],[aval_origen],[contrapartida_generica],[cuenta_contable_60],[tipo_archivo],[id_tipo_aval])VALUES(?,?,?,?,?,?)", AvalTypes.class);
         query.setParameter(1, toModify.getCuentaContable13());
         query.setParameter(2, toModify.getAvalOrigen());
         query.setParameter(3, toModify.getContraGenerica());
@@ -275,14 +275,14 @@ public class AvalTypeService {
                     avalTypes.setCuentaContable60(cellCuenta60);
                     avalTypes.setContraGenerica(cellContrapartida);
 
-                    Query query1 = entityManager.createNativeQuery("SELECT em.* FROM nexco_tipo_aval as em WHERE em.aval_origen = ? AND em.cuenta_contable_13 = ?", AvalTypes.class);
+                    Query query1 = entityManager.createNativeQuery("SELECT em.* FROM preciso_tipo_aval as em WHERE em.aval_origen = ? AND em.cuenta_contable_13 = ?", AvalTypes.class);
                     query1.setParameter(1, cellAvalOrigen );
                     query1.setParameter(2, cellCuenta13 );
 
                     logger.warn(query1.getResultList().isEmpty());
 
                     if(query1.getResultList().isEmpty()) {
-                        Query query = entityManager.createNativeQuery("INSERT INTO nexco_tipo_aval(aval_origen,id_tipo_aval,tipo_archivo,cuenta_contable_13,cuenta_contable_60,contrapartida_generica)" +
+                        Query query = entityManager.createNativeQuery("INSERT INTO preciso_tipo_aval(aval_origen,id_tipo_aval,tipo_archivo,cuenta_contable_13,cuenta_contable_60,contrapartida_generica)" +
                                 " VALUES (?,?,?,?,?,?)", AvalTypes.class);
                         query.setParameter(1, avalTypes.getAvalOrigen());
                         query.setParameter(2, avalTypes.getTipoAval());
@@ -294,7 +294,7 @@ public class AvalTypeService {
                         log[1] = "Registro insertado exitosamente.";
                     } else
                     {
-                        Query query = entityManager.createNativeQuery("UPDATE nexco_tipo_aval SET aval_origen=?,id_tipo_aval=?, tipo_archivo=?, cuenta_contable_13=?,cuenta_contable_60=?,contrapartida_generica=? " +
+                        Query query = entityManager.createNativeQuery("UPDATE preciso_tipo_aval SET aval_origen=?,id_tipo_aval=?, tipo_archivo=?, cuenta_contable_13=?,cuenta_contable_60=?,contrapartida_generica=? " +
                                 "WHERE aval_origen=? AND cuenta_contable_13=?", AvalTypes.class);
                         query.setParameter(1, avalTypes.getAvalOrigen());
                         query.setParameter(2, avalTypes.getTipoAval());
@@ -323,7 +323,7 @@ public class AvalTypeService {
         List<AvalTypes> list = new ArrayList<AvalTypes>();
         switch (filter) {
             case "Tipo de aval Origen":
-                Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_tipo_aval as em " +
+                Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_tipo_aval as em " +
                         "WHERE em.aval_origen = ? ", AvalTypes.class);
                 query.setParameter(1, value);
 
@@ -331,35 +331,35 @@ public class AvalTypeService {
 
                 break;
             case "Cuenta Contable 13":
-                Query query1 = entityManager.createNativeQuery("SELECT em.* FROM nexco_tipo_aval as em " +
+                Query query1 = entityManager.createNativeQuery("SELECT em.* FROM preciso_tipo_aval as em " +
                         "WHERE em.cuenta_contable_13 LIKE ?", AvalTypes.class);
                 query1.setParameter(1, value);
 
                 list = query1.getResultList();
                 break;
             case "Cuenta Contable 60":
-                Query query2 = entityManager.createNativeQuery("SELECT em.* FROM nexco_tipo_aval as em " +
+                Query query2 = entityManager.createNativeQuery("SELECT em.* FROM preciso_tipo_aval as em " +
                         "WHERE em.cuenta_contable_60 LIKE ?", AvalTypes.class);
                 query2.setParameter(1, value);
 
                 list = query2.getResultList();
                 break;
             case "Tipo de Archivo":
-                Query query3 = entityManager.createNativeQuery("SELECT em.* FROM nexco_tipo_aval as em " +
+                Query query3 = entityManager.createNativeQuery("SELECT em.* FROM preciso_tipo_aval as em " +
                         "WHERE em.tipo_archivo LIKE ?", AvalTypes.class);
                 query3.setParameter(1, value);
 
                 list = query3.getResultList();
                 break;
             case "Contrapartida Genérica":
-                Query query0 = entityManager.createNativeQuery("SELECT em.* FROM nexco_tipo_aval as em " +
+                Query query0 = entityManager.createNativeQuery("SELECT em.* FROM preciso_tipo_aval as em " +
                         "WHERE em.contrapartida_generica LIKE ?", AvalTypes.class);
                 query0.setParameter(1, value);
 
                 list = query0.getResultList();
                 break;
             case "Tipo de aval":
-                Query query4 = entityManager.createNativeQuery("SELECT em.* FROM nexco_tipo_aval as em " +
+                Query query4 = entityManager.createNativeQuery("SELECT em.* FROM preciso_tipo_aval as em " +
                         "WHERE em.id_tipo_aval LIKE ?", AvalTypes.class);
                 query4.setParameter(1, value);
 

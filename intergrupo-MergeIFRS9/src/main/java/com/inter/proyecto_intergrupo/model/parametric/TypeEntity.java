@@ -13,7 +13,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "nexco_tipo_entidad")
+@Table(name = "preciso_tipo_entidad")
 public class TypeEntity {
 
     @Id

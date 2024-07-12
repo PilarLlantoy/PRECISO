@@ -49,12 +49,12 @@ public class GenericAccountService {
 
 
     public List<GenericAccount> findAll(){
-        Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuenta_generica as em ", GenericAccount.class);
+        Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_cuenta_generica as em ", GenericAccount.class);
         return query.getResultList();
     }
 
     public List<GenericAccount> findGenericAccountbyId(Integer id){
-        Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuenta_generica as em " +
+        Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_cuenta_generica as em " +
                 "WHERE em.id = ?",GenericAccount.class);
 
         query.setParameter(1, id);
@@ -71,7 +71,7 @@ public class GenericAccountService {
         toInsert.setConcepto(toModify.getConcepto());
         toInsert.setFecha(toModify.getFecha());
         toInsert.setObservaciones(toModify.getObservaciones());
-        Query query = entityManager.createNativeQuery("UPDATE nexco_cuenta_generica SET cuenta = ? , empresa = ? , cod_cons = ?  , observaciones = ? , divisa = ? , concepto = ? , fecha = ? " +
+        Query query = entityManager.createNativeQuery("UPDATE preciso_cuenta_generica SET cuenta = ? , empresa = ? , cod_cons = ?  , observaciones = ? , divisa = ? , concepto = ? , fecha = ? " +
                 "WHERE id = ? ", GenericAccount.class);
         query.setParameter(1,toInsert.getCuenta());
         query.setParameter(2, toInsert.getEmpresa());
@@ -89,7 +89,7 @@ public class GenericAccountService {
     }
 
     public void saveGenericAccount(GenericAccount GenericAccounts){
-        Query query = entityManager.createNativeQuery("INSERT INTO nexco_cuenta_generica (cuenta,empresa,cod_cons,observaciones,divisa,concepto,fecha) VALUES (?,?,?,?,?,?,?)", GenericAccount.class);
+        Query query = entityManager.createNativeQuery("INSERT INTO preciso_cuenta_generica (cuenta,empresa,cod_cons,observaciones,divisa,concepto,fecha) VALUES (?,?,?,?,?,?,?)", GenericAccount.class);
         query.setParameter(1, GenericAccounts.getCuenta());
         query.setParameter(2, GenericAccounts.getEmpresa() );
         query.setParameter(3, GenericAccounts.getCodCons());
@@ -101,13 +101,13 @@ public class GenericAccountService {
     }
 
     public void removeGenericAccount(Integer id){
-        Query query = entityManager.createNativeQuery("DELETE FROM nexco_cuenta_generica WHERE id = ? ", GenericAccount.class);
+        Query query = entityManager.createNativeQuery("DELETE FROM preciso_cuenta_generica WHERE id = ? ", GenericAccount.class);
         query.setParameter(1, id);
         query.executeUpdate();
     }
 
     public void clearGenericAccount(User user){
-        Query query = entityManager.createNativeQuery("DELETE FROM nexco_cuenta_generica", GenericAccount.class);
+        Query query = entityManager.createNativeQuery("DELETE FROM preciso_cuenta_generica", GenericAccount.class);
         query.executeUpdate();
     }
 
@@ -124,7 +124,7 @@ public class GenericAccountService {
         switch (filter)
         {
             case "Cuenta":
-                Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuenta_generica as em " +
+                Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_cuenta_generica as em " +
                         "WHERE em.cuenta LIKE ?", GenericAccount.class);
                 query.setParameter(1, value );
 
@@ -132,42 +132,42 @@ public class GenericAccountService {
 
                 break;
             case "Empresa":
-                Query query0 = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuenta_generica as em " +
+                Query query0 = entityManager.createNativeQuery("SELECT em.* FROM preciso_cuenta_generica as em " +
                         "WHERE em.empresa LIKE ?", GenericAccount.class);
                 query0.setParameter(1, value);
 
                 list= query0.getResultList();
                 break;
             case "CodCons":
-                Query query1 = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuenta_generica as em " +
+                Query query1 = entityManager.createNativeQuery("SELECT em.* FROM preciso_cuenta_generica as em " +
                         "WHERE em.cod_cons LIKE ?", GenericAccount.class);
                 query1.setParameter(1, value);
 
                 list= query1.getResultList();
                 break;
             case "Observaciones":
-                Query query2 = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuenta_generica as em " +
+                Query query2 = entityManager.createNativeQuery("SELECT em.* FROM preciso_cuenta_generica as em " +
                         "WHERE em.observaciones LIKE ?", GenericAccount.class);
                 query2.setParameter(1, value);
 
                 list= query2.getResultList();
                 break;
             case "Divisa":
-                Query query3 = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuenta_generica as em " +
+                Query query3 = entityManager.createNativeQuery("SELECT em.* FROM preciso_cuenta_generica as em " +
                         "WHERE em.divisa LIKE ?", GenericAccount.class);
                 query3.setParameter(1, value);
 
                 list= query3.getResultList();
                 break;
             case "Concepto":
-                Query query4 = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuenta_generica as em " +
+                Query query4 = entityManager.createNativeQuery("SELECT em.* FROM preciso_cuenta_generica as em " +
                         "WHERE em.concepto LIKE ?", GenericAccount.class);
                 query4.setParameter(1, value);
 
                 list= query4.getResultList();
                 break;
             case "Fecha":
-                Query query5 = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuenta_generica as em " +
+                Query query5 = entityManager.createNativeQuery("SELECT em.* FROM preciso_cuenta_generica as em " +
                         "WHERE em.fecha LIKE ?", GenericAccount.class);
                 query5.setParameter(1, value);
 

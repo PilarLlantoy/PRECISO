@@ -268,7 +268,7 @@ public class TypeEntityService {
         switch (filter)
         {
             case "NIT":
-                Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_tipo_entidad as em " +
+                Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_tipo_entidad as em " +
                         "WHERE em.nit LIKE ?", TypeEntity.class);
                 query.setParameter(1, value );
 
@@ -276,35 +276,35 @@ public class TypeEntityService {
 
                 break;
             case "Contraparte":
-                Query query0 = entityManager.createNativeQuery("SELECT em.* FROM nexco_tipo_entidad as em " +
+                Query query0 = entityManager.createNativeQuery("SELECT em.* FROM preciso_tipo_entidad as em " +
                         "WHERE em.contraparte LIKE ?", TypeEntity.class);
                 query0.setParameter(1, value);
 
                 list= query0.getResultList();
                 break;
             case "Tipo Contraparte":
-                Query query1 = entityManager.createNativeQuery("SELECT em.* FROM nexco_tipo_entidad as em " +
+                Query query1 = entityManager.createNativeQuery("SELECT em.* FROM preciso_tipo_entidad as em " +
                         "WHERE em.tipo_contraparte LIKE ?", TypeEntity.class);
                 query1.setParameter(1, value);
 
                 list= query1.getResultList();
                 break;
             case "Intergrupo":
-                Query query2 = entityManager.createNativeQuery("SELECT em.* FROM nexco_tipo_entidad as em " +
+                Query query2 = entityManager.createNativeQuery("SELECT em.* FROM preciso_tipo_entidad as em " +
                         "WHERE em.intergrupo LIKE ?", TypeEntity.class);
                 query2.setParameter(1, value);
 
                 list= query2.getResultList();
                 break;
             case "Tipo Entidad":
-                Query query3 = entityManager.createNativeQuery("SELECT em.* FROM nexco_tipo_entidad as em " +
+                Query query3 = entityManager.createNativeQuery("SELECT em.* FROM preciso_tipo_entidad as em " +
                         "WHERE em.tipo_entidad LIKE ?", TypeEntity.class);
                 query3.setParameter(1, value);
 
                 list= query3.getResultList();
                 break;
             case "Eliminación":
-                Query query4 = entityManager.createNativeQuery("SELECT em.* FROM nexco_tipo_entidad as em " +
+                Query query4 = entityManager.createNativeQuery("SELECT em.* FROM preciso_tipo_entidad as em " +
                         "WHERE em.eliminacion LIKE ?", TypeEntity.class);
                 query4.setParameter(1, value);
 

@@ -168,7 +168,7 @@ public class ComerParametricService {
     }
 
     public void insertData(ComerParametric comer) {
-        Query toInsert = entityManager.createNativeQuery("INSERT INTO nexco_parametrica_metodo_comer (cuenta_local,clase,nombre_clase,doc_compr,prorrata_iva,tipo_importe) " +
+        Query toInsert = entityManager.createNativeQuery("INSERT INTO preciso_parametrica_metodo_comer (cuenta_local,clase,nombre_clase,doc_compr,prorrata_iva,tipo_importe) " +
                 "VALUES (?,?,?,?,?,?)");
         toInsert.setParameter(1, comer.getCuentaLocal());
         toInsert.setParameter(2, comer.getClase());
@@ -180,7 +180,7 @@ public class ComerParametricService {
     }
 
     public void clearTable(User user) {
-        Query clear = entityManager.createNativeQuery("DELETE FROM nexco_parametrica_metodo_comer");
+        Query clear = entityManager.createNativeQuery("DELETE FROM preciso_parametrica_metodo_comer");
         Date today=new Date();
         Audit insert = new Audit();
         insert.setAccion("Eliminación archivo Metodología Comercializadora");
@@ -196,7 +196,7 @@ public class ComerParametricService {
     }
 
     public ArrayList<ComerParametric> getAll() {
-        Query getInfo = entityManager.createNativeQuery("SELECT * FROM nexco_parametrica_metodo_comer", ComerParametric.class);
+        Query getInfo = entityManager.createNativeQuery("SELECT * FROM preciso_parametrica_metodo_comer", ComerParametric.class);
 
         ArrayList<ComerParametric> result;
 
@@ -215,38 +215,38 @@ public class ComerParametricService {
         switch (filter)
         {
             case "Cuenta Local":
-                Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_parametrica_metodo_comer as em " +
+                Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_parametrica_metodo_comer as em " +
                         "WHERE em.cuenta_local LIKE ?", ComerParametric.class);
                 query.setParameter(1, value );
                 list= query.getResultList();
 
                 break;
             case "Clase":
-                Query query0 = entityManager.createNativeQuery("SELECT em.* FROM nexco_parametrica_metodo_comer as em " +
+                Query query0 = entityManager.createNativeQuery("SELECT em.* FROM preciso_parametrica_metodo_comer as em " +
                         "WHERE em.clase LIKE ?", ComerParametric.class);
                 query0.setParameter(1, value);
                 list= query0.getResultList();
                 break;
             case "Nombre clase":
-                Query query1 = entityManager.createNativeQuery("SELECT em.* FROM nexco_parametrica_metodo_comer as em " +
+                Query query1 = entityManager.createNativeQuery("SELECT em.* FROM preciso_parametrica_metodo_comer as em " +
                         "WHERE em.nombre_clase LIKE ?", ComerParametric.class);
                 query1.setParameter(1, value);
                 list= query1.getResultList();
                 break;
             case "Doc.compr.":
-                Query query2 = entityManager.createNativeQuery("SELECT em.* FROM nexco_parametrica_metodo_comer as em " +
+                Query query2 = entityManager.createNativeQuery("SELECT em.* FROM preciso_parametrica_metodo_comer as em " +
                         "WHERE em.doc_compr LIKE ?", ComerParametric.class);
                 query2.setParameter(1, value);
                 list= query2.getResultList();
                 break;
             case "Prorrata de iva":
-                Query query3 = entityManager.createNativeQuery("SELECT em.* FROM nexco_parametrica_metodo_comer as em " +
+                Query query3 = entityManager.createNativeQuery("SELECT em.* FROM preciso_parametrica_metodo_comer as em " +
                         "WHERE em.prorrata_iva LIKE ?", ComerParametric.class);
                 query3.setParameter(1, value);
                 list= query3.getResultList();
                 break;
             case "Tipo de importe":
-                Query query4 = entityManager.createNativeQuery("SELECT em.* FROM nexco_parametrica_metodo_comer as em " +
+                Query query4 = entityManager.createNativeQuery("SELECT em.* FROM preciso_parametrica_metodo_comer as em " +
                         "WHERE em.tipo_importe LIKE ?", ComerParametric.class);
                 query4.setParameter(1, value);
                 list= query4.getResultList();

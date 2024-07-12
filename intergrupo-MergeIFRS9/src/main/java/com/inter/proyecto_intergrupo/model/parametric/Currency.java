@@ -1,6 +1,5 @@
 package com.inter.proyecto_intergrupo.model.parametric;
 
-import com.inter.proyecto_intergrupo.model.reports.ContingentTemplate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "nexco_divisas")
+@Table(name = "preciso_divisas")
 public class Currency {
 
     @Id
@@ -48,8 +47,7 @@ public class Currency {
     @OneToMany(mappedBy = "divisa",cascade = CascadeType.ALL)
     private List<YntpSociety> yntpSocietyList;
 
-    @OneToMany(mappedBy = "divisa",cascade = CascadeType.ALL)
-    private List<ContingentTemplate> contingentTemplateList;
+
 
 
 }

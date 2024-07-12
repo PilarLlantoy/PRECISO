@@ -14,7 +14,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "nexco_user_account")
+@Table(name = "preciso_user_account")
 public class UserAccount implements Serializable {
 
     @Id

@@ -13,7 +13,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "nexco_parametrica_metodo_comer")
+@Table(name = "preciso_parametrica_metodo_comer")
 public class ComerParametric implements Serializable {
 
     @Id

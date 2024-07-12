@@ -12,7 +12,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "nexco_parametria_pyg")
+@Table(name = "preciso_parametria_pyg")
 public class PyG {
 
     @Id

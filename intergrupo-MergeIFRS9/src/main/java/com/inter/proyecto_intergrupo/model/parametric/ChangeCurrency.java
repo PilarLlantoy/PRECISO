@@ -17,7 +17,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "nexco_divisas_valor")
+@Table(name = "preciso_divisas_valor")
 public class ChangeCurrency implements Serializable
 {
     @Id

@@ -18,7 +18,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "nexco_query_anterior")
+@Table(name = "preciso_query_anterior")
 public class QueryOld implements Serializable {
 
     @Id

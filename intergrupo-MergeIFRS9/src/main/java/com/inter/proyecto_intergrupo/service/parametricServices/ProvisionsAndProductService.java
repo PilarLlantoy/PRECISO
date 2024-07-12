@@ -46,12 +46,12 @@ public class ProvisionsAndProductService {
 
 
     public List<ProvisionsAndProduct> findAll(){
-        Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_provisiones_producto as em ", ProvisionsAndProduct.class);
+        Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_provisiones_producto as em ", ProvisionsAndProduct.class);
         return query.getResultList();
     }
 
     public List<ProvisionsAndProduct> findProvisionsAndProductbyCuenta(String cuenta){
-        Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_provisiones_producto as em " +
+        Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_provisiones_producto as em " +
                 "WHERE em.cuenta = ?",ProvisionsAndProduct.class);
 
         query.setParameter(1, cuenta);
@@ -72,7 +72,7 @@ public class ProvisionsAndProductService {
         toInsert.setSectorSpain(toModify.getSectorSpain());
         toInsert.setSigno(toModify.getSigno());
 
-        Query query = entityManager.createNativeQuery("UPDATE nexco_provisiones_producto SET instrumento = ? , jerarquia = ? , descripcion = ?  , cuenta = ? , minimo = ? , perimetro_ifrs9 = ? , stages_spain = ?  , producto_spain = ? , sector_spain = ? , signo = ? " +
+        Query query = entityManager.createNativeQuery("UPDATE preciso_provisiones_producto SET instrumento = ? , jerarquia = ? , descripcion = ?  , cuenta = ? , minimo = ? , perimetro_ifrs9 = ? , stages_spain = ?  , producto_spain = ? , sector_spain = ? , signo = ? " +
                 "WHERE cuenta = ? ", ProvisionsAndProduct.class);
         query.setParameter(1, toInsert.getInstrumento());
         query.setParameter(2, toInsert.getJerarquia());
@@ -93,7 +93,7 @@ public class ProvisionsAndProductService {
     }
 
     public void saveProvisionsAndProduct(ProvisionsAndProduct ProvisionsAndProducts){
-        Query query = entityManager.createNativeQuery("INSERT INTO nexco_provisiones_producto (instrumento,jerarquia,descripcion,cuenta,minimo,perimetro_ifrs9,stages_spain,producto_spain,sector_spain,signo) VALUES (?,?,?,?,?,?,?,?,?,?)", ProvisionsAndProduct.class);
+        Query query = entityManager.createNativeQuery("INSERT INTO preciso_provisiones_producto (instrumento,jerarquia,descripcion,cuenta,minimo,perimetro_ifrs9,stages_spain,producto_spain,sector_spain,signo) VALUES (?,?,?,?,?,?,?,?,?,?)", ProvisionsAndProduct.class);
         query.setParameter(1, ProvisionsAndProducts.getInstrumento());
         query.setParameter(2, ProvisionsAndProducts.getJerarquia());
         query.setParameter(3, ProvisionsAndProducts.getDescripcion());
@@ -108,13 +108,13 @@ public class ProvisionsAndProductService {
     }
 
     public void removeProvisionsAndProduct(String cuenta){
-        Query query = entityManager.createNativeQuery("DELETE FROM nexco_provisiones_producto WHERE cuenta = ? ", ProvisionsAndProduct.class);
+        Query query = entityManager.createNativeQuery("DELETE FROM preciso_provisiones_producto WHERE cuenta = ? ", ProvisionsAndProduct.class);
         query.setParameter(1, cuenta);
         query.executeUpdate();
     }
 
     public void clearProvisionsAndProduct(User user){
-        Query query = entityManager.createNativeQuery("DELETE FROM nexco_provisiones_producto", ProvisionsAndProduct.class);
+        Query query = entityManager.createNativeQuery("DELETE FROM preciso_provisiones_producto", ProvisionsAndProduct.class);
         query.executeUpdate();
     }
 
@@ -132,70 +132,70 @@ public class ProvisionsAndProductService {
         {
 
             case "Instrumento":
-                Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_provisiones_producto as em " +
+                Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_provisiones_producto as em " +
                         "WHERE em.instrumento LIKE ?", ProvisionsAndProduct.class);
                 query.setParameter(1, value);
                 list= query.getResultList();
                 break;
 
             case "Jerarquia":
-                Query query0 = entityManager.createNativeQuery("SELECT em.* FROM nexco_provisiones_producto as em " +
+                Query query0 = entityManager.createNativeQuery("SELECT em.* FROM preciso_provisiones_producto as em " +
                         "WHERE em.jerarquia LIKE ?", ProvisionsAndProduct.class);
                 query0.setParameter(1, value);
                 list= query0.getResultList();
                 break;
 
             case "Descripcion":
-                Query query1 = entityManager.createNativeQuery("SELECT em.* FROM nexco_provisiones_producto as em " +
+                Query query1 = entityManager.createNativeQuery("SELECT em.* FROM preciso_provisiones_producto as em " +
                         "WHERE em.descripcion LIKE ?", ProvisionsAndProduct.class);
                 query1.setParameter(1, value);
                 list= query1.getResultList();
                 break;
 
             case "Cuenta":
-                Query query2 = entityManager.createNativeQuery("SELECT em.* FROM nexco_provisiones_producto as em " +
+                Query query2 = entityManager.createNativeQuery("SELECT em.* FROM preciso_provisiones_producto as em " +
                         "WHERE em.cuenta LIKE ?", ProvisionsAndProduct.class);
                 query2.setParameter(1, value );
                 list= query2.getResultList();
                 break;
 
             case "Minimo":
-                Query query3 = entityManager.createNativeQuery("SELECT em.* FROM nexco_provisiones_producto as em " +
+                Query query3 = entityManager.createNativeQuery("SELECT em.* FROM preciso_provisiones_producto as em " +
                         "WHERE em.minimo LIKE ?", ProvisionsAndProduct.class);
                 query3.setParameter(1, value);
                 list= query3.getResultList();
                 break;
 
             case "PerimetroIFRS9":
-                Query query4 = entityManager.createNativeQuery("SELECT em.* FROM nexco_provisiones_producto as em " +
+                Query query4 = entityManager.createNativeQuery("SELECT em.* FROM preciso_provisiones_producto as em " +
                         "WHERE em.perimetro_ifrs9 LIKE ?", ProvisionsAndProduct.class);
                 query4.setParameter(1, value);
                 list= query4.getResultList();
                 break;
 
             case "StagesSpain":
-                Query query5 = entityManager.createNativeQuery("SELECT em.* FROM nexco_provisiones_producto as em " +
+                Query query5 = entityManager.createNativeQuery("SELECT em.* FROM preciso_provisiones_producto as em " +
                         "WHERE em.stages_spain LIKE ?", ProvisionsAndProduct.class);
                 query5.setParameter(1, value);
                 list= query5.getResultList();
                 break;
 
             case "ProductoSpain":
-                Query query6 = entityManager.createNativeQuery("SELECT em.* FROM nexco_provisiones_producto as em " +
+                Query query6 = entityManager.createNativeQuery("SELECT em.* FROM preciso_provisiones_producto as em " +
                         "WHERE em.producto_spain LIKE ?", ProvisionsAndProduct.class);
                 query6.setParameter(1, value);
                 list= query6.getResultList();
                 break;
 
             case "SectorSpain":
-                Query query7 = entityManager.createNativeQuery("SELECT em.* FROM nexco_provisiones_producto as em " +
+                Query query7 = entityManager.createNativeQuery("SELECT em.* FROM preciso_provisiones_producto as em " +
                         "WHERE em.sector_spain LIKE ?", ProvisionsAndProduct.class);
                 query7.setParameter(1, value);
                 list= query7.getResultList();
                 break;
 
             case "Signo":
-                Query query8 = entityManager.createNativeQuery("SELECT em.* FROM nexco_provisiones_producto as em " +
+                Query query8 = entityManager.createNativeQuery("SELECT em.* FROM preciso_provisiones_producto as em " +
                         "WHERE em.signo LIKE ?", ProvisionsAndProduct.class);
                 query8.setParameter(1, value);
                 list= query8.getResultList();

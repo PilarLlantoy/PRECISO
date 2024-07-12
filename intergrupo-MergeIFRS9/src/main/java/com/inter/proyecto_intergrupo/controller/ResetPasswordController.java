@@ -64,7 +64,7 @@ public class ResetPasswordController {
     }
 
     public void sendEmail(String recipientEmail, String link) {
-        String subject = "Cambio de contraseña BBVA Nexco";
+        String subject = "Cambio de contraseña BBVA PRECISO";
 
         String content = "<p>Hola,</p>"
                 + "<p>Ha solicitado recuperar su contraseña</p>"

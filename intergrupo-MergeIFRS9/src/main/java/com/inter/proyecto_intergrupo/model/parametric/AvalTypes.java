@@ -14,7 +14,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "nexco_tipo_aval")
+@Table(name = "preciso_tipo_aval")
 public class AvalTypes implements Serializable {
 
     @Id

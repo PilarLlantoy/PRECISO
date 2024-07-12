@@ -254,7 +254,7 @@ public class ControlPanelService {
     }
 
     public List<Object> findByAccounts(String centro,String componente,String input){
-        Query query = entityManager.createNativeQuery("SELECT ncr.centro, ncr.cuenta_local FROM nexco_cuentas_responsables as ncr \n" +
+        Query query = entityManager.createNativeQuery("SELECT ncr.centro, ncr.cuenta_local FROM preciso_cuentas_responsables as ncr \n" +
                 "WHERE ncr.centro = ? AND ncr.componente = ? AND ncr.input = ? ");
         query.setParameter(1, centro);
         query.setParameter(2, componente);
@@ -265,7 +265,7 @@ public class ControlPanelService {
     public void validateAccountsGlobal(List<String> listAccountsCompl, String centro,String input,String usuario,String periodo)
     {
 
-        Query queryS = entityManager.createNativeQuery("SELECT SUBSTRING(CAST(ncr.cuenta_local AS varchar),1,4) FROM nexco_cuentas_responsables as ncr \n" +
+        Query queryS = entityManager.createNativeQuery("SELECT SUBSTRING(CAST(ncr.cuenta_local AS varchar),1,4) FROM preciso_cuentas_responsables as ncr \n" +
                 "WHERE ncr.centro = :centro AND ncr.input = :input AND SUBSTRING(CAST(ncr.cuenta_local AS varchar),1,4) IN :lista GROUP BY SUBSTRING(CAST(ncr.cuenta_local AS varchar),1,4)");
         queryS.setParameter("centro", centro);
         queryS.setParameter("input", input);
@@ -276,7 +276,7 @@ public class ControlPanelService {
         {
             Query query = entityManager.createNativeQuery("UPDATE ncm SET semaforo_input = 'PENDING', usuario_carga = :usuario \n" +
                     "FROM preciso_administracion_cuadro_mando as ncm \n" +
-                    "INNER JOIN  nexco_cuentas_responsables AS ncr \n" +
+                    "INNER JOIN  preciso_cuentas_responsables AS ncr \n" +
                     "ON ncm.componente= ncr.componente AND ncr.input = ncm.input AND ncr.centro = ncm.responsable\n" +
                     "WHERE ncr.centro = :centro AND ncr.input = :input AND SUBSTRING(CAST(ncr.cuenta_local AS varchar),1,4) IN :listAccounts AND ncm.fecha_reporte = :periodo");
             query.setParameter("usuario", usuario);
@@ -299,14 +299,14 @@ public class ControlPanelService {
 
     public List<Object[]> getListRp21(String periodo){
         Query query = entityManager.createNativeQuery("SELECT local_rp21, div_rp21, SUM(vr_nominal_cop) AS suma " +
-                "FROM nexco_reporte_rp21 WHERE CONVERT(varchar(7),fecont,120) = ? GROUP BY local_rp21, div_rp21;");
+                "FROM preciso_reporte_rp21 WHERE CONVERT(varchar(7),fecont,120) = ? GROUP BY local_rp21, div_rp21;");
         query.setParameter(1,periodo);
         List<Object[]> listRp21 = query.getResultList();
         return listRp21;
     }
 
     public List<Object[]> getListQuery(String periodo){
-        Query query = entityManager.createNativeQuery("SELECT nucta,coddiv, SUM(salmes) AS suma FROM nexco_query WHERE fecont = ? GROUP BY nucta,coddiv;");
+        Query query = entityManager.createNativeQuery("SELECT nucta,coddiv, SUM(salmes) AS suma FROM preciso_query WHERE fecont = ? GROUP BY nucta,coddiv;");
         query.setParameter(1,periodo);
         List<Object[]> listQuery = query.getResultList();
         return listQuery;
@@ -401,7 +401,7 @@ public class ControlPanelService {
 
     public void deleteIntergrupo(String period, String inter){
         if(inter.equals("v1")){
-            Query delete = entityManager.createNativeQuery("DELETE FROM /*nexco_intergrupo_v1*/ nexco_intergrupo_v1_def WHERE periodo = ?");
+            Query delete = entityManager.createNativeQuery("DELETE FROM /*preciso_intergrupo_v1*/ preciso_intergrupo_v1_def WHERE periodo = ?");
             delete.setParameter(1,period);
             delete.executeUpdate();
 
@@ -409,7 +409,7 @@ public class ControlPanelService {
             deleteControl.setParameter(1,period);
             deleteControl.executeUpdate();
         }else{
-            Query delete = entityManager.createNativeQuery("DELETE FROM /*nexco_intergrupo_v2*/ nexco_intergrupo_v2_def WHERE periodo = ?");
+            Query delete = entityManager.createNativeQuery("DELETE FROM /*preciso_intergrupo_v2*/ preciso_intergrupo_v2_def WHERE periodo = ?");
             delete.setParameter(1,period);
             delete.executeUpdate();
         }

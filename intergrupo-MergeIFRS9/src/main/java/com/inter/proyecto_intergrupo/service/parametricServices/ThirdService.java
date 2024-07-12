@@ -230,7 +230,7 @@ public class ThirdService {
                 else if(thirdRepository.findByNit(cellNit)==null)
                 {
 
-                    Query query0 = entityManager.createNativeQuery("SELECT em.yntp FROM nexco_sociedades_yntp as em " +
+                    Query query0 = entityManager.createNativeQuery("SELECT em.yntp FROM preciso_sociedades_yntp as em " +
                             "WHERE em.yntp = ?");
                     query0.setParameter(1, cellYntp);
 
@@ -256,7 +256,7 @@ public class ThirdService {
                 else if(thirdRepository.findByNit(cellNit)!=null)
                 {
 
-                    Query query0 = entityManager.createNativeQuery("SELECT em.yntp FROM nexco_sociedades_yntp as em " +
+                    Query query0 = entityManager.createNativeQuery("SELECT em.yntp FROM preciso_sociedades_yntp as em " +
                             "WHERE em.yntp = ?");
                     query0.setParameter(1, cellYntp);
 
@@ -385,7 +385,7 @@ public class ThirdService {
         switch (filter)
         {
             case "NIT":
-                Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_terceros as em " +
+                Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_terceros as em " +
                         "WHERE em.nit_contraparte LIKE ?", Third.class);
                 query.setParameter(1, value );
 
@@ -393,42 +393,42 @@ public class ThirdService {
 
                 break;
             case "Contraparte":
-                Query query0 = entityManager.createNativeQuery("SELECT em.* FROM nexco_terceros as em " +
+                Query query0 = entityManager.createNativeQuery("SELECT em.* FROM preciso_terceros as em " +
                         "WHERE em.contraparte LIKE ?", Third.class);
                 query0.setParameter(1, value);
 
                 list= query0.getResultList();
                 break;
             case "Código Cliente":
-                Query query1 = entityManager.createNativeQuery("SELECT em.* FROM nexco_terceros as em " +
+                Query query1 = entityManager.createNativeQuery("SELECT em.* FROM preciso_terceros as em " +
                         "WHERE em.codigo_cliente LIKE ?", Third.class);
                 query1.setParameter(1, value);
 
                 list= query1.getResultList();
                 break;
             case "Tipo":
-                Query query2 = entityManager.createNativeQuery("SELECT em.* FROM nexco_terceros as em " +
+                Query query2 = entityManager.createNativeQuery("SELECT em.* FROM preciso_terceros as em " +
                         "WHERE em.tipo LIKE ?", Third.class);
                 query2.setParameter(1, value);
 
                 list= query2.getResultList();
                 break;
             case "DV":
-                Query query3 = entityManager.createNativeQuery("SELECT em.* FROM nexco_terceros as em " +
+                Query query3 = entityManager.createNativeQuery("SELECT em.* FROM preciso_terceros as em " +
                         "WHERE em.dv LIKE ?", Third.class);
                 query3.setParameter(1, value);
 
                 list= query3.getResultList();
                 break;
             case "YNTP":
-                Query query4 = entityManager.createNativeQuery("SELECT em.* FROM nexco_terceros as em " +
+                Query query4 = entityManager.createNativeQuery("SELECT em.* FROM preciso_terceros as em " +
                         "WHERE em.yntp LIKE ?", Third.class);
                 query4.setParameter(1, value);
 
                 list= query4.getResultList();
                 break;
             case "Marca Tipo de Institución":
-                Query query5 = entityManager.createNativeQuery("SELECT em.* FROM nexco_terceros as em " +
+                Query query5 = entityManager.createNativeQuery("SELECT em.* FROM preciso_terceros as em " +
                         "WHERE em.marca_tipo_institucion LIKE ?", Third.class);
                 query5.setParameter(1, value);
 

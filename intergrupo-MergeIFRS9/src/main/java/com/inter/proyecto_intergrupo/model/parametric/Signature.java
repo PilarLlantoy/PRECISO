@@ -14,7 +14,7 @@ import java.sql.Blob;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "nexco_firmas")
+@Table(name = "preciso_firmas")
 public class Signature implements Serializable{
 
     @Id

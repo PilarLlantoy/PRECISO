@@ -18,7 +18,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "nexco_h140_completa_ifrs9")
+@Table(name = "preciso_h140_completa_ifrs9")
 public class MarcacionConcil implements Serializable {
 
     @Id
