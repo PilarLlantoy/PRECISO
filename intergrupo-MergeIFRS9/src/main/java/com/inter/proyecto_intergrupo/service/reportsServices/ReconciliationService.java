@@ -133,7 +133,7 @@ public class ReconciliationService {
     public List<Object[]> getCdM(String periodo){
 
         Query resultInt = entityManager.createNativeQuery("SELECT componente, semaforo_componente\n" +
-                "FROM nexco_cuadro_mando \n" +
+                "FROM preciso_administracion_cuadro_mando \n" +
                 "where fecha_reporte  = ? \n" +
                 "group by componente, semaforo_componente");
         resultInt.setParameter(1,periodo);

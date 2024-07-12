@@ -101,37 +101,37 @@ public class RejectionsCcService {
         boolean error=false;
         boolean pass=true;
 
-        Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuadro_mando_ifrs as em " +
+        Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_administracion_cuadro_mando_ifrs as em " +
                 "WHERE em.input = ? AND em.componente = ?", ControlPanelIfrs.class);
         query.setParameter(1, "CUENTA PROV" );
         query.setParameter(2, "RECHAZOS");
         List<ControlPanelIfrs> cuentaProvList= query.getResultList();
 
-        Query query1 = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuadro_mando_ifrs as em " +
+        Query query1 = entityManager.createNativeQuery("SELECT em.* FROM preciso_administracion_cuadro_mando_ifrs as em " +
                 "WHERE em.input = ? AND em.componente = ?", ControlPanelIfrs.class);
         query1.setParameter(1, "CUENTA RECLASIFICACION" );
         query1.setParameter(2, "RECHAZOS");
         List<ControlPanelIfrs> cuentaReclaList= query1.getResultList();
 
-        Query query2 = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuadro_mando_ifrs as em " +
+        Query query2 = entityManager.createNativeQuery("SELECT em.* FROM preciso_administracion_cuadro_mando_ifrs as em " +
                 "WHERE em.input = ? AND em.componente = ?", ControlPanelIfrs.class);
         query2.setParameter(1, "CUENTA IMPUESTOS" );
         query2.setParameter(2, "RECHAZOS");
         List<ControlPanelIfrs> cuentaImpuList= query2.getResultList();
 
-        Query query3 = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuadro_mando as em " +
+        Query query3 = entityManager.createNativeQuery("SELECT em.* FROM preciso_administracion_cuadro_mando as em " +
                 "WHERE em.input = ? AND em.componente = ?", ControlPanelIfrs.class);
         query3.setParameter(1, "RISTRAS PROV" );
         query3.setParameter(2, "RECHAZOS");
         List<ControlPanelIfrs> ristrasProvList= query3.getResultList();
 
-        Query query4 = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuadro_mando as em " +
+        Query query4 = entityManager.createNativeQuery("SELECT em.* FROM preciso_administracion_cuadro_mando as em " +
                 "WHERE em.input = ? AND em.componente = ?", ControlPanelIfrs.class);
         query4.setParameter(1, "RISTRAS RECLASIFICACION" );
         query4.setParameter(2, "RECHAZOS");
         List<ControlPanelIfrs> ristrasReclaList= query4.getResultList();
 
-        Query query5 = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuadro_mando as em " +
+        Query query5 = entityManager.createNativeQuery("SELECT em.* FROM preciso_administracion_cuadro_mando as em " +
                 "WHERE em.input = ? AND em.componente = ?", ControlPanelIfrs.class);
         query5.setParameter(1, "RISTRAS IMPUESTOS" );
         query5.setParameter(2, "RECHAZOS");
@@ -281,7 +281,7 @@ public class RejectionsCcService {
                     temporal2.setSemaforoInput("PENDING");
                     temporal2.setUsuarioCarga(user.getPrimerNombre());
 
-                    Query query7 = entityManager.createNativeQuery("UPDATE nexco_cuadro_mando_ifrs SET semaforo_input = ? " +
+                    Query query7 = entityManager.createNativeQuery("UPDATE preciso_administracion_cuadro_mando_ifrs SET semaforo_input = ? " +
                             "WHERE input = ? AND componente = ? ", ControlPanelIfrs.class);
                     query7.setParameter(1, temporal2.getSemaforoInput());
                     query7.setParameter(2, temporal2.getInput());
@@ -322,7 +322,7 @@ public class RejectionsCcService {
                     temporal2.setSemaforoInput("PENDING");
                     temporal2.setUsuarioCarga(user.getPrimerNombre());
 
-                    Query query7 = entityManager.createNativeQuery("UPDATE nexco_cuadro_mando_ifrs SET semaforo_input = ? " +
+                    Query query7 = entityManager.createNativeQuery("UPDATE preciso_administracion_cuadro_mando_ifrs SET semaforo_input = ? " +
                             "WHERE input = ? AND componente = ? ", ControlPanelIfrs.class);
                     query7.setParameter(1, temporal2.getSemaforoInput());
                     query7.setParameter(2, temporal2.getInput());
@@ -363,7 +363,7 @@ public class RejectionsCcService {
                     temporal2.setSemaforoInput("PENDING");
                     temporal2.setUsuarioCarga(user.getPrimerNombre());
 
-                    Query query7 = entityManager.createNativeQuery("UPDATE nexco_cuadro_mando_ifrs SET semaforo_input = ? " +
+                    Query query7 = entityManager.createNativeQuery("UPDATE preciso_administracion_cuadro_mando_ifrs SET semaforo_input = ? " +
                             "WHERE input = ? AND componente = ? ", ControlPanelIfrs.class);
                     query7.setParameter(1, temporal2.getSemaforoInput());
                     query7.setParameter(2, temporal2.getInput());
@@ -404,7 +404,7 @@ public class RejectionsCcService {
                     temporal2.setSemaforoInput("PENDING");
                     temporal2.setUsuarioCarga(user.getPrimerNombre());
 
-                    Query query7 = entityManager.createNativeQuery("UPDATE nexco_cuadro_mando_ifrs SET semaforo_input = ? " +
+                    Query query7 = entityManager.createNativeQuery("UPDATE preciso_administracion_cuadro_mando_ifrs SET semaforo_input = ? " +
                             "WHERE input = ? AND componente = ? ", ControlPanelIfrs.class);
                     query7.setParameter(1, temporal2.getSemaforoInput());
                     query7.setParameter(2, temporal2.getInput());
@@ -445,7 +445,7 @@ public class RejectionsCcService {
                     temporal2.setSemaforoInput("PENDING");
                     temporal2.setUsuarioCarga(user.getPrimerNombre());
 
-                    Query query7 = entityManager.createNativeQuery("UPDATE nexco_cuadro_mando_ifrs SET semaforo_input = ? " +
+                    Query query7 = entityManager.createNativeQuery("UPDATE preciso_administracion_cuadro_mando_ifrs SET semaforo_input = ? " +
                             "WHERE input = ? AND componente = ? ", ControlPanelIfrs.class);
                     query7.setParameter(1, temporal2.getSemaforoInput());
                     query7.setParameter(2, temporal2.getInput());
@@ -486,7 +486,7 @@ public class RejectionsCcService {
                     temporal2.setSemaforoInput("PENDING");
                     temporal2.setUsuarioCarga(user.getPrimerNombre());
 
-                    Query query7 = entityManager.createNativeQuery("UPDATE nexco_cuadro_mando_ifrs SET semaforo_input = ? " +
+                    Query query7 = entityManager.createNativeQuery("UPDATE preciso_administracion_cuadro_mando_ifrs SET semaforo_input = ? " +
                             "WHERE input = ? AND componente = ? ", ControlPanelIfrs.class);
                     query7.setParameter(1, temporal2.getSemaforoInput());
                     query7.setParameter(2, temporal2.getInput());
@@ -526,7 +526,7 @@ public class RejectionsCcService {
 
     public void changeEmpty(String input)
     {
-        Query query5 = entityManager.createNativeQuery("UPDATE nexco_cuadro_mando_ifrs SET semaforo_input = ?, semaforo_componente = ? " +
+        Query query5 = entityManager.createNativeQuery("UPDATE preciso_administracion_cuadro_mando_ifrs SET semaforo_input = ?, semaforo_componente = ? " +
                 "WHERE componente = ? AND input = ?", ControlPanelIfrs.class);
         query5.setParameter(1, "EMPTY");
         query5.setParameter(2, "EMPTY");
@@ -551,7 +551,7 @@ public class RejectionsCcService {
 
             insertLoad();
 
-            Query query5 = entityManager.createNativeQuery("UPDATE nexco_cuadro_mando_ifrs SET semaforo_componente = ?, semaforo_input = ? " +
+            Query query5 = entityManager.createNativeQuery("UPDATE preciso_administracion_cuadro_mando_ifrs SET semaforo_componente = ?, semaforo_input = ? " +
                     "WHERE componente = ? AND semaforo_input = ?", ControlPanelIfrs.class);
             query5.setParameter(1, "PENDING");
             query5.setParameter(2, "PENDING");
@@ -586,11 +586,11 @@ public class RejectionsCcService {
 
     public void validateComponent(String component){
 
-        Query queryFinal = entityManager.createNativeQuery("SELECT * FROM nexco_cuadro_mando_ifrs " +
+        Query queryFinal = entityManager.createNativeQuery("SELECT * FROM preciso_administracion_cuadro_mando_ifrs " +
                 "WHERE componente = ? AND semaforo_input = 'PENDING' ", ControlPanelIfrs.class);
         queryFinal.setParameter(1, component);
 
-        Query query5 = entityManager.createNativeQuery("UPDATE nexco_cuadro_mando_ifrs SET semaforo_componente = ? " +
+        Query query5 = entityManager.createNativeQuery("UPDATE preciso_administracion_cuadro_mando_ifrs SET semaforo_componente = ? " +
                 "WHERE componente = ? ", ControlPanelIfrs.class);
         query5.setParameter(2, component);
 
@@ -790,7 +790,7 @@ public class RejectionsCcService {
 
     public boolean deleteAll()
     {
-        Query query7 = entityManager.createNativeQuery("UPDATE nexco_cuadro_mando_ifrs SET semaforo_input = 'EMPTY' , semaforo_componente = 'EMPTY' " +
+        Query query7 = entityManager.createNativeQuery("UPDATE preciso_administracion_cuadro_mando_ifrs SET semaforo_input = 'EMPTY' , semaforo_componente = 'EMPTY' " +
                 "WHERE componente = ? ", ControlPanelIfrs.class);
         query7.setParameter(1, "RECHAZOS");
         query7.executeUpdate();
@@ -841,7 +841,7 @@ public class RejectionsCcService {
 
             deleteAll.executeUpdate();
 
-            Query updateAll2 = entityManager.createNativeQuery("update nexco_cuadro_mando_ifrs \n" +
+            Query updateAll2 = entityManager.createNativeQuery("update preciso_administracion_cuadro_mando_ifrs \n" +
                     "set semaforo_input = 'EMPTY' , usuario_carga = ?, fecha_cargue = ?, semaforo_componente = 'EMPTY'\n" +
                     "where input = ? AND componente = ?");
             updateAll2.setParameter(1,user.getPrimerNombre());
@@ -861,7 +861,7 @@ public class RejectionsCcService {
     {
         try{
             Date hoy = new Date();
-            Query updateAll2 = entityManager.createNativeQuery("update nexco_cuadro_mando_ifrs \n" +
+            Query updateAll2 = entityManager.createNativeQuery("update preciso_administracion_cuadro_mando_ifrs \n" +
                     "set semaforo_componente = 'FULL' , usuario_carga = ? , fecha_cargue = ?\n" +
                     "where componente = ?");
             updateAll2.setParameter(1,user.getPrimerNombre());
@@ -869,7 +869,7 @@ public class RejectionsCcService {
             updateAll2.setParameter(3,"RECHAZOS");
             updateAll2.executeUpdate();
 
-            Query updateAll4 = entityManager.createNativeQuery("update nexco_cuadro_mando_ifrs \n" +
+            Query updateAll4 = entityManager.createNativeQuery("update preciso_administracion_cuadro_mando_ifrs \n" +
                     "set semaforo_input = 'FULL' \n" +
                     "where componente = ? AND semaforo_input = ?");
             updateAll4.setParameter(1,"RECHAZOS");
@@ -877,7 +877,7 @@ public class RejectionsCcService {
             updateAll4.executeUpdate();
 
             String resetPasswordLink = Utility.getSiteURL(request) + "/ifrs/accountCreation";
-            Query emails = entityManager.createNativeQuery("SELECT distinct A.* FROM nexco_usuarios A, nexco_rol_vista B, nexco_vistas C, nexco_user_rol D WHERE A.usuario = D.usuario AND D.id_perfil = B.id_perfil AND B.id_vista = C.id_vista \n" +
+            Query emails = entityManager.createNativeQuery("SELECT distinct A.* FROM preciso_administracion_usuarios A, preciso_administracion_rol_vista B, preciso_administracion_vistas C, preciso_administracion_user_rol D WHERE A.usuario = D.usuario AND D.id_perfil = B.id_perfil AND B.id_vista = C.id_vista \n" +
                     "AND C.nombre = 'Ver Creación de Cuentas (General)' and a.estado=1 ", User.class);
             List<User>listEmails = emails.getResultList();
             for (User u : listEmails)
@@ -886,7 +886,7 @@ public class RejectionsCcService {
             }
 
             String resetPasswordLink1 = Utility.getSiteURL(request) + "/ifrs/segmentsRisk";
-            Query emails1 = entityManager.createNativeQuery("SELECT distinct A.* FROM nexco_usuarios A, nexco_rol_vista B, nexco_vistas C, nexco_user_rol D WHERE A.usuario = D.usuario AND D.id_perfil = B.id_perfil AND B.id_vista = C.id_vista \n" +
+            Query emails1 = entityManager.createNativeQuery("SELECT distinct A.* FROM preciso_administracion_usuarios A, preciso_administracion_rol_vista B, preciso_administracion_vistas C, preciso_administracion_user_rol D WHERE A.usuario = D.usuario AND D.id_perfil = B.id_perfil AND B.id_vista = C.id_vista \n" +
                     "AND C.nombre = 'Ver Ajuste Segmentos Rechazos' and a.estado=1 ", User.class);
             List<User>listEmails1 = emails1.getResultList();
             for (User u : listEmails1)

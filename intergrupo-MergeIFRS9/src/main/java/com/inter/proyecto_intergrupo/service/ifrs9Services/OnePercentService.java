@@ -45,7 +45,7 @@ public class OnePercentService {
     @Scheduled(cron = "0 30 10 * * * ")
     public void executeJobMAuto() throws ParseException {
 
-        Query query1 = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuadro_mando_jobs as em WHERE em.nombre = 'Calculo 1%' AND em.estado = 1", ControlPanelJobs.class);
+        Query query1 = entityManager.createNativeQuery("SELECT em.* FROM preciso_administracion_cuadro_mando_jobs as em WHERE em.nombre = 'Calculo 1%' AND em.estado = 1", ControlPanelJobs.class);
         if(!query1.getResultList().isEmpty()) {
             Date today = new Date();
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", new Locale("es", "ES"));
@@ -81,7 +81,7 @@ public class OnePercentService {
     @Scheduled(cron = "0 30 17 * * * ")
     public void executeJobMAuto2() throws ParseException {
 
-        Query query1 = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuadro_mando_jobs as em WHERE em.nombre = 'Calculo 1%' AND em.estado = 1", ControlPanelJobs.class);
+        Query query1 = entityManager.createNativeQuery("SELECT em.* FROM preciso_administracion_cuadro_mando_jobs as em WHERE em.nombre = 'Calculo 1%' AND em.estado = 1", ControlPanelJobs.class);
         if(!query1.getResultList().isEmpty()) {
             Date today = new Date();
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", new Locale("es", "ES"));

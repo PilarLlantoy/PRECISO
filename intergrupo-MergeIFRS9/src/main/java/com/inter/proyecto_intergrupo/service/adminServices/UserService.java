@@ -73,7 +73,7 @@ public class    UserService {
             query1.executeUpdate();
         }
 
-        //Query query = entityManager.createNativeQuery("SELECT nua.cuenta_local FROM nexco_user_account AS nua, nexco_usuarios AS nu WHERE nua.id_usuario=nu.usuario AND nu.centro = ? GROUP BY nua.cuenta_local");
+        //Query query = entityManager.createNativeQuery("SELECT nua.cuenta_local FROM nexco_user_account AS nua, preciso_administracion_usuarios AS nu WHERE nua.id_usuario=nu.usuario AND nu.centro = ? GROUP BY nua.cuenta_local");
         Query query = entityManager.createNativeQuery("SELECT ncr.cuenta_local FROM nexco_cuentas_responsables AS ncr WHERE ncr.centro = ? GROUP BY ncr.cuenta_local");
         query.setParameter(1,centro);
         List<Object> list =query.getResultList();
@@ -140,7 +140,7 @@ public class    UserService {
 
     public List<Object[]> findUserByCentroAccount(Long cuenta)
     {
-        Query getCentro = entityManager.createNativeQuery("SELECT nu.centro FROM nexco_user_account AS nua, nexco_usuarios AS nu WHERE nua.cuenta_local = ? AND nu.usuario = nua.id_usuario");
+        Query getCentro = entityManager.createNativeQuery("SELECT nu.centro FROM nexco_user_account AS nua, preciso_administracion_usuarios AS nu WHERE nua.cuenta_local = ? AND nu.usuario = nua.id_usuario");
         getCentro.setParameter(1,cuenta);
 
         return getCentro.getResultList();
@@ -148,7 +148,7 @@ public class    UserService {
 
     public List<String> findUserByCentroAccount2(Long cuenta)
     {
-        Query getCentro = entityManager.createNativeQuery("SELECT nu.centro FROM nexco_user_account AS nua, nexco_usuarios AS nu WHERE nua.cuenta_local = ? AND nu.usuario = nua.id_usuario");
+        Query getCentro = entityManager.createNativeQuery("SELECT nu.centro FROM nexco_user_account AS nua, preciso_administracion_usuarios AS nu WHERE nua.cuenta_local = ? AND nu.usuario = nua.id_usuario");
         getCentro.setParameter(1,cuenta);
 
         return getCentro.getResultList();
@@ -161,7 +161,7 @@ public class    UserService {
 
     public boolean validateEndpoint(int usuario,String vista)
     {
-        Query validate = entityManager.createNativeQuery("SELECT nv.id_vista FROM nexco_user_rol AS nur, nexco_rol_vista AS nrv, nexco_vistas AS nv\n" +
+        Query validate = entityManager.createNativeQuery("SELECT nv.id_vista FROM preciso_administracion_user_rol AS nur, preciso_administracion_rol_vista AS nrv, preciso_administracion_vistas AS nv\n" +
                 "WHERE nur.id_perfil = nrv.id_perfil AND nrv.id_vista = nv.id_vista AND nur.id_usuario = ? AND nv.nombre = ? ");
         validate.setParameter(1,usuario);
         validate.setParameter(2,vista);
@@ -171,7 +171,7 @@ public class    UserService {
 
     public boolean validateEndpointVer(int usuario,String vista)
     {
-        Query validate = entityManager.createNativeQuery("SELECT nrv.p_visualizar FROM nexco_user_rol AS nur, nexco_rol_vista AS nrv, nexco_vistas AS nv\n" +
+        Query validate = entityManager.createNativeQuery("SELECT nrv.p_visualizar FROM preciso_administracion_user_rol AS nur, preciso_administracion_rol_vista AS nrv, preciso_administracion_vistas AS nv\n" +
                 "WHERE nur.id_perfil = nrv.id_perfil AND nrv.id_vista = nv.id_vista AND nur.id_usuario = ? AND nv.nombre = ? ");
         validate.setParameter(1,usuario);
         validate.setParameter(2,vista);
@@ -179,7 +179,7 @@ public class    UserService {
     }
     public boolean validateEndpointModificar(int usuario,String vista)
     {
-        Query validate = entityManager.createNativeQuery("SELECT nrv.p_modificar FROM nexco_user_rol AS nur, nexco_rol_vista AS nrv, nexco_vistas AS nv\n" +
+        Query validate = entityManager.createNativeQuery("SELECT nrv.p_modificar FROM preciso_administracion_user_rol AS nur, preciso_administracion_rol_vista AS nrv, preciso_administracion_vistas AS nv\n" +
                 "WHERE nur.id_perfil = nrv.id_perfil AND nrv.id_vista = nv.id_vista AND nur.id_usuario = ? AND nv.nombre = ? ");
         validate.setParameter(1,usuario);
         validate.setParameter(2,vista);
@@ -188,7 +188,7 @@ public class    UserService {
 
     public List<String> validatePrincipal(String principal)
     {
-        Query validate = entityManager.createNativeQuery("SELECT nv.sub_menu_p1 FROM nexco_vistas AS nv WHERE nv.menu_principal = ? GROUP BY nv.sub_menu_p1");
+        Query validate = entityManager.createNativeQuery("SELECT nv.sub_menu_p1 FROM preciso_administracion_vistas AS nv WHERE nv.menu_principal = ? GROUP BY nv.sub_menu_p1");
         validate.setParameter(1,principal);
         return validate.getResultList();
     }
@@ -201,56 +201,53 @@ public class    UserService {
         List<User> list=new ArrayList<User>();
         switch (filter)
         {
-            case "Usuario":
-                Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_usuarios as em " +
-                        "WHERE em.usuario LIKE ?", User.class);
+            case "Código":
+                Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_administracion_usuarios as em " +
+                        "WHERE em.codigo_usuario LIKE ?", User.class);
                 query.setParameter(1, value );
 
                 list= query.getResultList();
 
                 break;
             case "Nombre":
-                Query query0 = entityManager.createNativeQuery("SELECT em.* FROM nexco_usuarios as em " +
-                        "WHERE em.nombre LIKE ?", User.class);
-                query0.setParameter(1, value);
+                String sql = "SELECT em.* FROM preciso_administracion_usuarios as em " +
+                        "WHERE em.primer_nombre LIKE ? OR em.segundo_nombre LIKE ? " +
+                        "OR em.primer_apellido LIKE ? OR em.segundo_apellido LIKE ?";
 
-                list= query0.getResultList();
-                break;
-            case "Correo":
-                Query query1 = entityManager.createNativeQuery("SELECT em.* FROM nexco_usuarios as em " +
-                        "WHERE em.correo LIKE ?", User.class);
-                query1.setParameter(1, value);
+                Query query0 = entityManager.createNativeQuery(sql, User.class);
+                String likeValue = "%" + value + "%";
+                query0.setParameter(1, likeValue);
+                query0.setParameter(2, likeValue);
+                query0.setParameter(3, likeValue);
+                query0.setParameter(4, likeValue);
 
-                list= query1.getResultList();
+                list = query0.getResultList();
                 break;
-            case "Centro":
-                Query query2 = entityManager.createNativeQuery("SELECT em.* FROM nexco_usuarios as em " +
-                        "WHERE em.centro LIKE ?", User.class);
-                query2.setParameter(1, value);
+            case "Cargo":
+                String sql2 = "SELECT em.* FROM preciso_administracion_usuarios em " +
+                        "JOIN preciso_administracion_cargos ec ON em.id_cargo = ec.id_cargo " +
+                        "WHERE ec.nombre_cargo LIKE ?";
 
-                list= query2.getResultList();
-                break;
-            case "Estado":
-                Query query3 = entityManager.createNativeQuery("SELECT em.* FROM nexco_usuarios as em " +
-                        "WHERE em.estado LIKE ?", User.class);
-                query3.setParameter(1, value);
+                Query query1 = entityManager.createNativeQuery(sql2, User.class);
+                String likeValue1 = "%" + value + "%";
+                query1.setParameter(1, likeValue1);
 
-                list= query3.getResultList();
+                list = query1.getResultList();
                 break;
-            case "Roles":
-                Query query4 = entityManager.createNativeQuery("SELECT nu.* FROM nexco_usuarios as nu, nexco_user_rol AS nur, nexco_perfiles AS np \n" +
-                        "WHERE nu.usuario = nur.usuario AND nur.id_perfil = np.id_perfil AND np.nombre_perfil LIKE ?", User.class);
-                query4.setParameter(1, value);
+            case "Perfil":
+                String sql3 = "SELECT em.* " +
+                        "FROM preciso_administracion_usuarios em " +
+                        "JOIN preciso_administracion_user_rol ur ON em.id_usuario = ur.id_usuario " +
+                        "JOIN preciso_administracion_perfiles p ON ur.id_perfil = p.id_perfil " +
+                        "WHERE p.nombre_perfil LIKE ?";
 
-                list= query4.getResultList();
-                break;
-            case "YNTP Empresa":
-                Query query5 = entityManager.createNativeQuery("SELECT em.* FROM nexco_usuarios as em " +
-                        "WHERE em.empresa LIKE ?", User.class);
-                query5.setParameter(1, value);
+                Query query2 = entityManager.createNativeQuery(sql3, User.class);
+                String likeValue2 = "%" + value + "%";
+                query2.setParameter(1, likeValue2);
 
-                list= query5.getResultList();
+                list = query2.getResultList();
                 break;
+
             default:
                 break;
         }
@@ -261,8 +258,8 @@ public class    UserService {
 
     public void loadAudit(User user)
     {
-        Query query = entityManager.createNativeQuery("DELETE FROM nexco_logueo where usuario = ?; " +
-                "INSERT into nexco_logueo (usuario,nombre,fecha) values(?,?,?);");
+        Query query = entityManager.createNativeQuery("DELETE FROM preciso_administracion_logueo where usuario = ?; " +
+                "INSERT into preciso_administracion_logueo (usuario,nombre,fecha) values(?,?,?);");
         query.setParameter(1, user.getUsuario());
         query.setParameter(2, user.getUsuario());
         query.setParameter(3, user.getPrimerNombre());

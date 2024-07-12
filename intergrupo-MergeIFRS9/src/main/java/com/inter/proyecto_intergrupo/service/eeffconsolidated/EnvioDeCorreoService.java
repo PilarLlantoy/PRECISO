@@ -47,7 +47,7 @@ public class EnvioDeCorreoService {
     public void SendMailFiliales(String entidad, String periodo) {
         DatesLoadEeFF estado = datesLoadEeffRepository.findByEntidadAndPeriodo(entidad, periodo);
 
-        Query emails = entityManager.createNativeQuery("SELECT DISTINCT a.* FROM nexco_usuarios a, nexco_vistas b, nexco_rol_vista c, nexco_user_rol d \n" +
+        Query emails = entityManager.createNativeQuery("SELECT DISTINCT a.* FROM preciso_administracion_usuarios a, preciso_administracion_vistas b, preciso_administracion_rol_vista c, preciso_administracion_user_rol d \n" +
                 "WHERE a.usuario = d.usuario AND d.id_perfil = c.id_perfil AND c.id_vista=b.id_vista AND b.nombre IN ('Ver EEFF Consolidado Fiduciaria','Ver EEFF Consolidado Valores')", User.class);
         List<User> listEmails = emails.getResultList();
 

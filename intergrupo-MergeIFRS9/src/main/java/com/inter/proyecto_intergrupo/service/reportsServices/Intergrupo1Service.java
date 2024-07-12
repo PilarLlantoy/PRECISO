@@ -275,7 +275,7 @@ public class Intergrupo1Service {
 
     public void  updateStateTemplate(User user,String periodo)
     {
-        Query templateBankUpdate = entityManager.createNativeQuery("UPDATE nexco_cuadro_mando SET semaforo_input = ?,estado = 0, fecha_carga = ? where input = ? AND responsable = ? AND fecha_reporte = ?");
+        Query templateBankUpdate = entityManager.createNativeQuery("UPDATE preciso_administracion_cuadro_mando SET semaforo_input = ?,estado = 0, fecha_carga = ? where input = ? AND responsable = ? AND fecha_reporte = ?");
         templateBankUpdate.setParameter(1, "FULL");
         templateBankUpdate.setParameter(2, new Date());
         templateBankUpdate.setParameter(3, "PLANTILLA BANCO");
@@ -283,7 +283,7 @@ public class Intergrupo1Service {
         templateBankUpdate.setParameter(5, periodo);
         templateBankUpdate.executeUpdate();
 
-        Query templateBank = entityManager.createNativeQuery("SELECT * FROM nexco_cuadro_mando where input = ? AND responsable = ? AND fecha_reporte = ? AND semaforo_input = ?");
+        Query templateBank = entityManager.createNativeQuery("SELECT * FROM preciso_administracion_cuadro_mando where input = ? AND responsable = ? AND fecha_reporte = ? AND semaforo_input = ?");
         templateBank.setParameter(1, "PLANTILLA BANCO");
         templateBank.setParameter(2, user.getCentro());
         templateBank.setParameter(3, periodo);
@@ -291,7 +291,7 @@ public class Intergrupo1Service {
 
         if(templateBank.getResultList().size()==0)
         {
-            Query templateBankUpdateC = entityManager.createNativeQuery("UPDATE nexco_cuadro_mando SET semaforo_componente = ?, fecha_carga = ? where input = ? AND responsable = ? AND fecha_reporte = ?");
+            Query templateBankUpdateC = entityManager.createNativeQuery("UPDATE preciso_administracion_cuadro_mando SET semaforo_componente = ?, fecha_carga = ? where input = ? AND responsable = ? AND fecha_reporte = ?");
             templateBankUpdateC.setParameter(1, "FULL");
             templateBankUpdateC.setParameter(2, new Date());
             templateBankUpdateC.setParameter(3, "PLANTILLA BANCO");
@@ -303,7 +303,7 @@ public class Intergrupo1Service {
 
     public boolean validateComponentTemplate(User user, String periodo)
     {
-        Query templateBank = entityManager.createNativeQuery("SELECT * FROM nexco_cuadro_mando where input = ? AND responsable = ? AND fecha_reporte = ? AND estado = 1");
+        Query templateBank = entityManager.createNativeQuery("SELECT * FROM preciso_administracion_cuadro_mando where input = ? AND responsable = ? AND fecha_reporte = ? AND estado = 1");
         templateBank.setParameter(1, "PLANTILLA BANCO");
         templateBank.setParameter(2, user.getCentro());
         templateBank.setParameter(3, periodo);

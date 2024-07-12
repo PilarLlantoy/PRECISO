@@ -61,7 +61,7 @@ public class SiccService{
     @Scheduled(cron = "0 50 23 * * ?")
     public void saveFromSiccJob() {
 
-        Query query1 = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuadro_mando_jobs as em WHERE em.nombre = ? AND em.estado = ?", ControlPanelJobs.class);
+        Query query1 = entityManager.createNativeQuery("SELECT em.* FROM preciso_administracion_cuadro_mando_jobs as em WHERE em.nombre = ? AND em.estado = ?", ControlPanelJobs.class);
         query1.setParameter(1, "SICC");
         query1.setParameter(2, true);
         List<ControlPanelJobs> listTemporal=query1.getResultList();

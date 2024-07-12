@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "nexco_tipo_documento")
+@Table(name = "preciso_administracion_tipo_documento")
 public class TipoDocumento {
 
     @Id

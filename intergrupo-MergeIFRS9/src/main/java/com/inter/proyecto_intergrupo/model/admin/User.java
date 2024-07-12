@@ -19,7 +19,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "nexco_usuarios")
+@Table(name = "preciso_administracion_usuarios")
 public class User {
 
 
@@ -57,7 +57,7 @@ public class User {
 
     @ManyToMany(cascade = CascadeType.MERGE)
     @ToString.Exclude
-    @JoinTable(name="nexco_user_rol", joinColumns = @JoinColumn(name="id_usuario"), inverseJoinColumns = @JoinColumn(name = "id_perfil"))
+    @JoinTable(name="preciso_administracion_user_rol", joinColumns = @JoinColumn(name="id_usuario"), inverseJoinColumns = @JoinColumn(name = "id_perfil"))
     private Set<Role> roles;
 
     @ManyToOne

@@ -16,7 +16,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "nexco_cuadro_mando_jobs")
+@Table(name = "preciso_administracion_cuadro_mando_jobs")
 public class ControlPanelJobs {
 
     @Id

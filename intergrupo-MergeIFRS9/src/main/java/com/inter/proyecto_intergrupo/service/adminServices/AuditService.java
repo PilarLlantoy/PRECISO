@@ -49,7 +49,7 @@ public class AuditService {
     }
 
     public List<Audit> getAllList(){
-        Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_auditoria as em " +
+        Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_administracion_auditoria as em " +
                 "ORDER BY em.fecha desc", Audit.class);
 
         return query.getResultList();
@@ -60,7 +60,7 @@ public class AuditService {
         switch (filter)
         {
             case "Id Auditoria":
-                Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_auditoria as em " +
+                Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_administracion_auditoria as em " +
                         "WHERE em.id_auditoria LIKE ?", Audit.class);
                 query.setParameter(1, value );
 
@@ -68,49 +68,49 @@ public class AuditService {
 
                 break;
             case "Usuario":
-                Query query0 = entityManager.createNativeQuery("SELECT em.* FROM nexco_auditoria as em " +
+                Query query0 = entityManager.createNativeQuery("SELECT em.* FROM preciso_administracion_auditoria as em " +
                         "WHERE em.usuario LIKE ?", Audit.class);
                 query0.setParameter(1, value);
 
                 list= query0.getResultList();
                 break;
             case "Nombre":
-                Query query1 = entityManager.createNativeQuery("SELECT em.* FROM nexco_auditoria as em " +
+                Query query1 = entityManager.createNativeQuery("SELECT em.* FROM preciso_administracion_auditoria as em " +
                         "WHERE em.nombre LIKE ?", Audit.class);
                 query1.setParameter(1, value);
 
                 list= query1.getResultList();
                 break;
             case "Centro Costos":
-                Query query2 = entityManager.createNativeQuery("SELECT em.* FROM nexco_auditoria as em " +
+                Query query2 = entityManager.createNativeQuery("SELECT em.* FROM preciso_administracion_auditoria as em " +
                         "WHERE em.centro LIKE ?", Audit.class);
                 query2.setParameter(1, value);
 
                 list= query2.getResultList();
                 break;
             case "Componente":
-                Query query3 = entityManager.createNativeQuery("SELECT em.* FROM nexco_auditoria as em " +
+                Query query3 = entityManager.createNativeQuery("SELECT em.* FROM preciso_administracion_auditoria as em " +
                         "WHERE em.componente LIKE ?", Audit.class);
                 query3.setParameter(1, value);
 
                 list= query3.getResultList();
                 break;
             case "Input":
-                Query query4 = entityManager.createNativeQuery("SELECT em.* FROM nexco_auditoria as em " +
+                Query query4 = entityManager.createNativeQuery("SELECT em.* FROM preciso_administracion_auditoria as em " +
                         "WHERE em.input LIKE ?", Audit.class);
                 query4.setParameter(1, value);
 
                 list= query4.getResultList();
                 break;
             case "Acción":
-                Query query5 = entityManager.createNativeQuery("SELECT em.* FROM nexco_auditoria as em " +
+                Query query5 = entityManager.createNativeQuery("SELECT em.* FROM preciso_administracion_auditoria as em " +
                         "WHERE em.accion LIKE ?", Audit.class);
                 query5.setParameter(1, value);
 
                 list= query5.getResultList();
                 break;
             case "Hora y Fecha":
-                Query query6 = entityManager.createNativeQuery("SELECT em.* FROM nexco_auditoria as em " +
+                Query query6 = entityManager.createNativeQuery("SELECT em.* FROM preciso_administracion_auditoria as em " +
                         "WHERE em.fecha LIKE ?", Audit.class);
                 query6.setParameter(1, value);
 

@@ -218,12 +218,12 @@ public class ResponsibleAccountService {
         }
         String[] parte = todayString.split("-");
 
-        Query queryCuadroUpdate = entityManager.createNativeQuery("drop table nexco_cuadro_mando_trunc; \n" +
-                "select * into nexco_cuadro_mando_trunc from nexco_cuadro_mando where fecha_reporte = ? and semaforo_input='FULL'; ");
+        Query queryCuadroUpdate = entityManager.createNativeQuery("drop table preciso_administracion_cuadro_mando_trunc; \n" +
+                "select * into preciso_administracion_cuadro_mando_trunc from preciso_administracion_cuadro_mando where fecha_reporte = ? and semaforo_input='FULL'; ");
         queryCuadroUpdate.setParameter(1,todayString);
         queryCuadroUpdate.executeUpdate();
 
-        Query queryCuadroDelete = entityManager.createNativeQuery("DELETE FROM nexco_cuadro_mando WHERE year(convert(DATE,fecha_reporte+'-01',23)) >= ? AND month(convert(DATE,fecha_reporte+'-01',23)) >= ?");
+        Query queryCuadroDelete = entityManager.createNativeQuery("DELETE FROM preciso_administracion_cuadro_mando WHERE year(convert(DATE,fecha_reporte+'-01',23)) >= ? AND month(convert(DATE,fecha_reporte+'-01',23)) >= ?");
         queryCuadroDelete.setParameter(1,parte[0]);
         queryCuadroDelete.setParameter(2,parte[1]);
         queryCuadroDelete.executeUpdate();
@@ -249,7 +249,7 @@ public class ResponsibleAccountService {
 
                 List<User> listCenter = userRepository.findByCentro(cellCentro.trim());
 
-                Query querySearch = entityManager.createNativeQuery("SELECT * FROM nexco_cuadro_mando where input = ? AND componente = ? AND responsable = ? AND fecha_reporte = ? ", ControlPanel.class);
+                Query querySearch = entityManager.createNativeQuery("SELECT * FROM preciso_administracion_cuadro_mando where input = ? AND componente = ? AND responsable = ? AND fecha_reporte = ? ", ControlPanel.class);
                 querySearch.setParameter(1, cellInput);
                 querySearch.setParameter(2, cellComponente);
                 querySearch.setParameter(3, cellCentro);
@@ -259,7 +259,7 @@ public class ResponsibleAccountService {
                 if(result.size()==0) {
 
                     for (int i = Integer.parseInt(parte[1]); i <= 12; i++) {
-                        Query queryCuadro = entityManager.createNativeQuery("INSERT INTO nexco_cuadro_mando (responsable, input, fecha_reporte, componente,empresa,estado,semaforo_componente,semaforo_input) " +
+                        Query queryCuadro = entityManager.createNativeQuery("INSERT INTO preciso_administracion_cuadro_mando (responsable, input, fecha_reporte, componente,empresa,estado,semaforo_componente,semaforo_input) " +
                                 "VALUES (?,?,?,?,?,?,?,?)", ControlPanel.class);
                         queryCuadro.setParameter(1, cellCentro);
                         queryCuadro.setParameter(2, cellInput);
@@ -302,7 +302,7 @@ public class ResponsibleAccountService {
                             query.executeUpdate();
                         }
 
-                        /*Query queryCuadroDelete = entityManager.createNativeQuery("DELETE FROM nexco_cuadro_mando WHERE componente = ? AND input = ? AND responsable = ? AND year(convert(DATE,fecha_reporte+'-01',23)) = ? AND month(convert(DATE,fecha_reporte+'-01',23)) >= ?");
+                        /*Query queryCuadroDelete = entityManager.createNativeQuery("DELETE FROM preciso_administracion_cuadro_mando WHERE componente = ? AND input = ? AND responsable = ? AND year(convert(DATE,fecha_reporte+'-01',23)) = ? AND month(convert(DATE,fecha_reporte+'-01',23)) >= ?");
                         queryCuadroDelete.setParameter(1,cellComponente);
                         queryCuadroDelete.setParameter(2,cellInput);
                         queryCuadroDelete.setParameter(3,cellCentro);
@@ -311,7 +311,7 @@ public class ResponsibleAccountService {
                         queryCuadroDelete.executeUpdate();
 
                         for (int i=Integer.parseInt(parte[1]);i<=12;i++) {
-                            Query queryCuadro = entityManager.createNativeQuery("INSERT INTO nexco_cuadro_mando (responsable, input, fecha_reporte, componente,empresa,estado,semaforo_componente,semaforo_input) " +
+                            Query queryCuadro = entityManager.createNativeQuery("INSERT INTO preciso_administracion_cuadro_mando (responsable, input, fecha_reporte, componente,empresa,estado,semaforo_componente,semaforo_input) " +
                                     "VALUES (?,?,?,?,?,?,?,?)", ControlPanel.class);
                             queryCuadro.setParameter(1, cellCentro);
                             queryCuadro.setParameter(2, cellInput);
@@ -375,7 +375,7 @@ public class ResponsibleAccountService {
 
                     if(result.size()==0)
                     {
-                        Query queryCuadroDelete = entityManager.createNativeQuery("DELETE FROM nexco_cuadro_mando WHERE componente = ? AND input = ? AND year(convert(DATE,fecha_reporte+'-01',23)) = ? AND month(convert(DATE,fecha_reporte+'-01',23)) >= ? ");
+                        Query queryCuadroDelete = entityManager.createNativeQuery("DELETE FROM preciso_administracion_cuadro_mando WHERE componente = ? AND input = ? AND year(convert(DATE,fecha_reporte+'-01',23)) = ? AND month(convert(DATE,fecha_reporte+'-01',23)) >= ? ");
                         queryCuadroDelete.setParameter(1, cellComponente);
                         queryCuadroDelete.setParameter(2, cellInput);
                         queryCuadroDelete.setParameter(3, parte[0]);
@@ -383,7 +383,7 @@ public class ResponsibleAccountService {
                         queryCuadroDelete.executeUpdate();
 
                         for (int i = Integer.parseInt(parte[1]); i <= 12; i++) {
-                            Query queryCuadro = entityManager.createNativeQuery("INSERT INTO nexco_cuadro_mando (responsable, input, fecha_reporte, componente,empresa,estado,semaforo_componente,semaforo_input) " +
+                            Query queryCuadro = entityManager.createNativeQuery("INSERT INTO preciso_administracion_cuadro_mando (responsable, input, fecha_reporte, componente,empresa,estado,semaforo_componente,semaforo_input) " +
                                     "VALUES (?,?,?,?,?,?,?,?)", ControlPanel.class);
                             queryCuadro.setParameter(1, cellCentro);
                             queryCuadro.setParameter(2, cellInput);
@@ -406,7 +406,7 @@ public class ResponsibleAccountService {
                     }
                     else
                     {
-                        Query validate = entityManager.createNativeQuery("SELECT * FROM nexco_cuadro_mando WHERE responsable = ? AND input = ? AND componente = ?");
+                        Query validate = entityManager.createNativeQuery("SELECT * FROM preciso_administracion_cuadro_mando WHERE responsable = ? AND input = ? AND componente = ?");
                         validate.setParameter(1, cellCentro);
                         validate.setParameter(2, cellInput);
                         validate.setParameter(3, cellComponente);
@@ -420,7 +420,7 @@ public class ResponsibleAccountService {
 
                             if(validate2.getResultList().isEmpty())
                             {
-                                Query validate3 = entityManager.createNativeQuery("DELETE FROM nexco_cuadro_mando WHERE responsable = ? AND input = ? AND componente = ? AND year(convert(DATE,fecha_reporte+'-01',23)) = ? AND month(convert(DATE,fecha_reporte+'-01',23)) >= ? ");
+                                Query validate3 = entityManager.createNativeQuery("DELETE FROM preciso_administracion_cuadro_mando WHERE responsable = ? AND input = ? AND componente = ? AND year(convert(DATE,fecha_reporte+'-01',23)) = ? AND month(convert(DATE,fecha_reporte+'-01',23)) >= ? ");
                                 validate3.setParameter(1, result.get(0).getCentro());
                                 validate3.setParameter(2, cellInput);
                                 validate3.setParameter(3, cellComponente);
@@ -438,7 +438,7 @@ public class ResponsibleAccountService {
 
                             if(validate2.getResultList().isEmpty())
                             {
-                                Query queryCuadro2 = entityManager.createNativeQuery("UPDATE nexco_cuadro_mando SET responsable = ? WHERE responsable = ? AND input = ? AND componente = ? AND year(convert(DATE,fecha_reporte+'-01',23)) = ? AND month(convert(DATE,fecha_reporte+'-01',23)) >= ? ");
+                                Query queryCuadro2 = entityManager.createNativeQuery("UPDATE preciso_administracion_cuadro_mando SET responsable = ? WHERE responsable = ? AND input = ? AND componente = ? AND year(convert(DATE,fecha_reporte+'-01',23)) = ? AND month(convert(DATE,fecha_reporte+'-01',23)) >= ? ");
                                 queryCuadro2.setParameter(1, cellCentro);
                                 queryCuadro2.setParameter(2, result.get(0).getCentro());
                                 queryCuadro2.setParameter(3, cellInput);
@@ -450,7 +450,7 @@ public class ResponsibleAccountService {
                             else
                             {
                                 for (int i = Integer.parseInt(parte[1]); i <= 12; i++) {
-                                    Query queryCuadro = entityManager.createNativeQuery("INSERT INTO nexco_cuadro_mando (responsable, input, fecha_reporte, componente,empresa,estado,semaforo_componente,semaforo_input) " +
+                                    Query queryCuadro = entityManager.createNativeQuery("INSERT INTO preciso_administracion_cuadro_mando (responsable, input, fecha_reporte, componente,empresa,estado,semaforo_componente,semaforo_input) " +
                                             "VALUES (?,?,?,?,?,?,?,?)", ControlPanel.class);
                                     queryCuadro.setParameter(1, cellCentro);
                                     queryCuadro.setParameter(2, cellInput);
@@ -493,7 +493,7 @@ public class ResponsibleAccountService {
         }
 
         Query queryCuadroUpdate1 = entityManager.createNativeQuery("update a set a.usuario_carga=b.usuario_carga, a.semaforo_componente = b.semaforo_componente, a.semaforo_input=b.semaforo_input, a.fecha_carga=b.fecha_carga\n" +
-                "from (select * from nexco_cuadro_mando where fecha_reporte = ? ) a, nexco_cuadro_mando_trunc b \n" +
+                "from (select * from preciso_administracion_cuadro_mando where fecha_reporte = ? ) a, preciso_administracion_cuadro_mando_trunc b \n" +
                 "where a.fecha_reporte=b.fecha_reporte and a.input=b.input and a.responsable = b.responsable and a.componente = b.componente and a.empresa=b.empresa;");
         queryCuadroUpdate1.setParameter(1,todayString);
         queryCuadroUpdate1.executeUpdate();
@@ -510,7 +510,7 @@ public class ResponsibleAccountService {
     public String modifyResponsibleAccount(ResponsibleAccount toModify,Long id, List<User> listUser,String centro,String input, String componente,User userid){
 
         String resp="Modify1";
-        Query queryC = entityManager.createNativeQuery("DELETE FROM nexco_cuadro_mando WHERE responsable = ? AND input = ? AND componente = ? ");
+        Query queryC = entityManager.createNativeQuery("DELETE FROM preciso_administracion_cuadro_mando WHERE responsable = ? AND input = ? AND componente = ? ");
         queryC.setParameter(1, centro);
         queryC.setParameter(2, input);
         queryC.setParameter(3, componente);
@@ -575,7 +575,7 @@ public class ResponsibleAccountService {
         }
 
         for (int i = 1; i <=12 ; i++) {
-            Query queryCuadro = entityManager.createNativeQuery("INSERT INTO nexco_cuadro_mando (responsable, input, fecha_reporte, componente,empresa,estado,semaforo_componente,semaforo_input) " +
+            Query queryCuadro = entityManager.createNativeQuery("INSERT INTO preciso_administracion_cuadro_mando (responsable, input, fecha_reporte, componente,empresa,estado,semaforo_componente,semaforo_input) " +
                     "VALUES (?,?,?,?,?,?,?,?)", ControlPanel.class);
             queryCuadro.setParameter(1, toModify.getCentro());
             queryCuadro.setParameter(2, toModify.getEntrada());
@@ -642,7 +642,7 @@ public class ResponsibleAccountService {
 
         if(queryS.getResultList().size()==1)
         {
-            Query query2 = entityManager.createNativeQuery("DELETE from nexco_cuadro_mando " +
+            Query query2 = entityManager.createNativeQuery("DELETE from preciso_administracion_cuadro_mando " +
                     "WHERE componente = ? AND input = ? AND responsable = ?");
             query2.setParameter(1, cuenta.getComponente());
             query2.setParameter(2, cuenta.getEntrada());
@@ -674,7 +674,7 @@ public class ResponsibleAccountService {
         query.executeUpdate();
         Query query1 = entityManager.createNativeQuery("DELETE from nexco_cuentas_responsables", ResponsibleAccount.class);
         query1.executeUpdate();
-        Query queryCuadroDelete = entityManager.createNativeQuery("DELETE FROM nexco_cuadro_mando");
+        Query queryCuadroDelete = entityManager.createNativeQuery("DELETE FROM preciso_administracion_cuadro_mando");
         queryCuadroDelete.executeUpdate();
         Date today = new Date();
         Audit insert = new Audit();
@@ -694,7 +694,7 @@ public class ResponsibleAccountService {
     }
 
     public List<UserAccount> getCostCenterUser(String value){
-        Query query = entityManager.createNativeQuery("SELECT em.cuenta_local, us.nombre, us.centro FROM nexco_user_account as em, nexco_usuarios as us " +
+        Query query = entityManager.createNativeQuery("SELECT em.cuenta_local, us.nombre, us.centro FROM nexco_user_account as em, preciso_administracion_usuarios as us " +
                 "WHERE em.cuenta_local = ? AND us.usuario = em.id_usuario");
         query.setParameter(1, Long.parseLong(value));
         return query.getResultList();
@@ -713,7 +713,7 @@ public class ResponsibleAccountService {
 
                 break;
             case "Usuario":
-                Query query0 = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuentas_responsables as em, nexco_usuarios as us " +
+                Query query0 = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuentas_responsables as em, preciso_administracion_usuarios as us " +
                         "WHERE us.usuario LIKE ?", ResponsibleAccount.class);
                 query0.setParameter(1, value);
 

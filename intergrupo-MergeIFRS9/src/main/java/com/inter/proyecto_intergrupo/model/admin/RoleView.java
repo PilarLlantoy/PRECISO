@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "nexco_rol_vista")
+@Table(name = "preciso_administracion_rol_vista")
 public class RoleView {
     @EmbeddedId
     private RoleViewId idRolView;

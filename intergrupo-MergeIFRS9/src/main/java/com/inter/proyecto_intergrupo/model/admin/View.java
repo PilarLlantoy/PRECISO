@@ -15,7 +15,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "nexco_vistas")
+@Table(name = "preciso_administracion_vistas")
 public class View {
 
     @Id

@@ -25,12 +25,12 @@ public class ControlPanelIfrsService {
 
     public List<ControlPanelIfrs> findAll()
     {
-        Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuadro_mando_ifrs as em where componente != 'RECHAZOS' order by orden,componente,input", ControlPanelIfrs.class);
+        Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_administracion_cuadro_mando_ifrs as em where componente != 'RECHAZOS' order by orden,componente,input", ControlPanelIfrs.class);
         return query.getResultList();
     }
 
     public List<ControlPanelIfrs> findByIdCuadroMando(String input, String componente){
-        Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuadro_mando_ifrs as em WHERE " +
+        Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_administracion_cuadro_mando_ifrs as em WHERE " +
                 " em.input = ? AND em.componente = ?", ControlPanelIfrs.class);
         query.setParameter(1, input);
         query.setParameter(2, componente);
@@ -45,7 +45,7 @@ public class ControlPanelIfrsService {
             control.setEstado(true);
         }
         Query query = entityManager.createNativeQuery("" +
-                "UPDATE nexco_cuadro_mando_ifrs SET estado = ? " +
+                "UPDATE preciso_administracion_cuadro_mando_ifrs SET estado = ? " +
                 "WHERE input = ? AND componente = ?", ControlPanelIfrs.class);
         query.setParameter(1, control.getEstado());
         query.setParameter(2, control.getInput());
@@ -54,7 +54,7 @@ public class ControlPanelIfrsService {
     }
 
     public void changeSemaforoInput(ControlPanelIfrs control){
-        Query query = entityManager.createNativeQuery("UPDATE nexco_cuadro_mando_ifrs SET semaforo_input = ? " +
+        Query query = entityManager.createNativeQuery("UPDATE preciso_administracion_cuadro_mando_ifrs SET semaforo_input = ? " +
                 "WHERE input = ? AND componente = ?", ControlPanelIfrs.class);
         query.setParameter(1, control.getSemaforoInput());
         query.setParameter(2, control.getInput());
@@ -63,7 +63,7 @@ public class ControlPanelIfrsService {
     }
 
     public void changeSemaforoComponente(ControlPanelIfrs control){
-        Query query = entityManager.createNativeQuery("UPDATE nexco_cuadro_mando_ifrs SET semaforo_componente = ? " +
+        Query query = entityManager.createNativeQuery("UPDATE preciso_administracion_cuadro_mando_ifrs SET semaforo_componente = ? " +
                 "WHERE componente = ?", ControlPanelIfrs.class);
         query.setParameter(1, control.getSemaforoComponente());
         query.setParameter(2, control.getComponente());
@@ -74,7 +74,7 @@ public class ControlPanelIfrsService {
 
         panel.setSemaforoInput("PENDING");
 
-        Query query = entityManager.createNativeQuery("UPDATE nexco_cuadro_mando_ifrs SET semaforo_input = ? " +
+        Query query = entityManager.createNativeQuery("UPDATE preciso_administracion_cuadro_mando_ifrs SET semaforo_input = ? " +
                 "WHERE input = ? AND componente = ?", ControlPanelIfrs.class);
         query.setParameter(1, panel.getSemaforoInput());
         query.setParameter(2, panel.getInput());
@@ -83,14 +83,14 @@ public class ControlPanelIfrsService {
     }
 
     public List<ControlPanelIfrs> findByCPI(User user){
-        Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuadro_mando_ifrs as em WHERE em.componente = ? ORDER BY em.input", ControlPanelIfrs.class);
+        Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_administracion_cuadro_mando_ifrs as em WHERE em.componente = ? ORDER BY em.input", ControlPanelIfrs.class);
         query.setParameter(1, "RECHAZOS");
         return query.getResultList();
     }
 
     public void updateState(List<ControlPanelIfrs> controlPanelList){
         for (ControlPanelIfrs panel: controlPanelList) {
-            Query query = entityManager.createNativeQuery("UPDATE nexco_cuadro_mando_ifrs SET semaforo_input = ? , semaforo_componente = ?" +
+            Query query = entityManager.createNativeQuery("UPDATE preciso_administracion_cuadro_mando_ifrs SET semaforo_input = ? , semaforo_componente = ?" +
                     " WHERE input = ? AND componente = ?", ControlPanelIfrs.class);
             query.setParameter(1, "FULL");
             query.setParameter(2, "FULL");
@@ -101,7 +101,7 @@ public class ControlPanelIfrsService {
     }
 
     public void save(ControlPanelIfrs control) {
-        Query query = entityManager.createNativeQuery("INSERT INTO nexco_cuadro_mando_ifrs(input, componente, empresa, estado, semaforo_componente, semaforo_input) VALUES (?,?,?,?,?,?)", ControlPanelIfrs.class);
+        Query query = entityManager.createNativeQuery("INSERT INTO preciso_administracion_cuadro_mando_ifrs(input, componente, empresa, estado, semaforo_componente, semaforo_input) VALUES (?,?,?,?,?,?)", ControlPanelIfrs.class);
         query.setParameter(1, control.getInput());
         query.setParameter(2, control.getComponente());
         query.setParameter(3, control.getEmpresa());
@@ -113,11 +113,11 @@ public class ControlPanelIfrsService {
 
     public void changeAllStates(String action){
         if(action.equals("Enable")){
-            Query enable = entityManager.createNativeQuery("UPDATE nexco_cuadro_mando_ifrs " +
+            Query enable = entityManager.createNativeQuery("UPDATE preciso_administracion_cuadro_mando_ifrs " +
                     "SET estado = 1 ");
             enable.executeUpdate();
         } else {
-            Query disable = entityManager.createNativeQuery("UPDATE nexco_cuadro_mando_ifrs " +
+            Query disable = entityManager.createNativeQuery("UPDATE preciso_administracion_cuadro_mando_ifrs " +
                     "SET estado = 0 ");
             disable.executeUpdate();
         }

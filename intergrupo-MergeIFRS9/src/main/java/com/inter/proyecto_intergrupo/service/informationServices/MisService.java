@@ -45,7 +45,7 @@ public class MisService {
 
         boolean result = true;
 
-        Query query1 = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuadro_mando_jobs as em WHERE em.nombre = 'Depositos' AND em.estado = 1", ControlPanelJobs.class);
+        Query query1 = entityManager.createNativeQuery("SELECT em.* FROM preciso_administracion_cuadro_mando_jobs as em WHERE em.nombre = 'Depositos' AND em.estado = 1", ControlPanelJobs.class);
         if(!query1.getResultList().isEmpty())
         {
             List<ControlPanelJobs> listTemporal = query1.getResultList();

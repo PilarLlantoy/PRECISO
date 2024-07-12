@@ -254,10 +254,10 @@ public class AccountCreationOtherService {
         accountCreationOtherPlane.setArchivo(bytesArray);
         accountCreationOtherPlaneRepository.save(accountCreationOtherPlane);
 
-        Query consulta1 = entityManager.createNativeQuery("select a.* from nexco_usuarios a\n" +
-                "inner join nexco_user_rol b on a.usuario = b.usuario\n" +
-                "inner join nexco_rol_vista c on b.id_perfil=c.id_perfil\n" +
-                "inner join nexco_vistas d on c.id_vista =d.id_vista where d.nombre in ('Ver Creación de Cuentas Otros (Control Contable)' ,'Ver Creación de Cuentas Otros (Consolidación)','Ver Creación de Cuentas Otros (Gestión)')", User.class);
+        Query consulta1 = entityManager.createNativeQuery("select a.* from preciso_administracion_usuarios a\n" +
+                "inner join preciso_administracion_user_rol b on a.usuario = b.usuario\n" +
+                "inner join preciso_administracion_rol_vista c on b.id_perfil=c.id_perfil\n" +
+                "inner join preciso_administracion_vistas d on c.id_vista =d.id_vista where d.nombre in ('Ver Creación de Cuentas Otros (Control Contable)' ,'Ver Creación de Cuentas Otros (Consolidación)','Ver Creación de Cuentas Otros (Gestión)')", User.class);
         List<User> tempThird = consulta1.getResultList();
 
         String usuarios = "";
@@ -456,10 +456,10 @@ public class AccountCreationOtherService {
         consulta.setParameter("valores", useList);
         List<AccountCreationOther> listResult = consulta.getResultList();
 
-        Query consulta1 = entityManager.createNativeQuery("select a.* from nexco_usuarios a\n" +
-                "inner join nexco_user_rol b on a.usuario = b.usuario\n" +
-                "inner join nexco_rol_vista c on b.id_perfil=c.id_perfil\n" +
-                "inner join nexco_vistas d on c.id_vista =d.id_vista where d.nombre in ('Ver Creación de Cuentas Otros (Control Contable)' ,'Ver Creación de Cuentas Otros (Consolidación)','Ver Creación de Cuentas Otros (Gestión)')", User.class);
+        Query consulta1 = entityManager.createNativeQuery("select a.* from preciso_administracion_usuarios a\n" +
+                "inner join preciso_administracion_user_rol b on a.usuario = b.usuario\n" +
+                "inner join preciso_administracion_rol_vista c on b.id_perfil=c.id_perfil\n" +
+                "inner join preciso_administracion_vistas d on c.id_vista =d.id_vista where d.nombre in ('Ver Creación de Cuentas Otros (Control Contable)' ,'Ver Creación de Cuentas Otros (Consolidación)','Ver Creación de Cuentas Otros (Gestión)')", User.class);
         List<User> tempThird = consulta1.getResultList();
 
         String usuarios = "";
@@ -1557,7 +1557,7 @@ public class AccountCreationOtherService {
         consulta.setParameter("valores", id);
         AccountCreationOther data = (AccountCreationOther) consulta.getResultList().get(0);
 
-        Query consulta1 = entityManager.createNativeQuery("select a.* from nexco_usuarios a where a.usuario = ? ", User.class);
+        Query consulta1 = entityManager.createNativeQuery("select a.* from preciso_administracion_usuarios a where a.usuario = ? ", User.class);
         consulta1.setParameter(1,data.getCreador());
         List<User> tempThird = consulta1.getResultList();
 
@@ -1591,7 +1591,7 @@ public class AccountCreationOtherService {
         String subject = "[NEXCO] Notificación Mensaje Creación Otras Cuentas";
 
         if(cambio.contains("CONSOLIDACION")) {
-            Query consulta1 = entityManager.createNativeQuery("select a.* from nexco_usuarios a where a.usuario = ? ", User.class);
+            Query consulta1 = entityManager.createNativeQuery("select a.* from preciso_administracion_usuarios a where a.usuario = ? ", User.class);
             consulta1.setParameter(1,data.getUsuarioConsolidacion());
             User tempThird = (User) consulta1.getResultList().get(0);
             String mensaje = data.getComentarioConsolidacion();
@@ -1599,7 +1599,7 @@ public class AccountCreationOtherService {
             sendEmailService.sendEmailCopAd(tempThird.getCorreo(),user.getCorreo()+";con.group@bbva.com", subject, content);
         }
         if(cambio.contains("GESTION")) {
-            Query consulta1 = entityManager.createNativeQuery("select a.* from nexco_usuarios a where a.usuario = ? ", User.class);
+            Query consulta1 = entityManager.createNativeQuery("select a.* from preciso_administracion_usuarios a where a.usuario = ? ", User.class);
             consulta1.setParameter(1,data.getUsuarioGestion());
             User tempThird = (User) consulta1.getResultList().get(0);
             String mensaje = data.getComentarioGestion();
@@ -1607,7 +1607,7 @@ public class AccountCreationOtherService {
             sendEmailService.sendEmailCopAd(tempThird.getCorreo(),user.getCorreo()+";con.group@bbva.com", subject, content);
         }
         if(cambio.contains("CONTROL CONTABLE")) {
-            Query consulta1 = entityManager.createNativeQuery("select a.* from nexco_usuarios a where a.usuario = ? ", User.class);
+            Query consulta1 = entityManager.createNativeQuery("select a.* from preciso_administracion_usuarios a where a.usuario = ? ", User.class);
             consulta1.setParameter(1,data.getUsuarioControl());
             User tempThird = (User) consulta1.getResultList().get(0);
             String mensaje = data.getComentarioControl();

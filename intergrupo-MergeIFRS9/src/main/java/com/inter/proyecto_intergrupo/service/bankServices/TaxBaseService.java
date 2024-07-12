@@ -77,7 +77,7 @@ public class TaxBaseService {
     //@Scheduled(cron = "0 22 11 * * * ")
     public void validateRoutineTax() throws IOException, InvalidFormatException {
 
-        Query validate = entityManager.createNativeQuery("SELECT * FROM nexco_cuadro_mando_jobs WHERE estado = 1 AND nombre = 'GOF Base Fiscal'");
+        Query validate = entityManager.createNativeQuery("SELECT * FROM preciso_administracion_cuadro_mando_jobs WHERE estado = 1 AND nombre = 'GOF Base Fiscal'");
 
         if (!validate.getResultList().isEmpty()) {
             ControlPanelJobs job = controlPanelJobsService.findByIdJob(1);

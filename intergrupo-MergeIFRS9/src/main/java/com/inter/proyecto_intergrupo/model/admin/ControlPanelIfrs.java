@@ -17,7 +17,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "nexco_cuadro_mando_ifrs")
+@Table(name = "preciso_administracion_cuadro_mando_ifrs")
 public class ControlPanelIfrs implements Serializable {
 
     @Id

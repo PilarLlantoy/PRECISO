@@ -282,12 +282,12 @@ public class ContingentesService {
         }
 
     public void validateComponent(String component, String mes){
-        Query queryFinal = entityManager.createNativeQuery("SELECT * FROM nexco_cuadro_mando " +
+        Query queryFinal = entityManager.createNativeQuery("SELECT * FROM preciso_administracion_cuadro_mando " +
                 "WHERE componente = ? AND (semaforo_input = 'EMPTY' OR semaforo_input = 'PENDING') AND fecha_reporte = ?", ControlPanel.class);
         queryFinal.setParameter(1, component);
         queryFinal.setParameter(2, mes);
 
-        Query query5 = entityManager.createNativeQuery("UPDATE nexco_cuadro_mando SET semaforo_componente = ? " +
+        Query query5 = entityManager.createNativeQuery("UPDATE preciso_administracion_cuadro_mando SET semaforo_componente = ? " +
                 "WHERE componente = ? AND fecha_reporte = ?", ControlPanel.class);
         query5.setParameter(2, component);
         query5.setParameter(3, mes);
@@ -480,7 +480,7 @@ public class ContingentesService {
 
     public List<String[]> saveFilePlantilla(Collection<Part>  parts, String period,User user) throws IOException, InvalidFormatException {
 
-        Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuadro_mando as em " +
+        Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_administracion_cuadro_mando as em " +
                 "WHERE em.input = ? AND em.fecha_reporte = ? AND em.responsable = ? AND em.componente = ? AND em.estado = 1", ControlPanel.class);
         query.setParameter(1, "PLANTILLA CONTINGENTES - NEXCO" );
         query.setParameter(2, period);
@@ -514,7 +514,7 @@ public class ContingentesService {
                 finalList = validateContingentTemplate(period, success, fail);
                 if (finalList.get(finalList.size() - 1)[3].equals("PLANTILLA")) {
 
-                    Query query7 = entityManager.createNativeQuery("UPDATE nexco_cuadro_mando SET semaforo_input = ? , usuario_carga = ? " +
+                    Query query7 = entityManager.createNativeQuery("UPDATE preciso_administracion_cuadro_mando SET semaforo_input = ? , usuario_carga = ? " +
                             "WHERE responsable = ? AND input = ? AND componente = ? AND fecha_reporte = ?", ControlPanel.class);
                     query7.setParameter(1, "PENDING");
                     query7.setParameter(2, user.getPrimerNombre());
@@ -538,7 +538,7 @@ public class ContingentesService {
                     auditRepository.save(insert);
                 } else if (finalList.get(finalList.size() - 1)[3].equals("BANCO")) {
 
-                    Query query7 = entityManager.createNativeQuery("UPDATE nexco_cuadro_mando SET semaforo_input = ?, usuario_carga = ? " +
+                    Query query7 = entityManager.createNativeQuery("UPDATE preciso_administracion_cuadro_mando SET semaforo_input = ?, usuario_carga = ? " +
                             "WHERE responsable = ? AND input = ? AND componente = ? AND fecha_reporte = ?", ControlPanel.class);
                     query7.setParameter(1, "EMPTY");
                     query7.setParameter(2, user.getPrimerNombre());
@@ -560,7 +560,7 @@ public class ContingentesService {
                     auditRepository.save(insert);
                 } else if (finalList.get(finalList.size() - 1)[3].equals("CONTRATO")) {
 
-                    Query query7 = entityManager.createNativeQuery("UPDATE nexco_cuadro_mando SET semaforo_input = ? , usuario_carga = ? " +
+                    Query query7 = entityManager.createNativeQuery("UPDATE preciso_administracion_cuadro_mando SET semaforo_input = ? , usuario_carga = ? " +
                             "WHERE responsable = ? AND input = ? AND componente = ? AND fecha_reporte = ?", ControlPanel.class);
                     query7.setParameter(1, "PENDING");
                     query7.setParameter(2, user.getPrimerNombre());
@@ -598,7 +598,7 @@ public class ContingentesService {
 
     public void validateContingentesComponent(User user, String period, String input)
     {
-        Query query8 = entityManager.createNativeQuery("SELECT * FROM nexco_cuadro_mando " +
+        Query query8 = entityManager.createNativeQuery("SELECT * FROM preciso_administracion_cuadro_mando " +
                 "WHERE responsable = ? AND input = ? AND componente = ? AND fecha_reporte = ? AND semaforo_input != ?", ControlPanel.class);
         query8.setParameter(1, user.getCentro());
         query8.setParameter(2, input);
@@ -607,7 +607,7 @@ public class ContingentesService {
         query8.setParameter(5, "FULL");
 
         if(query8.getResultList().size()>0) {
-            Query query7 = entityManager.createNativeQuery("UPDATE nexco_cuadro_mando SET semaforo_componente = ? " +
+            Query query7 = entityManager.createNativeQuery("UPDATE preciso_administracion_cuadro_mando SET semaforo_componente = ? " +
                     "WHERE responsable = ? AND componente = ? AND fecha_reporte = ?", ControlPanel.class);
             query7.setParameter(1, "EMPTY");
             query7.setParameter(2, user.getCentro());
@@ -1466,7 +1466,7 @@ public class ContingentesService {
     }
 
     public List<ControlPanel> validateControlPanel(String periodo, String responsable, String input){
-        Query query = entityManager.createNativeQuery("SELECT * FROM nexco_cuadro_mando WHERE fecha_reporte = ? " +
+        Query query = entityManager.createNativeQuery("SELECT * FROM preciso_administracion_cuadro_mando WHERE fecha_reporte = ? " +
                 "AND responsable = ? AND componente = ? AND input = ?;", ControlPanel.class);
         query.setParameter(1,periodo);
         query.setParameter(2,responsable);
@@ -1636,7 +1636,7 @@ public class ContingentesService {
     }
 
     public void updateState(String perido, String responsable,String empresa, String input){
-        Query query = entityManager.createNativeQuery("UPDATE nexco_cuadro_mando SET semaforo_input = ? , semaforo_componente = ?" +
+        Query query = entityManager.createNativeQuery("UPDATE preciso_administracion_cuadro_mando SET semaforo_input = ? , semaforo_componente = ?" +
                 " WHERE responsable = ? AND input = ? AND componente = ? AND fecha_reporte = ? AND empresa = ?", ControlPanel.class);
         query.setParameter(1, "FULL");
         query.setParameter(2, "FULL");
@@ -1763,7 +1763,7 @@ public class ContingentesService {
                     StatusInfoRepository.save(validateStatus);
                 }
 
-                Query query7 = entityManager.createNativeQuery("UPDATE nexco_cuadro_mando SET semaforo_input = ? , usuario_carga = ? " +
+                Query query7 = entityManager.createNativeQuery("UPDATE preciso_administracion_cuadro_mando SET semaforo_input = ? , usuario_carga = ? " +
                         "WHERE responsable = ? AND input = ? AND componente = ? AND fecha_reporte = ?", ControlPanel.class);
                 query7.setParameter(1, "PENDING");
                 query7.setParameter(2, user.getPrimerNombre());
@@ -2193,7 +2193,7 @@ public class ContingentesService {
         queryList.setParameter(2,periodo);
         queryList.executeUpdate();
 
-        Query updateAll = entityManager.createNativeQuery("update nexco_cuadro_mando \n" +
+        Query updateAll = entityManager.createNativeQuery("update preciso_administracion_cuadro_mando \n" +
                 "set semaforo_componente = 'FULL', estado = 0, fecha_carga = ? \n" +
                 "where componente = 'CONTINGENTES' \n" +
                 "and fecha_reporte = ?");
@@ -2201,7 +2201,7 @@ public class ContingentesService {
         updateAll.setParameter(2,periodo);
         updateAll.executeUpdate();
 
-        Query updateAll1 = entityManager.createNativeQuery("update nexco_cuadro_mando \n" +
+        Query updateAll1 = entityManager.createNativeQuery("update preciso_administracion_cuadro_mando \n" +
                 "set semaforo_input = 'FULL', estado = 0, fecha_carga = ? \n" +
                 "where componente = 'CONTINGENTES' \n" +
                 "and fecha_reporte = ? AND semaforo_input ='PENDING'");

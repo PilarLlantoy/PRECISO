@@ -444,7 +444,7 @@ public class ParamNIC34ConsolService {
             }
             if(lista.size()-1 == i || ( lista.size()-1 != i && !actual.equals(lista.get(i+1)[0])))
             {
-                Query cTercero = entityManager.createNativeQuery("select * from nexco_usuarios where usuario = ?",User.class);
+                Query cTercero = entityManager.createNativeQuery("select * from preciso_administracion_usuarios where usuario = ?",User.class);
                 cTercero.setParameter(1,actual.trim().toUpperCase());
                 List<User> tempThird = cTercero.getResultList();
                 if(!tempThird.isEmpty())

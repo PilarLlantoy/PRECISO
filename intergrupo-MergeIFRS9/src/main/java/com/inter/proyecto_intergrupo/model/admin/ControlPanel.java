@@ -15,7 +15,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "nexco_cuadro_mando")
+@Table(name = "preciso_administracion_cuadro_mando")
 public class ControlPanel implements Serializable {
 
     @Id

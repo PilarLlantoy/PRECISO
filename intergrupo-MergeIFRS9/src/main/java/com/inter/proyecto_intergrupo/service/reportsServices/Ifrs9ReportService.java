@@ -784,7 +784,7 @@ public class Ifrs9ReportService {
         deleteVertAll.setParameter(2,actPrev);
         deleteVertAll.executeUpdate();
 
-        Query emails = entityManager.createNativeQuery("SELECT distinct A.* FROM nexco_usuarios A, nexco_perfiles B, nexco_user_rol C \n" +
+        Query emails = entityManager.createNativeQuery("SELECT distinct A.* FROM preciso_administracion_usuarios A, preciso_administracion_perfiles B, preciso_administracion_user_rol C \n" +
                 "WHERE A.usuario = C.usuario AND C.id_perfil = B.id_perfil AND B.nombre_perfil = 'Correo Vertical' and a.estado=1", User.class);
         List<User>listEmails = emails.getResultList();
         for (User u : listEmails)

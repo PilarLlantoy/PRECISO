@@ -33,12 +33,12 @@ public class ControlPanelService {
 
     public List<ControlPanel> findAll()
     {
-        Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuadro_mando as em", ControlPanel.class);
+        Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_administracion_cuadro_mando as em", ControlPanel.class);
         return query.getResultList();
     }
 
     public List<ControlPanel> findByIdCuadroMando(String centro, String input, String componente, String fecha){
-        Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuadro_mando as em WHERE em.responsable = ? AND" +
+        Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_administracion_cuadro_mando as em WHERE em.responsable = ? AND" +
                 " em.input = ? AND em.componente = ? AND em.fecha_reporte = ?", ControlPanel.class);
         query.setParameter(1, centro);
         query.setParameter(2, input);
@@ -56,7 +56,7 @@ public class ControlPanelService {
             switch (filtro)
             {
                 case "Componente":
-                    Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuadro_mando as em " +
+                    Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_administracion_cuadro_mando as em " +
                             "WHERE em.componente LIKE ? AND em.fecha_reporte = ? ORDER BY componente,input,responsable", ControlPanel.class);
                     query.setParameter(1, value );
                     query.setParameter(2, id );
@@ -65,7 +65,7 @@ public class ControlPanelService {
 
                     break;
                 case "Input":
-                    Query query0 = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuadro_mando as em " +
+                    Query query0 = entityManager.createNativeQuery("SELECT em.* FROM preciso_administracion_cuadro_mando as em " +
                             "WHERE em.input LIKE ? AND em.fecha_reporte = ? ORDER BY componente,input,responsable", ControlPanel.class);
                     query0.setParameter(1, value);
                     query0.setParameter(2, id );
@@ -73,7 +73,7 @@ public class ControlPanelService {
                     list= query0.getResultList();
                     break;
                 case "Centro Costos":
-                    Query query1 = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuadro_mando as em " +
+                    Query query1 = entityManager.createNativeQuery("SELECT em.* FROM preciso_administracion_cuadro_mando as em " +
                             "WHERE em.responsable LIKE ? AND em.fecha_reporte = ? ORDER BY componente,input,responsable", ControlPanel.class);
                     query1.setParameter(1, value);
                     query1.setParameter(2, id );
@@ -81,7 +81,7 @@ public class ControlPanelService {
                     list= query1.getResultList();
                     break;
                 case "Empresa":
-                    Query query2 = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuadro_mando as em " +
+                    Query query2 = entityManager.createNativeQuery("SELECT em.* FROM preciso_administracion_cuadro_mando as em " +
                             "WHERE em.empresa LIKE ? AND em.fecha_reporte = ? ORDER BY componente,input,responsable", ControlPanel.class);
                     query2.setParameter(1, value);
                     query2.setParameter(2, id );
@@ -89,7 +89,7 @@ public class ControlPanelService {
                     list= query2.getResultList();
                     break;
                 case "Usuario Carga":
-                    Query query3 = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuadro_mando as em " +
+                    Query query3 = entityManager.createNativeQuery("SELECT em.* FROM preciso_administracion_cuadro_mando as em " +
                             "WHERE em.usuario_carga LIKE ? AND em.fecha_reporte = ? ORDER BY componente,input,responsable", ControlPanel.class);
                     query3.setParameter(1, value);
                     query3.setParameter(2, id );
@@ -97,7 +97,7 @@ public class ControlPanelService {
                     list= query3.getResultList();
                     break;
                 case "Estado Carga":
-                    Query query4 = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuadro_mando as em " +
+                    Query query4 = entityManager.createNativeQuery("SELECT em.* FROM preciso_administracion_cuadro_mando as em " +
                             "WHERE em.estado LIKE ? AND em.fecha_reporte = ? ORDER BY componente,input,responsable", ControlPanel.class);
                     query4.setParameter(1, value);
                     query4.setParameter(2, id );
@@ -110,7 +110,7 @@ public class ControlPanelService {
         }
         else
         {
-            Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuadro_mando as em " +
+            Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_administracion_cuadro_mando as em " +
                     "WHERE em.fecha_reporte = ? ORDER BY componente,input,responsable", ControlPanel.class);
             query.setParameter(1, id );
 
@@ -120,14 +120,14 @@ public class ControlPanelService {
         return list;
     }
     public List<ControlPanel> findByFechaReporteRP21(String fecha, User user){
-        Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuadro_mando as em WHERE em.fecha_reporte = ? AND em.componente = ? ORDER BY em.input", ControlPanel.class);
+        Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_administracion_cuadro_mando as em WHERE em.fecha_reporte = ? AND em.componente = ? ORDER BY em.input", ControlPanel.class);
         query.setParameter(1, fecha);
         query.setParameter(2, "DERIVADOS");
         return query.getResultList();
     }
 
     public List<ControlPanel> findByFechaReporteContingentes(String fecha, User user){
-        Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuadro_mando as em WHERE em.fecha_reporte = ? AND em.componente = ? AND em.responsable = ? ORDER BY em.input", ControlPanel.class);
+        Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_administracion_cuadro_mando as em WHERE em.fecha_reporte = ? AND em.componente = ? AND em.responsable = ? ORDER BY em.input", ControlPanel.class);
         query.setParameter(1, fecha);
         query.setParameter(2, "CONTINGENTES");
         query.setParameter(3, user.getCentro());
@@ -135,7 +135,7 @@ public class ControlPanelService {
     }
 
     public boolean findByRysFechaReporte(String periodo){
-        Query query = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuadro_mando as em WHERE em.fecha_reporte = ? AND em.componente = ? AND em.input = ? AND semaforo_input ='FULL'", ControlPanel.class);
+        Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_administracion_cuadro_mando as em WHERE em.fecha_reporte = ? AND em.componente = ? AND em.input = ? AND semaforo_input ='FULL'", ControlPanel.class);
         query.setParameter(1, periodo);
         query.setParameter(2, "DERIVADOS");
         query.setParameter(3, "RYS");
@@ -158,7 +158,7 @@ public class ControlPanelService {
         else{
             control.setEstado(true);
         }
-        Query query = entityManager.createNativeQuery("UPDATE nexco_cuadro_mando SET estado = ? " +
+        Query query = entityManager.createNativeQuery("UPDATE preciso_administracion_cuadro_mando SET estado = ? " +
                 "WHERE responsable = ? AND input = ? AND componente = ? AND fecha_reporte = ?", ControlPanel.class);
         query.setParameter(1, control.getEstado());
         query.setParameter(2, control.getResponsable());
@@ -170,7 +170,7 @@ public class ControlPanelService {
     }
 
     public void changeSemaforoInput(ControlPanel control){
-        Query query = entityManager.createNativeQuery("UPDATE nexco_cuadro_mando SET semaforo_input = ? " +
+        Query query = entityManager.createNativeQuery("UPDATE preciso_administracion_cuadro_mando SET semaforo_input = ? " +
                 "WHERE responsable = ? AND input = ? AND componente = ?", ControlPanel.class);
         query.setParameter(1, control.getSemaforoInput());
         query.setParameter(2, control.getResponsable());
@@ -180,7 +180,7 @@ public class ControlPanelService {
     }
 
     public void changeSemaforoComponente(ControlPanel control){
-        Query query = entityManager.createNativeQuery("UPDATE nexco_cuadro_mando SET semaforo_componente = ? " +
+        Query query = entityManager.createNativeQuery("UPDATE preciso_administracion_cuadro_mando SET semaforo_componente = ? " +
                 "WHERE componente = ?", ControlPanel.class);
         query.setParameter(1, control.getSemaforoComponente());
         query.setParameter(2, control.getComponente());
@@ -191,7 +191,7 @@ public class ControlPanelService {
 
         panel.setSemaforoInput("PENDING");
 
-        Query query = entityManager.createNativeQuery("UPDATE nexco_cuadro_mando SET semaforo_input = ? " +
+        Query query = entityManager.createNativeQuery("UPDATE preciso_administracion_cuadro_mando SET semaforo_input = ? " +
                 "WHERE responsable = ? AND input = ? AND componente = ? AND fecha_reporte = ?", ControlPanel.class);
         query.setParameter(1, panel.getSemaforoInput());
         query.setParameter(2, panel.getResponsable());
@@ -203,12 +203,12 @@ public class ControlPanelService {
 
     public void validateComponent(String component,String period)
     {
-        Query queryFinal = entityManager.createNativeQuery("SELECT * FROM nexco_cuadro_mando " +
+        Query queryFinal = entityManager.createNativeQuery("SELECT * FROM preciso_administracion_cuadro_mando " +
                 "WHERE componente = ? AND semaforo_input = 'PENDING' AND fecha_reporte = ?", ControlPanel.class);
         queryFinal.setParameter(1, component);
         queryFinal.setParameter(2, period);
 
-        Query query5 = entityManager.createNativeQuery("UPDATE nexco_cuadro_mando SET semaforo_componente = ? " +
+        Query query5 = entityManager.createNativeQuery("UPDATE preciso_administracion_cuadro_mando SET semaforo_componente = ? " +
                 "WHERE componente = ? AND fecha_reporte = ?", ControlPanel.class);
         query5.setParameter(2, component);
         query5.setParameter(3, period);
@@ -226,7 +226,7 @@ public class ControlPanelService {
     }
     public void validateComponentByInput(String input, String periodo)
     {
-        Query queryFinal1 = entityManager.createNativeQuery("SELECT componente FROM nexco_cuadro_mando " +
+        Query queryFinal1 = entityManager.createNativeQuery("SELECT componente FROM preciso_administracion_cuadro_mando " +
                 "WHERE input = :input AND semaforo_input != :state AND fecha_reporte = :periodo");
         queryFinal1.setParameter("input", input);
         queryFinal1.setParameter("state", "PENDING");
@@ -234,7 +234,7 @@ public class ControlPanelService {
         List<String> lista1=queryFinal1.getResultList();
 
 
-        Query queryFinal = entityManager.createNativeQuery("SELECT componente FROM nexco_cuadro_mando " +
+        Query queryFinal = entityManager.createNativeQuery("SELECT componente FROM preciso_administracion_cuadro_mando " +
                 "WHERE input = :input AND semaforo_input = :state AND fecha_reporte= :periodo AND componente NOT IN :comp");
         queryFinal.setParameter("input", input);
         queryFinal.setParameter("periodo", periodo);
@@ -242,7 +242,7 @@ public class ControlPanelService {
         queryFinal.setParameter("comp",lista1 );
         List<String> lista2=queryFinal.getResultList();
 
-        Query query5 = entityManager.createNativeQuery("UPDATE nexco_cuadro_mando SET semaforo_componente = :estado " +
+        Query query5 = entityManager.createNativeQuery("UPDATE preciso_administracion_cuadro_mando SET semaforo_componente = :estado " +
                 "WHERE input = :input AND fecha_reporte = :periodo AND componente IN :comp");
         query5.setParameter("estado", "PENDING");
         query5.setParameter("input", input);
@@ -275,7 +275,7 @@ public class ControlPanelService {
         if(listAccounts.size()>0)
         {
             Query query = entityManager.createNativeQuery("UPDATE ncm SET semaforo_input = 'PENDING', usuario_carga = :usuario \n" +
-                    "FROM nexco_cuadro_mando as ncm \n" +
+                    "FROM preciso_administracion_cuadro_mando as ncm \n" +
                     "INNER JOIN  nexco_cuentas_responsables AS ncr \n" +
                     "ON ncm.componente= ncr.componente AND ncr.input = ncm.input AND ncr.centro = ncm.responsable\n" +
                     "WHERE ncr.centro = :centro AND ncr.input = :input AND SUBSTRING(CAST(ncr.cuenta_local AS varchar),1,4) IN :listAccounts AND ncm.fecha_reporte = :periodo");
@@ -289,7 +289,7 @@ public class ControlPanelService {
     }
 
     public List<ControlPanel> validateQueryAndVertical(String periodo, String responsable){
-        Query query = entityManager.createNativeQuery("SELECT * FROM nexco_cuadro_mando WHERE fecha_reporte = ? AND responsable = ? AND componente = ?;", ControlPanel.class);
+        Query query = entityManager.createNativeQuery("SELECT * FROM preciso_administracion_cuadro_mando WHERE fecha_reporte = ? AND responsable = ? AND componente = ?;", ControlPanel.class);
         query.setParameter(1,periodo);
         query.setParameter(2,responsable);
         query.setParameter(3,"DERIVADOS");
@@ -354,7 +354,7 @@ public class ControlPanelService {
 
     public void updateState(List<ControlPanel> controlPanelList){
         for (ControlPanel panel: controlPanelList) {
-            Query query = entityManager.createNativeQuery("UPDATE nexco_cuadro_mando SET semaforo_input = ? , semaforo_componente = ?" +
+            Query query = entityManager.createNativeQuery("UPDATE preciso_administracion_cuadro_mando SET semaforo_input = ? , semaforo_componente = ?" +
                     " WHERE responsable = ? AND input = ? AND componente = ? AND fecha_reporte = ?", ControlPanel.class);
             query.setParameter(1, "FULL");
             query.setParameter(2, "FULL");
@@ -367,7 +367,7 @@ public class ControlPanelService {
     }
 
     public void save(ControlPanel control) {
-        Query query = entityManager.createNativeQuery("INSERT INTO nexco_cuadro_mando(responsable, input, fecha_reporte, componente, empresa, estado, semaforo_componente, semaforo_input) VALUES (?,?,?,?,?,?,?,?)", ControlPanel.class);
+        Query query = entityManager.createNativeQuery("INSERT INTO preciso_administracion_cuadro_mando(responsable, input, fecha_reporte, componente, empresa, estado, semaforo_componente, semaforo_input) VALUES (?,?,?,?,?,?,?,?)", ControlPanel.class);
         query.setParameter(1, control.getResponsable());
         query.setParameter(2, control.getInput());
         query.setParameter(3, control.getFechaReporte());
@@ -381,7 +381,7 @@ public class ControlPanelService {
 
     public void changeAllStates(String period, String action,User user){
         if(action.equals("Enable")){
-            Query enable = entityManager.createNativeQuery("UPDATE nexco_cuadro_mando " +
+            Query enable = entityManager.createNativeQuery("UPDATE preciso_administracion_cuadro_mando " +
                     "SET estado = 1 " +
                     "WHERE fecha_reporte = ?");
 
@@ -389,7 +389,7 @@ public class ControlPanelService {
             enable.executeUpdate();
             auditCode("Cambio general de estados a Habilitado en el periodo " + period ,user);
         } else {
-            Query disable = entityManager.createNativeQuery("UPDATE nexco_cuadro_mando " +
+            Query disable = entityManager.createNativeQuery("UPDATE preciso_administracion_cuadro_mando " +
                     "SET estado = 0 " +
                     "WHERE fecha_reporte = ?");
 
@@ -405,7 +405,7 @@ public class ControlPanelService {
             delete.setParameter(1,period);
             delete.executeUpdate();
 
-            Query deleteControl = entityManager.createNativeQuery("UPDATE nexco_cuadro_mando SET semaforo_componente = 'EMPTY', semaforo_input = 'EMPTY' WHERE fecha_reporte = ?");
+            Query deleteControl = entityManager.createNativeQuery("UPDATE preciso_administracion_cuadro_mando SET semaforo_componente = 'EMPTY', semaforo_input = 'EMPTY' WHERE fecha_reporte = ?");
             deleteControl.setParameter(1,period);
             deleteControl.executeUpdate();
         }else{

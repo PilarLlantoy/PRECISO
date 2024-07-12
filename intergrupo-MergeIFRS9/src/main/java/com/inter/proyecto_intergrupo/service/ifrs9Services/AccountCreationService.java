@@ -815,7 +815,7 @@ public class AccountCreationService {
         {
             accountCreationRepository.saveAll(listAdd);
 
-            Query updateAll3 = entityManager.createNativeQuery("update nexco_cuadro_mando_ifrs \n" +
+            Query updateAll3 = entityManager.createNativeQuery("update preciso_administracion_cuadro_mando_ifrs \n" +
                     "set semaforo_componente = 'PENDING' \n" +
                     "where orden > 1");
             updateAll3.executeUpdate();
@@ -827,7 +827,7 @@ public class AccountCreationService {
     {
         if(perfil.equals("GENERAL"))
         {
-            Query updateAll3 = entityManager.createNativeQuery("update nexco_cuadro_mando_ifrs \n" +
+            Query updateAll3 = entityManager.createNativeQuery("update preciso_administracion_cuadro_mando_ifrs \n" +
                     "set semaforo_componente = 'PENDING' \n" +
                     "where orden > 1");
             updateAll3.executeUpdate();
@@ -847,7 +847,7 @@ public class AccountCreationService {
     {
         if(perfil.equals("GENERAL"))
         {
-            Query updateAll3 = entityManager.createNativeQuery("update nexco_cuadro_mando_ifrs \n" +
+            Query updateAll3 = entityManager.createNativeQuery("update preciso_administracion_cuadro_mando_ifrs \n" +
                     "set semaforo_componente = 'PENDING' \n" +
                     "where orden > 1");
             updateAll3.executeUpdate();
@@ -891,20 +891,20 @@ public class AccountCreationService {
             }
             if(list.size()==0) {
                 Date hoy = new Date();
-                Query updateAll2 = entityManager.createNativeQuery("update nexco_cuadro_mando_ifrs \n" +
+                Query updateAll2 = entityManager.createNativeQuery("update preciso_administracion_cuadro_mando_ifrs \n" +
                         "set semaforo_componente = 'FULL', usuario_carga = ?  , fecha_cargue = ?\n" +
                         "where componente = ? AND input = ?");
                 if (perfil.equals("GENERAL")) {
                     updateAll2.setParameter(3, "STAGES");
                     updateAll2.setParameter(1, user.getPrimerNombre());
                     updateAll2.setParameter(2, hoy);
-                    Query updateAll3 = entityManager.createNativeQuery("update nexco_cuadro_mando_ifrs \n" +
+                    Query updateAll3 = entityManager.createNativeQuery("update preciso_administracion_cuadro_mando_ifrs \n" +
                             "set semaforo_componente = 'PENDING' \n" +
                             "where orden > 2");
                     updateAll3.executeUpdate();
 
                     String resetPasswordLink = Utility.getSiteURL(request) + "/ifrs/accountCreation";
-                    Query emails = entityManager.createNativeQuery("SELECT distinct A.* FROM nexco_usuarios A, nexco_rol_vista B, nexco_vistas C, nexco_user_rol D WHERE A.usuario = D.usuario AND D.id_perfil = B.id_perfil AND B.id_vista = C.id_vista \n" +
+                    Query emails = entityManager.createNativeQuery("SELECT distinct A.* FROM preciso_administracion_usuarios A, preciso_administracion_rol_vista B, preciso_administracion_vistas C, preciso_administracion_user_rol D WHERE A.usuario = D.usuario AND D.id_perfil = B.id_perfil AND B.id_vista = C.id_vista \n" +
                             "AND (C.nombre = 'Ver Creación de Cuentas (Gestión)' OR C.nombre = 'Ver Creación de Cuentas (Control Contable)' OR C.nombre = 'Ver Creación de Cuentas (Consolidación)')", User.class);
                     List<User>listEmails = emails.getResultList();
                     for (User u : listEmails)
@@ -939,11 +939,11 @@ public class AccountCreationService {
         if(perfil.equals("GENERAL"))
         {
 
-            Query search2 = entityManager.createNativeQuery("SELECT * FROM nexco_cuadro_mando_ifrs \n" +
+            Query search2 = entityManager.createNativeQuery("SELECT * FROM preciso_administracion_cuadro_mando_ifrs \n" +
                     "WHERE componente = ? AND semaforo_componente = 'FULL'");
             search2.setParameter(1,"STAGES");
 
-            Query search3 = entityManager.createNativeQuery("SELECT * FROM nexco_cuadro_mando_ifrs \n" +
+            Query search3 = entityManager.createNativeQuery("SELECT * FROM preciso_administracion_cuadro_mando_ifrs \n" +
                     "WHERE componente = ? AND semaforo_componente != 'FULL'");
             search3.setParameter(1,"CREACION");
 
@@ -964,11 +964,11 @@ public class AccountCreationService {
         else
         {
 
-            Query search1 = entityManager.createNativeQuery("SELECT * FROM nexco_cuadro_mando_ifrs \n" +
+            Query search1 = entityManager.createNativeQuery("SELECT * FROM preciso_administracion_cuadro_mando_ifrs \n" +
                     "WHERE componente = ? AND semaforo_componente = 'FULL'");
             search1.setParameter(1,"STAGES");
 
-            Query search2 = entityManager.createNativeQuery("SELECT * FROM nexco_cuadro_mando_ifrs \n" +
+            Query search2 = entityManager.createNativeQuery("SELECT * FROM preciso_administracion_cuadro_mando_ifrs \n" +
                     "WHERE componente = ? AND input = ? AND semaforo_componente = 'FULL'");
             search2.setParameter(1,"CREACION");
             search2.setParameter(2,perfil);
@@ -1007,7 +1007,7 @@ public class AccountCreationService {
             insertData.executeUpdate();
         }
 
-        Query updateAll3 = entityManager.createNativeQuery("update nexco_cuadro_mando_ifrs \n" +
+        Query updateAll3 = entityManager.createNativeQuery("update preciso_administracion_cuadro_mando_ifrs \n" +
                 "set semaforo_componente = 'PENDING' \n" +
                 "where orden > 1");
         updateAll3.executeUpdate();

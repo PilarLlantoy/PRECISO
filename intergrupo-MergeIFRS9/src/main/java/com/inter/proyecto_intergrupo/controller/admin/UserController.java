@@ -37,7 +37,8 @@ import java.util.stream.IntStream;
 public class UserController {
 
     private static final int PAGINATIONCOUNT=12;
-    private List<String> listColumns=List.of("Usuario", "Nombre", "Correo","Centro","Estado","Roles","YNTP Empresa");
+    private List<String> listColumns=List.of(
+            "Código", "Nombre", "Perfil", "Cargo");
 
     @Autowired
     private UserService userService;
@@ -444,10 +445,13 @@ public class UserController {
         modelAndView.addObject("columns",listColumns);
         modelAndView.addObject("directory","searchUsers");
         modelAndView.addObject("registers",list.size());
-
         User user = userService.findUserByUserName(auth.getName());
+        Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Usuarios");
+
         modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
+        modelAndView.addObject("p_modificar", p_modificar);
+
         modelAndView.setViewName("admin/users");
         return modelAndView;
     }

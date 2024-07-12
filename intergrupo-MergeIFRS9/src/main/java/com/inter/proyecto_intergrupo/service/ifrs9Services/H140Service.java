@@ -60,7 +60,7 @@ public class H140Service {
     @Scheduled(cron = "0 0 5 * * * ")
     //@Scheduled(fixedDelay = 60000*1)
     public void validateRoutineTax() throws IOException, ParseException {
-        Query query1 = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuadro_mando_jobs as em WHERE em.nombre = ? AND em.estado = ?", ControlPanelJobs.class);
+        Query query1 = entityManager.createNativeQuery("SELECT em.* FROM preciso_administracion_cuadro_mando_jobs as em WHERE em.nombre = ? AND em.estado = ?", ControlPanelJobs.class);
         query1.setParameter(1, "HADT140");
         query1.setParameter(2, true);
         List<ControlPanelJobs> listTemporal = query1.getResultList();

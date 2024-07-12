@@ -74,7 +74,7 @@ public class TemplateBankService {
     public ArrayList<String[]> saveFileBD(InputStream file, User user, String period) throws IOException, InvalidFormatException {
         ArrayList<String[]> list = new ArrayList<String[]>();
 
-        Query query1 = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuadro_mando as em " +
+        Query query1 = entityManager.createNativeQuery("SELECT em.* FROM preciso_administracion_cuadro_mando as em " +
                 "WHERE em.input = ? AND em.fecha_reporte = ? AND em.responsable = ? AND estado = 1", ControlPanel.class);
         query1.setParameter(1, "PLANTILLA BANCO");
         query1.setParameter(2, period);
@@ -463,10 +463,10 @@ public class TemplateBankService {
 
     public void updateCuadroMando(User user,String period)
     {
-        Query updateMando = entityManager.createNativeQuery("UPDATE nexco_cuadro_mando " +
+        Query updateMando = entityManager.createNativeQuery("UPDATE preciso_administracion_cuadro_mando " +
                 "SET semaforo_input = 'FULL', usuario_carga = ?, fecha_carga = ? " +
                 "WHERE input = 'PLANTILLA BANCO' AND fecha_reporte = ? " +
-                "AND responsable IN (SELECT centro FROM nexco_usuarios where usuario = ? " +
+                "AND responsable IN (SELECT centro FROM preciso_administracion_usuarios where usuario = ? " +
                 "GROUP BY centro)");
         updateMando.setParameter(1,user.getPrimerNombre());
         updateMando.setParameter(2,new Date());
@@ -474,7 +474,7 @@ public class TemplateBankService {
         updateMando.setParameter(4,user.getUsuario());
         updateMando.executeUpdate();
 
-        Query selectMandoComp = entityManager.createNativeQuery("SELECT componente FROM nexco_cuadro_mando WHERE input = 'PLANTILLA BANCO' AND fecha_reporte = ? AND responsable = ? GROUP BY componente");
+        Query selectMandoComp = entityManager.createNativeQuery("SELECT componente FROM preciso_administracion_cuadro_mando WHERE input = 'PLANTILLA BANCO' AND fecha_reporte = ? AND responsable = ? GROUP BY componente");
         selectMandoComp.setParameter(1,period);
         selectMandoComp.setParameter(2,user.getCentro());
         List<String> listP = selectMandoComp.getResultList();
@@ -482,20 +482,20 @@ public class TemplateBankService {
         for (String part:listP)
         {
 
-            Query selectMando = entityManager.createNativeQuery("SELECT * FROM nexco_cuadro_mando WHERE input = 'PLANTILLA BANCO' AND semaforo_input != 'FULL' AND fecha_reporte = ? AND componente = ?");
+            Query selectMando = entityManager.createNativeQuery("SELECT * FROM preciso_administracion_cuadro_mando WHERE input = 'PLANTILLA BANCO' AND semaforo_input != 'FULL' AND fecha_reporte = ? AND componente = ?");
             selectMando.setParameter(1,period);
             selectMando.setParameter(2,part);
 
             if(selectMando.getResultList().size()==0)
             {
-                Query updateMando1 = entityManager.createNativeQuery("UPDATE nexco_cuadro_mando SET semaforo_componente = 'FULL' " +
+                Query updateMando1 = entityManager.createNativeQuery("UPDATE preciso_administracion_cuadro_mando SET semaforo_componente = 'FULL' " +
                         "WHERE input = 'PLANTILLA BANCO' AND fecha_reporte = ? AND componente = ?");
                 updateMando1.setParameter(1,period);
                 updateMando1.setParameter(2,part);
                 updateMando1.executeUpdate();
             }
             else {
-                Query updateMando1 = entityManager.createNativeQuery("UPDATE nexco_cuadro_mando SET semaforo_componente = 'EMPTY' " +
+                Query updateMando1 = entityManager.createNativeQuery("UPDATE preciso_administracion_cuadro_mando SET semaforo_componente = 'EMPTY' " +
                         "WHERE input = 'PLANTILLA BANCO' AND fecha_reporte = ? AND componente = ?");
                 updateMando1.setParameter(1,period);
                 updateMando1.setParameter(2,part);
@@ -514,7 +514,7 @@ public class TemplateBankService {
     }
 
     public boolean clearRegisterFront(User user, String period) {
-        Query query1 = entityManager.createNativeQuery("SELECT em.* FROM nexco_cuadro_mando as em " +
+        Query query1 = entityManager.createNativeQuery("SELECT em.* FROM preciso_administracion_cuadro_mando as em " +
                 "WHERE em.input = ? AND em.fecha_reporte = ? AND em.responsable = ? AND estado = 1", ControlPanel.class);
         query1.setParameter(1, "PLANTILLA BANCO");
         query1.setParameter(2, period);

@@ -16,7 +16,7 @@ import static javax.persistence.GenerationType.SEQUENCE;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "nexco_auditoria")
+@Table(name = "preciso_administracion_auditoria")
 public class Audit {
 
     @Id

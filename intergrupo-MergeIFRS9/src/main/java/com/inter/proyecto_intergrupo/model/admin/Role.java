@@ -18,7 +18,7 @@ import static javax.persistence.GenerationType.SEQUENCE;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "nexco_perfiles")
+@Table(name = "preciso_administracion_perfiles")
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,7 +44,7 @@ public class Role {
 
     @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     @ToString.Exclude
-    @JoinTable(name="nexco_rol_vista", joinColumns = @JoinColumn(name="id_perfil"), inverseJoinColumns = @JoinColumn(name = "id_vista"))
+    @JoinTable(name="preciso_administracion_rol_vista", joinColumns = @JoinColumn(name="id_perfil"), inverseJoinColumns = @JoinColumn(name = "id_vista"))
     private List<View> vistas;
 
 }
