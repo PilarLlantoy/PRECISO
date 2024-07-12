@@ -1,9 +1,13 @@
 package com.inter.proyecto_intergrupo.controller.parametric;
 
 import com.inter.proyecto_intergrupo.model.admin.User;
+import com.inter.proyecto_intergrupo.model.admin.View;
 import com.inter.proyecto_intergrupo.model.parametric.EventMatrix;
+import com.inter.proyecto_intergrupo.model.parametric.EventType;
+import com.inter.proyecto_intergrupo.model.parametric.SourceSystem;
 import com.inter.proyecto_intergrupo.service.adminServices.UserService;
 import com.inter.proyecto_intergrupo.service.parametricServices.EventMatrixService;
+import com.inter.proyecto_intergrupo.service.parametricServices.EventTypeService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +17,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -32,6 +39,9 @@ public class EventMatrixController {
 
     @Autowired
     private EventMatrixService eventMatrixService;
+
+    @Autowired
+    private EventTypeService eventTypeService;
 
     @GetMapping(value="/parametric/eventMatrix")
     public ModelAndView showEventMatrix(@RequestParam Map<String, Object> params) {
@@ -54,7 +64,7 @@ public class EventMatrixController {
                 List<Integer> pages = IntStream.rangeClosed(1, totalPage).boxed().collect(Collectors.toList());
                 modelAndView.addObject("pages",pages);
             }
-            modelAndView.addObject("allCountry",pageEventMatrix.getContent());
+            modelAndView.addObject("allEvents",pageEventMatrix.getContent());
             modelAndView.addObject("current",page+1);
             modelAndView.addObject("next",page+2);
             modelAndView.addObject("prev",page);
@@ -79,8 +89,32 @@ public class EventMatrixController {
     public ModelAndView showCreateEventMatrix(){
         ModelAndView modelAndView = new ModelAndView();
         EventMatrix eventMatrix = new EventMatrix();
+        List<EventType> allETs = eventTypeService.findAll();
+        modelAndView.addObject("tipoEventos", allETs);
         modelAndView.addObject("eventMatrix",eventMatrix);
         modelAndView.setViewName("/parametric/createEventMatrix");
+        return modelAndView;
+    }
+
+    @PostMapping(value = "/parametric/createEventMatrix")
+    public ModelAndView createEventMatrix(
+            @ModelAttribute EventMatrix eventMatrix,
+            @RequestParam(name = "selectedTipoEvento") String tipoEventoSelected,
+            BindingResult bindingResult){
+        ModelAndView modelAndView = new ModelAndView("redirect:/parametric/eventMatrix");
+        EventMatrix matrixExists = eventMatrixService.findById(eventMatrix.getId());
+        if(matrixExists != null){
+            bindingResult
+                    .rejectValue("pais", "error.pais",
+                            "El pais ya se ha registrado");
+        }
+        if(bindingResult.hasErrors()){
+            modelAndView.setViewName("parametric/createEventMatrix");
+        }else{
+            EventType tipoEvento = eventTypeService.findByName(tipoEventoSelected);
+            eventMatrix.setTipoEvento(tipoEvento);
+            eventMatrixService.modificar(eventMatrix);
+        }
         return modelAndView;
     }
 
@@ -99,6 +133,8 @@ public class EventMatrixController {
         modelAndView.setViewName("parametric/modifyCountry");
         return modelAndView;
     }
+
+
 
     @PostMapping(value = "/parametric/modifyCountry")
     public ModelAndView updateCountry(@ModelAttribute Country pais){
@@ -262,23 +298,7 @@ public class EventMatrixController {
     /*
 
 
-    @PostMapping(value = "/parametric/createCountry")
-    public ModelAndView createCountry(@ModelAttribute Country pais, BindingResult bindingResult){
-        ModelAndView modelAndView = new ModelAndView("redirect:/parametric/country");
-        Country paisExists = countryService.findCountryById(pais.getId());
-        if(paisExists != null){
-            bindingResult
-                    .rejectValue("pais", "error.pais",
-                            "El pais ya se ha registrado");
-        }
-        if(bindingResult.hasErrors()){
-            modelAndView.setViewName("parametric/createCountry");
-        }else{
-            countryService.modificarCountry(pais);
-        }
-        return modelAndView;
 
-    }
 
     */
 

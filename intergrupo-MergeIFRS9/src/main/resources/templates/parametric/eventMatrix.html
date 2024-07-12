@@ -35,23 +35,6 @@
             <a class="btn btn-primary mx-1" th:href="@{/parametric/eventMatrix}"><i class="fas fa-redo-alt"></i></a>
             <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1" th:onclick="|window.location.href='@{/parametric/createEventMatrix}'|">Crear M.E.</button>
         </div>
-        <!--
-        <div class="col-md-8 d-block p-0">
-            <form th:action="@{/bank/subsidiariesTemplate}" id="fileUploadForm" enctype="multipart/form-data"
-                  method="post" class="d-flex flex-column">
-                <div class="form-group my-2 d-flex align-items-center">
-                    <h5 class="fw-bold me-2 mb-0">Cargar archivo: </h5>
-                    <input accept=".xls,.xlsx,.xlsm" type="file" name="file" class="custom-file-control" id="file"
-                           required>
-                    <button type="submit" class="btn btn-primary">Cargar</button>
-                </div>
-                <div class="form-group mb-2 d-flex align-items-center">
-                    <h5 class="fw-bold me-2 mb-0">Periodo: </h5>
-                    <input type="month" th:name="period" th:value="${period}" class="form-control w-25" required>
-                </div>
-            </form>
-        </div>
-        -->
         <div class="col-md-12 p-0">
             <div class="table-responsive rounded border-primary">
                 <table id="example" class="table table-striped table-hover text-center table-bordered table-sm" width="100%">
@@ -66,17 +49,17 @@
                         <th>Hom. Cntros</th>
                         <th>PYG</th>
                         <th>Activo</th>
-                        <th></th>
+                        <th></th> <th></th> <th></th> <th></th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr th:each="event : ${allEvents}">
                         <td th:text="${event.conciliacion}"></td>
-                        <td th:text="${event.inventario}"></td>
+                        <td th:text="${event.inventarioConciliacion}"></td>
                         <td th:text="${event.id}"></td>
-                        <td th:text="${event.tipoEvento}"></td>
-                        <td th:text="${event.cuentaDebito}"></td>
-                        <td th:text="${event.cuentaCredito}"></td>
+                        <td th:text="${event.tipoEvento.nombre}"></td>
+                        <td th:text="${event.campoCC} ?: ''"></td> <!--Cuenta Debito-->
+                        <td th:text="${event.campoCC} ?: ''"></td> <!--Cuenta Credito-->
                         <td th:if="${event.homCntros == true}">Activo</td>
                         <td th:if="${event.homCntros == false}">Inactivo</td>
                         <td th:if="${event.PYG == true}">Activo</td>
@@ -85,7 +68,18 @@
                         <td th:if="${event.activo == false}">Inactivo</td>
                         <td>
                             <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
-                                    th:onclick="|window.location.href='@{/admin/modifyUsers/{id}(id=${concil.id})}'|">Editar</button>
+                                    th:onclick="|window.location.href='@{/parametric/cargueCampos/{id}(id=${event.id})}'|">Condiciones</button>
+                        </td>
+                        <td>
+                            <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
+                                    th:onclick="|window.location.href='@{/parametric/modifyAccountingRoute/{id}(id=${event.id})}'|">Cuentas</button>
+                        </td>
+                        <td>
+                            <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
+                                    th:onclick="|window.location.href='@{/parametric/modifyAccountingRoute/{id}(id=${event.id})}'|">Validaciones</button>
+                        <td>
+                            <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
+                                    th:onclick="|window.location.href='@{/parametric/modifyEventMatrix/{id}(id=${event.id})}'|">Editar</button>
                         </td>
                     </tr>
                     </tbody>

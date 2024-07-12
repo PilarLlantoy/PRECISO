@@ -58,7 +58,7 @@
                         <select class="form-control" name="selectedTipoEvento" id="selectedTipoEvento" required>
                             <option disabled value="" selected hidden>Seleccione una tipo de Evento</option>
                             <option th:each="tipoEvento : ${tipoEventos}" th:value="${tipoEvento.nombre}" th:text="${tipoEvento.nombre}"
-                                    th:selected="${concil.tipoEvento != null and tipoEvento.id == concil.tipoEvento.id}"></option>
+                                    th:selected="${eventMatrix.tipoEvento != null and tipoEvento.id == eventMatrix.tipoEvento.id}"></option>
                         </select>
                     </div>
 

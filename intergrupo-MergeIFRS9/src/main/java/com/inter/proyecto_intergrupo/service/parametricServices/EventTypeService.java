@@ -2,6 +2,7 @@ package com.inter.proyecto_intergrupo.service.parametricServices;
 
 import com.inter.proyecto_intergrupo.model.admin.Audit;
 import com.inter.proyecto_intergrupo.model.admin.User;
+import com.inter.proyecto_intergrupo.model.parametric.Country;
 import com.inter.proyecto_intergrupo.model.parametric.EventType;
 import com.inter.proyecto_intergrupo.repository.admin.AuditRepository;
 import com.inter.proyecto_intergrupo.repository.parametric.EventTypeRepository;
@@ -41,6 +42,12 @@ public class EventTypeService {
     public List<EventType> findAllActive() {
         return eventTypeRepository.findByEstado(true);
     }
+
+
+    public EventType findByName(String nombre){
+        return eventTypeRepository.findAllByNombre(nombre);
+    }
+
 
     public EventType findAllById(int id){
         return eventTypeRepository.findAllById(id);
