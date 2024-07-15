@@ -1,5 +1,6 @@
 package com.inter.proyecto_intergrupo.configuration;
 import com.inter.proyecto_intergrupo.model.admin.LDAP;
+import com.inter.proyecto_intergrupo.service.adminServices.UserService;
 import com.inter.proyecto_intergrupo.service.parametricServices.MyUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -19,6 +20,8 @@ public class LdapAuthenticationProvider implements AuthenticationProvider {
     private MyUserDetailsService userDetailsService;
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+    @Autowired
+    private UserService userService;
 
     private LDAP ldap;
 
@@ -37,6 +40,7 @@ public class LdapAuthenticationProvider implements AuthenticationProvider {
         if (u!=null && rta.contains("exitosa")){
             if(bCryptPasswordEncoder.matches(password,u.getPassword())){
                 System.out.println("Contra coincide con BD");
+                userService.saveUsarLDAP(username);
             }
             return new UsernamePasswordAuthenticationToken(username, password, Collections.emptyList());
         } else if (u==null && !rta.contains("exitosa")) {

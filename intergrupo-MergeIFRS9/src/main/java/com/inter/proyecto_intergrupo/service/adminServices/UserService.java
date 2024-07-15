@@ -64,6 +64,13 @@ public class    UserService {
         return user;
     }
 
+    public void saveUsarLDAP(String usuario){
+        Query createUser = entityManager.createNativeQuery("IF NOT EXISTS(SELECT * FROM preciso_administracion_usuarios WHERE codigo_usuario= :codigoUsuario ) BEGIN INSERT INTO preciso_administracion_usuarios(codigo_usuario,creacion) VALUES(:codigoUsuario, :fechaCreacion ) END\n");
+        createUser.setParameter("codigoUsuario",usuario);
+        createUser.setParameter("fechaCreacion",new Date());
+        createUser.executeUpdate();
+    }
+
     public void asociarCentro(String centro, int id, int operacion){
 
         if(operacion==2)

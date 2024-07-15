@@ -85,7 +85,7 @@ public class User {
 
     @Column(name = "correo", unique = true)
     @Email(message = "El email no es valido")
-    @NotEmpty(message = "Ingrese un Email")
+    //@NotEmpty(message = "Ingrese un Email")
     private String correo;
 
     @Column(name = "contra")
