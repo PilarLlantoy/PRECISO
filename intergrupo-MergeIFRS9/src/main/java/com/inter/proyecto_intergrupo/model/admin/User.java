@@ -9,6 +9,7 @@ import javax.validation.constraints.*;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -70,19 +71,6 @@ public class User {
     @Column(name = "estado", columnDefinition = "BIT DEFAULT 1")
     private boolean estado = true;
 
-    @Column(name = "fecha_nacimiento")
-    //@NotNull(message = "Ingrese una fecha de nacimiento")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date fechaNacimiento;
-
-    @Column(name = "inicio_inactividad")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date inicioInactividad;
-
-    @Column(name = "fin_inactividad")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date finInactividad;
-
     @Column(name = "correo", unique = true)
     @Email(message = "El email no es valido")
     //@NotEmpty(message = "Ingrese un Email")
@@ -107,4 +95,17 @@ public class User {
     @Column(name = "centro")
     //@NotEmpty(message = "Ingrese el centro")
     private String centro;
+
+    // Otros métodos y campos
+
+    public String getUsername() {
+        return primerNombre + " " +
+                (segundoNombre != null && !segundoNombre.isEmpty() ? segundoNombre + " " : "") +
+                primerApellido + " " + segundoApellido;
+    }
+
+    public String getFechaCreacion(){
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        return formatter.format(creacion);
+    }
 }

@@ -1,6 +1,7 @@
 package com.inter.proyecto_intergrupo.repository.admin;
 
 import com.inter.proyecto_intergrupo.model.admin.User;
+import org.apache.xpath.operations.Bool;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

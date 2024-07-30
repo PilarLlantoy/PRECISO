@@ -34,12 +34,12 @@ public class Role {
 
     // NUEVOOO
     @Builder.Default
-    @Column(name = "estado_perfil", columnDefinition = "BIT DEFAULT 1")
+    @Column(name = "estado", columnDefinition = "BIT DEFAULT 1")
     private boolean estado = true;
 
     // NUEVOOO
     @Builder.Default
-    @Column(name = "activo_perfil", columnDefinition = "BIT DEFAULT 1")
+    @Column(name = "activo", columnDefinition = "BIT DEFAULT 1")
     private boolean activo = true;
 
     @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)

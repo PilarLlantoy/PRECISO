@@ -38,7 +38,7 @@ public class UserController {
 
     private static final int PAGINATIONCOUNT=12;
     private List<String> listColumns=List.of(
-            "Código", "Nombre", "Perfil", "Cargo");
+            "Estado","Código", "Nombre", "Perfil", "Cargo");
 
     @Autowired
     private UserService userService;
@@ -64,7 +64,7 @@ public class UserController {
         User user = userService.findUserByUserName(auth.getName());
         userService.loadAudit(user);
         modelAndView.addObject(user);
-        modelAndView.addObject("userName", user.getPrimerNombre());
+        modelAndView.addObject("userName", user.getUsername());
         modelAndView.addObject("userEmail", user.getCorreo());
         modelAndView.addObject("userComp", user.getEmpresa());
         modelAndView.setViewName("home");
@@ -154,8 +154,8 @@ public class UserController {
 
             modelAndView.addObject("userName", user.getUsuario());
             modelAndView.addObject("userEmail", user.getCorreo());
-            List<Role> allRoles = roleService.findAll();
-            List<Cargo> allCargos = cargoService.findAll();
+            List<Role> allRoles = roleService.findAllActiveRoles();
+            List<Cargo> allCargos = cargoService.findAllActiveCargos();
             modelAndView.addObject("roles", allRoles);
             List<TipoDocumento> allTipos = tipoDocumentoService.findAll();
             modelAndView.addObject("tipos", allTipos);
@@ -181,7 +181,7 @@ public class UserController {
             @RequestParam(name = "newU") String id,
             BindingResult bindingResult){
 
-        ModelAndView modelAndView = new ModelAndView("redirect:/admin/users");
+        ModelAndView modelAndView = new ModelAndView("redirect:/admin/searchUsers?vId=activo&vFilter=Estado");
         //Verifica que no haya usuario y correo repetido
         User userExists = userService.findUserByUserName(user.getUsuario());
         User userByEmail = userService.findUserByEmail(user.getCorreo());
@@ -190,18 +190,7 @@ public class UserController {
             bindingResult
                     .rejectValue("roles", "error.roles",
                             "Roles no puede estar vacio");
-        }/*
-        if (userExists != null && userExists.getId()!=user.getId()) {
-            bindingResult
-                    .rejectValue("usuario", "error.usuario",
-                            "El usuario ya se encuentra registrado");
         }
-        if(userByEmail != null && userExists.getId()!=user.getId()){
-            bindingResult
-                    .rejectValue("correo",
-                            "error.correo",
-                            "El correo ya se encuentra registrado");
-        }*/
 
         if(bindingResult.hasErrors()) {
             modelAndView.addObject("bindingResult", bindingResult);
@@ -308,7 +297,7 @@ public class UserController {
             @RequestParam(name = "selectedRoles", defaultValue = "N") String[] roles,
             BindingResult bindingResult, HttpServletRequest request) {
 
-        ModelAndView modelAndView = new ModelAndView("redirect:/admin/users");
+        ModelAndView modelAndView = new ModelAndView("redirect:/admin/searchUsers?vId=activo&vFilter=Estado");
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         List <Role> allRoles = roleService.findAll();
         modelAndView.addObject("roles",allRoles);
@@ -320,7 +309,7 @@ public class UserController {
         if(roles[0].equals("N")) {
             bindingResult
                     .rejectValue("roles", "error.roles",
-                            "Roles no uede estar vacio");
+                            "Roles no puede estar vacio");
         }
 
         if (userExists != null) {
@@ -422,9 +411,12 @@ public class UserController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
+        System.out.println("PARAMS "+params.get("vId").toString()+" "+params.get("vFilter").toString());
         int page=params.get("page")==null?0:(Integer.valueOf(params.get("page").toString())-1);
         PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
-        List<User> list=userService.findByFilter(params.get("vId").toString(),params.get("vFilter").toString());
+        List<User> list;
+        if(params==null) list=userService.findByFilter("inactivo", "Estado");
+        else list=userService.findByFilter(params.get("vId").toString(),params.get("vFilter").toString());
 
         int start = (int)pageRequest.getOffset();
         int end = Math.min((start + pageRequest.getPageSize()), list.size());

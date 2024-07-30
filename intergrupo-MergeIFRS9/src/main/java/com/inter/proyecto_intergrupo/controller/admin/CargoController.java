@@ -3,6 +3,7 @@ package com.inter.proyecto_intergrupo.controller.admin;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.inter.proyecto_intergrupo.model.admin.Cargo;
+import com.inter.proyecto_intergrupo.model.admin.Role;
 import com.inter.proyecto_intergrupo.service.adminServices.CargoService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,7 +36,7 @@ public class CargoController {
         User user = userService.findUserByUserName(auth.getName());
         Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Cargos");
         if(userService.validateEndpointVer(user.getId(),"Ver Cargos")) {
-            List<Cargo> allCargos = cargoService.findAllActiveCargos();
+            List<Cargo> allCargos = cargoService.findAll();
             modelAndView.addObject("cargos", allCargos);
             modelAndView.addObject("p_modificar", p_modificar);
             modelAndView.setViewName("admin/cargos");
@@ -66,10 +67,50 @@ public class CargoController {
         return modelAndView;
     }
 
-    @PostMapping(value = "/admin/deleteCargo/{id}")
-    public boolean deleteCargo(@PathVariable int id){
+    @PostMapping(value = "/admin/inactivarCargo/{id}")
+    public boolean inactivarCargo(@PathVariable int id){
+        //Cargo cargo = cargoService.findCargoById(id);
+        //cargo.setActivo(false);
+        //cargoService.actualizarCargo(cargo);
+        //return true;
+
+        try {
+            Cargo cargo = cargoService.findCargoById(id);
+
+            if (cargo == null) {
+                System.out.println("Cargo no encontrado");
+                return false;
+            }
+
+            // Verificar si el cargo tiene usuarios asociados
+            boolean tieneUsuarios = verificarUsuarios(id);
+
+            // Inactivar el rol si no tiene usuarios
+            if (!tieneUsuarios) {
+                cargo.setActivo(false);
+                cargoService.actualizarCargo(cargo); // Suponiendo que exista un método para actualizar
+            } else {
+                System.out.println("El cargo tiene usuarios asociados, no se puede inactivar.");
+            }
+
+            System.out.println("Usuarios asociados: " + tieneUsuarios);
+            return !tieneUsuarios;
+        } catch (Exception e) {
+            // Manejar excepciones
+            System.out.println("Error al inactivar el cargo: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean verificarUsuarios(int id) {
+        List<User> usuarios = cargoService.encontrarUsuarios(id);
+        return usuarios != null && !usuarios.isEmpty();
+    }
+
+    @PostMapping(value = "/admin/activarCargo/{id}")
+    public boolean activarCargo(@PathVariable int id){
         Cargo cargo = cargoService.findCargoById(id);
-        cargo.setEstado(false);
+        cargo.setActivo(true);
         cargoService.actualizarCargo(cargo);
         return true;
     }

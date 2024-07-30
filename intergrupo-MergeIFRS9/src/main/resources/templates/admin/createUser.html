@@ -7,7 +7,13 @@
 <body>
 <div th:replace="fragments/menuTemplate :: menuBody"></div>
 <div class="main-container">
+    <style>
+        body, .btn, .form-control, .badge, h6 {
+            font-size: 12px;
+        }
 
+        .big-checkbox {width: 1rem; height: 1rem; top:0.5rem}
+    </style>
     <div class="row m-0 bg-primary fixed-top myNav">
         <div class="col-md-12 border-bottom border-primary p-0 bg-primary d-flex align-items-center">
             <h3 class="fw-bold text-white mx-4 my-3">Crear Usuario</h3>
@@ -45,7 +51,7 @@
                 <div class="col-md-6">
                     <div class="form-group mb-1">
                         <label>Segundo nombre</label>
-                        <input class="form-control" maxlength="255" required th:field="*{segundoNombre}" type="text">
+                        <input class="form-control" maxlength="255" th:field="*{segundoNombre}" type="text">
                         <div class="alert alert-warning" th:errors="*{segundoNombre}"
                              th:if="${#fields.hasErrors('segundoNombre')}"></div>
                     </div>
@@ -115,30 +121,6 @@
                 </div>
 
                 <div class="col-md-6">
-                    <div class="form-group mb-1">
-                        <label>Fecha Nacimiento</label>
-                        <input class="form-control" type="date"
-                               th:field="*{fechaNacimiento}">
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="form-group mb-1">
-                        <label>Fecha inicio inactividad</label>
-                        <input class="form-control" type="date"
-                               th:field="*{inicioInactividad}" >
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="form-group mb-1">
-                        <label>Fecha fin inactividad</label>
-                        <input class="form-control" type="date"
-                               th:field="*{finInactividad}">
-                    </div>
-                </div>
-
-                <div class="col-md-6">
                     <div class="row">
                         <div class="col-12">
                             <p>Activo:</p>
@@ -154,13 +136,13 @@
                 </div>
 
             </div>
-            <div class="row pt-5 py-3">
+            <div class="row pt-3 py-3">
                 <div class="col-md-12 d-flex align-content-center justify-content-center">
                     <div class="d-grid gap-2 col-3">
                         <button type="submit" class="btn btn-primary">Agregar</button>
                     </div>
                     <div class="d-grid gap-2 col-3">
-                        <a class="btn btn-danger"th:href="@{/admin/users}">Cancelar</a>
+                        <a class="btn btn-danger"th:href="@{/admin/searchUsers?vId=activo&vFilter=Estado}">Cancelar</a>
                     </div>
                 </div>
             </div>

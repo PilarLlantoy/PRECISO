@@ -49,7 +49,7 @@ public class RoleController {
         System.out.println("user"+user.getUsuario()+user.getPrimerNombre());
         Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Roles");
         if(userService.validateEndpointVer(user.getId(),"Ver Roles")) {
-            List<Role> allRoles = roleService.findAllActiveRoles();
+            List<Role> allRoles = roleService.findAll();
             modelAndView.addObject("roles", allRoles);
             modelAndView.addObject("p_modificar", p_modificar);
             modelAndView.setViewName("profile/roles");
@@ -109,6 +109,49 @@ public class RoleController {
     public boolean deleteRole(@PathVariable int id){
         Role role = roleService.findRoleById(id);
         role.setEstado(false);
+        roleService.deleteRole(role);
+        return true;
+    }
+
+    @PostMapping(value = "/profile/inactivarRole/{id}")
+    public boolean inactivarRole(@PathVariable int id) {
+        try {
+            Role role = roleService.findRoleById(id);
+
+            if (role == null) {
+                System.out.println("Rol no encontrado");
+                return false;
+            }
+
+            // Verificar si el rol tiene usuarios asociados
+            boolean tieneUsuarios = verificarUsuarios(id);
+
+            // Inactivar el rol si no tiene usuarios
+            if (!tieneUsuarios) {
+                role.setActivo(false);
+                roleService.modifyOnlyRole(role); // Suponiendo que exista un método para actualizar
+            } else {
+                System.out.println("El rol tiene usuarios asociados, no se puede inactivar.");
+            }
+
+            System.out.println("Usuarios asociados: " + tieneUsuarios);
+            return !tieneUsuarios;
+        } catch (Exception e) {
+            // Manejar excepciones
+            System.out.println("Error al inactivar el rol: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean verificarUsuarios(int id) {
+        List<User> usuarios = roleService.encontrarUsuarios(id);
+        return usuarios != null && !usuarios.isEmpty();
+    }
+
+    @PostMapping(value = "/profile/activarRole/{id}")
+    public boolean activarRole(@PathVariable int id){
+        Role role = roleService.findRoleById(id);
+        role.setActivo(true);
         roleService.deleteRole(role);
         return true;
     }

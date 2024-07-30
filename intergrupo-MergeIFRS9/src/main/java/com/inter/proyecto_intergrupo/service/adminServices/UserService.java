@@ -47,6 +47,11 @@ public class    UserService {
     }
 
     public List<User> findAll(){return userRepository.findAll();}
+    public List<User> findAllActive() {
+        Query query = entityManager.createNativeQuery(
+                "SELECT * FROM preciso_administracion_usuarios WHERE activo = 1", User.class);
+        return query.getResultList();
+    }
 
     public List<User> findByEmpresa(String empresa){return userRepository.findByEmpresa(empresa);}
 
@@ -115,9 +120,6 @@ public class    UserService {
         toInsert.setEstado(toModify.isEstado());
         toInsert.setCreacion(fecha);
         toInsert.setRoles(roles);
-        toInsert.setFechaNacimiento(toModify.getFechaNacimiento());
-        toInsert.setInicioInactividad(toModify.getInicioInactividad());
-        toInsert.setFinInactividad(toModify.getFinInactividad());
         asociarCentro(toModify.getCentro(),toModify.getId(),2);
         userRepository.save(toInsert);
         return toInsert;
@@ -208,6 +210,17 @@ public class    UserService {
         List<User> list=new ArrayList<User>();
         switch (filter)
         {
+            case "Estado":
+                Boolean valor = true;
+                if ("inactivo".equalsIgnoreCase(value)) {
+                    valor = false;
+                }
+                System.out.println("valor: " + valor);
+                Query quer = entityManager.createNativeQuery(
+                        "SELECT em.* FROM preciso_administracion_usuarios as em WHERE em.activo = ?", User.class);
+                quer.setParameter(1, valor);
+                list = quer.getResultList();
+                break;
             case "Código":
                 Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_administracion_usuarios as em " +
                         "WHERE em.codigo_usuario LIKE ?", User.class);
