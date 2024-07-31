@@ -1,7 +1,9 @@
 package com.inter.proyecto_intergrupo.configuration;
 import com.inter.proyecto_intergrupo.model.admin.LDAP;
+import com.inter.proyecto_intergrupo.model.admin.User;
 import com.inter.proyecto_intergrupo.service.adminServices.UserService;
 import com.inter.proyecto_intergrupo.service.parametricServices.MyUserDetailsService;
+import com.inter.proyecto_intergrupo.service.resourcesServices.SendEmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,6 +24,8 @@ public class LdapAuthenticationProvider implements AuthenticationProvider {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     @Autowired
     private UserService userService;
+    @Autowired
+    private SendEmailService sendEmailService;
 
     private LDAP ldap;
 
@@ -38,9 +42,23 @@ public class LdapAuthenticationProvider implements AuthenticationProvider {
         UserDetails u = userDetailsService.loadUserByUsername(username);
 
         if (u!=null && rta.contains("exitosa")){
+
+            //verifica con red y manda correo
             if(bCryptPasswordEncoder.matches(password,u.getPassword())){
                 System.out.println("Contra coincide con BD");
-                userService.saveUsarLDAP(username);
+
+                //verificar en tabla local
+                User existe = userService.findUserByUserName(username);
+
+                if(existe==null){
+                    //si no está, mandar correo
+                    String subject = "Solicitud de registro de usuario BBVA PRECISO";
+                    String content = "<p>Hola,</p>"
+                            + username+"<p> ha solicitado registrarse en PRECISO</p>";
+                    String recipientEmail = "pilar.llantoy.contractor@bbva.com";
+                    sendEmailService.sendEmail(recipientEmail, subject, content);
+                    //userService.saveUsarLDAP(username); //para guardar al usuario
+                }
             }
             return new UsernamePasswordAuthenticationToken(username, password, Collections.emptyList());
         } else if (u==null && !rta.contains("exitosa")) {

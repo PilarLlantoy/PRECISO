@@ -38,9 +38,9 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth
-                //.authenticationProvider(ldapAuthenticationProvider);
-                .userDetailsService(userDetailsService)
-                .passwordEncoder(bCryptPasswordEncoder);
+                .authenticationProvider(ldapAuthenticationProvider);
+                //.userDetailsService(userDetailsService)
+                //.passwordEncoder(bCryptPasswordEncoder);
     }
 
     @Override
