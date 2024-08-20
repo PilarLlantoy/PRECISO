@@ -1,11 +1,14 @@
 package com.inter.proyecto_intergrupo.controller.parametric;
 
+import com.inter.proyecto_intergrupo.model.admin.TipoDocumento;
 import com.inter.proyecto_intergrupo.model.admin.User;
 import com.inter.proyecto_intergrupo.model.admin.View;
+import com.inter.proyecto_intergrupo.model.parametric.Conciliation;
 import com.inter.proyecto_intergrupo.model.parametric.EventMatrix;
 import com.inter.proyecto_intergrupo.model.parametric.EventType;
 import com.inter.proyecto_intergrupo.model.parametric.SourceSystem;
 import com.inter.proyecto_intergrupo.service.adminServices.UserService;
+import com.inter.proyecto_intergrupo.service.parametricServices.ConciliationService;
 import com.inter.proyecto_intergrupo.service.parametricServices.EventMatrixService;
 import com.inter.proyecto_intergrupo.service.parametricServices.EventTypeService;
 import org.apache.logging.log4j.LogManager;
@@ -40,8 +43,12 @@ public class EventMatrixController {
     @Autowired
     private EventMatrixService eventMatrixService;
 
+
     @Autowired
     private EventTypeService eventTypeService;
+
+    @Autowired
+    private ConciliationService conciliationService;
 
     @GetMapping(value="/parametric/eventMatrix")
     public ModelAndView showEventMatrix(@RequestParam Map<String, Object> params) {
@@ -75,6 +82,14 @@ public class EventMatrixController {
             modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.addObject("p_modificar", p_modificar);
+
+            List<EventType> allTEs = eventTypeService.findAll();
+            modelAndView.addObject("allTEs", allTEs);
+
+            List<Conciliation> allConcils = conciliationService.findAll();
+            modelAndView.addObject("allConcils", allConcils);
+
+
             modelAndView.setViewName("parametric/eventMatrix");
         }
         else

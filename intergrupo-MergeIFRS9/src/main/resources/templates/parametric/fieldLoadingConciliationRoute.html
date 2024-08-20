@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+
+<div class="main-container">
+    <style>
+        body, .btn, .form-control {
+            font-size: 12px;
+        }
+
+        h2{
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .big-checkbox {width: 1rem; height: 1rem; top:0.5rem}
+    </style>
+    <div class="row m-0 bg-primary fixed-top myNav">
+        <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
+            <h3 class="fw-bold text-white mx-4 my-3">Conciliacion: -</h3>
+            <h3 class="fw-bold text-white mx-4 my-3">Inventario: -</h3>
+            <h3 class="fw-bold text-white mx-4 my-3">Matriz: -</h3>
+            <h3 class="fw-bold text-white mx-4 my-3">Tipo Evento: -</h3>
+        </div>
+    </div>
+
+    <div class="row m-0 px-4 mt-5">
+        <div class="text-left pr-3 col-md-12 my-3">
+
+            <!--SECCION DE FILTROS-->
+            <h2>Cargue de campos</h2>
+
+            <div class="mb-3 row">
+                <div class="col-md-2">
+                    <div class="form-group mb-1">
+                        <label>Detalle Campo</label>
+                        <input type="text" class="form-control">
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <div class="col-12"><p>Campo Primario</p></div>
+                    <div class="form-group col-md-2">
+                        <div class="form-check form-check-inline">
+                            <input id="PKInput" class="form-check-input" type="checkbox" name="PK" th:id="${PK}">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <div class="col-12"><p>Seleccionado Conciliación</p></div>
+                    <div class="form-group col-md-2">
+                        <div class="form-check form-check-inline">
+                            <input id="aFormulaInput" class="form-check-input" type="checkbox" name="aFormula" th:id="${aFormula}">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <div class="form-group mb-1">
+                        <label>Tipo de Campo</label>
+                        <select class="form-control" name="selectedTipoCampo" id="selectedTipoCampo" required>
+                            <option disabled value="" selected hidden>Seleccione</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <div class="form-group mb-1">
+                        <label>Longitud de Campo</label>
+                        <input type="text" class="form-control">
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <div class="col-12"><p>Nulo a moneda</p></div>
+                    <div class="form-group col-md-2">
+                        <div class="form-check form-check-inline">
+                            <input id="NMInput" class="form-check-input" type="checkbox" name="nm" th:id="${nm}">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="mb-1 row">
+                <div class="col-md-5">
+                    <div class="form-group mb-1">
+                        <label>Formato Fecha:</label>
+                        <select class="form-control" name="selectedFormatoFecha" id="formatoFecha" required>
+                            <option disabled value="" selected hidden>Seleccione formato</option>
+                            <option th:value="YYYYMMDD">AÑO MES DIA CORTA (YYYYMMDD)</option>
+                            <option th:value="YYMMDD">AÑO MES DIA RED (YYMMDD)</option>
+                            <option th:value="DDMMMMYYYY">DIA MES AÑO COM. (DDMMMMYYYY)</option>
+                            <option th:value="DDMMYYYY">DIA MES AÑO CORTA (DDMMYYYY)</option>
+                            <option th:value="DDMMYY">DIA MES AÑO RED. (DDMMYY)</option>
+                            <option th:value="DDMMMMYYYY">DIA MES AÑO SIMPLE (DDMMMMYYYY)</option>
+                            <option th:value="MMDDYY">MES DIA AÑO (MMDDYY)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <div class="form-group mb-1">
+                        <label>Idioma Campo:</label>
+                        <select class="form-control" name="selectedIdiomaCampo" id="idiomaCampo" required>
+                            <option disabled value="" selected hidden>Seleccione formato</option>
+                            <option th:value="EspañolColombia">Español - Colombia</option>
+                            <option th:value="EspañolEspaña">Español - España</option>
+                            <option th:value="InglésUSA">Inglés - USA</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group mb-1">
+                        <label>Separador</label>
+                        <input type="text" class="form-control">
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="col-md-4" style="display: flex; align-items: center;">
+                <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1" th:onclick="|window.location.href='@{/parametric/createEventMatrix}'|">Descartar</button>
+                <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1" th:onclick="|window.location.href='@{/parametric/createEventMatrix}'|">Agregar</button>
+            </div>
+
+        </div>
+        <div class="col-md-12 p-0">
+            <div class="table-responsive rounded border-primary">
+                <h2>Filtros registrados</h2>
+                <table id="example" class="table table-striped table-hover text-center table-bordered table-sm" width="100%">
+                    <thead class="bg-primary">
+                    <tr>
+                        <th>Campo referencia</th>
+                        <th>Campo validación</th>
+                        <th>Valor validación</th>
+                        <th>Operación</th>
+                        <th>Valor operación</th>
+                        <th></th> <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="event : ${allEvents}">
+                        <td th:text="${event.conciliacion}"></td>
+                        <td th:text="${event.inventarioConciliacion}"></td>
+                        <td th:text="${event.conciliacion}"></td>
+                        <td th:text="${event.inventarioConciliacion}"></td>
+                        <td th:text="${event.id}"></td>
+                        <td>
+                            <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
+                                    th:onclick="|window.location.href='@{/parametric/cargueCampos/{id}(id=${event.id})}'|">Seleccionar</button>
+                        </td>
+                        <td>
+                            <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
+                                    th:onclick="|window.location.href='@{/parametric/modifyAccountingRoute/{id}(id=${event.id})}'|">Borrar</button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="row" th:if="${last != 0}">
+                <div class="col-md-4 text-left">
+                    <nav arial-label="Pagination">
+                        <ul class="pagination">
+                            <li class="page-item" th:classappend="${prev == 0 ? 'disabled' : ''}">
+                                <a class="page-link"
+                                   th:href="@{/admin/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${prev},dir=${directory},vId=${vId})}">Anterior</a>
+                            </li>
+                            <li class="page-item" th:classappend="${current == last ? 'disabled' : ''}">
+                                <a class="page-link"
+                                   th:href="@{/admin/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${next},dir=${directory},vId=${vId})}">Siguiente</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="col-md-4 text-center">
+                    <h6 th:utext="${registers} + ' Registros Encontrados'"></h6>
+                </div>
+                <div class="col-md-4 text-right">
+                    <h6 class="mx-1" th:utext="'Página ' + ${current} + ' de ' + ${last}"></h6>
+                </div>
+            </div>
+            <div class="d-flex align-items-center justify-content-center" th:if="${filterExport != 'Original'}">
+                <h5><span class="badge badge-pill text-light badge-info py-2 px-5">¡La Tabla se encuentra Filtrada!</span>
+                </h5>
+            </div>
+            <!--
+            <div class="d-flex align-items-center justify-content-center">
+                <a th:href="@{/admin/users/download/?vFilter={vFilter}&vId={vId}(vFilter=${vFilter},vId=${vId})}" class="btn btn-primary">Exportar a Excel</a>
+            </div>
+            -->
+        </div>
+
+    </div>
+</div>
+</div>
+</body>
+</html>

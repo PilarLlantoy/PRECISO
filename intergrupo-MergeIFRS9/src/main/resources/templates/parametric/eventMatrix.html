@@ -8,6 +8,18 @@
 <div th:replace="fragments/menuTemplate :: menuBody"></div>
 
 <div class="main-container">
+    <style>
+        body, .btn, .form-control {
+            font-size: 12px;
+        }
+
+        h2{
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .big-checkbox {width: 1rem; height: 1rem; top:0.5rem}
+    </style>
     <div class="row m-0 bg-primary fixed-top myNav">
         <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
             <h3 class="fw-bold text-white mx-4 my-3">Módulo de Matriz de Eventos</h3>
@@ -31,9 +43,69 @@
         </div>
     </div>
     <div class="row m-0 px-4 mt-5">
-        <div class="text-right pr-3 col-md-12 my-3">
-            <a class="btn btn-primary mx-1" th:href="@{/parametric/eventMatrix}"><i class="fas fa-redo-alt"></i></a>
-            <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1" th:onclick="|window.location.href='@{/parametric/createEventMatrix}'|">Crear M.E.</button>
+        <div class="text-left pr-3 col-md-12 my-3">
+
+            <!--SECCION DE FILTROS-->
+            <h2>Registros Cargados</h2>
+
+            <div class="mb-1 row">
+                <div class="col-md-2">
+                    <div class="form-group mb-1">
+                        <label>Tipo Evento</label>
+                        <select class="form-control" name="selectedET" id="selectedET" required>
+                            <option disabled value="" selected hidden>Seleccione un tipo evento</option>
+                            <option th:each="TE : ${allTEs}" th:value="${TE.nombre}" th:text="${TE.nombre}"></option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <div class="form-group mb-1">
+                        <label>Conciliacion</label>
+                        <select class="form-control" name="selectedConcil" id="selectedConcil" required>
+                            <option disabled value="" selected hidden>Seleccione una concicliación</option>
+                            <option th:each="concil : ${allConcils}" th:value="${concil.nombre}" th:text="${concil.nombre}"></option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <div class="form-group mb-1">
+                        <label>Inventario Conciliacion</label>
+                        <select class="form-control" name="selectedInv" id="selectedInv" required>
+                            <option disabled value="" selected hidden>Seleccione una I.C.</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <div class="form-group mb-1">
+                        <label>Cuentas</label>
+                        <select class="form-control" name="selectedCuenta" id="selectedCuenta" required>
+                            <option disabled value="" selected hidden>Seleccione una Cuenta</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-4" style="text-align: right;">
+                    <a class="btn btn-primary mx-1" th:href="@{/parametric/eventMatrix}"><i class="fas fa-redo-alt"></i></a>
+                    <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1" th:onclick="|window.location.href='@{/parametric/createEventMatrix}'|">Crear M.E.</button>
+                </div>
+
+            </div>
+
+            <a th:href="@{/parametric/conditionsEventMatrix}">
+                <span class="links_name">condiciones</span>
+            </a>
+
+            <a th:href="@{/parametric/cuentasEventMatrix}">
+                <span class="links_name">cuentas</span>
+            </a>
+
+            <a th:href="@{/parametric/validationsEventMatrix}">
+                <span class="links_name">validaciones</span>
+            </a>
+
         </div>
         <div class="col-md-12 p-0">
             <div class="table-responsive rounded border-primary">
@@ -44,8 +116,8 @@
                         <th>Inventario</th>
                         <th>Matriz</th>
                         <th>Tipo Evento</th>
-                        <th>Cuenta Debito</th>
-                        <th>Cuenta Credito</th>
+                        <th>Cuenta 1</th>
+                        <th>Cuenta 2</th>
                         <th>Hom. Cntros</th>
                         <th>PYG</th>
                         <th>Activo</th>
@@ -68,7 +140,7 @@
                         <td th:if="${event.activo == false}">Inactivo</td>
                         <td>
                             <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
-                                    th:onclick="|window.location.href='@{/parametric/cargueCampos/{id}(id=${event.id})}'|">Condiciones</button>
+                                    th:onclick="|window.location.href='@{/parametric/conditionsEventMatrix/{id}(id=${event.id})}'|">Condiciones</button>
                         </td>
                         <td>
                             <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"

@@ -47,6 +47,9 @@ public class ConciliationRoute {
     @Column(name = "activo", columnDefinition = "BIT DEFAULT 1")
     private boolean activo = true;
 
+    @Column(name = "esFichero", columnDefinition = "BIT DEFAULT 1")
+    private boolean esFichero = false;
+
     @Column(name = "estado", columnDefinition = "BIT DEFAULT 1")
     private boolean estado = true;
 
