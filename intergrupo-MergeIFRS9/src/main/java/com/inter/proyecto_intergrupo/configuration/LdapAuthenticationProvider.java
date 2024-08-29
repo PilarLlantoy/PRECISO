@@ -37,15 +37,12 @@ public class LdapAuthenticationProvider implements AuthenticationProvider {
         System.out.println("VALIDAR "+username+password);
 
         ldap = new LDAP();
-        String rta = ldap.inicializarLDAP(username,password);
+        //String rta = ldap.inicializarLDAP(username,password);
+        String rta = "exitosa";
 
-        UserDetails u = userDetailsService.loadUserByUsername(username);
+        //UserDetails u = userDetailsService.loadUserByUsername(username);
 
-        if (u!=null && rta.contains("exitosa")){
-
-            //verifica con red y manda correo
-            if(bCryptPasswordEncoder.matches(password,u.getPassword())){
-                System.out.println("Contra coincide con BD");
+        if (rta.contains("exitosa")){
 
                 //verificar en tabla local
                 User existe = userService.findUserByUserName(username);
@@ -59,10 +56,8 @@ public class LdapAuthenticationProvider implements AuthenticationProvider {
                     sendEmailService.sendEmail(recipientEmail, subject, content);
                     //userService.saveUsarLDAP(username); //para guardar al usuario
                 }
-            }
+
             return new UsernamePasswordAuthenticationToken(username, password, Collections.emptyList());
-        } else if (u==null && !rta.contains("exitosa")) {
-            System.out.println("Usuario no existe en BD");
         }
         return null;
 

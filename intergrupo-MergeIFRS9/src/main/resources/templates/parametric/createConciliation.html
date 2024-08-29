@@ -120,7 +120,11 @@
 
                     <div class="form-group mb-1">
                         <label>Ruta Contable</label>
-                        <input type="text" class="form-control"  th:field="*{rutaContable}"  required>
+                        <select class="form-control" name="selectedRutaContable" id="selectedRutaContable" required onchange="loadCentros()">
+                            <option disabled value="" selected hidden>Seleccione un R.C.</option>
+                            <option th:each="ruta : ${rutasContables}" th:value="${ruta.id}" th:text="${ruta.nombre}"
+                                    th:selected="${concil.rutaContable != null and ruta.id == concil.rutaContable.id}"></option>
+                        </select>
                     </div>
 
                     <div class="form-group mb-1">
@@ -184,7 +188,10 @@
                             <div class="col-md-3">
                                 <div class="form-group mb-1">
                                     <label>Campo Centro</label>
-                                    <input type="text" class="form-control"  th:field="*{centro}"  required>
+                                    <!-- <input type="text" class="form-control"  th:field="*{centro}"  required> -->
+                                    <select class="form-control" id="selectedCentro" name="centroSelect" required>
+                                        <!-- Opciones se llenarán aquí dinámicamente -->
+                                    </select>
                                 </div>
                             </div>
 
@@ -236,6 +243,38 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
 <script>
+    function loadCentros() {
+    var rutaId = document.getElementById("selectedRutaContable").value;
+    var centroSelect = document.getElementById("centroSelect");
+
+    if (!rutaId) {
+        // Si no hay `rutaId`, vacía el campo "Campo Centro"
+        centroSelect.innerHTML = '<option value="" selected hidden>Seleccione un Centro</option>';
+        return;
+    }
+
+    console.log("ENTRE");
+
+    // Realiza una solicitud al servicio para obtener los centros
+    fetch(`/recuperaCampos?rutaId=${rutaId}`)
+        .then(response => response.json())
+        .then(data => {
+            // Limpia las opciones existentes
+            centroSelect.innerHTML = '<option value="" selected hidden>Seleccione un Centro</option>';
+
+            // Agrega las nuevas opciones
+            data.forEach(centro => {
+                console.log(centro.id, centro.nombre);
+                var option = document.createElement('option');
+                option.value = centro.id; // Ajusta según la estructura de tu objeto CampoRC
+                option.text = centro.nombre; // Ajusta según la estructura de tu objeto CampoRC
+                centroSelect.add(option);
+            });
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+}
 
 </script>
 </body>

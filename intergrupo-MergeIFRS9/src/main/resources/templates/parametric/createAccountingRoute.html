@@ -9,7 +9,12 @@
 
 <div class="main-container">
     <style>
-        .big-checkbox {width: 1.5rem; height: 1.5rem;top:0.5rem}
+
+        body, .btn, .form-control {
+            font-size: 12px;
+        }
+
+        .big-checkbox {width: 1rem; height: 1rem; top:0.5rem}
 
         .scrollable-menu {
             height: auto;
@@ -36,138 +41,140 @@
         </div>
     </div>
     <div id="content">
-        <div class="row mt-5">
+        <div class="row mt-3">
             <form th:object="${aroute}" th:action="@{/parametric/createAccountingRoute}" method="POST">
                 <div class="row pt-5 py-3">
 
-                    <div class="col-md-5">
-                        <div class="form-group mb-1">
-                            <label>Detalle:</label>
-                            <input type="text" class="form-control"  th:field="*{nombre}"  required>
+                    <div class="row col-md-12 mb-3">
+                        <div class="col-md-3">
+                            <div class="form-group mb-1">
+                                <label>Detalle:</label>
+                                <input type="text" class="form-control"  th:field="*{nombre}"  required>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-md-5">
-                        <div class="form-group mb-1">
-                            <label>Nombre Archivo:</label>
-                            <input type="text" class="form-control"  th:field="*{nombreArchivo}"  required>
+                        <div class="col-md-3">
+                            <div class="form-group mb-1">
+                                <label>Nombre Archivo:</label>
+                                <input type="text" class="form-control"  th:field="*{nombreArchivo}"  required>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group mb-1">
-                            <label>Activo:</label>
-                            <input id="activoInput" name="activo" th:field="*{activo}" th:id="${activo}"
-                                   th:value="${activo}" type="checkbox" class="styled-checkbox">
-                            <label>[[${activo}]]</label>
+                        <div class="col-md-2">
+                            <div class="form-group mb-1">
+                                <label>Tipo Archivo:</label>
+                                <select class="form-control" name="selectedTipoArchivo" id="tipoArchivo" required>
+                                    <option disabled value="" selected hidden>Seleccione formato</option>
+                                    <option th:value="CRCC">ARCHIVO CRCC</option>
+                                    <option th:value="CRCC_CUIF">ARCHIVO CRCC_CUIF</option>
+                                    <option th:value="CRCC_NIIF">ARCHIVO CRCC_NIIF</option>
+                                    <option th:value="DIALOGO">ARCHIVO DIALOGO</option>
+                                    <option th:value="DIALOGO_CUIF">ARCHIVO DIALOGO_CUIF</option>
+                                    <option th:value="DIALOGO_NIIF">ARCHIVO DIALOGO_NIIF</option>
+                                    <option th:value="XLS">ARCHIVO EXCEL XLS</option>
+                                    <option th:value="XLSX">ARCHIVO EXCEL XLSX</option>
+                                    <option th:value="CSV">ARCHIVO PLANO CSV</option>
+                                    <option th:value="TXT">ARCHIVO PLANO TXT</option>
+                                    <option th:value="TXT_SINDEL">ARCHIVO PLANO TXT SIN DEL.</option>
+                                </select>
+                            </div>
                         </div>
-                    </div>
-
-                    <div class="col-md-5">
-                        <div class="form-group mb-1">
-                            <label>Tipo Archivo:</label>
-                            <select class="form-control" name="selectedTipoArchivo" id="tipoArchivo" required>
-                                <option disabled value="" selected hidden>Seleccione formato</option>
-                                <option th:value="CRCC">ARCHIVO CRCC</option>
-                                <option th:value="CRCC_CUIF">ARCHIVO CRCC_CUIF</option>
-                                <option th:value="CRCC_NIIF">ARCHIVO CRCC_NIIF</option>
-                                <option th:value="DIALOGO">ARCHIVO DIALOGO</option>
-                                <option th:value="DIALOGO_CUIF">ARCHIVO DIALOGO_CUIF</option>
-                                <option th:value="DIALOGO_NIIF">ARCHIVO DIALOGO_NIIF</option>
-                                <option th:value="XLS">ARCHIVO EXCEL XLS</option>
-                                <option th:value="XLSX">ARCHIVO EXCEL XLSX</option>
-                                <option th:value="CSV">ARCHIVO PLANO CSV</option>
-                                <option th:value="TXT">ARCHIVO PLANO TXT</option>
-                                <option th:value="TXT_SINDEL">ARCHIVO PLANO TXT SIN DEL.</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-5">
-                        <div class="form-group mb-1">
-                            <label>Complemento Archivo:</label>
-                            <input type="text" class="form-control"  th:field="*{complementoArchivo}"  required>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group mb-1">
-                            <label>Delimitador:</label>
-                            <input type="text" class="form-control"  th:field="*{delimitador}"  required>
-
+                        <div class="col-md-3">
+                            <div class="form-group mb-1">
+                                <label>Complemento Archivo:</label>
+                                <input type="text" class="form-control"  th:field="*{complementoArchivo}"  required>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="col-md-10">
-                        <!-- <form enctype="multipart/form-data" id="fileUploadForm" method="post" th:action="@{/parametric/currency}"> -->
+
+                    <div class="row col-md-12 mb-3">
+                        <div class="col-md-6">
+                            <!-- <form enctype="multipart/form-data" id="fileUploadForm" method="post" th:action="@{/parametric/currency}"> -->
                             <div class="form-group">
                                 <label>Ruta: </label>
-                                <input accept=".xls,.xlsx,.xlsm" class="custom-file-control" id="file" name="file" required type="file" onchange="updateFilePath()">
-                                <input type="text" id="filePath" class="form-control mt-2" readonly placeholder="Ruta del archivo" th:field="*{ruta}">
-                                <button class="btn btn-primary mt-2 d-none" type="submit">Cargar</button>
+                                <input type="text" class="form-control"  th:field="*{ruta}"  required>
                             </div>
-                        <!-- </form> -->
-                    </div>
+                            <!-- </form> -->
+                        </div>
+                        <div class="col-md-1">
+                            <div class="form-group mb-1">
+                                <label>Delimitador:</label>
+                                <input type="text" class="form-control"  th:field="*{delimitador}"  required>
 
-                    <div class="col-md-2">
-                        <div class="form-group mb-1">
-                            <label>Aplica Cargue Diario:</label>
-                            <input id="cargueDiarioInput" name="cargueDiario" th:field="*{cargueDiario}" th:id="${cargueDiario}"
-                                   th:value="${cargueDiario}" type="checkbox" class="styled-checkbox">
-                            <label>[[${cargueDiario}]]</label>
+                            </div>
                         </div>
-                    </div>
-
-                    <div class="col-md-5">
-                        <div class="form-group mb-1">
-                            <label>Formato Fecha:</label>
-                            <select class="form-control" name="selectedFormatoFecha" id="formatoFecha" required>
-                                <option disabled value="" selected hidden>Seleccione formato</option>
-                                <option th:value="YYYYMMDD">AÑO MES DIA CORTA (YYYYMMDD)</option>
-                                <option th:value="YYMMDD">AÑO MES DIA RED (YYMMDD)</option>
-                                <option th:value="DDMMMMYYYY">DIA MES AÑO COM. (DDMMMMYYYY)</option>
-                                <option th:value="DDMMYYYY">DIA MES AÑO CORTA (DDMMYYYY)</option>
-                                <option th:value="DDMMYY">DIA MES AÑO RED. (DDMMYY)</option>
-                                <option th:value="DDMMMMYYYY">DIA MES AÑO SIMPLE (DDMMMMYYYY)</option>
-                                <option th:value="MMDDYY">MES DIA AÑO (MMDDYY)</option>
-                            </select>
+                        <div class="col-md-2">
+                            <div class="form-group mb-1">
+                                <label>Aplica Cargue Diario:</label>
+                                <input id="cargueDiarioInput" name="cargueDiario" th:field="*{cargueDiario}" th:id="${cargueDiario}"
+                                       th:value="${cargueDiario}" type="checkbox" class="styled-checkbox">
+                                <label>[[${cargueDiario}]]</label>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-md-5">
-                        <div class="form-group mb-1">
-                            <label>Idioma Fecha:</label>
-                            <select class="form-control" name="selectedIdiomaFecha" id="idiomaFecha" required>
-                                <option disabled value="" selected hidden>Seleccione formato</option>
-                                <option th:value="EspañolColombia">Español - Colombia</option>
-                                <option th:value="EspañolEspaña">Español - España</option>
-                                <option th:value="InglésUSA">Inglés - USA</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group mb-1">
-                            <label>Maneja Siglas de Fechas:</label>
-                            <input id="siglasFechasInput" name="siglasFechas" th:field="*{siglasFechas}" th:id="${activo}"
-                                   th:value="${siglasFechas}" type="checkbox" class="styled-checkbox">
-                            <label>[[${siglasFechas}]]</label>
+                        <div class="col-md-1">
+                            <div class="form-group mb-1">
+                                <label>Activo:</label>
+                                <input id="activoInput" name="activo" th:field="*{activo}" th:id="${activo}"
+                                       th:value="${activo}" type="checkbox" class="styled-checkbox">
+                                <label>[[${activo}]]</label>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="col-md-5">
-                        <div class="form-group mb-1">
-                            <label>Sistema Fuente:</label>
+                    <div class="row col-md-12">
+                        <div class="col-md-2">
+                            <div class="form-group mb-1">
+                                <label>Maneja Siglas de Fechas:</label>
+                                <input id="siglasFechasInput" name="siglasFechas" th:field="*{siglasFechas}" th:id="${activo}"
+                                       th:value="${siglasFechas}" type="checkbox" class="styled-checkbox">
+                                <label>[[${siglasFechas}]]</label>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group mb-1">
+                                <label>Formato Fecha:</label>
+                                <select class="form-control" name="selectedFormatoFecha" id="formatoFecha" required>
+                                    <option disabled value="" selected hidden>Seleccione formato</option>
+                                    <option th:value="YYYYMMDD">AÑO MES DIA CORTA (YYYYMMDD)</option>
+                                    <option th:value="YYMMDD">AÑO MES DIA RED (YYMMDD)</option>
+                                    <option th:value="DDMMMMYYYY">DIA MES AÑO COM. (DDMMMMYYYY)</option>
+                                    <option th:value="DDMMYYYY">DIA MES AÑO CORTA (DDMMYYYY)</option>
+                                    <option th:value="DDMMYY">DIA MES AÑO RED. (DDMMYY)</option>
+                                    <option th:value="DDMMMMYYYY">DIA MES AÑO SIMPLE (DDMMMMYYYY)</option>
+                                    <option th:value="MMDDYY">MES DIA AÑO (MMDDYY)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group mb-1">
+                                <label>Idioma Fecha:</label>
+                                <select class="form-control" name="selectedIdiomaFecha" id="idiomaFecha" required>
+                                    <option disabled value="" selected hidden>Seleccione formato</option>
+                                    <option th:value="EspañolColombia">Español - Colombia</option>
+                                    <option th:value="EspañolEspaña">Español - España</option>
+                                    <option th:value="InglésUSA">Inglés - USA</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group mb-1">
+                                <label>Sistema Fuente:</label>
                                 <select class="form-control" required th:name="selectedSF">
                                     <option disabled hidden selected value="">Seleccione un filtro</option>
                                     <option th:each="sfrc : ${allSFs}" th:text="${sfrc.nombre}" th:value="${sfrc.nombre}"></option>
                                 </select>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group mb-1">
-                            <label>Filas Omitidas:</label>
-                            <input type="text" class="form-control"  th:field="*{filasOmitidas}"  required>
+                        <div class="col-md-1">
+                            <div class="form-group mb-1">
+                                <label>Filas Omitidas:</label>
+                                <input type="text" class="form-control"  th:field="*{filasOmitidas}"  required>
+                            </div>
                         </div>
                     </div>
 
                 </div>
 
-                <div class="row pt-5 py-3">
+                <div class="row pt-3 py-3">
                     <div class="col-md-12 d-flex align-content-center justify-content-center">
                         <div class="d-grid gap-2 col-3">
                             <button type="submit" class="btn btn-primary">Agregar</button>
@@ -177,9 +184,6 @@
                         </div>
                     </div>
                 </div>
-
-
-
 
             </form>
         </div>

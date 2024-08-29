@@ -7,6 +7,7 @@ import com.inter.proyecto_intergrupo.model.admin.TipoDocumento;
 import com.inter.proyecto_intergrupo.model.admin.User;
 import com.inter.proyecto_intergrupo.model.admin.View;
 import com.inter.proyecto_intergrupo.model.parametric.AccountingRoute;
+import com.inter.proyecto_intergrupo.model.parametric.CampoRC;
 import com.inter.proyecto_intergrupo.model.parametric.SourceSystem;
 import com.inter.proyecto_intergrupo.service.adminServices.UserService;
 import com.inter.proyecto_intergrupo.service.parametricServices.AccountingRouteService;
@@ -260,7 +261,7 @@ public class AccountingRoutesController {
         return modelAndView;
     }
 
-    @GetMapping(value = "/parametric/cargueCampos/{id}")
+    @GetMapping(value = "/parametric/fieldLoadingAccountingRoute/{id}")
     public ModelAndView cargueCampos(@PathVariable int id){
         ModelAndView modelAndView = new ModelAndView();
         Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
@@ -268,7 +269,13 @@ public class AccountingRoutesController {
         List<SourceSystem> allSFs = sourceSystemService.findAll();
         modelAndView.addObject("allSFs", allSFs);
         modelAndView.addObject("aroute",aroute);
-        modelAndView.setViewName("parametric/modifyAccountingRoute");
+        CampoRC campoRC = new CampoRC();
+        modelAndView.addObject("campoRC",campoRC);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findUserByUserName(auth.getName());
+        Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Países");
+        modelAndView.addObject("p_modificar", p_modificar);
+        modelAndView.setViewName("parametric/fieldLoadingAccountingRoute");
         return modelAndView;
     }
 

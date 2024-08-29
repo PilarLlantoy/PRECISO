@@ -145,13 +145,13 @@ public class UserController {
         listReport.export(response);
     }
 
-    @GetMapping(value = "/admin/modifyUsers/{id}")
+    @GetMapping(value = "/admin/modifyUsuario/{id}")
     @ResponseBody
     public ModelAndView modifyUsers(@PathVariable String id){
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-
+        System.out.println("HOLAAA");
             modelAndView.addObject("userName", user.getUsuario());
             modelAndView.addObject("userEmail", user.getCorreo());
             List<Role> allRoles = roleService.findAllActiveRoles();
@@ -167,7 +167,7 @@ public class UserController {
             Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
             String hasRoles = gson.toJson(finalRoles);
             modelAndView.addObject("hasRoles", hasRoles);
-            modelAndView.setViewName("admin/modifyUsers");
+            modelAndView.setViewName("admin/modifyUsuario");
 
         return modelAndView;
     }
@@ -179,6 +179,7 @@ public class UserController {
             @RequestParam(name = "selectedCargo") String cargo,
             @RequestParam(name = "selectedTipoDoc") String tipodoc,
             @RequestParam(name = "newU") String id,
+            @RequestParam(name = "validaRoles", defaultValue = "OK") String validaRoles,
             BindingResult bindingResult){
 
         ModelAndView modelAndView = new ModelAndView("redirect:/admin/searchUsers?vId=activo&vFilter=Estado");
@@ -186,15 +187,19 @@ public class UserController {
         User userExists = userService.findUserByUserName(user.getUsuario());
         User userByEmail = userService.findUserByEmail(user.getCorreo());
 
+        System.out.println(roles + " " + roles[0]);
         if(roles[0].equals("N") || roles.length == 0) {
             bindingResult
                     .rejectValue("roles", "error.roles",
                             "Roles no puede estar vacio");
+            System.out.println("TENEMOS UN ERROR");
+            validaRoles="NOTok";
         }
 
         if(bindingResult.hasErrors()) {
             modelAndView.addObject("bindingResult", bindingResult);
 
+            System.out.println("ENTRAMOS A ERROR");
             modelAndView.addObject("userName", user.getUsuario());
             modelAndView.addObject("userEmail", user.getCorreo());
             List<Role> allRoles = roleService.findAll();
@@ -204,6 +209,7 @@ public class UserController {
             modelAndView.addObject("tipos", allTipos);
             modelAndView.addObject("cargos", allCargos);
             modelAndView.addObject("userModify", user);
+            modelAndView.addObject("validaRoles", validaRoles);
             Set<Role> userRoles = null;
             if(roles[0].equals("N")){
                 userRoles = userService.findUserByUserName(user.getUsuario()).getRoles();
@@ -229,9 +235,9 @@ public class UserController {
                 Role myRole = roleService.findRole(role);
                 newRoles.add(myRole);
             }
-            user.setRoles(newRoles);
+                user.setRoles(newRoles);
             modelAndView.addObject("userModify",user);
-            modelAndView.setViewName("admin/modifyUsers");
+            modelAndView.setViewName("admin/modifyUsuario");
         }
         else{
             Set<Role> newRoles = new HashSet<Role>();

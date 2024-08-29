@@ -91,6 +91,7 @@
                 <div class="col-md-6">
                     <div class="row">
                         <div class="col-12">
+                            <p th:text="${validaRoles}">AA</p>
                             <p>Perfiles:</p>
                         </div>
                         <div class="form-group col-12">
@@ -100,8 +101,8 @@
                                 <input id="userRoles" th:value="${hasRoles}" type="hidden"/>
                                 <label>[[${role.nombre}]]</label>
                             </div>
-                            <div class="alert alert-warning" th:errors="*{roles}"
-                                 th:if="${#bindingResult!=null and #bindingResult.hasErrors('roles')}"></div>
+                            <div class="alert alert-warning" th:errors="*{user.roles}"
+                                 th:if="${validaRoles == 'NOTok'}"></div>
 
                         </div>
                     </div>
@@ -111,7 +112,7 @@
                     <div class="form-group mb-1">
                         <label>Cargo</label>
                         <select class="form-control" name="selectedCargo" id="selectedCargo" required>
-                            <option disabled value="" selected hidden>Seleccione el primer filtro</option>
+                            <option disabled value="" selected hidden>Seleccione el cargo</option>
                             <option th:each="cargo : ${cargos}" th:value="${cargo.nombre}" th:text="${cargo.nombre}"
                                     th:selected="${userModify.cargo != null and cargo.id == userModify.cargo.id}"></option>
                         </select>
@@ -177,28 +178,6 @@
         src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
 
 
-<script type="text/javascript">
 
-
-    $(document).ready(function () {
-        $('#sidebarCollapse').on('click', function () {
-            $('#sidebar').toggleClass('active');
-        });
-    });
-    $("#idNew").change(function () {
-        $.get("/parametric/validateSociety/?idNew=" + $("#idNew").val() + "&id=" + $("#id").val(), function (responseText) {
-            if (responseText != 'valid') {
-                Swal.fire({
-                    position: 'center',
-                    icon: 'warning',
-                    title: '¡Validación YNTP Fallo!',
-                    text: 'El YNTP con valor ' + $("#idNew").val() + ' ingresado en el campo YNTP ya se encuentra asociado a otro registro.',
-                    showConfirmButton: true
-                });
-                $("#idNew").val('');
-            }
-        });
-    });
-</script>
 </body>
 </html>

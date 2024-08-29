@@ -1,5 +1,6 @@
 package com.inter.proyecto_intergrupo.model.parametric;
 import lombok.*;
+import java.util.List;
 
 import javax.persistence.*;
 
@@ -14,7 +15,7 @@ public class AccountingRoute {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "id_rc")
     private int id;
 
     @Column(name = "nombre")
@@ -63,6 +64,10 @@ public class AccountingRoute {
 
     @Column(name = "filasOmitidas")
     private Integer filasOmitidas;
+
+    // Relación con CampoAC
+    @OneToMany(mappedBy = "rutaContable", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CampoRC> campos;
 
 
 }

@@ -89,7 +89,7 @@
                         <td th:if="${user.activo == false}">Inactivo</td>
                         <td>
                             <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
-                                    th:onclick="|window.location.href='@{/admin/modifyUsers/{id}(id=${user.usuario})}'|">Editar</button>
+                                    th:onclick="|window.location.href='@{/admin/modifyUsuario/{id}(id=${user.usuario})}'|">Editar</button>
                         </td>
                     </tr>
                     </tbody>

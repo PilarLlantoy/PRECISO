@@ -1,7 +1,10 @@
 package com.inter.proyecto_intergrupo.controller.parametric;
 
 import com.inter.proyecto_intergrupo.model.admin.User;
-import com.inter.proyecto_intergrupo.model.parametric.*;
+import com.inter.proyecto_intergrupo.model.parametric.AccountingRoute;
+import com.inter.proyecto_intergrupo.model.parametric.Campo;
+import com.inter.proyecto_intergrupo.model.parametric.CampoRC;
+import com.inter.proyecto_intergrupo.model.parametric.Conciliation;
 import com.inter.proyecto_intergrupo.service.adminServices.UserService;
 import com.inter.proyecto_intergrupo.service.parametricServices.*;
 import org.apache.logging.log4j.LogManager;
@@ -13,7 +16,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
@@ -22,7 +29,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Controller
-public class ConciliationController {
+public class CampoRCController {
     private static final int PAGINATIONCOUNT=12;
     Logger logger = LogManager.getLogger(LogManager.ROOT_LOGGER_NAME);
     @Autowired
@@ -32,10 +39,7 @@ public class ConciliationController {
     private ConciliationService conciliationService;
 
     @Autowired
-    private CountryService countryService;
-
-    @Autowired
-    private CurrencyService currencyService;
+    private CampoRCService campoRCService;
 
     @Autowired
     private AccountingRouteService accountingRouteService;
@@ -43,16 +47,13 @@ public class ConciliationController {
     @Autowired
     private SourceSystemService sourceSystemService;
 
-    @Autowired
-    private CampoRCService campoRCService;
-
-    @GetMapping(value="/parametric/conciliation")
-    public ModelAndView showConciliation(@RequestParam Map<String, Object> params) {
+    @GetMapping(value="/parametric/mostrarCamposRC")
+    public ModelAndView mostrarCamposRC(@RequestParam Map<String, Object> params) {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Conciliaciones");
-        if(userService.validateEndpoint(user.getId(),"Ver Conciliaciones")) { //CAMBIAR A VER Conciliaciones
+        Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Países");
+        if(userService.validateEndpoint(user.getId(),"Ver Países")) { //CAMBIAR A VER CargueCampos
 
             int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
             PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
@@ -88,35 +89,33 @@ public class ConciliationController {
         return modelAndView;
     }
 
-    @GetMapping(value = "/parametric/createConciliation")
-    public ModelAndView showCreateConciliation(){
+    @GetMapping(value = "/parametric/cargueCamposRC")
+    public ModelAndView cargueCamposRC(){
         ModelAndView modelAndView = new ModelAndView();
-        Conciliation concil = new Conciliation();
-
-        List<Country> allCountries = countryService.findAll();
-        List<SourceSystem> allSFs = sourceSystemService.findAll();
-        List<SourceSystem> allSFCCs = sourceSystemService.findAll();
-        List<Currency> allDivisas = currencyService.findAll();
-        List<AccountingRoute> rutasContables = accountingRouteService.findAll();
-
-        modelAndView.addObject("paises", allCountries);
-        modelAndView.addObject("sfs", allSFs);
-        modelAndView.addObject("sfcs", allSFCCs);
-        modelAndView.addObject("divisas", allDivisas);
-        modelAndView.addObject("rutasContables", rutasContables);
-
-
-        modelAndView.addObject("concil",concil);
-        modelAndView.setViewName("/parametric/createConciliation");
+        Campo campo = new Campo();
+        modelAndView.addObject("campo",campo);
+        modelAndView.setViewName("/parametric/cargueCampos");
         return modelAndView;
     }
 
 
-    @GetMapping("/recuperaCampos")
-    @ResponseBody
-    public List<CampoRC> recuperaCampos(@RequestParam String rutaId) {
-        // Lógica para obtener las opciones del campo "Campo Centro" basado en `rutaId`
-        return campoRCService.findActiveRC(Integer.valueOf(rutaId));
+    @PostMapping(value = "/parametric/createCampoRC")
+    public ModelAndView createCampoRC(@ModelAttribute CampoRC campoRC,
+                                      @RequestParam(name = "selectedTipoCampo") String tipo,
+                                      @RequestParam(name = "selectedFormatoFecha") String formFecha,
+                                      @RequestParam(name = "selectedIdiomaCampo") String idioma,
+                                      @RequestParam int id, BindingResult bindingResult){
+        ModelAndView modelAndView = new ModelAndView("redirect:/parametric/fieldLoadingAccountingRoute/" + id);
+
+        AccountingRoute aroute = accountingRouteService.findById(id);
+        campoRC.setRutaContable(aroute);
+        campoRC.setTipo(tipo);
+        campoRC.setFormatoFecha(formFecha);
+        campoRC.setIdioma(idioma);
+        campoRCService.modificar(campoRC);
+
+        return modelAndView;
+
     }
 
 

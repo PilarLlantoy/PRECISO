@@ -2,6 +2,7 @@ package com.inter.proyecto_intergrupo.model.parametric;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @Setter
@@ -47,8 +48,7 @@ public class Conciliation {
     @JoinColumn(name = "id_sfc", nullable = false)
     private SourceSystem sfc;
 
-    @Column(name = "ruta_contable")
-    private String rutaContable;
+
 
     @Column(name = "centro")
     private String centro;
@@ -92,5 +92,7 @@ public class Conciliation {
     @Column(name = "aplica_domingo", columnDefinition = "BIT DEFAULT 0")
     private boolean domingo = false;
 
-
+    @ManyToOne
+    @JoinColumn(name = "id_rc")
+    private AccountingRoute rutaContable;
 }
