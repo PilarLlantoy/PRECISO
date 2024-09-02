@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -111,12 +113,16 @@ public class ConciliationController {
         return modelAndView;
     }
 
-
-    @GetMapping("/recuperaCampos")
+    @GetMapping(value = "/parametric/validatePrincipal")
     @ResponseBody
-    public List<CampoRC> recuperaCampos(@RequestParam String rutaId) {
-        // Lógica para obtener las opciones del campo "Campo Centro" basado en `rutaId`
-        return campoRCService.findActiveRC(Integer.valueOf(rutaId));
+    public List<String> validatePrincipal(@RequestParam("principalSelect") String principalSelect) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println("User authenticated: " + auth.getName());
+        System.out.println("Received principalSelect: " + principalSelect);
+
+        List<String> response = campoRCService.validatePrincipal(principalSelect);
+        System.out.println("Response from service: " + response);
+        return response;
     }
 
 

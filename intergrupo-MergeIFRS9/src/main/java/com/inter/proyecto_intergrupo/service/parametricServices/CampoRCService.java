@@ -50,13 +50,12 @@ public class CampoRCService {
        return campo;
     }
 
-
-    // Método para encontrar todos los campos activos y visibles asociados a la conciliacion
-    public List<CampoRC> findActiveRC(int idRuta) {
-        Query query = entityManager.createNativeQuery("SELECT * FROM preciso_campos_rc WHERE " +
-                "visualizacion=1 and estado=1 and id_rc = ?", CampoRC.class);
-        query.setParameter(1, idRuta);
-        return query.getResultList();
+    public List<String> validatePrincipal(String principal)
+    {
+        Query validate = entityManager.createNativeQuery("SELECT nv.nombre FROM preciso_campos_rc as nv WHERE " +
+                "nv.visualizacion=1 and nv.estado=1 and nv.id_rc = 1");
+        //validate.setParameter(1,principal);
+        return validate.getResultList();
     }
 
 

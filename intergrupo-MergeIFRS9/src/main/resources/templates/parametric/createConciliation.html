@@ -47,7 +47,7 @@
 
                     <div class="form-group mb-1">
                         <label>Detalle</label>
-                        <input type="text" class="form-control"  th:field="*{nombre}"  required>
+                        <input type="text" class="form-control" th:field="*{nombre}" required>
                     </div>
 
                     <div class="form-group mb-1">
@@ -71,56 +71,57 @@
 
                     <div class="mb-1 row">
 
-                            <div class="col-md-3">
-                                <div class="form-group mb-1">
-                                    <label>Periodicidad</label>
-                                    <select class="form-control" name="selectedTipoDoc" id="selectedPeriodicidad" required>
-                                        <option disabled value="" selected hidden>Seleccione periodicidad</option>
-                                        <option th:value="diario">Diario</option>
-                                        <option th:value="mensual">Mensual</option>
-                                    </select>
-                                </div>
+                        <div class="col-md-3">
+                            <div class="form-group mb-1">
+                                <label>Periodicidad</label>
+                                <select class="form-control" name="selectedTipoDoc" id="selectedPeriodicidad" required>
+                                    <option disabled value="" selected hidden>Seleccione periodicidad</option>
+                                    <option th:value="diario">Diario</option>
+                                    <option th:value="mensual">Mensual</option>
+                                </select>
                             </div>
+                        </div>
 
-                            <div class="col-md-3">
-                                <div class="form-group mb-1">
-                                    <label>País:</label>
-                                    <select class="form-control" name="selectedPais" id="selectedPais" required>
-                                        <option disabled value="" selected hidden>Seleccione un país</option>
-                                        <option th:each="pais : ${paises}" th:value="${pais.nombre}" th:text="${pais.nombre}"
-                                                th:selected="${concil.pais != null and pais.id == concil.pais.id}"></option>
-                                    </select>
-                                </div>
+                        <div class="col-md-3">
+                            <div class="form-group mb-1">
+                                <label>País:</label>
+                                <select class="form-control" name="selectedPais" id="selectedPais" required>
+                                    <option disabled value="" selected hidden>Seleccione un país</option>
+                                    <option th:each="pais : ${paises}" th:value="${pais.nombre}"
+                                            th:text="${pais.nombre}"
+                                            th:selected="${concil.pais != null and pais.id == concil.pais.id}"></option>
+                                </select>
                             </div>
+                        </div>
 
 
-                            <div class="col-md-3">
-                                <div class="form-group mb-1">
+                        <div class="col-md-3">
+                            <div class="form-group mb-1">
                                 <label>Sistema Fuente:</label>
                                 <select class="form-control" name="selectedPais" id="selectedSF" required>
                                     <option disabled value="" selected hidden>Seleccione un S.F.</option>
                                     <option th:each="sf : ${sfs}" th:value="${sf.nombre}" th:text="${sf.nombre}"
                                             th:selected="${concil.sf != null and sf.id == concil.sf.id}"></option>
                                 </select>
-                                </div>
                             </div>
+                        </div>
 
-                            <div class="col-md-3">
-                                <div class="form-group mb-1">
+                        <div class="col-md-3">
+                            <div class="form-group mb-1">
                                 <label>Sistema Fuente Contable:</label>
                                 <select class="form-control" name="selectedPais" id="selectedSFC" required>
                                     <option disabled value="" selected hidden>Seleccione un S.F.C.</option>
                                     <option th:each="sfc : ${sfcs}" th:value="${sfc.nombre}" th:text="${sfc.nombre}"
                                             th:selected="${concil.sfc != null and sfc.id == concil.sfc.id}"></option>
                                 </select>
-                                </div>
                             </div>
+                        </div>
 
                     </div>
 
                     <div class="form-group mb-1">
                         <label>Ruta Contable</label>
-                        <select class="form-control" name="selectedRutaContable" id="selectedRutaContable" required onchange="loadCentros()">
+                        <select class="form-control" name="selectedRutaContable" id="selectedRutaContable" required>
                             <option disabled value="" selected hidden>Seleccione un R.C.</option>
                             <option th:each="ruta : ${rutasContables}" th:value="${ruta.id}" th:text="${ruta.nombre}"
                                     th:selected="${concil.rutaContable != null and ruta.id == concil.rutaContable.id}"></option>
@@ -185,96 +186,124 @@
 
                     <div class="mb-1 row">
 
-                            <div class="col-md-3">
-                                <div class="form-group mb-1">
-                                    <label>Campo Centro</label>
-                                    <!-- <input type="text" class="form-control"  th:field="*{centro}"  required> -->
-                                    <select class="form-control" id="selectedCentro" name="centroSelect" required>
-                                        <!-- Opciones se llenarán aquí dinámicamente -->
-                                    </select>
-                                </div>
-                            </div>
+                        <!-- Campo oculto para el token CSRF -->
+                        <input type="hidden" id="csrfToken" th:value="${_csrf.token}" />
 
-                            <div class="col-md-3">
-                                <div class="form-group mb-1">
-                                    <label>Campo Cuenta</label>
-                                    <input type="text" class="form-control"  th:field="*{cuenta}"  required>
-                                </div>
+                        <div class="col-md-3">
+                            <div class="form-group mb-1">
+                                <label>Campo Centro</label>
+                                <select class="form-control" id="selectedCentro" name="centroSelect" required>
+                                    <!-- Opciones se llenarán aquí dinámicamente -->
+                                </select>
                             </div>
+                        </div>
 
-                            <div class="col-md-3">
-                                <div class="form-group mb-1">
-                                    <label>Campo Divisa:</label>
-                                    <select class="form-control" name="selecteDivisa" id="selectedDivisa" required>
-                                        <option disabled value="" selected hidden>Seleccione una divisa</option>
-                                        <option th:each="divisa : ${divisas}" th:value="${divisa.nombre}" th:text="${divisa.nombre}"
-                                                th:selected="${concil.divisa != null and divisa.id == concil.divisa.id}"></option>
-                                    </select>
-                                </div>
+                        <div class="col-md-3">
+                            <div class="form-group mb-1">
+                                <label>Campo Cuenta</label>
+                                <select class="form-control" id="selectedCuenta" name="cuentaSelect" required>
+                                    <!-- Opciones se llenarán aquí dinámicamente -->
+                                </select>
                             </div>
+                        </div>
 
-                            <div class="col-md-3">
-                                <div class="form-group mb-1">
-                                    <label>Campo Saldo</label>
-                                    <input type="text" class="form-control"  th:field="*{saldo}"  required>
-                                </div>
+                        <div class="col-md-3">
+                            <div class="form-group mb-1">
+                                <label>Campo Divisa:</label>
+                                <select class="form-control" id="selectedDivisa" name="divisaSelect" required>
+                                    <!-- Opciones se llenarán aquí dinámicamente -->
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="form-group mb-1">
+                                <label>Campo Saldo</label>
+                                <select class="form-control" id="selectedSaldo" name="saldoSelect" required>
+                                    <!-- Opciones se llenarán aquí dinámicamente -->
+                                </select>
                             </div>
                         </div>
                     </div>
-
-
                 </div>
 
-                <div class="row pt-3 py-3">
-                    <div class="col-md-12 d-flex align-content-center justify-content-center">
-                        <div class="d-grid gap-2 col-3">
-                            <button type="submit" class="btn btn-primary">Agregar</button>
-                        </div>
-                        <div class="d-grid gap-2 col-3">
-                            <a class="btn btn-danger" th:href="@{/parametric/conciliation}">Cancelar</a>
-                        </div>
-                    </div>
+        <div class="row pt-3 py-3">
+            <div class="col-md-12 d-flex align-content-center justify-content-center">
+                <div class="d-grid gap-2 col-3">
+                    <button type="submit" class="btn btn-primary">Agregar</button>
                 </div>
-            </form>
+                <div class="d-grid gap-2 col-3">
+                    <a class="btn btn-danger" th:href="@{/parametric/conciliation}">Cancelar</a>
+                </div>
+            </div>
         </div>
+        </form>
     </div>
 </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"
+        integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
+        crossorigin="anonymous"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"
+        integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
+        crossorigin="anonymous"></script>
 <script>
-    function loadCentros() {
-    var rutaId = document.getElementById("selectedRutaContable").value;
-    var centroSelect = document.getElementById("centroSelect");
 
-    if (!rutaId) {
-        // Si no hay `rutaId`, vacía el campo "Campo Centro"
-        centroSelect.innerHTML = '<option value="" selected hidden>Seleccione un Centro</option>';
-        return;
-    }
 
-    console.log("ENTRE");
+    $("#selectedRutaContable").change(function(){
+        var csrfToken = $("#csrfToken").val(); // Obtener el token CSRF
 
-    // Realiza una solicitud al servicio para obtener los centros
-    fetch(`/recuperaCampos?rutaId=${rutaId}`)
-        .then(response => response.json())
-        .then(data => {
-            // Limpia las opciones existentes
-            centroSelect.innerHTML = '<option value="" selected hidden>Seleccione un Centro</option>';
+        $.ajax({
+            url: "/parametric/validatePrincipal/?principalSelect=" + $("#selectedRutaContable").val(),
+            type: "GET",
+            headers: {
+                "X-CSRF-TOKEN": csrfToken // Incluir el token CSRF en los headers
+            },
+            success: function(responseText) {
+                var inputN = document.querySelector('#selectedCentro');
+                var inputC = document.querySelector('#selectedCuenta');
+                var inputD = document.querySelector('#selectedDivisa');
+                var inputS = document.querySelector('#selectedSaldo');
+                inputN.innerHTML = null;
 
-            // Agrega las nuevas opciones
-            data.forEach(centro => {
-                console.log(centro.id, centro.nombre);
-                var option = document.createElement('option');
-                option.value = centro.id; // Ajusta según la estructura de tu objeto CampoRC
-                option.text = centro.nombre; // Ajusta según la estructura de tu objeto CampoRC
-                centroSelect.add(option);
-            });
-        })
-        .catch(error => {
-            console.error('Error:', error);
+                responseText.forEach(element => {
+                    var option = document.createElement('option');
+                    option.value = element.toString();
+                    option.innerHTML = element.toString();
+                    inputN.appendChild(option);
+                });
+
+                responseText.forEach(element => {
+                    var option = document.createElement('option');
+                    option.value = element.toString();
+                    option.innerHTML = element.toString();
+                    inputC.appendChild(option);
+                });
+
+                responseText.forEach(element => {
+                    var option = document.createElement('option');
+                    option.value = element.toString();
+                    option.innerHTML = element.toString();
+                    inputD.appendChild(option);
+                });
+
+                responseText.forEach(element => {
+                    var option = document.createElement('option');
+                    option.value = element.toString();
+                    option.innerHTML = element.toString();
+                    inputS.appendChild(option);
+                });
+
+            },
+            error: function(xhr, status, error) {
+                console.error("Ocurrió un error al enviar la solicitud GET: " + error);
+            }
         });
-}
+
+
+    });
+
 
 </script>
 </body>
