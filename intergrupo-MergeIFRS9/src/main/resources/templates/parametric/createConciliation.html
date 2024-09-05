@@ -42,7 +42,7 @@
     </div>
     <div id="content">
         <div class="row mt-5">
-            <form th:object="${concil}" th:action="@{/parametric/createConciliation}" method="POST">
+            <form th:object="${concil}" th:action="@{/parametric/createConcil}" method="POST">
                 <div class="col-md-12 px-5 mb-3">
 
                     <div class="form-group mb-1">
@@ -74,7 +74,7 @@
                         <div class="col-md-3">
                             <div class="form-group mb-1">
                                 <label>Periodicidad</label>
-                                <select class="form-control" name="selectedTipoDoc" id="selectedPeriodicidad" required>
+                                <select class="form-control" name="selectedPeriodicidad" id="selectedPeriodicidad" required>
                                     <option disabled value="" selected hidden>Seleccione periodicidad</option>
                                     <option th:value="diario">Diario</option>
                                     <option th:value="mensual">Mensual</option>
@@ -98,7 +98,7 @@
                         <div class="col-md-3">
                             <div class="form-group mb-1">
                                 <label>Sistema Fuente:</label>
-                                <select class="form-control" name="selectedPais" id="selectedSF" required>
+                                <select class="form-control" name="selectedSF" id="selectedSF" required>
                                     <option disabled value="" selected hidden>Seleccione un S.F.</option>
                                     <option th:each="sf : ${sfs}" th:value="${sf.nombre}" th:text="${sf.nombre}"
                                             th:selected="${concil.sf != null and sf.id == concil.sf.id}"></option>
@@ -106,26 +106,6 @@
                             </div>
                         </div>
 
-                        <div class="col-md-3">
-                            <div class="form-group mb-1">
-                                <label>Sistema Fuente Contable:</label>
-                                <select class="form-control" name="selectedPais" id="selectedSFC" required>
-                                    <option disabled value="" selected hidden>Seleccione un S.F.C.</option>
-                                    <option th:each="sfc : ${sfcs}" th:value="${sfc.nombre}" th:text="${sfc.nombre}"
-                                            th:selected="${concil.sfc != null and sfc.id == concil.sfc.id}"></option>
-                                </select>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <div class="form-group mb-1">
-                        <label>Ruta Contable</label>
-                        <select class="form-control" name="selectedRutaContable" id="selectedRutaContable" required>
-                            <option disabled value="" selected hidden>Seleccione un R.C.</option>
-                            <option th:each="ruta : ${rutasContables}" th:value="${ruta.id}" th:text="${ruta.nombre}"
-                                    th:selected="${concil.rutaContable != null and ruta.id == concil.rutaContable.id}"></option>
-                        </select>
                     </div>
 
                     <div class="form-group mb-1">
@@ -183,6 +163,35 @@
                         </div>
                     </div>
 
+
+
+                    <div class="mb-1 row">
+                        <div class="col-md-3">
+                            <div class="form-group mb-1">
+                                <label>Sistema Fuente Contable:</label>
+                                <select class="form-control" name="selectedSFC" id="selectedSFC" required>
+                                    <option disabled value="" selected hidden>Seleccione un S.F.C.</option>
+                                    <option th:each="sfc : ${sfcs}" th:value="${sfc.nombre}" th:text="${sfc.nombre}"
+                                            th:selected="${concil.sfc != null and sfc.id == concil.sfc.id}"></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-9">
+                            <div class="form-group mb-1">
+                                <label>Ruta Contable</label>
+                                <select class="form-control" name="selectedRutaContable" id="selectedRutaContable" required>
+                                    <!--
+                                    <option disabled value="" selected hidden>Seleccione un R.C.</option>
+                                    <option th:each="ruta : ${rutasContables}" th:value="${ruta.id}" th:text="${ruta.nombre}"
+                                            th:selected="${concil.rutaContable != null and ruta.id == concil.rutaContable.id}"></option>
+                                -->
+                                    <select class="form-control" id="selectedRCont" name="rContSelect" required>
+                                        <!-- Opciones se llenarán aquí dinámicamente -->
+                                    </select>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
 
                     <div class="mb-1 row">
 
@@ -267,6 +276,35 @@
                 var inputS = document.querySelector('#selectedSaldo');
                 inputN.innerHTML = null;
 
+                // Agregar la opción predeterminada "Seleccione"
+                var defaultOption = document.createElement('option');
+                defaultOption.value = "";
+                defaultOption.innerHTML = "Seleccione";
+                defaultOption.disabled = true; // Deshabilitar la opción
+                defaultOption.selected = true; // Seleccionarla por defecto
+                inputN.appendChild(defaultOption);
+
+                var defaultOption2 = document.createElement('option');
+                defaultOption2.value = "";
+                defaultOption2.innerHTML = "Seleccione";
+                defaultOption2.disabled = true; // Deshabilitar la opción
+                defaultOption2.selected = true; // Seleccionarla por defecto
+                inputC.appendChild(defaultOption2);
+
+                var defaultOption3 = document.createElement('option');
+                defaultOption3.value = "";
+                defaultOption3.innerHTML = "Seleccione";
+                defaultOption3.disabled = true; // Deshabilitar la opción
+                defaultOption3.selected = true; // Seleccionarla por defecto
+                inputD.appendChild(defaultOption3);
+
+                var defaultOption4 = document.createElement('option');
+                defaultOption4.value = "";
+                defaultOption4.innerHTML = "Seleccione";
+                defaultOption4.disabled = true; // Deshabilitar la opción
+                defaultOption4.selected = true; // Seleccionarla por defecto
+                inputS.appendChild(defaultOption4);
+
                 responseText.forEach(element => {
                     var option = document.createElement('option');
                     option.value = element.toString();
@@ -301,6 +339,44 @@
             }
         });
 
+
+    });
+
+
+
+    $("#selectedSFC").change(function(){
+        var csrfToken = $("#csrfToken").val(); // Obtener el token CSRF
+
+        $.ajax({
+            url: "/parametric/validatePrincipal2/?principalSelect=" + $("#selectedSFC").val(),
+            type: "GET",
+            headers: {
+                "X-CSRF-TOKEN": csrfToken // Incluir el token CSRF en los headers
+            },
+            success: function(responseText) {
+                var inputN = document.querySelector('#selectedRutaContable');
+                inputN.innerHTML = null;
+
+                // Agregar la opción predeterminada "Seleccione"
+                var defaultOption = document.createElement('option');
+                defaultOption.value = "";
+                defaultOption.innerHTML = "Seleccione";
+                defaultOption.disabled = true; // Deshabilitar la opción
+                defaultOption.selected = true; // Seleccionarla por defecto
+                inputN.appendChild(defaultOption);
+
+                responseText.forEach(element => {
+                    var option = document.createElement('option');
+                    option.value = element.toString();
+                    option.innerHTML = element.toString();
+                    inputN.appendChild(option);
+                });
+
+            },
+            error: function(xhr, status, error) {
+                console.error("Ocurrió un error al enviar la solicitud GET: " + error);
+            }
+        });
 
     });
 

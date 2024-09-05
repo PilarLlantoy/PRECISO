@@ -104,10 +104,12 @@ public class CampoRCController {
                                       @RequestParam(name = "selectedTipoCampo") String tipo,
                                       @RequestParam(name = "selectedFormatoFecha") String formFecha,
                                       @RequestParam(name = "selectedIdiomaCampo") String idioma,
-                                      @RequestParam int id, BindingResult bindingResult){
-        ModelAndView modelAndView = new ModelAndView("redirect:/parametric/fieldLoadingAccountingRoute/" + id);
+                                      @RequestParam(name = "arouteId") String arouteId,
+                                      BindingResult bindingResult){
+        ModelAndView modelAndView = new ModelAndView("redirect:/parametric/fieldLoadingAccountingRoute/" + arouteId);
 
-        AccountingRoute aroute = accountingRouteService.findById(id);
+        AccountingRoute aroute = accountingRouteService.findById(Integer.parseInt(arouteId));
+        System.out.println(campoRC.getId()+ " IDDDD "+arouteId);
         campoRC.setRutaContable(aroute);
         campoRC.setTipo(tipo);
         campoRC.setFormatoFecha(formFecha);

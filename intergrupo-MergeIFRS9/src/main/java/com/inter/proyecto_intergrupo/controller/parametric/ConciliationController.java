@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -113,6 +114,31 @@ public class ConciliationController {
         return modelAndView;
     }
 
+    @PostMapping(value = "/parametric/createConcil")
+    public ModelAndView createConciliation(@ModelAttribute Conciliation campoRC,
+                                           @RequestParam(name = "selectedPeriodicidad") String periodicidad,
+                                           @RequestParam(name = "selectedPais") String pais,
+                                           @RequestParam(name = "selectedSF") String sf,
+                                           @RequestParam(name = "selectedSFC") String sfc,
+                                           @RequestParam(name = "selectedRutaContable") String rutaCont,
+                                           @RequestParam(name = "centroSelect") String centro,
+                                           @RequestParam(name = "divisaSelect") String divisa,
+                                           @RequestParam(name = "cuentaSelect") String cuenta,
+                                           @RequestParam(name = "saldoSelect") String saldo,
+                                           BindingResult bindingResult){
+        ModelAndView modelAndView = new ModelAndView("redirect:/parametric/fieldLoadingAccountingRoute/" + campoRC.getId());
+
+        AccountingRoute aroute = accountingRouteService.findById(campoRC.getId());
+        campoRC.setRutaContable(aroute);
+        //campoRC.setTipo(tipo);
+        //campoRC.setFormatoFecha(formFecha);
+        //campoRC.setIdioma(idioma);
+        //campoRCService.modificar(campoRC);
+
+        return modelAndView;
+
+    }
+
     @GetMapping(value = "/parametric/validatePrincipal")
     @ResponseBody
     public List<String> validatePrincipal(@RequestParam("principalSelect") String principalSelect) {
@@ -121,6 +147,18 @@ public class ConciliationController {
         System.out.println("Received principalSelect: " + principalSelect);
 
         List<String> response = campoRCService.validatePrincipal(principalSelect);
+        System.out.println("Response from service: " + response);
+        return response;
+    }
+
+    @GetMapping(value = "/parametric/validatePrincipal2")
+    @ResponseBody
+    public List<String> validatePrincipal2(@RequestParam("principalSelect") String principalSelect) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println("User authenticated: " + auth.getName());
+        System.out.println("Received principalSelect: " + principalSelect);
+
+        List<String> response = campoRCService.validatePrincipal2(principalSelect);
         System.out.println("Response from service: " + response);
         return response;
     }

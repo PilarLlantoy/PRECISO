@@ -59,5 +59,13 @@ public class CampoRCService {
     }
 
 
+    public List<String> validatePrincipal2(String principal)
+    {
+        Query validate = entityManager.createNativeQuery("SELECT nv.nombre FROM preciso_rutas_contables as nv WHERE " +
+                "nv.id_sf=1 and nv.activo=1");
+        //validate.setParameter(1,principal);
+        return validate.getResultList();
+    }
+
 
 }

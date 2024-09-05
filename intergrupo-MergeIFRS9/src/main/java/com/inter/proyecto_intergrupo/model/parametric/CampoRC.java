@@ -48,6 +48,12 @@ public class CampoRC {
     @Column(name = "separador")
     private String separador;
 
+    @Column(name = "operacion")
+    private String operacion;
+
+    @Column(name = "valorOperacion")
+    private String valorOperacion;
+
     @Column(name = "estado", columnDefinition = "BIT DEFAULT 1")
     private boolean estado = true;
 

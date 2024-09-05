@@ -28,11 +28,19 @@
 
     <div class="row m-0 px-4 mt-5">
         <div class="text-left pr-3 col-md-12 my-3">
-            <form th:object="${campoRC}" th:action="@{/parametric/createCampoRC}" method="POST">
+            <form id="formulario" th:object="${campoRC}" th:action="@{/parametric/createCampoRC}" method="POST">
 
                 <h2>Cargue de campos</h2>
 
                 <div class="mb-3 row">
+
+                    <div hidden class="col-md-2">
+                        <div class="form-group mb-1">
+                            <label>ID</label>
+                            <input type="text" class="form-control" th:field="*{id}">
+                        </div>
+                    </div>
+
                     <div class="col-md-2">
                         <div class="form-group mb-1">
                             <label>Detalle Campo</label>
@@ -126,18 +134,35 @@
                             <input type="text" class="form-control" th:field="*{separador}">
                         </div>
                     </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <label>Operación:</label>
+                            <select class="form-control" name="selectedOperación" id="selectedOperación" required>
+                                <option disabled value="" selected hidden>Seleccione operación</option>
+                                <option th:value="Divida">Divida</option>
+                                <option th:value="Multiplica">Multiplica</option>
+                                <option th:value="Resta">Resta</option>
+                                <option th:value="Suma">Suma</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <label>Valor Operación</label>
+                            <input type="text" class="form-control" th:field="*{valorOperacion}">
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Formulario oculto para pasar el objeto aroute -->
-                <input type="hidden" th:object="${aroute}" th:field="*{id}" />
-
+                <input type="hidden" id="arouteId" name="arouteId" th:value="${aroute.id}" />
 
                 <div class="row">
                     <div class="d-grid gap-2 col-2">
-                        <button th:disabled="${!p_modificar}" class="btn btn-primary" th:onclick="|window.location.href='@{/parametric/createEventMatrix}'|">Descartar</button>
+                        <button th:disabled="${!p_modificar}" class="btn btn-primary" onclick="descartar()">Descartar</button>
                     </div>
                     <div class="d-grid gap-2 col-2">
-                        <button type="submit" class="btn btn-primary">Agregar</button>
+                        <button th:disabled="${!p_modificar}" type="submit" class="btn btn-primary">Agregar</button>
                     </div>
                 </div>
 
@@ -157,11 +182,10 @@
                         <th>Longitud</th>
                         <th>Visualizado</th>
                         <th></th>
-                        <th></th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="camp : ${aroute.campos}">
+                    <tr th:each="camp : ${allCampos}">
                         <td th:text="${camp.id}"></td>
                         <td th:text="${camp.nombre}"></td>
                         <td th:if="${camp.primario == true}">Sí</td>
@@ -172,12 +196,21 @@
                         <td th:if="${camp.visualizacion == false}">No</td>
                         <td>
                             <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
-                                    th:onclick="|window.location.href='@{/parametric/cargueCampos/{id}(id=${camp.id})}'|">Seleccionar</button>
+                                    th:data-id="${camp.id}"
+                                    th:data-nombre="${camp.nombre}"
+                                    th:data-primario="${camp.primario}"
+                                    th:data-visualizacion="${camp.visualizacion}"
+                                    th:data-tipo="${camp.tipo}"
+                                    th:data-longitud="${camp.longitud}"
+                                    th:data-formula="${camp.formula}"
+                                    th:data-formatoFecha="${camp.formatoFecha}"
+                                    th:data-idioma="${camp.idioma}"
+                                    th:data-separador="${camp.separador}"
+                                    th:data-operacion="${camp.operacion}"
+                                    th:data-valorOperacion="${camp.valorOperacion}"
+                                    onclick="cargarCampos(this)">Seleccionar</button>
                         </td>
-                        <td>
-                            <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
-                                    th:onclick="|window.location.href='@{/parametric/modifyAccountingRoute/{id}(id=${camp.id})}'|">Borrar</button>
-                        </td>
+
                     </tr>
                     </tbody>
                 </table>
@@ -188,11 +221,11 @@
                         <ul class="pagination">
                             <li class="page-item" th:classappend="${prev == 0 ? 'disabled' : ''}">
                                 <a class="page-link"
-                                   th:href="@{/admin/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${prev},dir=${directory},vId=${vId})}">Anterior</a>
+                                   th:href="@{/parametric/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${prev},dir=${directory},vId=${vId})}">Anterior</a>
                             </li>
                             <li class="page-item" th:classappend="${current == last ? 'disabled' : ''}">
                                 <a class="page-link"
-                                   th:href="@{/admin/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${next},dir=${directory},vId=${vId})}">Siguiente</a>
+                                   th:href="@{/parametric/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${next},dir=${directory},vId=${vId})}">Siguiente</a>
                             </li>
                         </ul>
                     </nav>
@@ -218,5 +251,60 @@
     </div>
 </div>
 </div>
+<script>
+    function cargarCampos(button) {
+        var id = button.getAttribute("data-id");
+        var nombre = button.getAttribute("data-nombre");
+        var primario = button.getAttribute("data-primario") === 'true';
+        var tipo = button.getAttribute("data-tipo");
+        var formatoFecha = button.getAttribute("data-formatoFecha");
+        var idioma = button.getAttribute("data-idioma");
+        var operacion = button.getAttribute("data-operacion");
+        var longitud = button.getAttribute("data-longitud");
+        var separador = button.getAttribute("data-separador");
+        var valorOperacion = button.getAttribute("data-valorOperacion");
+        var visualizacion = button.getAttribute("data-visualizacion") === 'true';
+        var formula = button.getAttribute("data-formula") === 'true';
+
+        // Asignar los valores a los campos del formulario
+        document.querySelector("input[name='id']").value = id;
+        document.querySelector("input[name='nombre']").value = nombre;
+        document.querySelector("input[name='primario']").checked = primario;
+        document.querySelector("input[name='visualizacion']").checked = visualizacion;
+        document.querySelector("input[name='longitud']").value = longitud;
+        document.querySelector("input[name='formula']").checked = formula;
+        document.querySelector("input[name='separador']").value = separador;
+
+        var selectTipoCampo = document.querySelector("select[name='selectedTipoCampo']");
+        selectTipoCampo.value = tipo; // Asigna el valor directamente
+        if (!selectTipoCampo.querySelector('option[value="' + tipo + '"]')) {
+            console.error("El valor '" + tipo + "' no está en las opciones del select.");
+        }
+
+        var selectFormatoFecha = document.querySelector("select[name='selectedFormatoFecha']");
+        selectFormatoFecha.value = formatoFecha; // Asigna el valor directamente
+        if (!selectFormatoFecha.querySelector('option[value="' + formatoFecha + '"]')) {
+            console.error("El valor '" + formatoFecha + "' no está en las opciones del select.");
+        }
+
+        var selectIdioma = document.querySelector("select[name='selectedIdiomaCampo']");
+        selectIdioma.value = idioma; // Asigna el valor directamente
+        if (!selectIdioma.querySelector('option[value="' + idioma + '"]')) {
+            console.error("El valor '" + idioma + "' no está en las opciones del select.");
+        }
+
+        var selectOperacion = document.querySelector("select[name='selectedOperacion']");
+        selectOperacion.value = operacion; // Asigna el valor directamente
+        if (!selectOperacion.querySelector('option[value="' + operacion + '"]')) {
+            console.error("El valor '" + operacion + "' no está en las opciones del select.");
+        }
+
+    }
+
+    function descartar() {
+        document.getElementById('miFormulario').reset();
+    }
+
+</script>
 </body>
 </html>
