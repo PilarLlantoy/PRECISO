@@ -62,12 +62,12 @@
                         <td th:text="${concil.id}"></td>
                         <td th:text="${concil.nombre}"></td>
                         <td th:text="${concil.periodicidad}"></td>
-                        <td th:text="${concil.sistemaFuente}"></td>
+                        <td th:text="${concil.sf.nombre}"></td>
                         <td th:if="${concil.activo == true}">Activo</td>
                         <td th:if="${concil.activo == false}">Inactivo</td>
-                        <td th:if="${concil.fest == true}">Activo</td>
-                        <td th:if="${concil.fest == false}">Inactivo</td>
-                        <td th:text="${concil.fuenteContable}"></td>
+                        <td th:if="${concil.festivo == true}">Activo</td>
+                        <td th:if="${concil.festivo == false}">Inactivo</td>
+                        <td th:text="${concil.sfc.nombre}"></td>
                         <td>
                             <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
                                     th:onclick="|window.location.href='@{/admin/modifyUsers/{id}(id=${concil.id})}'|">Editar</button>

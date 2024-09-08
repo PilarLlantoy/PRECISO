@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+
+<div class="main-container">
+    <style>
+        body, .btn, .form-control, p {
+            font-size: 12px;
+        }
+
+        h2{
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .big-checkbox {width: 1rem; height: 1rem; top:0.5rem}
+    </style>
+    <div class="row m-0 bg-primary fixed-top myNav">
+        <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
+            <h3 class="fw-bold text-white mx-4 my-3">Cargue de Condiciones Ruta Contable</h3>
+        </div>
+    </div>
+
+    <div class="row m-0 px-4 mt-5">
+        <div class="text-left pr-3 col-md-12 my-3">
+            <form id="formulario" th:object="${condicionRC}" th:action="@{/parametric/createCampoRC}" method="POST">
+
+                <h2>Cargue de Condiciones Según Campos</h2>
+
+                <div class="mb-3 row">
+
+                    <div hidden class="col-md-2">
+                        <div class="form-group mb-1">
+                            <label>ID</label>
+                            <input type="text" class="form-control" th:field="*{id}">
+                        </div>
+                    </div>
+
+                    <div class="col-2">
+                        <div class="form-group mb-1 row">
+                            <label class="col-sm-4 col-form-label pr-0">Campo</label>
+                            <div class="col-sm-8 pl-0">
+                                <select class="form-control" name="selectedCampo" id="selectedCampo" required>
+                                    <option disabled value="" selected hidden>Seleccione Campo</option>
+                                    <option th:each="campo : ${campos}" th:value="${campo.nombre}" th:text="${campo.nombre}"></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <div class="form-group mb-1">
+                            <p>=</p>
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <div class="form-group mb-1">
+                            <input type="text" class="form-control" th:field="*{valorCondicion}">
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Formulario oculto para pasar el objeto aroute -->
+                <input type="hidden" id="arouteId" name="arouteId" th:value="${aroute.id}" />
+
+                <div class="row">
+                    <div class="d-grid gap-2 col-2">
+                        <button th:disabled="${!p_modificar}" class="btn btn-primary" onclick="descartar()">Descartar</button>
+                    </div>
+                    <div class="d-grid gap-2 col-2">
+                        <button th:disabled="${!p_modificar}" type="submit" class="btn btn-primary">Agregar</button>
+                    </div>
+                </div>
+
+            </form>
+
+        </div>
+        <div class="col-md-12 p-0">
+            <div class="table-responsive rounded border-primary">
+                <h2>Condiciones registradas</h2>
+                <table id="example" class="table table-striped table-hover text-center table-bordered table-sm" width="100%">
+                    <thead class="bg-primary">
+                    <tr>
+                        <th>Campo Condición</th>
+                        <th>Valor Condición </th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="camp : ${allCampos}">
+                        <td th:text="${camp.campo.nombre}"></td>
+                        <td th:text="${camp.valorCondicion}"></td>
+
+                        <td>
+                            <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
+                                    th:data-id="${camp.id}"
+                                    th:data-campo="${camp.campo.nombre}"
+                                    th:data-valorCondicion="${camp.valorCondicion}"
+                                    onclick="cargarCampos(this)">Seleccionar</button>
+                        </td>
+                        <td>
+                            <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
+                                    th:data-id="${camp.id}"
+                                    th:data-campo="${camp.campo.nombre}"
+                                    th:data-valorCondicion="${camp.valorCondicion}"
+                                    onclick="cargarCampos(this)">Eliminar</button>
+                        </td>
+
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="row" th:if="${last != 0}">
+                <div class="col-md-4 text-left">
+                    <nav arial-label="Pagination">
+                        <ul class="pagination">
+                            <li class="page-item" th:classappend="${prev == 0 ? 'disabled' : ''}">
+                                <a class="page-link"
+                                   th:href="@{/parametric/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${prev},dir=${directory},vId=${vId})}">Anterior</a>
+                            </li>
+                            <li class="page-item" th:classappend="${current == last ? 'disabled' : ''}">
+                                <a class="page-link"
+                                   th:href="@{/parametric/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${next},dir=${directory},vId=${vId})}">Siguiente</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="col-md-4 text-center">
+                    <h6 th:utext="${registers} + ' Registros Encontrados'"></h6>
+                </div>
+                <div class="col-md-4 text-right">
+                    <h6 class="mx-1" th:utext="'Página ' + ${current} + ' de ' + ${last}"></h6>
+                </div>
+            </div>
+            <div class="d-flex align-items-center justify-content-center" th:if="${filterExport != 'Original'}">
+                <h5><span class="badge badge-pill text-light badge-info py-2 px-5">¡La Tabla se encuentra Filtrada!</span>
+                </h5>
+            </div>
+            <!--
+            <div class="d-flex align-items-center justify-content-center">
+                <a th:href="@{/admin/users/download/?vFilter={vFilter}&vId={vId}(vFilter=${vFilter},vId=${vId})}" class="btn btn-primary">Exportar a Excel</a>
+            </div>
+            -->
+        </div>
+
+    </div>
+</div>
+</div>
+<script>
+    function cargarCampos(button) {
+        var id = button.getAttribute("data-id");
+        var campo = button.getAttribute("data-campo");
+        var valorCondicion = button.getAttribute("data-valorCondicion");
+
+        // Asignar los valores a los campos del formulario
+        document.querySelector("input[name='id']").value = id;
+        document.querySelector("input[name='valorCondicion']").value = valorCondicion;
+
+        var selectCampo = document.querySelector("select[name='selectedCampo']");
+        selectCampo.value = campo; // Asigna el valor directamente
+        if (!selectCampo.querySelector('option[value="' + campo + '"]')) {
+            console.error("El valor '" + campo + "' no está en las opciones del select.");
+        }
+
+    }
+
+    function descartar() {
+        document.getElementById('miFormulario').reset();
+    }
+
+</script>
+</body>
+</html>

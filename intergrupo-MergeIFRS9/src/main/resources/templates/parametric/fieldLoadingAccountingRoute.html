@@ -88,17 +88,6 @@
                         </div>
                     </div>
 
-                    <div class="col-md-2">
-                        <div class="col-12"><p>Aplica Fórmula?</p></div>
-                        <div class="form-group col-md-2">
-                            <div class="form-check form-check-inline">
-                                <input id="formula" name="formula" th:field="*{formula}" th:id="${formula}"
-                                       th:value="${formula}" type="checkbox" class="styled-checkbox">
-                                <label>[[${activo}]]</label>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
 
                 <div class="mb-1 row mb-3">
@@ -135,9 +124,19 @@
                         </div>
                     </div>
                     <div class="col-md-2">
+                        <div class="col-12"><p>Aplica Fórmula?</p></div>
+                        <div class="form-group col-md-2">
+                            <div class="form-check form-check-inline">
+                                <input id="formula" name="formula" th:field="*{formula}" th:id="${formula}"
+                                       th:value="${formula}" type="checkbox" class="styled-checkbox">
+                                <label>[[${formula}]]</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
                         <div class="form-group mb-1">
                             <label>Operación:</label>
-                            <select class="form-control" name="selectedOperación" id="selectedOperación" required>
+                            <select class="form-control" name="selectedOperacion" id="selectedOperacion">
                                 <option disabled value="" selected hidden>Seleccione operación</option>
                                 <option th:value="Divida">Divida</option>
                                 <option th:value="Multiplica">Multiplica</option>
@@ -252,6 +251,7 @@
 </div>
 </div>
 <script>
+
     function cargarCampos(button) {
         var id = button.getAttribute("data-id");
         var nombre = button.getAttribute("data-nombre");
@@ -274,6 +274,7 @@
         document.querySelector("input[name='longitud']").value = longitud;
         document.querySelector("input[name='formula']").checked = formula;
         document.querySelector("input[name='separador']").value = separador;
+        document.querySelector("input[name='valorOperacion']").value = valorOperacion;
 
         var selectTipoCampo = document.querySelector("select[name='selectedTipoCampo']");
         selectTipoCampo.value = tipo; // Asigna el valor directamente

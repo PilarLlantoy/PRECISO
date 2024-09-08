@@ -69,5 +69,7 @@ public class AccountingRoute {
     @OneToMany(mappedBy = "rutaContable", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CampoRC> campos;
 
+    @OneToMany(mappedBy = "rutaContable", cascade = CascadeType.ALL)
+    private List<CondicionRC> condiciones;
 
 }

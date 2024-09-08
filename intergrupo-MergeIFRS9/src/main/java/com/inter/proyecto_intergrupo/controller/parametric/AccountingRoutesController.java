@@ -192,5 +192,50 @@ public class AccountingRoutesController {
         return modelAndView;
     }
 
+    @GetMapping(value = "/parametric/conditionLoadingAccountingRoute/{id}")
+    public ModelAndView cargueCondiciones(@PathVariable int id, @RequestParam Map<String, Object> params){
+        ModelAndView modelAndView = new ModelAndView();
+        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+        AccountingRoute aroute = accountingRouteService.findById(id);
+        modelAndView.addObject("aroute",aroute);
+        List<CondicionRC> condiciones = aroute.getCondiciones();
+
+        int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
+        PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
+        int start = (int) pageRequest.getOffset();
+        int end = Math.min((start + pageRequest.getPageSize()), condiciones.size());
+
+        Page<CondicionRC> pageConciliation = new PageImpl<>(condiciones.subList(start, end), pageRequest, condiciones.size());
+        List<CampoRC> campos = aroute.getCampos();
+        modelAndView.addObject("campos",campos);
+
+        int totalPage=pageConciliation.getTotalPages();
+        if(totalPage>0){
+            List<Integer> pages = IntStream.rangeClosed(1, totalPage).boxed().collect(Collectors.toList());
+            modelAndView.addObject("pages",pages);
+        }
+        modelAndView.addObject("current",page+1);
+        modelAndView.addObject("next",page+2);
+        modelAndView.addObject("prev",page);
+        modelAndView.addObject("last",totalPage);
+        modelAndView.addObject("directory","conditionLoadingAccountingRoute/"+id);
+        modelAndView.addObject("allCampos",pageConciliation.getContent());
+        modelAndView.addObject("registers",condiciones.size());
+        modelAndView.addObject("filterExport","Original");
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findUserByUserName(auth.getName());
+        modelAndView.addObject("userName", user.getPrimerNombre());
+        modelAndView.addObject("userEmail", user.getCorreo());
+        Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Países");
+        modelAndView.addObject("p_modificar", p_modificar);
+        CondicionRC condicionRC = new CondicionRC();
+        modelAndView.addObject("condicionRC",condicionRC);
+
+
+        modelAndView.setViewName("parametric/conditionLoadingAccountingRoute");
+        return modelAndView;
+    }
+
 
 }

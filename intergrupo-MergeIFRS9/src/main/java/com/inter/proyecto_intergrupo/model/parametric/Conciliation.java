@@ -56,9 +56,8 @@ public class Conciliation {
     @Column(name = "cuenta")
     private String cuenta;
 
-    @ManyToOne
-    @JoinColumn(name = "id_divisa", nullable = false)
-    private Currency divisa;
+    @Column(name = "divisa")
+    private String divisa;
 
     @Column(name = "saldo")
     private String saldo;

@@ -6,7 +6,10 @@ import com.inter.proyecto_intergrupo.model.parametric.Campo;
 import com.inter.proyecto_intergrupo.model.parametric.CampoRC;
 import com.inter.proyecto_intergrupo.model.parametric.Conciliation;
 import com.inter.proyecto_intergrupo.service.adminServices.UserService;
-import com.inter.proyecto_intergrupo.service.parametricServices.*;
+import com.inter.proyecto_intergrupo.service.parametricServices.AccountingRouteService;
+import com.inter.proyecto_intergrupo.service.parametricServices.CampoRCService;
+import com.inter.proyecto_intergrupo.service.parametricServices.ConciliationService;
+import com.inter.proyecto_intergrupo.service.parametricServices.SourceSystemService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +32,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Controller
-public class CampoRCController {
+public class CondicionRCController {
     private static final int PAGINATIONCOUNT=12;
     Logger logger = LogManager.getLogger(LogManager.ROOT_LOGGER_NAME);
     @Autowired
@@ -47,8 +50,8 @@ public class CampoRCController {
     @Autowired
     private SourceSystemService sourceSystemService;
 
-    @GetMapping(value="/parametric/mostrarCamposRC")
-    public ModelAndView mostrarCamposRC(@RequestParam Map<String, Object> params) {
+    @GetMapping(value="/parametric/mostrarCondicionesRC")
+    public ModelAndView mostrarCondicionesRC(@RequestParam Map<String, Object> params) {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
@@ -89,8 +92,8 @@ public class CampoRCController {
         return modelAndView;
     }
 
-    @GetMapping(value = "/parametric/cargueCamposRC")
-    public ModelAndView cargueCamposRC(){
+    @GetMapping(value = "/parametric/cargueCondicionesRC")
+    public ModelAndView cargueCondicionesRC(){
         ModelAndView modelAndView = new ModelAndView();
         Campo campo = new Campo();
         modelAndView.addObject("campo",campo);
@@ -99,12 +102,11 @@ public class CampoRCController {
     }
 
 
-    @PostMapping(value = "/parametric/createCampoRC")
-    public ModelAndView createCampoRC(@ModelAttribute CampoRC campoRC,
+    @PostMapping(value = "/parametric/createCondicionRC")
+    public ModelAndView createCondicionRC(@ModelAttribute CampoRC campoRC,
                                       @RequestParam(name = "selectedTipoCampo") String tipo,
                                       @RequestParam(name = "selectedFormatoFecha") String formFecha,
                                       @RequestParam(name = "selectedIdiomaCampo") String idioma,
-                                      @RequestParam(name = "selectedOperacion") String operacion,
                                       @RequestParam(name = "arouteId") String arouteId,
                                       BindingResult bindingResult){
         ModelAndView modelAndView = new ModelAndView("redirect:/parametric/fieldLoadingAccountingRoute/" + arouteId);
@@ -115,7 +117,6 @@ public class CampoRCController {
         campoRC.setTipo(tipo);
         campoRC.setFormatoFecha(formFecha);
         campoRC.setIdioma(idioma);
-        campoRC.setOperacion((operacion));
         campoRCService.modificar(campoRC);
 
         return modelAndView;

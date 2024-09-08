@@ -60,8 +60,8 @@ public class CampoRC {
     @Column(name = "visualizacion", columnDefinition = "BIT DEFAULT 1")
     private boolean visualizacion = true;
 
-    @Column(name = "formula", columnDefinition = "BIT DEFAULT 1")
-    private boolean formula = true;
+    @Column(name = "formula", columnDefinition = "BIT DEFAULT 0")
+    private boolean formula = false;
 
     // Relación con AccountingRoute
     @ManyToOne

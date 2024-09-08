@@ -70,7 +70,7 @@ public class ConciliationController {
                 List<Integer> pages = IntStream.rangeClosed(1, totalPage).boxed().collect(Collectors.toList());
                 modelAndView.addObject("pages",pages);
             }
-            modelAndView.addObject("allCountry",pageConciliation.getContent());
+            modelAndView.addObject("allConcils",pageConciliation.getContent());
             modelAndView.addObject("current",page+1);
             modelAndView.addObject("next",page+2);
             modelAndView.addObject("prev",page);
@@ -115,7 +115,7 @@ public class ConciliationController {
     }
 
     @PostMapping(value = "/parametric/createConcil")
-    public ModelAndView createConciliation(@ModelAttribute Conciliation campoRC,
+    public ModelAndView createConciliation(@ModelAttribute Conciliation conciliacion,
                                            @RequestParam(name = "selectedPeriodicidad") String periodicidad,
                                            @RequestParam(name = "selectedPais") String pais,
                                            @RequestParam(name = "selectedSF") String sf,
@@ -126,17 +126,31 @@ public class ConciliationController {
                                            @RequestParam(name = "cuentaSelect") String cuenta,
                                            @RequestParam(name = "saldoSelect") String saldo,
                                            BindingResult bindingResult){
-        ModelAndView modelAndView = new ModelAndView("redirect:/parametric/fieldLoadingAccountingRoute/" + campoRC.getId());
+        ModelAndView modelAndView = new ModelAndView("redirect:/parametric/conciliation/");
 
-        AccountingRoute aroute = accountingRouteService.findById(campoRC.getId());
-        campoRC.setRutaContable(aroute);
-        //campoRC.setTipo(tipo);
-        //campoRC.setFormatoFecha(formFecha);
-        //campoRC.setIdioma(idioma);
-        //campoRCService.modificar(campoRC);
+        Conciliation concil = conciliationService.findById(conciliacion.getId());
+        if(concil!=null) System.out.println("ERROR");
+        else{
+            concil=conciliacion;
+            concil.setPeriodicidad(periodicidad);
+            Country paisSeleccionado = countryService.findCountryByName(pais);
+            concil.setPais(paisSeleccionado);
+            SourceSystem sistema = sourceSystemService.findByNombre(sf);
+            concil.setSf(sistema);
+            SourceSystem sistemaContable = sourceSystemService.findByNombre(sfc);
+            concil.setSfc(sistemaContable);
+            AccountingRoute ruta = accountingRouteService.findByName(rutaCont);
+            concil.setRutaContable(ruta);
+
+            concil.setCentro(centro);
+            concil.setCuenta(cuenta);
+            concil.setDivisa(divisa);
+            concil.setSaldo(saldo);
+            conciliationService.modificarConciliacion(concil);
+        }
+
 
         return modelAndView;
-
     }
 
     @GetMapping(value = "/parametric/validatePrincipal")
