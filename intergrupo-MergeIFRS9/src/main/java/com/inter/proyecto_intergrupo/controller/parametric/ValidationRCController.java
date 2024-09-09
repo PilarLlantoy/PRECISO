@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Controller
-public class CondicionRCController {
+public class ValidationRCController {
     private static final int PAGINATIONCOUNT=12;
     Logger logger = LogManager.getLogger(LogManager.ROOT_LOGGER_NAME);
     @Autowired
@@ -47,8 +47,8 @@ public class CondicionRCController {
     @Autowired
     private SourceSystemService sourceSystemService;
 
-    @GetMapping(value="/parametric/mostrarCondicionesRC")
-    public ModelAndView mostrarCondicionesRC(@RequestParam Map<String, Object> params) {
+    @GetMapping(value="/parametric/mostrarValidacionesRC")
+    public ModelAndView mostrarValidacionesRC(@RequestParam Map<String, Object> params) {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
@@ -89,8 +89,8 @@ public class CondicionRCController {
         return modelAndView;
     }
 
-    @GetMapping(value = "/parametric/cargueCondicionesRC")
-    public ModelAndView cargueCondicionesRC(){
+    @GetMapping(value = "/parametric/cargueValidacionesRC")
+    public ModelAndView cargueValidacionesRC(){
         ModelAndView modelAndView = new ModelAndView();
         Campo campo = new Campo();
         modelAndView.addObject("campo",campo);
@@ -99,8 +99,8 @@ public class CondicionRCController {
     }
 
 
-    @PostMapping(value = "/parametric/createCondicionRC")
-    public ModelAndView createCondicionRC(@ModelAttribute CondicionRC condicionRC,
+    @PostMapping(value = "/parametric/createValidacionRC")
+    public ModelAndView createValidacionRC(@ModelAttribute CondicionRC condicionRC,
                                       @RequestParam(name = "selectedCampo") String campo,
                                       @RequestParam(name = "arouteId") String arouteId,
                                       BindingResult bindingResult){

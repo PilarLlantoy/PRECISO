@@ -1,25 +1,24 @@
 package com.inter.proyecto_intergrupo.service.parametricServices;
 
-import com.inter.proyecto_intergrupo.model.parametric.CampoRC;
 import com.inter.proyecto_intergrupo.model.parametric.CondicionRC;
+import com.inter.proyecto_intergrupo.model.parametric.ValidationRC;
 import com.inter.proyecto_intergrupo.repository.admin.AuditRepository;
-import com.inter.proyecto_intergrupo.repository.parametric.CampoRCRepository;
 import com.inter.proyecto_intergrupo.repository.parametric.CondicionRCRepository;
+import com.inter.proyecto_intergrupo.repository.parametric.ValidationRCRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import java.util.List;
 
 @Service
 @Transactional
-public class CondicionRCService {
+public class ValidationRCService {
 
     @Autowired
-    private final CondicionRCRepository condicionRCRepository;
+    private final ValidationRCRepository validationRCRepository;
 
     @PersistenceContext
     EntityManager entityManager;
@@ -28,22 +27,22 @@ public class CondicionRCService {
     private AuditRepository auditRepository;
 
     @Autowired
-    public CondicionRCService(CondicionRCRepository condicionRCRepository) {
-        this.condicionRCRepository = condicionRCRepository;
+    public ValidationRCService(ValidationRCRepository validationRCRepository) {
+        this.validationRCRepository = validationRCRepository;
     }
 
-    public List <CondicionRC> findAll(){return condicionRCRepository.findAll();}
-    public List<CondicionRC> findAllActive() {
-        return condicionRCRepository.findByEstado(true);
+    public List <ValidationRC> findAll(){return validationRCRepository.findAll();}
+    public List<ValidationRC> findAllActive() {
+        return validationRCRepository.findByEstado(true);
     }
 
-    public CondicionRC findById(int id){
-        return condicionRCRepository.findAllById(id);
+    public ValidationRC findById(int id){
+        return validationRCRepository.findAllById(id);
     }
 
 
-    public CondicionRC modificar(CondicionRC campo){
-        condicionRCRepository.save(campo);
+    public ValidationRC modificar(ValidationRC campo){
+        validationRCRepository.save(campo);
        return campo;
     }
 

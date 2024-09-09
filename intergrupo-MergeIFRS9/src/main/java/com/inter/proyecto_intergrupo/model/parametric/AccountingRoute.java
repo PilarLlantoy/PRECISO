@@ -72,4 +72,7 @@ public class AccountingRoute {
     @OneToMany(mappedBy = "rutaContable", cascade = CascadeType.ALL)
     private List<CondicionRC> condiciones;
 
+    @OneToMany(mappedBy = "rutaContable", cascade = CascadeType.ALL)
+    private List<ValidationRC> validaciones;
+
 }
