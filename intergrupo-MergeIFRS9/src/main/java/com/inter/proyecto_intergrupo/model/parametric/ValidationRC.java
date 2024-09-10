@@ -45,7 +45,7 @@ public class ValidationRC {
     private CampoRC campoRef;
 
     @ManyToOne
-    @JoinColumn(name = "id_campo_validacion", nullable = false)
+    @JoinColumn(name = "id_campo_validacion")
     private CampoRC campoVal;
 
 }

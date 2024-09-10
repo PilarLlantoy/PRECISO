@@ -254,6 +254,8 @@ public class AccountingRoutesController {
         Page<ValidationRC> pageConciliation = new PageImpl<>(validaciones.subList(start, end), pageRequest, validaciones.size());
         List<CampoRC> campos = aroute.getCampos();
         modelAndView.addObject("campos",campos);
+        List<CampoRC> camposRef = aroute.getCampos();
+        modelAndView.addObject("camposRef",camposRef);
 
         int totalPage=pageConciliation.getTotalPages();
         if(totalPage>0){

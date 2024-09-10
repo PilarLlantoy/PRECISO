@@ -42,6 +42,9 @@ public class ValidationRCController {
     private CampoRCService campoRCService;
 
     @Autowired
+    private ValidationRCService validationRCService;
+
+    @Autowired
     private AccountingRouteService accountingRouteService;
 
     @Autowired
@@ -100,17 +103,23 @@ public class ValidationRCController {
 
 
     @PostMapping(value = "/parametric/createValidacionRC")
-    public ModelAndView createValidacionRC(@ModelAttribute CondicionRC condicionRC,
-                                      @RequestParam(name = "selectedCampo") String campo,
-                                      @RequestParam(name = "arouteId") String arouteId,
-                                      BindingResult bindingResult){
-        ModelAndView modelAndView = new ModelAndView("redirect:/parametric/conditionLoadingAccountingRoute/" + arouteId);
+    public ModelAndView createValidacionRC(@ModelAttribute ValidationRC validationRC,
+                                           @RequestParam(name = "selectedCampoRef") String campoRef,
+                                           @RequestParam(name = "selectedCampoVal") String campoVal,
+                                           @RequestParam(name = "selectedOperacion") String operacion,
+                                           @RequestParam(name = "arouteId") String arouteId,
+                                           BindingResult bindingResult){
+        ModelAndView modelAndView = new ModelAndView("redirect:/parametric/validationLoadingAccountingRoute/" + arouteId);
 
+        System.out.println(campoRef +" "+ campoVal+" "+operacion+" "+arouteId);
         AccountingRoute aroute = accountingRouteService.findById(Integer.parseInt(arouteId));
-        condicionRC.setRutaContable(aroute);
-        CampoRC camposele = campoRCService.findByName(campo);
-        condicionRC.setCampo(camposele);
-        condicionRCService.modificar(condicionRC);
+        validationRC.setRutaContable(aroute);
+        CampoRC referencia = campoRCService.findByName(campoRef);
+        validationRC.setCampoRef(referencia);
+        CampoRC validacion = campoRCService.findByName(campoVal);
+        validationRC.setCampoVal(validacion);
+        validationRC.setOperacion(operacion);
+        validationRCService.modificar(validationRC);
 
         return modelAndView;
 

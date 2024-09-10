@@ -28,41 +28,82 @@
 
     <div class="row m-0 px-4 mt-5">
         <div class="text-left pr-3 col-md-12 my-3">
-            <form id="formulario" th:object="${validationRC}" th:action="@{/parametric/createValidationRC}" method="POST">
+            <form id="miFormulario" th:object="${validationRC}" th:action="@{/parametric/createValidacionRC}" method="POST">
 
                 <h2>Cargue de Validaciones a Campos</h2>
 
-                <div class="mb-3 row">
-
-                    <div hidden class="col-md-2">
+                <div class="mb-3" style="display: flex; gap: 10px;">
+                    <div hidden="">
                         <div class="form-group mb-1">
                             <label>ID</label>
-                            <input type="text" class="form-control" th:field="*{id}">
+                            <input type="text" class="form-control" id="id" name="id" value="0">
                         </div>
                     </div>
-
-                    <div class="col-2">
-                        <div class="form-group mb-1 row">
-                            <label class="col-sm-4 col-form-label pr-0">Campo</label>
-                            <div class="col-sm-8 pl-0">
-                                <select class="form-control" name="selectedCampo" id="selectedCampo" required>
+                    <div>
+                        <div class="mb-1 mr-3" style="display: flex;">
+                            <label class="mr-2">Campo</label>
+                            <div>
+                                <select class="form-control" name="selectedCampoRef" id="selectedCampoRef" required="" style="width: auto;">
                                     <option disabled value="" selected hidden>Seleccione Campo</option>
-                                    <option th:each="campo : ${campos}" th:value="${campo.nombre}" th:text="${campo.nombre}"></option>
+                                    <option th:each="campo : ${camposRef}" th:value="${campo.nombre}" th:text="${campo.nombre}"></option>
                                 </select>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-1">
+                    <div style="display: flex;">
+                        <p>Aplica Fórmula?</p>
+                        <div class="form-check form-check-inline" style="margin-left: 10px;">
+                            <input id="formula" class="form-check-input" type="checkbox" name="formula" th:id="${formula}">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3" style="display: flex; gap: 10px;">
+                    <div>
+                        <div class="form-group mb-1" style="display:flex">
+                            <label class="mr-2">Campo Validación</label>
+                            <div>
+                                <select class="form-control" name="selectedCampoVal" id="selectedCampoVal" required>
+                                    <option disabled value="" selected hidden>Seleccione Campo</option>
+                                    <option th:each="campoVal : ${campos}" th:value="${campoVal.nombre}" th:text="${campoVal.nombre}"></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
                         <div class="form-group mb-1">
                             <p>=</p>
                         </div>
                     </div>
-                    <div class="col-md-1">
+                    <div>
                         <div class="form-group mb-1">
-                            <input type="text" class="form-control" th:field="*{valorCondicion}">
+                            <input type="text" class="form-control" th:field="*{valorValidacion}">
                         </div>
                     </div>
-
+                </div>
+                <div class="mb-3" style="display: flex; gap: 10px;">
+                    <div>
+                        <div class="form-group mb-1" style="display:flex">
+                            <label class="mr-2">Operación:</label>
+                            <select class="form-control" name="selectedOperacion" id="selectedOperacion">
+                                <option disabled value="" selected hidden>Seleccione operación</option>
+                                <option th:value="Divida">Divida</option>
+                                <option th:value="Multiplica">Multiplica</option>
+                                <option th:value="Resta">Resta</option>
+                                <option th:value="Suma">Suma</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="form-group mb-1">
+                            <p>=</p>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="form-group mb-1">
+                            <input type="text" class="form-control" th:field="*{valorOperacion}">
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Formulario oculto para pasar el objeto aroute -->
@@ -110,6 +151,8 @@
                                     th:data-campoVal="${val.campoVal.nombre}"
                                     th:data-operacion="${val.operacion}"
                                     th:data-valorOperacion="${val.valorOperacion}"
+                                    th:data-valorValidacion="${val.valorValidacion}"
+                                    th:data-formula="${val.formula}"
                                     onclick="cargarCampos(this)">Seleccionar</button>
                         </td>
                         <td>
@@ -164,21 +207,39 @@
 </div>
 <script>
     function cargarCampos(button) {
-    /*
+
         var id = button.getAttribute("data-id");
-        var campo = button.getAttribute("data-campo");
-        var valorCondicion = button.getAttribute("data-valorCondicion");
+        var campoRef = button.getAttribute("data-campoRef");
+        var campoVal = button.getAttribute("data-campoVal");
+        var operacion = button.getAttribute("data-operacion");
+        var valorOperacion = button.getAttribute("data-valorOperacion");
+        var valorValidacion = button.getAttribute("data-valorValidacion");
+        var formula = button.getAttribute("data-formula") === 'true';
 
         // Asignar los valores a los campos del formulario
         document.querySelector("input[name='id']").value = id;
-        document.querySelector("input[name='valorCondicion']").value = valorCondicion;
+        document.querySelector("input[name='valorOperacion']").value = valorOperacion;
+        document.querySelector("input[name='valorValidacion']").value = valorValidacion;
+        document.querySelector("input[name='formula']").checked = formula;
 
-        var selectCampo = document.querySelector("select[name='selectedCampo']");
-        selectCampo.value = campo; // Asigna el valor directamente
-        if (!selectCampo.querySelector('option[value="' + campo + '"]')) {
-            console.error("El valor '" + campo + "' no está en las opciones del select.");
+        var selectCampoRef = document.querySelector("select[name='selectedCampoRef']");
+        selectCampoRef.value = campoRef; // Asigna el valor directamente
+        if (!selectCampoRef.querySelector('option[value="' + campoRef + '"]')) {
+            console.error("El valor '" + campoRef + "' no está en las opciones del select.");
         }
-*/
+
+        var selectCampoVal = document.querySelector("select[name='selectedCampoVal']");
+        selectCampoVal.value = campoVal; // Asigna el valor directamente
+        if (!selectCampoVal.querySelector('option[value="' + campoVal + '"]')) {
+            console.error("El valor '" + campoVal + "' no está en las opciones del select.");
+        }
+
+        var selectOperacion = document.querySelector("select[name='selectedOperacion']");
+        selectOperacion.value = operacion; // Asigna el valor directamente
+        if (!selectOperacion.querySelector('option[value="' + operacion + '"]')) {
+            console.error("El valor '" + operacion + "' no está en las opciones del select.");
+        }
+
     }
 
     function descartar() {
