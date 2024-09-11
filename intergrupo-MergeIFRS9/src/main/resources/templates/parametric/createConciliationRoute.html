@@ -9,6 +9,7 @@
 
 <div class="main-container">
     <style>
+
         body, .btn, .form-control {
             font-size: 12px;
         }
@@ -40,16 +41,17 @@
         </div>
     </div>
     <div id="content">
-        <div class="row mt-2 px-5">
+        <div class="row mt-5">
             <form th:object="${croute}" th:action="@{/parametric/createConciliationRoute}" method="POST">
-                <div class="row pt-5 py-3">
+                <div class="col-md-12 px-5 mb-3">
 
                     <div class="row">
                         <div class="col-md-3">
                             <div class="form-group mb-1">
-                                <label>Conciliacion:</label>
-                                <select class="form-control" name="selectedConcil" id="selectedConcil" required>
-                                    <option disabled value="" selected hidden>Seleccione una conciliacion</option>
+                                <label>Conciliación:</label>
+                                <select class="form-control" name="selectedConcil" id="selectedConcil" required="" style="width: auto;">
+                                    <option disabled value="" selected hidden>Seleccione Conciliación</option>
+                                    <option th:each="concil : ${conciliations}" th:value="${concil.nombre}" th:text="${concil.nombre}"></option>
                                 </select>
                             </div>
                         </div>
@@ -67,16 +69,8 @@
                                 <label>[[${activo}]]</label>
                             </div>
                         </div>
-                        <div class="col-md-2">
-                            <div class="form-group mb-1">
-                                <label>Es fichero?</label>
-                                <input id="esFicheroInput" name="esFichero" th:field="*{esFichero}" th:id="${esFichero}"
-                                       th:value="${esFichero}" type="checkbox" class="styled-checkbox">
-                                <label>[[${activo}]]</label>
-                            </div>
-                        </div>
+                        <input type="hidden" id="csrfToken" th:value="${_csrf.token}" />
                     </div>
-
                     <div class="row">
                         <div class="col-md-3">
                             <div class="form-group mb-1">
@@ -112,29 +106,27 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="row">
                         <div class="col-md-9">
-                            <form enctype="multipart/form-data" id="fileUploadForm" method="post" th:action="@{/parametric/currency}">
-                                <div class="form-group">
-                                    <label>Ruta: </label>
-                                    <!--
-                                    <input accept=".xls,.xlsx,.xlsm" class="custom-file-control" id="file" name="file" required type="file" onchange="updateFilePath()">
-                                    <input type="text" id="filePath" class="form-control mt-2" readonly placeholder="Ruta del archivo" th:field="*{ruta}">
-                                    <button class="btn btn-primary mt-2 d-none" type="submit">Cargar</button>
-                                    -->
-                                    <input type="text" class="form-control"  th:field="*{ruta}"  required>
-                                </div>
-                            </form>
+                            <div class="form-group">
+                                <label>Ruta: </label>
+                                <input type="text" class="form-control"  th:field="*{ruta}"  required>
+                            </div>
                         </div>
                     </div>
-
-
                     <div class="row">
                         <div class="col-md-2">
                             <div class="form-group mb-1">
                                 <label>Filas Omitidas:</label>
                                 <input type="text" class="form-control"  th:field="*{filasOmitidas}"  required>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group mb-1">
+                                <label>Maneja Siglas de Fechas:</label>
+                                <input id="siglasFechasInput" name="siglasFechas" th:field="*{siglasFechas}" th:id="${activo}"
+                                       th:value="${siglasFechas}" type="checkbox" class="styled-checkbox">
+                                <label>[[${siglasFechas}]]</label>
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -165,14 +157,6 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-2">
-                            <div class="form-group mb-1">
-                                <label>Maneja Siglas de Fechas:</label>
-                                <input id="siglasFechasInput" name="siglasFechas" th:field="*{siglasFechas}" th:id="${activo}"
-                                       th:value="${siglasFechas}" type="checkbox" class="styled-checkbox">
-                                <label>[[${siglasFechas}]]</label>
-                            </div>
-                        </div>
                     </div>
 
                 </div>
@@ -183,28 +167,145 @@
                             <button type="submit" class="btn btn-primary">Agregar</button>
                         </div>
                         <div class="d-grid gap-2 col-3">
-                            <a class="btn btn-danger" th:href="@{/parametric/conciliationRoutes}">Cancelar</a>
+                            <a class="btn btn-danger" th:href="@{/parametric/conciliation}">Cancelar</a>
                         </div>
                     </div>
                 </div>
-
-
-
-
             </form>
         </div>
     </div>
 </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"
+        integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
+        crossorigin="anonymous"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"
+        integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
+        crossorigin="anonymous"></script>
 <script>
-    function updateFilePath() {
-        var fileInput = document.getElementById('file');
-        var filePath = document.getElementById('filePath');
-        var fakePath = fileInput.value;  // "ruta virtual"
-        filePath.value = fakePath;
-    }
+
+
+    $("#selectedRutaContable").change(function(){
+        var csrfToken = $("#csrfToken").val(); // Obtener el token CSRF
+
+        $.ajax({
+            url: "/parametric/validatePrincipal/?principalSelect=" + $("#selectedRutaContable").val(),
+            type: "GET",
+            headers: {
+                "X-CSRF-TOKEN": csrfToken // Incluir el token CSRF en los headers
+            },
+            success: function(responseText) {
+                var inputN = document.querySelector('#selectedCentro');
+                var inputC = document.querySelector('#selectedCuenta');
+                var inputD = document.querySelector('#selectedDivisa');
+                var inputS = document.querySelector('#selectedSaldo');
+                inputN.innerHTML = null;
+
+                // Agregar la opción predeterminada "Seleccione"
+                var defaultOption = document.createElement('option');
+                defaultOption.value = "";
+                defaultOption.innerHTML = "Seleccione";
+                defaultOption.disabled = true; // Deshabilitar la opción
+                defaultOption.selected = true; // Seleccionarla por defecto
+                inputN.appendChild(defaultOption);
+
+                var defaultOption2 = document.createElement('option');
+                defaultOption2.value = "";
+                defaultOption2.innerHTML = "Seleccione";
+                defaultOption2.disabled = true; // Deshabilitar la opción
+                defaultOption2.selected = true; // Seleccionarla por defecto
+                inputC.appendChild(defaultOption2);
+
+                var defaultOption3 = document.createElement('option');
+                defaultOption3.value = "";
+                defaultOption3.innerHTML = "Seleccione";
+                defaultOption3.disabled = true; // Deshabilitar la opción
+                defaultOption3.selected = true; // Seleccionarla por defecto
+                inputD.appendChild(defaultOption3);
+
+                var defaultOption4 = document.createElement('option');
+                defaultOption4.value = "";
+                defaultOption4.innerHTML = "Seleccione";
+                defaultOption4.disabled = true; // Deshabilitar la opción
+                defaultOption4.selected = true; // Seleccionarla por defecto
+                inputS.appendChild(defaultOption4);
+
+                responseText.forEach(element => {
+                    var option = document.createElement('option');
+                    option.value = element.toString();
+                    option.innerHTML = element.toString();
+                    inputN.appendChild(option);
+                });
+
+                responseText.forEach(element => {
+                    var option = document.createElement('option');
+                    option.value = element.toString();
+                    option.innerHTML = element.toString();
+                    inputC.appendChild(option);
+                });
+
+                responseText.forEach(element => {
+                    var option = document.createElement('option');
+                    option.value = element.toString();
+                    option.innerHTML = element.toString();
+                    inputD.appendChild(option);
+                });
+
+                responseText.forEach(element => {
+                    var option = document.createElement('option');
+                    option.value = element.toString();
+                    option.innerHTML = element.toString();
+                    inputS.appendChild(option);
+                });
+
+            },
+            error: function(xhr, status, error) {
+                console.error("Ocurrió un error al enviar la solicitud GET: " + error);
+            }
+        });
+
+
+    });
+
+
+
+    $("#selectedSFC").change(function(){
+        var csrfToken = $("#csrfToken").val(); // Obtener el token CSRF
+
+        $.ajax({
+            url: "/parametric/validatePrincipal2/?principalSelect=" + $("#selectedSFC").val(),
+            type: "GET",
+            headers: {
+                "X-CSRF-TOKEN": csrfToken // Incluir el token CSRF en los headers
+            },
+            success: function(responseText) {
+                var inputN = document.querySelector('#selectedRutaContable');
+                inputN.innerHTML = null;
+
+                // Agregar la opción predeterminada "Seleccione"
+                var defaultOption = document.createElement('option');
+                defaultOption.value = "";
+                defaultOption.innerHTML = "Seleccione";
+                defaultOption.disabled = true; // Deshabilitar la opción
+                defaultOption.selected = true; // Seleccionarla por defecto
+                inputN.appendChild(defaultOption);
+
+                responseText.forEach(element => {
+                    var option = document.createElement('option');
+                    option.value = element.toString();
+                    option.innerHTML = element.toString();
+                    inputN.appendChild(option);
+                });
+
+            },
+            error: function(xhr, status, error) {
+                console.error("Ocurrió un error al enviar la solicitud GET: " + error);
+            }
+        });
+
+    });
+
+
 </script>
 </body>
 </html>
