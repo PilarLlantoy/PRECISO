@@ -53,7 +53,7 @@
                         <th>Ruta de Acceso</th>
                         <th>Tipo Archivo</th>
                         <th>Activo</th>
-                        <th></th><th></th><th></th><th></th>
+                        <th></th><th></th><th></th><th></th><th></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -80,6 +80,11 @@
                         <td>
                             <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
                                     th:onclick="|window.location.href='@{/parametric/validationLoadingAccountingRoute/{id}(id=${rc.id})}'|">Validaciones</button>
+                        </td>
+
+                        <td>
+                            <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
+                                    th:onclick="|mifuncion(${rc.id})|">Carga Manual</button>
                         </td>
                     </tr>
                     </tbody>
@@ -117,5 +122,31 @@
     </div>
 </div>
 </div>
+<script>
+    function mifuncion(id) {
+            fetch(`/leer-archiva?id=${encodeURIComponent(id)}`)
+                .then(response => {
+            if (response.ok) {
+                return response.blob();
+            } else {
+                throw new Error('Error en la solicitud');
+            }
+        })
+        .then(blob => {
+            // Crear un enlace y hacer clic en él para iniciar la descarga
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'datos.xlsx'; // Nombre del archivo
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+</script>
 </body>
 </html>

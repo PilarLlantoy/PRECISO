@@ -1,5 +1,6 @@
 package com.inter.proyecto_intergrupo.controller.parametric;
-
+import java.util.ArrayList;
+import java.util.HashMap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.inter.proyecto_intergrupo.model.admin.User;
@@ -11,9 +12,11 @@ import com.inter.proyecto_intergrupo.service.parametricServices.SourceSystemServ
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -29,6 +32,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import java.io.File;
+import java.io.FileInputStream;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 
 @Controller
 public class AccountingRoutesController {
@@ -100,27 +115,199 @@ public class AccountingRoutesController {
         List<SourceSystem> allSFs = sourceSystemService.findAll();
         modelAndView.addObject("allSFs", allSFs);
         modelAndView.addObject("aroute",aroute);
-        leerArchivo("AH");
         modelAndView.setViewName("/parametric/createAccountingRoute");
 
         return modelAndView;
     }
 
-    public static void leerArchivo(String ruta) {
-        // String filePath = "D:\\S2_300824_0013.txt";
-        String filePath = "D:\\DATOS_OPERACIONES.xlsx";
-        System.out.println("RUTA "+ruta);
+    @GetMapping("/leer-archiva")
+    public ResponseEntity<InputStreamResource> leerArchivoTXTs(@RequestParam String id) throws IOException {
+        AccountingRoute ac = accountingRouteService.findById(Integer.valueOf(id));
+        String filePath = ac.getRuta();
+        List<CampoRC> campos = ac.getCampos();
+        List<CondicionRC> condiciones = ac.getCondiciones();
+        List<ValidationRC> validaciones = ac.getValidaciones();
 
-        // Leer archivo usando BufferedReader e imprimir el contenido
+        List<Map<String, String>> lineasMap = new ArrayList<>();
+
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
-            System.out.println("Contenido del archivo:");
             while ((line = br.readLine()) != null) {
-                System.out.println(line); // Imprime cada línea leída
+                Map<String, String> lineaMap = new HashMap<>();
+                int offset = 0;
+
+                for (CampoRC campo : campos) {
+                    String campoNombre = campo.getNombre();
+                    int longitud = Integer.valueOf(campo.getLongitud());
+                    String valorCampo = line.substring(offset, Math.min(offset + longitud, line.length())).trim();
+                    lineaMap.put(campoNombre, valorCampo);
+                    offset += longitud;
+                }
+
+                boolean cumpleCondiciones = true;
+                for (CondicionRC condicion : condiciones) {
+                    String valorCampo = lineaMap.get(condicion.getCampo().getNombre());
+                    if (valorCampo == null || !valorCampo.equals(condicion.getValorCondicion())) {
+                        cumpleCondiciones = false;
+                        break;
+                    }
+                }
+
+                if (cumpleCondiciones) {
+                    lineasMap.add(lineaMap);
+                }
             }
         } catch (IOException e) {
-            System.err.println("Error al leer el archivo: " + e.getMessage());
+            e.printStackTrace();
         }
+
+        for (ValidationRC validacion : validaciones) {
+            String campoRef = validacion.getCampoRef().getNombre();
+            String campoVal = validacion.getCampoVal().getNombre();
+            String valorValidacion = validacion.getValorValidacion();
+            String operacion = validacion.getOperacion();
+            double valorOperacion = Double.parseDouble(validacion.getValorOperacion());
+
+            for (Map<String, String> lineaMap : lineasMap) {
+                String valorCampoRef = lineaMap.get(campoRef);
+                String valorCampoVal = lineaMap.get(campoVal);
+
+                if (valorCampoVal != null && valorCampoRef != null && valorCampoVal.equals(valorValidacion)) {
+                    double valorCampoRefNum = Double.parseDouble(valorCampoRef);
+
+                    switch (operacion) {
+                        case "Suma":
+                            valorCampoRefNum += valorOperacion;
+                            break;
+                        case "Resta":
+                            valorCampoRefNum -= valorOperacion;
+                            break;
+                        case "Multiplica":
+                            valorCampoRefNum *= valorOperacion;
+                            break;
+                        case "Divida":
+                            if (valorOperacion != 0) {
+                                valorCampoRefNum /= valorOperacion;
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+
+                    lineaMap.put(campoRef, String.valueOf(valorCampoRefNum));
+                }
+            }
+        }
+
+        /* Imprimir los datos filtrados
+        System.out.println("Contenido del archivo procesado y filtrado:");
+        for (Map<String, String> mapa : lineasMap) {
+            System.out.println("Línea:");
+            for (Map.Entry<String, String> entry : mapa.entrySet()) {
+                System.out.println(entry.getKey() + ": " + entry.getValue());
+            }
+            System.out.println();
+        }*/
+
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Datos");
+        CellStyle numericStyle = workbook.createCellStyle();
+        DataFormat format = workbook.createDataFormat();
+        numericStyle.setDataFormat(format.getFormat("0"));
+        if (!lineasMap.isEmpty()) {
+            Map<String, String> firstLine = lineasMap.get(0);
+            Row headerRow = sheet.createRow(0);
+            int headerCellIndex = 0;
+            for (String header : firstLine.keySet()) {
+                headerRow.createCell(headerCellIndex++).setCellValue(header);
+            }
+
+            int rowIndex = 1;
+            for (Map<String, String> lineMap : lineasMap) {
+                Row row = sheet.createRow(rowIndex++);
+                int cellIndex = 0;
+                for (String header : firstLine.keySet()) {
+                    String cellValue = lineMap.get(header);
+                    try {
+                        double numericValue = Double.parseDouble(cellValue);
+                        Cell cell = row.createCell(cellIndex++);
+                        cell.setCellValue(numericValue);
+                        cell.setCellStyle(numericStyle);
+                    } catch (NumberFormatException e) {
+                        row.createCell(cellIndex++).setCellValue(cellValue);
+                    }
+                }
+            }
+        }
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        workbook.write(baos);
+        workbook.close();
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=datos.xlsx");
+
+        return new ResponseEntity<>(new InputStreamResource(bais), headers, HttpStatus.OK);
+    }
+
+
+    public static void leerArchivoXLSX(String ruta) {
+        String excelFilePath  = "D:\\DATOS_OPERACIONES.xlsx";
+        try (FileInputStream fis = new FileInputStream(new File(excelFilePath));
+             Workbook workbook = new XSSFWorkbook(fis)) {
+
+            // Obtener la primera hoja del archivo Excel
+            Sheet sheet = workbook.getSheetAt(0);
+
+            // Recorrer las filas
+            for (Row row : sheet) {
+                // Comprobar si la fila está vacía
+                if (isRowEmpty(row)) {
+                    continue; // Saltar filas vacías
+                }
+
+                // Recorrer las celdas de cada fila
+                for (Cell cell : row) {
+                    switch (cell.getCellType()) {
+                        case STRING:
+                            System.out.print(cell.getStringCellValue() + "\t");
+                            break;
+                        case NUMERIC:
+                            if (DateUtil.isCellDateFormatted(cell)) {
+                                System.out.print(cell.getDateCellValue() + "\t");
+                            } else {
+                                System.out.print(cell.getNumericCellValue() + "\t");
+                            }
+                            break;
+                        case BOOLEAN:
+                            System.out.print(cell.getBooleanCellValue() + "\t");
+                            break;
+                        case FORMULA:
+                            System.out.print(cell.getCellFormula() + "\t");
+                            break;
+                        default:
+                            System.out.print(" \t");
+                    }
+                }
+                System.out.println(); // Nueva línea después de cada fila
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static boolean isRowEmpty(Row row) {
+        if (row == null) {
+            return true;
+        }
+        for (int cellNum = row.getFirstCellNum(); cellNum < row.getLastCellNum(); cellNum++) {
+            Cell cell = row.getCell(cellNum);
+            if (cell != null && cell.getCellType() != CellType.BLANK) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @PostMapping(value = "/parametric/createAccountingRoute")
