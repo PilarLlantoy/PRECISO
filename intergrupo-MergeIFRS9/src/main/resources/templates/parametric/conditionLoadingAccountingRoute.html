@@ -47,7 +47,7 @@
                             <div class="col-sm-8 pl-0">
                                 <select class="form-control" name="selectedCampo" id="selectedCampo" required>
                                     <option disabled value="" selected hidden>Seleccione Campo</option>
-                                    <option th:each="campo : ${campos}" th:value="${campo.nombre}" th:text="${campo.nombre}"></option>
+                                    <option th:each="campo : ${campos}" th:value="${campo.id}" th:text="${campo.nombre}"></option>
                                 </select>
                             </div>
                         </div>

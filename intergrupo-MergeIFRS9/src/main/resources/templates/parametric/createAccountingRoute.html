@@ -98,7 +98,7 @@
                         <div class="col-md-1">
                             <div class="form-group mb-1">
                                 <label>Delimitador:</label>
-                                <input type="text" class="form-control"  th:field="*{delimitador}"  required>
+                                <input type="text" class="form-control"  th:field="*{delimitador}">
 
                             </div>
                         </div>
@@ -132,7 +132,7 @@
                         <div class="col-md-2">
                             <div class="form-group mb-1">
                                 <label>Formato Fecha:</label>
-                                <select class="form-control" name="selectedFormatoFecha" id="formatoFecha" required>
+                                <select class="form-control" name="selectedFormatoFecha" id="formatoFecha">
                                     <option disabled value="" selected hidden>Seleccione formato</option>
                                     <option th:value="YYYYMMDD">AÑO MES DIA CORTA (YYYYMMDD)</option>
                                     <option th:value="YYMMDD">AÑO MES DIA RED (YYMMDD)</option>
@@ -147,7 +147,7 @@
                         <div class="col-md-2">
                             <div class="form-group mb-1">
                                 <label>Idioma Fecha:</label>
-                                <select class="form-control" name="selectedIdiomaFecha" id="idiomaFecha" required>
+                                <select class="form-control" name="selectedIdiomaFecha" id="idiomaFecha">
                                     <option disabled value="" selected hidden>Seleccione formato</option>
                                     <option th:value="EspañolColombia">Español - Colombia</option>
                                     <option th:value="EspañolEspaña">Español - España</option>
@@ -167,7 +167,7 @@
                         <div class="col-md-1">
                             <div class="form-group mb-1">
                                 <label>Filas Omitidas:</label>
-                                <input type="text" class="form-control"  th:field="*{filasOmitidas}"  required>
+                                <input type="text" class="form-control"  th:field="*{filasOmitidas}">
                             </div>
                         </div>
                     </div>

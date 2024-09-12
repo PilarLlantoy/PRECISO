@@ -101,14 +101,14 @@ public class CondicionRCController {
 
     @PostMapping(value = "/parametric/createCondicionRC")
     public ModelAndView createCondicionRC(@ModelAttribute CondicionRC condicionRC,
-                                      @RequestParam(name = "selectedCampo") String campo,
+                                      @RequestParam(name = "selectedCampo") String idcampo,
                                       @RequestParam(name = "arouteId") String arouteId,
                                       BindingResult bindingResult){
         ModelAndView modelAndView = new ModelAndView("redirect:/parametric/conditionLoadingAccountingRoute/" + arouteId);
 
         AccountingRoute aroute = accountingRouteService.findById(Integer.parseInt(arouteId));
         condicionRC.setRutaContable(aroute);
-        CampoRC camposele = campoRCService.findByName(campo);
+        CampoRC camposele = campoRCService.findById(Integer.valueOf(idcampo));
         condicionRC.setCampo(camposele);
         condicionRCService.modificar(condicionRC);
 

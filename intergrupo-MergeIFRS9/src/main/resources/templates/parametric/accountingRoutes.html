@@ -84,7 +84,7 @@
 
                         <td>
                             <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
-                                    th:onclick="|mifuncion(${rc.id})|">Carga Manual</button>
+                                    th:onclick="|subida(${rc.id})|">Carga Manual</button>
                         </td>
                     </tr>
                     </tbody>
@@ -145,6 +145,17 @@
         .catch(error => {
             console.error('Error:', error);
         });
+    }
+
+    function subida(id) {
+            fetch(`/leer-archivo?id=${encodeURIComponent(id)}`)
+                .then(response => response.text())
+                .then(data => {
+                    console.log("Respuesta del servidor:", data);
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                });
     }
 
 </script>

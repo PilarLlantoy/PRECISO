@@ -120,6 +120,7 @@ public class AccountingRoutesController {
         return modelAndView;
     }
 
+
     @GetMapping("/leer-archiva")
     public ResponseEntity<InputStreamResource> leerArchivoTXTs(@RequestParam String id) throws IOException {
         AccountingRoute ac = accountingRouteService.findById(Integer.valueOf(id));
@@ -251,6 +252,23 @@ public class AccountingRoutesController {
     }
 
 
+
+    @GetMapping("/leer-archivo")
+    @ResponseBody
+    public void leerArchivoTXT(@RequestParam String id) throws IOException {
+        AccountingRoute ac = accountingRouteService.findById(Integer.valueOf(id));
+        String filePath = ac.getRuta();
+        List<CampoRC> campos = ac.getCampos();
+        List<CondicionRC> condiciones = ac.getCondiciones();
+        List<ValidationRC> validaciones = ac.getValidaciones();
+        List<Map<String, String>> lineasMap = new ArrayList<>();
+
+        accountingRouteService.createTableTemporal(ac, campos);
+        accountingRouteService.bulkImport(ac);
+        return;
+    }
+
+
     public static void leerArchivoXLSX(String ruta) {
         String excelFilePath  = "D:\\DATOS_OPERACIONES.xlsx";
         try (FileInputStream fis = new FileInputStream(new File(excelFilePath));
@@ -313,10 +331,10 @@ public class AccountingRoutesController {
     @PostMapping(value = "/parametric/createAccountingRoute")
     public ModelAndView createAccountingRoute(
             @ModelAttribute AccountingRoute aroute,
-            @RequestParam(name = "selectedSF") String sistFuente,
-            @RequestParam(name = "selectedTipoArchivo") String tipoArch,
-            @RequestParam(name = "selectedFormatoFecha") String formFecha,
-            @RequestParam(name = "selectedIdiomaFecha") String idiomFecha,
+            @RequestParam(defaultValue = "N" ,name = "selectedSF") String sistFuente,
+            @RequestParam(defaultValue = "N" ,name = "selectedTipoArchivo") String tipoArch,
+            @RequestParam(defaultValue = "N" ,name = "selectedFormatoFecha") String formFecha,
+            @RequestParam(defaultValue = "N" ,name = "selectedIdiomaFecha") String idiomFecha,
 
             BindingResult bindingResult){
         ModelAndView modelAndView = new ModelAndView("redirect:/parametric/accountingRoutes");
@@ -331,9 +349,9 @@ public class AccountingRoutesController {
         }else{
             SourceSystem SF = sourceSystemService.findByNombre(sistFuente);
             aroute.setSfrc(SF);
-            aroute.setTipoArchivo(tipoArch);
-            aroute.setFormatoFecha(formFecha);
-            aroute.setIdiomaFecha(idiomFecha);
+            if(tipoArch!="N") aroute.setTipoArchivo(tipoArch);
+            if(formFecha!="N") aroute.setFormatoFecha(formFecha);
+            if(idiomFecha!="N") aroute.setIdiomaFecha(idiomFecha);
             accountingRouteService.modificar(aroute);
         }
         return modelAndView;
