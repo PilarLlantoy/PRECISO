@@ -53,23 +53,23 @@ public class ConciliationRoutesController {
             int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
             PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
 
-            List<Conciliation> conciliations = conciliationService.findAllActive();
+            List<ConciliationRoute> conciliations = conciliationRouteService.findAllActive();
             int start = (int) pageRequest.getOffset();
             int end = Math.min((start + pageRequest.getPageSize()), conciliations.size());
-            Page<Conciliation> pageConciliation = new PageImpl<>(conciliations.subList(start, end), pageRequest, conciliations.size());
+            Page<ConciliationRoute> pageConciliation = new PageImpl<>(conciliations.subList(start, end), pageRequest, conciliations.size());
 
             int totalPage=pageConciliation.getTotalPages();
             if(totalPage>0){
                 List<Integer> pages = IntStream.rangeClosed(1, totalPage).boxed().collect(Collectors.toList());
                 modelAndView.addObject("pages",pages);
             }
-            modelAndView.addObject("allCountry",pageConciliation.getContent());
+            modelAndView.addObject("allCRoutes",pageConciliation.getContent());
             modelAndView.addObject("current",page+1);
             modelAndView.addObject("next",page+2);
             modelAndView.addObject("prev",page);
             modelAndView.addObject("last",totalPage);
             modelAndView.addObject("filterExport","Original");
-            modelAndView.addObject("directory","country");
+            modelAndView.addObject("directory","conciliationRoutes");
             modelAndView.addObject("registers",conciliations.size());
             modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());

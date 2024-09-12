@@ -66,21 +66,18 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="concil : ${allConcils}">
-                        <td th:text="${concil.id}"></td>
-                        <td th:text="${concil.nombre}"></td>
-                        <td th:text="${concil.periodicidad}"></td>
-                        <td th:text="${concil.periodicidad}"></td>
-                        <td th:text="${concil.periodicidad}"></td>
-                        <td th:text="${concil.sistemaFuente}"></td>
-                        <td th:if="${concil.activo == true}">Activo</td>
-                        <td th:if="${concil.activo == false}">Inactivo</td>
-                        <td th:if="${concil.fest == true}">Activo</td>
-                        <td th:if="${concil.fest == false}">Inactivo</td>
-                        <td th:text="${concil.fuenteContable}"></td>
+                    <tr th:each="route : ${allCRoutes}">
+                        <td th:text="${route.id}"></td>
+                        <td th:text="${route.conciliacion.nombre}"></td>
+                        <td th:text="${route.ruta}"></td>
+                        <td th:text="${route.nombreArchivo}"></td>
+                        <td th:text="${route.ruta}"></td>
+                        <td th:text="${route.tipoArchivo}"></td>
+                        <td th:if="${route.activo == true}">Activo</td>
+                        <td th:if="${route.activo == false}">Inactivo</td>
                         <td>
                             <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
-                                    th:onclick="|window.location.href='@{/admin/modifyUsers/{id}(id=${concil.id})}'|">Editar</button>
+                                    th:onclick="|window.location.href='@{/admin/modifyUsers/{id}(id=${route.id})}'|">Editar</button>
                         </td>
                     </tr>
                     </tbody>

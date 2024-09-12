@@ -21,6 +21,15 @@ public class ConciliationRoute {
     @JoinColumn(name = "id_conciliacion")
     private Conciliation conciliacion;
 
+    /*
+    @Column(name = "ruta_id")
+    private int rutaId;
+
+    @Column(name = "orden_ruta")
+    private int ordenRuta;
+
+     */
+
     @Column(name = "detalle")
     private String detalle;
 

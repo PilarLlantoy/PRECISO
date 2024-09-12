@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -47,6 +48,30 @@ public class ConciliationRouteService {
         conciliationRouteRepository.save(croute);
        return croute;
     }
+
+    /*
+    @Transactional
+    public void crearRutaC(String nombre, String ruta) {
+
+        Optional<Integer> rutaIdOptional = conciliationRouteRepository.findRutaIdByRuta(ruta);
+        int rutaId;
+        if (rutaIdOptional.isPresent()) {
+            rutaId = rutaIdOptional.get();
+        } else {
+            rutaId = conciliationRouteRepository.findMaxRutaId().orElse(0) + 1;
+        }
+        int codigo = conciliationRouteRepository.findMaxCodigoByRuta(ruta).orElse(0) + 1;
+
+        ConciliationRoute newRutaC = new ConciliationRoute();
+        newRutaC.setDetalle(nombre);
+        newRutaC.setRuta(ruta);
+        newRutaC.setRutaId(rutaId);
+        newRutaC.setOrdenRuta(codigo);
+
+        conciliationRouteRepository.save(newRutaC);
+    }
+
+     */
 
 
 

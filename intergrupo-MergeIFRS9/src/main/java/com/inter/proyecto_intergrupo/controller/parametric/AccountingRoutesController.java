@@ -2,15 +2,11 @@ package com.inter.proyecto_intergrupo.controller.parametric;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.inter.proyecto_intergrupo.model.admin.Role;
-import com.inter.proyecto_intergrupo.model.admin.TipoDocumento;
 import com.inter.proyecto_intergrupo.model.admin.User;
-import com.inter.proyecto_intergrupo.model.admin.View;
 import com.inter.proyecto_intergrupo.model.parametric.*;
 import com.inter.proyecto_intergrupo.service.adminServices.UserService;
 import com.inter.proyecto_intergrupo.service.parametricServices.AccountingRouteService;
 import com.inter.proyecto_intergrupo.service.parametricServices.CampoRCService;
-import com.inter.proyecto_intergrupo.service.parametricServices.CountryService;
 import com.inter.proyecto_intergrupo.service.parametricServices.SourceSystemService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,14 +14,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 
 import java.util.List;
 import java.util.Map;
@@ -102,8 +100,27 @@ public class AccountingRoutesController {
         List<SourceSystem> allSFs = sourceSystemService.findAll();
         modelAndView.addObject("allSFs", allSFs);
         modelAndView.addObject("aroute",aroute);
+        leerArchivo("AH");
         modelAndView.setViewName("/parametric/createAccountingRoute");
+
         return modelAndView;
+    }
+
+    public static void leerArchivo(String ruta) {
+        // String filePath = "D:\\S2_300824_0013.txt";
+        String filePath = "D:\\DATOS_OPERACIONES.xlsx";
+        System.out.println("RUTA "+ruta);
+
+        // Leer archivo usando BufferedReader e imprimir el contenido
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            System.out.println("Contenido del archivo:");
+            while ((line = br.readLine()) != null) {
+                System.out.println(line); // Imprime cada línea leída
+            }
+        } catch (IOException e) {
+            System.err.println("Error al leer el archivo: " + e.getMessage());
+        }
     }
 
     @PostMapping(value = "/parametric/createAccountingRoute")
