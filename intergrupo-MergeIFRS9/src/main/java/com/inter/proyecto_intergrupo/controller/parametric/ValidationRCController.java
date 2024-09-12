@@ -104,19 +104,18 @@ public class ValidationRCController {
 
     @PostMapping(value = "/parametric/createValidacionRC")
     public ModelAndView createValidacionRC(@ModelAttribute ValidationRC validationRC,
-                                           @RequestParam(name = "selectedCampoRef") String campoRef,
-                                           @RequestParam(name = "selectedCampoVal") String campoVal,
+                                           @RequestParam(name = "selectedCampoRef") String campoRefid,
+                                           @RequestParam(name = "selectedCampoVal") String campoValid,
                                            @RequestParam(name = "selectedOperacion") String operacion,
                                            @RequestParam(name = "arouteId") String arouteId,
                                            BindingResult bindingResult){
         ModelAndView modelAndView = new ModelAndView("redirect:/parametric/validationLoadingAccountingRoute/" + arouteId);
 
-        System.out.println(campoRef +" "+ campoVal+" "+operacion+" "+arouteId);
         AccountingRoute aroute = accountingRouteService.findById(Integer.parseInt(arouteId));
         validationRC.setRutaContable(aroute);
-        CampoRC referencia = campoRCService.findByName(campoRef);
+        CampoRC referencia = campoRCService.findById(Integer.valueOf(campoRefid));
         validationRC.setCampoRef(referencia);
-        CampoRC validacion = campoRCService.findByName(campoVal);
+        CampoRC validacion = campoRCService.findById(Integer.valueOf(campoValid));
         validationRC.setCampoVal(validacion);
         validationRC.setOperacion(operacion);
         validationRCService.modificar(validationRC);

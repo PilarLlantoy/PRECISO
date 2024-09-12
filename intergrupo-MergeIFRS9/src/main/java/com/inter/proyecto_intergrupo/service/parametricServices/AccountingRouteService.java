@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -53,7 +56,7 @@ public class AccountingRouteService {
     }
 
    public void createTableTemporal(AccountingRoute data, List<CampoRC> columns) {
-        Query queryDrop = entityManager.createNativeQuery("IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '"+(data.getNombre()+"_TEMPORAL")+"' AND TABLE_SCHEMA = 'dbo') BEGIN DROP TABLE "+(data.getNombre()+"_TEMPORAL") +" END;");
+        Query queryDrop = entityManager.createNativeQuery("IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '"+(data.getNombreArchivo()+"_TEMPORAL")+"' AND TABLE_SCHEMA = 'dbo') BEGIN DROP TABLE "+(data.getNombreArchivo()+"_TEMPORAL") +" END;");
         queryDrop.executeUpdate();
 
         StringBuilder createTableQuery = new StringBuilder("CREATE TABLE ");
@@ -86,14 +89,104 @@ public class AccountingRouteService {
 
     public String todayDateConvert(String formato) {
         LocalDate today = LocalDate.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(formato);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyy");
+
+        System.out.println("FORMATOOOO "+formato +" "+ today.format(formatter));
         return today.format(formatter);
     }
 
-    public void bulkImport(AccountingRoute data){
+    public void bulkImport(AccountingRoute data, String ruta){
         String extension=".txt";
-        Query queryBulk = entityManager.createNativeQuery("BULK INSERT "+(data.getNombre()+"_TEMPORAL")+" FROM '"+data.getRuta()+"\\"+data.getNombreArchivo() + todayDateConvert(data.getFormatoFecha()) +data.getComplementoArchivo()+extension+"' WITH (FIELDTERMINATOR= '"+data.getDelimitador()+"',ROWTERMINATOR = '\\n', FIRSTROW = "+data.getFilasOmitidas()+")");
+        Query queryBulk = entityManager.createNativeQuery("BULK INSERT " + (data.getNombreArchivo() + "_TEMPORAL") +
+                " FROM '" + data.getRuta() + "\\" + data.getNombreArchivo() + todayDateConvert(data.getFormatoFecha()) +
+                data.getComplementoArchivo() + extension +
+                "' WITH (FORMATFILE = '" + ruta + "', FIRSTROW = " + data.getFilasOmitidas() + ")");
         queryBulk.executeUpdate();
+    }
+
+    public void conditionData(AccountingRoute data){
+        Query querySelect = entityManager.createNativeQuery("SELECT a.valor_condicion, a.id_campo, b.nombre FROM PRECISO.dbo.preciso_condiciones_rc a \n" +
+                "left join PRECISO.dbo.preciso_campos_rc b on a.id_rc = b.id_rc and a.id_campo=b.id_campo\n" +
+                "where a.id_rc = ? and a.estado=1 order by a.id_campo\n");
+        querySelect.setParameter(1,data.getId());
+        List<Object[]> condicionesLista = querySelect.getResultList();
+        if(!condicionesLista.isEmpty()){
+            String condicion = "(";
+            String campo = condicionesLista.get(0)[2].toString();
+            for(Object[] obj : condicionesLista){
+                if(campo.equals(obj[2]) && !condicion.equals("(")){
+                    condicion = condicion + " OR ";
+                }
+                else if(!condicion.equals("(")){
+                    campo = obj[2].toString();
+                    condicion = condicion + ") AND (";
+                }
+                condicion=condicion+obj[2]+" = '"+obj[0].toString()+"'";
+            }
+
+            Query deleteSelect = entityManager.createNativeQuery("DELETE FROM "+data.getNombreArchivo() + "_TEMPORAL WHERE NOT("+ condicion +"));");
+            deleteSelect.executeUpdate();
+
+        }
+
+    }
+
+    public void validationData(AccountingRoute data){
+        Query querySelect = entityManager.createNativeQuery("SELECT b.nombre as referencia, c.nombre as validacion, a.valor_validacion, a.valor_operacion, \n" +
+                "CASE a.operacion when 'Suma' then '+' when 'Resta' then '-' when 'Multiplica' then '*' when 'Divida' then '/' END as Operacion\n" +
+                "FROM PRECISO.dbo.preciso_validaciones_rc a \n" +
+                "inner join PRECISO.dbo.preciso_campos_rc b on a.id_rc = b.id_rc and a.id_campo_referencia=b.id_campo \n" +
+                "inner join PRECISO.dbo.preciso_campos_rc c on a.id_rc = c.id_rc and a.id_campo_validacion=c.id_campo \n" +
+                "where a.id_rc = ? and a.estado=1");
+        querySelect.setParameter(1,data.getId());
+        List<Object[]> validacionLista = querySelect.getResultList();
+        if(!validacionLista.isEmpty()){
+            for(Object[] obj : validacionLista){
+                Query deleteSelect = entityManager.createNativeQuery("UPDATE "+data.getNombreArchivo() + "_TEMPORAL SET "+obj[0].toString()+" = "+obj[0].toString()+obj[4].toString()+obj[3].toString()+" WHERE "+obj[1].toString()+"='"+obj[2].toString()+"';");
+                deleteSelect.executeUpdate();
+            }
+        }
+
+    }
+
+    public void generarArchivoFormato(List<CampoRC> campos, String rutaArchivoFormato) throws IOException {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(rutaArchivoFormato))) {
+
+            // Escribir encabezado del archivo de formato
+            writer.write("13.0\n"); // Versión del archivo de formato
+            writer.write(campos.size()+1 + "\n"); // Número de campos
+
+            int fieldIndex = 1;
+            for (CampoRC campo : campos) {
+                // Cada línea sigue la estructura:
+                // <FieldID> SQLCHAR 0 <LongitudCampo> "" <IndexCampo> <NombreCampo> Latin1_General_CI_AS
+                String line = String.format(
+                        "%d\tSQLCHAR\t0\t%d\t\"\"\t%d\t%s\tLatin1_General_CI_AS",
+                        fieldIndex,
+                        Integer.parseInt(campo.getLongitud()),
+                        fieldIndex,
+                        campo.getNombre()
+                );
+
+                // Añadir salto de línea
+                writer.write(line + "\n");
+
+                fieldIndex++;
+            }
+
+            // Si necesitas manejar el último campo con terminador de línea (por ejemplo, "\r\n")
+            String ultimaLinea = String.format(
+                    "%d\tSQLCHAR\t0\t%d\t\"\\r\\n\"\t%d\t%s\tLatin1_General_CI_AS",
+                    fieldIndex,
+                    Integer.parseInt(campos.get(campos.size() - 1).getLongitud()),
+                    fieldIndex,
+                    campos.get(campos.size() - 1).getNombre()
+            );
+            writer.write(ultimaLinea + "\n");
+
+        } catch (IOException e) {
+            throw new IOException("Error al generar el archivo de formato.", e);
+        }
     }
 
 

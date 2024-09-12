@@ -262,9 +262,19 @@ public class AccountingRoutesController {
         List<CondicionRC> condiciones = ac.getCondiciones();
         List<ValidationRC> validaciones = ac.getValidaciones();
         List<Map<String, String>> lineasMap = new ArrayList<>();
+        String rutaArchivoFormato = "D:\\archivo.fmt"; // Cambia esto a la ruta deseada
 
-        accountingRouteService.createTableTemporal(ac, campos);
-        accountingRouteService.bulkImport(ac);
+        try {
+            accountingRouteService.createTableTemporal(ac, campos);
+            accountingRouteService.generarArchivoFormato(campos, rutaArchivoFormato);
+            System.out.println("Archivo de formato generado con éxito.");
+            accountingRouteService.bulkImport(ac,rutaArchivoFormato);
+            accountingRouteService.conditionData(ac);
+            accountingRouteService.validationData(ac);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         return;
     }
 

@@ -45,7 +45,7 @@
                             <div>
                                 <select class="form-control" name="selectedCampoRef" id="selectedCampoRef" required="" style="width: auto;">
                                     <option disabled value="" selected hidden>Seleccione Campo</option>
-                                    <option th:each="campo : ${camposRef}" th:value="${campo.nombre}" th:text="${campo.nombre}"></option>
+                                    <option th:each="campo : ${camposRef}" th:value="${campo.id}" th:text="${campo.nombre}"></option>
                                 </select>
                             </div>
                         </div>
@@ -65,7 +65,7 @@
                             <div>
                                 <select class="form-control" name="selectedCampoVal" id="selectedCampoVal" required>
                                     <option disabled value="" selected hidden>Seleccione Campo</option>
-                                    <option th:each="campoVal : ${campos}" th:value="${campoVal.nombre}" th:text="${campoVal.nombre}"></option>
+                                    <option th:each="campoVal : ${campos}" th:value="${campoVal.id}" th:text="${campoVal.nombre}"></option>
                                 </select>
                             </div>
                         </div>
