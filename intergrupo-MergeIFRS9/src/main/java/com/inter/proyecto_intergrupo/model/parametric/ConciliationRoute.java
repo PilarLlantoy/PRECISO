@@ -2,6 +2,7 @@ package com.inter.proyecto_intergrupo.model.parametric;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @Setter
@@ -20,15 +21,6 @@ public class ConciliationRoute {
     @ManyToOne
     @JoinColumn(name = "id_conciliacion")
     private Conciliation conciliacion;
-
-    /*
-    @Column(name = "ruta_id")
-    private int rutaId;
-
-    @Column(name = "orden_ruta")
-    private int ordenRuta;
-
-     */
 
     @Column(name = "detalle")
     private String detalle;
@@ -57,11 +49,21 @@ public class ConciliationRoute {
     @Column(name = "activo", columnDefinition = "BIT DEFAULT 1")
     private boolean activo = true;
 
+    @Column(name = "fichero", columnDefinition = "BIT DEFAULT 1")
+    private boolean fichero = true;
+
     @Column(name = "estado", columnDefinition = "BIT DEFAULT 1")
     private boolean estado = true;
 
     @Column(name = "filasOmitidas")
     private Integer filasOmitidas;
+
+    // Relación con CampoAC
+    @OneToMany(mappedBy = "rutaConciliacion", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CampoRConcil> campos;
+
+    @OneToMany(mappedBy = "rutaConciliacion", cascade = CascadeType.ALL)
+    private List<ValidationRConcil> validaciones;
 
 
 }

@@ -70,7 +70,7 @@
                         <td th:text="${concil.sfc.nombre}"></td>
                         <td>
                             <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
-                                    th:onclick="|window.location.href='@{/admin/modifyUsers/{id}(id=${concil.id})}'|">Editar</button>
+                                    th:onclick="|window.location.href='@{/parametric/modifyConciliation/{id}(id=${concil.id})}'|">Editar</button>
                         </td>
                     </tr>
                     </tbody>

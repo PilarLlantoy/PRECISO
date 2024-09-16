@@ -114,6 +114,25 @@ public class ConciliationController {
         return modelAndView;
     }
 
+    @GetMapping(value = "/parametric/modifyConciliation/{id}")
+    public ModelAndView showModifyConciliation(@PathVariable int id){
+        ModelAndView modelAndView = new ModelAndView();
+        Conciliation concil = conciliationService.findById(id);
+        List<Country> allCountries = countryService.findAll();
+        List<SourceSystem> allSFs = sourceSystemService.findAll();
+        List<SourceSystem> allSFCCs = sourceSystemService.findAll();
+        List<Currency> allDivisas = currencyService.findAll();
+        List<AccountingRoute> rutasContables = accountingRouteService.findAll();
+        modelAndView.addObject("paises", allCountries);
+        modelAndView.addObject("sfs", allSFs);
+        modelAndView.addObject("sfcs", allSFCCs);
+        modelAndView.addObject("divisas", allDivisas);
+        modelAndView.addObject("rutasContables", rutasContables);
+        modelAndView.addObject("concil",concil);
+        modelAndView.setViewName("/parametric/modifyConciliation");
+        return modelAndView;
+    }
+
     @PostMapping(value = "/parametric/createConcil")
     public ModelAndView createConciliation(@ModelAttribute Conciliation conciliacion,
                                            @RequestParam(name = "selectedPeriodicidad") String periodicidad,

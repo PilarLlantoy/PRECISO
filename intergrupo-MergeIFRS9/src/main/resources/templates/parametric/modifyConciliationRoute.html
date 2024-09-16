@@ -37,13 +37,20 @@
     </style>
     <div class="row m-0 bg-primary fixed-top myNav">
         <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
-            <h3 class="fw-bold text-white mx-4 my-3">Creación de Ruta de Conciliación</h3>
+            <h3 class="fw-bold text-white mx-4 my-3">Edición de Ruta de Conciliación</h3>
         </div>
     </div>
     <div id="content">
         <div class="row mt-5">
-            <form th:object="${croute}" th:action="@{/parametric/createConciliationRoute}" method="POST">
+            <form th:object="${croute}" th:action="@{/parametric/modifyConciliationRoute}" method="POST">
                 <div class="col-md-12 px-5 mb-3">
+
+                    <div hidden="">
+                        <div class="form-group mb-1">
+                            <label>ID</label>
+                            <input type="text" class="form-control" th:field="*{id}" >
+                        </div>
+                    </div>
 
                     <div class="row">
                         <div class="col-md-3">
@@ -51,7 +58,8 @@
                                 <label>Conciliación:</label>
                                 <select class="form-control" name="selectedConcil" id="selectedConcil" required="" style="width: auto;">
                                     <option disabled value="" selected hidden>Seleccione Conciliación</option>
-                                    <option th:each="concil : ${conciliations}" th:value="${concil.nombre}" th:text="${concil.nombre}"></option>
+                                    <option th:each="concil : ${conciliations}" th:value="${concil.nombre}" th:text="${concil.nombre}"
+                                            th:selected="${croute.conciliacion != null and concil.id == croute.conciliacion.id}"></option>
                                 </select>
                             </div>
                         </div>
@@ -91,11 +99,11 @@
                                 <label>Tipo Archivo:</label>
                                 <select class="form-control" name="selectedTipoArchivo" id="tipoArchivo" required>
                                     <option disabled value="" selected hidden>Seleccione formato</option>
-                                    <option th:value="XLS">ARCHIVO EXCEL XLS</option>
-                                    <option th:value="XLSX">ARCHIVO EXCEL XLSX</option>
-                                    <option th:value="CSV">ARCHIVO PLANO CSV</option>
-                                    <option th:value="TXT">ARCHIVO PLANO TXT</option>
-                                    <option th:value="TXT_SINDEL">ARCHIVO PLANO TXT SIN DEL.</option>
+                                    <option th:value="XLS" th:selected="${croute.tipoArchivo == 'XLS'}">ARCHIVO EXCEL XLS</option>
+                                    <option th:value="XLSX" th:selected="${croute.tipoArchivo == 'XLSX'}">ARCHIVO EXCEL XLSX</option>
+                                    <option th:value="CSV" th:selected="${croute.tipoArchivo == 'CSV'}">ARCHIVO PLANO CSV</option>
+                                    <option th:value="TXT" th:selected="${croute.tipoArchivo == 'TXT'}">ARCHIVO PLANO TXT</option>
+                                    <option th:value="TXT_SINDEL" th:selected="${croute.tipoArchivo == 'TXT_SINDEL'}">ARCHIVO PLANO TXT SIN DEL.</option>
                                 </select>
                             </div>
                         </div>
@@ -135,26 +143,24 @@
                                 <label>Formato Fecha:</label>
                                 <select class="form-control" name="selectedFormatoFecha" id="formatoFecha" required>
                                     <option disabled value="" selected hidden>Seleccione formato</option>
-                                    <option th:value="YYYYMMDD">AÑO MES DIA CORTA (YYYYMMDD)</option>
-                                    <option th:value="YYMMDD">AÑO MES DIA RED (YYMMDD)</option>
-                                    <option th:value="DDMMMMYYYY">DIA MES AÑO COM. (DDMMMMYYYY)</option>
-                                    <option th:value="DDMMYYYY">DIA MES AÑO CORTA (DDMMYYYY)</option>
-                                    <option th:value="DDMMYY">DIA MES AÑO RED. (DDMMYY)</option>
-                                    <option th:value="DDMMMMYYYY">DIA MES AÑO SIMPLE (DDMMMMYYYY)</option>
-                                    <option th:value="MMDDYY">MES DIA AÑO (MMDDYY)</option>
+                                    <option th:value="YYYYMMDD" th:selected="${croute.formatoFecha == 'YYYYMMDD'}">AÑO MES DIA CORTA (YYYYMMDD)</option>
+                                    <option th:value="YYMMDD" th:selected="${croute.formatoFecha == 'YYMMDD'}">AÑO MES DIA RED (YYMMDD)</option>
+                                    <option th:value="DDMMMMYYYY" th:selected="${croute.formatoFecha == 'DDMMMMYYYY'}">DIA MES AÑO COM. (DDMMMMYYYY)</option>
+                                    <option th:value="DDMMYYYY" th:selected="${croute.formatoFecha == 'DDMMYYYY'}">DIA MES AÑO CORTA (DDMMYYYY)</option>
+                                    <option th:value="DDMMYY" th:selected="${croute.formatoFecha == 'DDMMYY'}">DIA MES AÑO RED. (DDMMYY)</option>
+                                    <option th:value="DDMMMMYYYY" th:selected="${croute.formatoFecha == 'DDMMMMYYYY'}">DIA MES AÑO SIMPLE (DDMMMMYYYY)</option>
+                                    <option th:value="MMDDYY" th:selected="${croute.formatoFecha == 'MMDDYY'}">MES DIA AÑO (MMDDYY)</option>
                                 </select>
-                                <!-- <input type="text" class="form-control"  th:field="*{formatoFecha}"  required> -->
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group mb-1">
                                 <label>Idioma Fecha:</label>
-                                <!-- <input type="text" class="form-control"  th:field="*{idiomaFecha}" required>-->
                                 <select class="form-control" name="selectedIdiomaFecha" id="idiomaFecha" required>
                                     <option disabled value="" selected hidden>Seleccione formato</option>
-                                    <option th:value="EspañolColombia">Español - Colombia</option>
-                                    <option th:value="EspañolEspaña">Español - España</option>
-                                    <option th:value="InglésUSA">Inglés - USA</option>
+                                    <option th:value="EspañolColombia" th:selected="${croute.idiomaFecha == 'EspañolColombia'}">Español - Colombia</option>
+                                    <option th:value="EspañolEspaña" th:selected="${croute.idiomaFecha == 'EspañolEspaña'}">Español - España</option>
+                                    <option th:value="InglésUSA" th:selected="${croute.idiomaFecha == 'InglésUSA'}">Inglés - USA</option>
                                 </select>
                             </div>
                         </div>
@@ -168,7 +174,7 @@
                             <button type="submit" class="btn btn-primary">Agregar</button>
                         </div>
                         <div class="d-grid gap-2 col-3">
-                            <a class="btn btn-danger" th:href="@{/parametric/conciliation}">Cancelar</a>
+                            <a class="btn btn-danger" th:href="@{/parametric/conciliationRoutes}">Cancelar</a>
                         </div>
                     </div>
                 </div>

@@ -37,7 +37,7 @@
     </style>
     <div class="row m-0 bg-primary fixed-top myNav">
         <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
-            <h3 class="fw-bold text-white mx-4 my-3">Edición de Conciliación</h3>
+            <h3 class="fw-bold text-white mx-4 my-3">Edicion de Conciliación</h3>
         </div>
     </div>
     <div id="content">
@@ -76,8 +76,8 @@
                                 <label>Periodicidad</label>
                                 <select class="form-control" name="selectedPeriodicidad" id="selectedPeriodicidad" required>
                                     <option disabled value="" selected hidden>Seleccione periodicidad</option>
-                                    <option th:value="diario">Diario</option>
-                                    <option th:value="mensual">Mensual</option>
+                                    <option th:value="diario" th:selected="${concil.periodicidad == 'diario'}">Diario</option>
+                                    <option th:value="mensual" th:selected="${concil.periodicidad == 'mensual'}">Mensual</option>
                                 </select>
                             </div>
                         </div>
@@ -163,8 +163,6 @@
                         </div>
                     </div>
 
-
-
                     <div class="mb-1 row">
                         <div class="col-md-3">
                             <div class="form-group mb-1">
@@ -180,11 +178,6 @@
                             <div class="form-group mb-1">
                                 <label>Ruta Contable</label>
                                 <select class="form-control" name="selectedRutaContable" id="selectedRutaContable" required>
-                                    <!--
-                                    <option disabled value="" selected hidden>Seleccione un R.C.</option>
-                                    <option th:each="ruta : ${rutasContables}" th:value="${ruta.id}" th:text="${ruta.nombre}"
-                                            th:selected="${concil.rutaContable != null and ruta.id == concil.rutaContable.id}"></option>
-                                -->
                                     <select class="form-control" id="selectedRCont" name="rContSelect" required>
                                         <!-- Opciones se llenarán aquí dinámicamente -->
                                     </select>
@@ -236,19 +229,19 @@
                     </div>
                 </div>
 
-        <div class="row pt-3 py-3">
-            <div class="col-md-12 d-flex align-content-center justify-content-center">
-                <div class="d-grid gap-2 col-3">
-                    <button type="submit" class="btn btn-primary">Agregar</button>
+                <div class="row pt-3 py-3">
+                    <div class="col-md-12 d-flex align-content-center justify-content-center">
+                        <div class="d-grid gap-2 col-3">
+                            <button type="submit" class="btn btn-primary">Agregar</button>
+                        </div>
+                        <div class="d-grid gap-2 col-3">
+                            <a class="btn btn-danger" th:href="@{/parametric/conciliation}">Cancelar</a>
+                        </div>
+                    </div>
                 </div>
-                <div class="d-grid gap-2 col-3">
-                    <a class="btn btn-danger" th:href="@{/parametric/conciliation}">Cancelar</a>
-                </div>
-            </div>
+            </form>
         </div>
-        </form>
     </div>
-</div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"
         integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
