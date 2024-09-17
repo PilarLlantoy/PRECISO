@@ -41,36 +41,57 @@
         </div>
     </div>
     <div id="content">
-        <div class="row mt-5">
+        <div class="row mt-4 p-4">
             <form th:object="${aroute}" th:action="@{/parametric/modifyAccountingRoute}" method="POST">
-                <div class="row pt-5 py-3">
-
-                    <div class="col-md-5">
+                <h5 class="font-weight-bold">Opciones Resgitro</h5>
+                <div class="row p-2 mt-1 mb-2 border rounded">
+                    <div class="col-md-2">
                         <div class="form-group mb-1">
-                            <label>Detalle:</label>
-                            <input type="text" class="form-control"  th:field="*{nombre}"  required>
-                        </div>
-                    </div>
-                    <div class="col-md-5">
-                        <div class="form-group mb-1">
-                            <label>Nombre Archivo:</label>
-                            <input type="text" class="form-control"  th:field="*{nombreArchivo}"  required>
+                            <h6>Activo</h6>
+                            <input id="activoInput" name="activo" th:field="*{activo}" th:id="${activo}"
+                                   th:value="${activo}" type="checkbox" class="styled-checkbox ms-2">
                         </div>
                     </div>
                     <div class="col-md-2">
                         <div class="form-group mb-1">
-                            <label>Activo:</label>
-                            <input id="activoInput" name="activo" th:field="*{activo}" th:id="${activo}"
-                                   th:value="${activo}" type="checkbox" class="styled-checkbox">
-                            <label>[[${activo}]]</label>
+                            <h6>Maneja Siglas de Fechas</h6>
+                            <input id="siglasFechasInput" name="siglasFechas" th:field="*{siglasFechas}"
+                                   th:value="${siglasFechas}" type="checkbox" class="styled-checkbox ms-2" onchange="toggleFields()">
                         </div>
                     </div>
-
-                    <div class="col-md-5">
+                </div>
+                <h5 class="font-weight-bold">Información Resgitro</h5>
+                <div class="row p-2 border rounded">
+                    <input type="hidden" class="form-control"  th:field="*{id}"  required>
+                    <div class="col-md-4">
                         <div class="form-group mb-1">
-                            <label>Tipo Archivo:</label>
-                            <select class="form-control" name="selectedTipoArchivo" id="tipoArchivo" required>
-                                <option disabled value="" selected hidden>Seleccione formato</option>
+                            <h6 class="font-weight-bold">Detalle:</h6>
+                            <input type="text" class="form-control"  th:field="*{nombre}"  required>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Ruta: </h6>
+                            <input type="text" id="filePath" class="form-control" placeholder="Ruta del archivo" th:field="*{ruta}">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Nombre Archivo:</h6>
+                            <input type="text" class="form-control"  th:field="*{nombreArchivo}"  required>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Complemento Archivo:</h6>
+                            <input type="text" class="form-control"  th:field="*{complementoArchivo}"  required>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Tipo Archivo:<i class="bi bi-caret-down"></i></h6>
+                            <select class="form-control" name="selectedTipoArchivo" id="tipoArchivo" th:field="*{tipoArchivo}" required>
+                                <option disabled hidden selected value="">Seleccione un filtro</option>
                                 <option th:value="CRCC" th:selected="${aroute.tipoArchivo == 'CRCC'}">ARCHIVO CRCC</option>
                                 <option th:value="CRCC_CUIF" th:selected="${aroute.tipoArchivo == 'CRCC_CUIF'}">ARCHIVO CRCC_CUIF</option>
                                 <option th:value="CRCC_NIIF" th:selected="${aroute.tipoArchivo == 'CRCC_NIIF'}">ARCHIVO CRCC_NIIF</option>
@@ -81,100 +102,67 @@
                                 <option th:value="XLSX" th:selected="${aroute.tipoArchivo == 'XLSX'}">ARCHIVO EXCEL XLSX</option>
                                 <option th:value="CSV" th:selected="${aroute.tipoArchivo == 'CSV'}">ARCHIVO PLANO CSV</option>
                                 <option th:value="TXT" th:selected="${aroute.tipoArchivo == 'TXT'}">ARCHIVO PLANO TXT</option>
-                                <option th:value="TXT_SINDEL" th:selected="${aroute.tipoArchivo == 'TXT_SINDEL'}">ARCHIVO PLANO TXT SIN DEL.</option>
                             </select>
-
-                        </div>
-                    </div>
-                    <div class="col-md-5">
-                        <div class="form-group mb-1">
-                            <label>Complemento Archivo:</label>
-                            <input type="text" class="form-control"  th:field="*{complementoArchivo}"  required>
                         </div>
                     </div>
                     <div class="col-md-2">
                         <div class="form-group mb-1">
-                            <label>Delimitador:</label>
-                            <input type="text" class="form-control"  th:field="*{delimitador}"  required>
+                            <h6 class="font-weight-bold">Delimitador:</h6>
+                            <input type="text" class="form-control"  th:field="*{delimitador}">
 
                         </div>
                     </div>
-
-                    <div class="col-md-10">
-                        <!-- <form enctype="multipart/form-data" id="fileUploadForm" method="post" th:action="@{/parametric/currency}"> -->
-                            <div class="form-group">
-                                <label>Ruta: </label>
-                                <input accept=".xls,.xlsx,.xlsm" class="custom-file-control" id="file" name="file" required type="file" onchange="updateFilePath()">
-                                <input type="text" id="filePath" class="form-control mt-2" readonly placeholder="Ruta del archivo" th:field="*{ruta}">
-                                <button class="btn btn-primary mt-2 d-none" type="submit">Cargar</button>
-                            </div>
-                        <!-- </form> -->
+                    <div class="col-md-4">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Hora Ejecución:</h6>
+                            <input type="time" class="form-control" th:id="selecthoraCargue" th:name="selecthoraCargue" th:value="${selecthoraCargue}" required>
+                        </div>
                     </div>
-
                     <div class="col-md-2">
                         <div class="form-group mb-1">
-                            <label>Aplica Cargue Diario:</label>
-                            <input id="cargueDiarioInput" name="cargueDiario" th:field="*{cargueDiario}" th:id="${cargueDiario}"
-                                   th:value="${cargueDiario}" type="checkbox" class="styled-checkbox">
-                            <label>[[${cargueDiario}]]</label>
+                            <h6 class="font-weight-bold">Filas Omitidas:</h6>
+                            <input type="number" class="form-control"  th:field="*{filasOmitidas}"  required>
                         </div>
                     </div>
-
-                    <div class="col-md-5">
+                    <div class="col-md-4">
                         <div class="form-group mb-1">
-                            <label>Formato Fecha:</label>
-                            <select class="form-control" name="selectedFormatoFecha" id="formatoFecha" required>
+                            <h6 class="font-weight-bold">Sistema Fuente:<i class="bi bi-caret-down"></i></h6>
+                            <select class="form-control" required th:name="selectedSF" th:id="selectedSF">
+                                <option disabled hidden selected value="">Seleccione un filtro</option>
+                                <option th:each="sfrc : ${allSFs}" th:text="${sfrc.nombre}" th:value="${sfrc.nombre}"
+                                        th:selected="${aroute.sfrc != null and sfrc.id == aroute.sfrc.id}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4 hidden" id="formatoFechaContainer">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Formato Fecha:<i class="bi bi-caret-down"></i></h6>
+                            <select class="form-control" name="selectedFormatoFecha" id="formatoFecha" required th:field="*{formatoFecha}">
                                 <option disabled value="" selected hidden>Seleccione formato</option>
-                                <option th:value="YYYYMMDD" th:selected="${aroute.formatoFecha == 'YYYYMMDD'}">AÑO MES DIA CORTA (YYYYMMDD)</option>
-                                <option th:value="YYMMDD" th:selected="${aroute.formatoFecha == 'YYMMDD'}">AÑO MES DIA RED (YYMMDD)</option>
-                                <option th:value="DDMMMMYYYY" th:selected="${aroute.formatoFecha == 'DDMMMMYYYY'}">DIA MES AÑO COM. (DDMMMMYYYY)</option>
-                                <option th:value="DDMMYYYY" th:selected="${aroute.formatoFecha == 'DDMMYYYY'}">DIA MES AÑO CORTA (DDMMYYYY)</option>
-                                <option th:value="DDMMYY" th:selected="${aroute.formatoFecha == 'DDMMYY'}">DIA MES AÑO RED. (DDMMYY)</option>
-                                <option th:value="DDMMMMYYYY" th:selected="${aroute.formatoFecha == 'DDMMMMYYYY'}">DIA MES AÑO SIMPLE (DDMMMMYYYY)</option>
-                                <option th:value="MMDDYY" th:selected="${aroute.formatoFecha == 'MMDDYY'}">MES DIA AÑO (MMDDYY)</option>
+                                <option value="YYYYMMDD">AÑO MES DIA CORTA (YYYYMMDD)</option>
+                                <option value="YYMMDD">AÑO MES DIA RED (YYMMDD)</option>
+                                <option value="DDMMMMYYYY">DIA MES AÑO COM. (DDMMMMYYYY)</option>
+                                <option value="DDMMYYYY">DIA MES AÑO CORTA (DDMMYYYY)</option>
+                                <option value="DDMMYY">DIA MES AÑO RED. (DDMMYY)</option>
+                                <option value="DDMMMMYYYY">DIA MES AÑO SIMPLE (DDMMMMYYYY)</option>
+                                <option value="MMDDYY">MES DIA AÑO (MMDDYY)</option>
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-5">
+                    <div class="col-md-4 hidden" id="idiomaFechaContainer">
                         <div class="form-group mb-1">
-                            <label>Idioma Fecha:</label>
-                            <select class="form-control" name="selectedIdiomaFecha" id="idiomaFecha" required>
+                            <h6 class="font-weight-bold">Idioma Fecha:<i class="bi bi-caret-down"></i></h6>
+                            <select class="form-control" name="selectedIdiomaFecha" id="idiomaFecha" required th:field="*{idiomaFecha}">
                                 <option disabled value="" selected hidden>Seleccione formato</option>
-                                <option th:value="EspañolColombia" th:selected="${aroute.idiomaFecha == 'EspañolColombia'}">Español - Colombia</option>
-                                <option th:value="EspañolEspaña" th:selected="${aroute.idiomaFecha == 'EspañolEspaña'}">Español - España</option>
-                                <option th:value="InglésUSA" th:selected="${aroute.idiomaFecha == 'InglésUSA'}">Inglés - USA</option>
+                                <option value="EspañolColombia">Español - Colombia</option>
+                                <option value="EspañolEspaña">Español - España</option>
+                                <option value="InglésUSA">Inglés - USA</option>
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-2">
-                        <div class="form-group mb-1">
-                            <label>Maneja Siglas de Fechas:</label>
-                            <input id="siglasFechasInput" name="siglasFechas" th:field="*{siglasFechas}" th:id="${activo}"
-                                   th:value="${siglasFechas}" type="checkbox" class="styled-checkbox">
-                            <label>[[${siglasFechas}]]</label>
-                        </div>
-                    </div>
-
-                    <div class="col-md-5">
-                        <div class="form-group mb-1">
-                            <label>Sistema Fuente:</label>
-                                <select class="form-control" required th:name="selectedSF">
-                                    <option disabled hidden selected value="">Seleccione un filtro</option>
-                                    <option th:each="sfrc : ${allSFs}" th:text="${sfrc.nombre}" th:value="${sfrc.nombre}"
-                                            th:selected="${aroute.sfrc != null and sfrc.id == aroute.sfrc.id}"></option>
-                                </select>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group mb-1">
-                            <label>Filas Omitidas:</label>
-                            <input type="text" class="form-control"  th:field="*{filasOmitidas}"  required>
-                        </div>
-                    </div>
-
                 </div>
 
-                <div class="row pt-5 py-3">
+                <div class="row py-2">
                     <div class="col-md-12 d-flex align-content-center justify-content-center">
                         <div class="d-grid gap-2 col-3">
                             <button type="submit" class="btn btn-primary">Agregar</button>
@@ -184,10 +172,6 @@
                         </div>
                     </div>
                 </div>
-
-
-
-
             </form>
         </div>
     </div>
@@ -196,13 +180,24 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
 <script>
-    function updateFilePath() {
-        var fileInput = document.getElementById('file');
-        var filePath = document.getElementById('filePath');
-        var fakePath = fileInput.value;  // "ruta virtual"
-        filePath.value = fakePath;
+    function toggleFields() {
+        var siglasFechasCheckbox = document.getElementById('siglasFechasInput');
+        var formatoFechaContainer = document.getElementById('formatoFechaContainer');
+        var idiomaFechaContainer = document.getElementById('idiomaFechaContainer');
+
+        if (siglasFechasCheckbox.checked) {
+            formatoFechaContainer.classList.remove('hidden');
+            idiomaFechaContainer.classList.remove('hidden');
+        } else {
+            formatoFechaContainer.classList.add('hidden');
+            idiomaFechaContainer.classList.add('hidden');
+        }
     }
 
+    // Inicializar el estado de los campos cuando la página se carga
+    window.onload = function() {
+        toggleFields();
+    };
 </script>
 </body>
 </html>

@@ -1,4 +1,7 @@
 package com.inter.proyecto_intergrupo.controller.parametric;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import com.google.gson.Gson;
@@ -16,6 +19,7 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -113,6 +117,7 @@ public class AccountingRoutesController {
         ModelAndView modelAndView = new ModelAndView();
         AccountingRoute aroute = new AccountingRoute();
         List<SourceSystem> allSFs = sourceSystemService.findAll();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
         modelAndView.addObject("allSFs", allSFs);
         modelAndView.addObject("aroute",aroute);
         modelAndView.setViewName("/parametric/createAccountingRoute");
@@ -345,6 +350,7 @@ public class AccountingRoutesController {
             @RequestParam(defaultValue = "N" ,name = "selectedTipoArchivo") String tipoArch,
             @RequestParam(defaultValue = "N" ,name = "selectedFormatoFecha") String formFecha,
             @RequestParam(defaultValue = "N" ,name = "selectedIdiomaFecha") String idiomFecha,
+            @RequestParam(defaultValue = "N" ,name = "selecthoraCargue") String horaCargue,
 
             BindingResult bindingResult){
         ModelAndView modelAndView = new ModelAndView("redirect:/parametric/accountingRoutes");
@@ -353,6 +359,13 @@ public class AccountingRoutesController {
             bindingResult
                     .rejectValue("pais", "error.pais",
                             "El pais ya se ha registrado");
+        }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        try {
+            aroute.setHoraCargue(LocalTime.parse(horaCargue, formatter));;
+
+        } catch (Exception e) {
+            System.out.println("Error parsing time: " + e.getMessage());
         }
         if(bindingResult.hasErrors()){
             modelAndView.setViewName("parametric/createAccountingRoute");
@@ -364,6 +377,8 @@ public class AccountingRoutesController {
             if(idiomFecha!="N") aroute.setIdiomaFecha(idiomFecha);
             accountingRouteService.modificar(aroute);
         }
+        modelAndView.addObject("resp", "Add1");
+        modelAndView.addObject("data", aroute.getNombre());
         return modelAndView;
 
     }
@@ -374,9 +389,36 @@ public class AccountingRoutesController {
         Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
         AccountingRoute aroute = accountingRouteService.findById(id);
         List<SourceSystem> allSFs = sourceSystemService.findAll();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        try {
+            String selecthoraCargue = aroute.getHoraCargue().format(formatter);
+            modelAndView.addObject("selecthoraCargue", selecthoraCargue);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
         modelAndView.addObject("allSFs", allSFs);
         modelAndView.addObject("aroute",aroute);
         modelAndView.setViewName("parametric/modifyAccountingRoute");
+        return modelAndView;
+    }
+
+    @PostMapping(value = "/parametric/modifyAccountingRoute")
+    public ModelAndView modifyAccountingRouteCompl(@ModelAttribute AccountingRoute aroute, @RequestParam Map<String, Object> params) {
+        ModelAndView modelAndView = new ModelAndView("redirect:/parametric/accountingRoutes");
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findUserByUserName(auth.getName());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        try {
+            aroute.setHoraCargue(LocalTime.parse(params.get("selecthoraCargue").toString(), formatter));
+            aroute.setSfrc(sourceSystemService.findByNombre(params.get("selectedSF").toString()));
+            accountingRouteService.modificar(aroute);
+        } catch (Exception e) {
+            System.out.println("Error parsing time: " + e.getMessage());
+        }
+        modelAndView.addObject("resp", "Modify1");
+        modelAndView.addObject("data", aroute.getNombre());
         return modelAndView;
     }
 
