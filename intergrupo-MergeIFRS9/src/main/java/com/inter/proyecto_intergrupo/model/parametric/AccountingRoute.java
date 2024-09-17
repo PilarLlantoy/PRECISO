@@ -1,5 +1,7 @@
 package com.inter.proyecto_intergrupo.model.parametric;
 import lombok.*;
+
+import java.time.LocalTime;
 import java.util.List;
 
 import javax.persistence.*;
@@ -51,6 +53,9 @@ public class AccountingRoute {
     @Column(name = "idiomaFecha")
     private String idiomaFecha;
 
+    @Column(name = "hora_cargue")
+    private LocalTime horaCargue;
+
     @Column(name = "activo", columnDefinition = "BIT DEFAULT 1")
     private boolean activo = true;
 
@@ -66,7 +71,7 @@ public class AccountingRoute {
     private Integer filasOmitidas;
 
     // Relación con CampoAC
-    @OneToMany(mappedBy = "rutaContable", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "rutaContable", cascade = CascadeType.ALL)
     private List<CampoRC> campos;
 
     @OneToMany(mappedBy = "rutaContable", cascade = CascadeType.ALL)
