@@ -3,6 +3,7 @@ package com.inter.proyecto_intergrupo.controller.parametric;
 import com.inter.proyecto_intergrupo.model.admin.TipoDocumento;
 import com.inter.proyecto_intergrupo.model.admin.User;
 import com.inter.proyecto_intergrupo.model.parametric.Country;
+import com.inter.proyecto_intergrupo.model.parametric.EventType;
 import com.inter.proyecto_intergrupo.model.parametric.SourceSystem;
 import com.inter.proyecto_intergrupo.service.adminServices.UserService;
 import com.inter.proyecto_intergrupo.service.parametricServices.CountryService;
@@ -38,7 +39,7 @@ public class SourceSystemController {
     @Autowired
     private SourceSystemService sourceSystemService;
 
-    private List<String> listColumns = List.of("Código País", "Nombre País");
+    private List<String> listColumns = List.of("Código","Nombre","Sigla","Aplica Festivo","Código País","País","Estado");
 
     @GetMapping(value = "/parametric/sourceSystem")
     public ModelAndView showSourceSystem(@RequestParam Map<String, Object> params) {
@@ -125,145 +126,6 @@ public class SourceSystemController {
         return modelAndView;
     }
 
-
-
-    /*
-            @PostMapping(value = "/parametric/modifyCountry")
-            @ResponseBody
-            public ModelAndView updateCountry(@ModelAttribute Country country,@RequestParam String idOld){
-                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-                User user = userService.findUserByUserName(auth.getName());
-                ModelAndView modelAndView = new ModelAndView("redirect:/parametric/country");
-                try {
-                    Country searchCountry = countryService.findCountryById(country.getId()+"");
-                    if (searchCountry==null||idOld.equals(country.getId()))
-                    {
-                        countryService.modifyCountry(country, idOld,user);
-                        modelAndView.addObject("resp", "Modify1");
-                    }
-                    else
-                    {
-                        modelAndView.addObject("resp", "Modify0");
-                    }
-                }
-                catch(Exception e){
-                    e.printStackTrace();
-                    modelAndView.addObject("resp", "UpdateCascade-1");
-                }
-                return  modelAndView;
-
-            }
-
-            @GetMapping(value = "/parametric/validateIdCountry")
-            @ResponseBody
-            public String validateIdCountry(@RequestParam String idNew,@RequestParam String idT){
-                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-                String result = "invalid";
-                if(countryService.findCountryById(idNew)==null||idNew.equals(idT))
-                    result="valid";
-                return  result;
-            }
-
-            @GetMapping(value = "/parametric/removeCountry/{id}")
-            @ResponseBody
-            public boolean removeCountry(@PathVariable String id){
-                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-                User user = userService.findUserByUserName(auth.getName());
-                ModelAndView modelAndView = new ModelAndView("redirect:/parametric/country");
-                boolean response=false;
-                try {
-                    Country toRemove = countryService.findCountryById(id);
-                    countryService.removeCountry(toRemove.getId()+"",user);
-                    response=true;
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
-
-                return  response;
-
-            }
-
-            @GetMapping(value = "/parametric/clearCountry")
-            @ResponseBody
-            public boolean clearCountry(){
-                boolean response=false;
-                ModelAndView modelAndView = new ModelAndView("redirect:/parametric/country");
-                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-                User user = userService.findUserByUserName(auth.getName());
-                try{
-                    countryService.clearCountry(user);
-                    response=true;
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
-
-                return  response;
-            }
-
-            @GetMapping(value = "/parametric/country/download")
-            @ResponseBody
-            public void exportToExcel(HttpServletResponse response, RedirectAttributes redirectAttrs,@RequestParam Map<String, Object> params) throws IOException {
-                response.setContentType("application/octet-stream");
-                DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
-                String currentDateTime = dateFormatter.format(new Date());
-
-                String headerKey = "Content-Disposition";
-                String headerValue = "attachment; filename=País_" + currentDateTime + ".xlsx";
-                response.setHeader(headerKey, headerValue);
-                List<Country> countryList= new ArrayList<Country>();
-                if((params.get("vFilter").toString()).equals("Original") ||params.get("vFilter")==null||(params.get("vFilter").toString()).equals("")) {
-                    countryList = countryService.findAll();
-                }
-                else{
-                    countryList = countryService.findByFilter(params.get("vId").toString(),params.get("vFilter").toString());
-                }
-                CountryListReport listReport = new CountryListReport(countryList);
-                listReport.export(response);
-            }
-
-            @GetMapping(value = "/parametric/searchCountry")
-            @ResponseBody
-            public ModelAndView searchCountry(@RequestParam Map<String, Object> params) {
-                ModelAndView modelAndView = new ModelAndView();
-                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-                int page=params.get("page")==null?0:(Integer.valueOf(params.get("page").toString())-1);
-                PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
-                List<Country> list=countryService.findByFilter(params.get("vId").toString(),params.get("vFilter").toString());
-
-                int start = (int)pageRequest.getOffset();
-                int end = Math.min((start + pageRequest.getPageSize()), list.size());
-                Page<Country> pageCountry = new PageImpl<>(list.subList(start, end), pageRequest, list.size());
-
-                int totalPage=pageCountry.getTotalPages();
-                if(totalPage>0){
-                    List<Integer> pages = IntStream.rangeClosed(1, totalPage).boxed().collect(Collectors.toList());
-                    modelAndView.addObject("pages",pages);
-                }
-                modelAndView.addObject("allCountry",pageCountry.getContent());
-                modelAndView.addObject("current",page+1);
-                modelAndView.addObject("next",page+2);
-                modelAndView.addObject("prev",page);
-                modelAndView.addObject("vId",params.get("vId").toString());
-                modelAndView.addObject("last",totalPage);
-                modelAndView.addObject("vFilter",params.get("vFilter").toString());
-                modelAndView.addObject("columns",listColumns);
-                modelAndView.addObject("directory","searchCountry");
-                modelAndView.addObject("registers",list.size());
-
-                User user = userService.findUserByUserName(auth.getName());
-                modelAndView.addObject("userName",user.getPrimerNombre());
-                modelAndView.addObject("userEmail",user.getCorreo());
-                modelAndView.setViewName("parametric/country");
-                return modelAndView;
-            }
-        */
-
-
     @GetMapping(value = "/parametric/createSourceSystem")
     public ModelAndView showCreateSourceSystem(){
         ModelAndView modelAndView = new ModelAndView();
@@ -299,7 +161,48 @@ public class SourceSystemController {
         return modelAndView;
 
     }
+    @GetMapping(value = "/parametric/searchSourceSystem")
+    @ResponseBody
+    public ModelAndView searchSourceSystem(@RequestParam Map<String, Object> params) {
+        ModelAndView modelAndView = new ModelAndView();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
+        System.out.println("PARAMS "+params.get("vId").toString()+" "+params.get("vFilter").toString());
+        int page=params.get("page")==null?0:(Integer.valueOf(params.get("page").toString())-1);
+        PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
+        List<SourceSystem> list;
+        if(params==null)
+            list=sourceSystemService.findByFilter("inactivo", "Estado");
+        else
+            list=sourceSystemService.findByFilter(params.get("vId").toString(),params.get("vFilter").toString());
 
+        int start = (int)pageRequest.getOffset();
+        int end = Math.min((start + pageRequest.getPageSize()), list.size());
+        Page<SourceSystem> pageTypeEntity = new PageImpl<>(list.subList(start, end), pageRequest, list.size());
 
+        int totalPage=pageTypeEntity.getTotalPages();
+        if(totalPage>0){
+            List<Integer> pages = IntStream.rangeClosed(1, totalPage).boxed().collect(Collectors.toList());
+            modelAndView.addObject("pages",pages);
+        }
+        modelAndView.addObject("allSFS",pageTypeEntity.getContent());
+        modelAndView.addObject("current",page+1);
+        modelAndView.addObject("next",page+2);
+        modelAndView.addObject("prev",page);
+        modelAndView.addObject("vId",params.get("vId").toString());
+        modelAndView.addObject("last",totalPage);
+        modelAndView.addObject("vFilter",params.get("vFilter").toString());
+        modelAndView.addObject("columns",listColumns);
+        modelAndView.addObject("directory","searchSourceSystem");
+        modelAndView.addObject("registers",list.size());
+        User user = userService.findUserByUserName(auth.getName());
+        Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Sistemas Fuentes");
+
+        modelAndView.addObject("userName",user.getPrimerNombre());
+        modelAndView.addObject("userEmail",user.getCorreo());
+        modelAndView.addObject("p_modificar", p_modificar);
+
+        modelAndView.setViewName("parametric/sourceSystem");
+        return modelAndView;
+    }
 }

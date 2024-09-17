@@ -24,7 +24,7 @@
             <h3 class="fw-bold text-white mx-4 my-3">Módulo de Sistemas Fuente</h3>
         </div>
         <div class="col-md-6 d-flex align-items-center justify-content-end pe-5">
-            <form class="form-inline" method="get" th:action="@{/parametric/sourceSystem}">
+            <form class="form-inline" method="get" th:action="@{/parametric/searchSourceSystem}">
                 <div class="input-group">
                     <input type="text" class="form-control" th:name="vId" placeholder="Buscar...">
                     <div class="input-group-append">
@@ -35,7 +35,7 @@
                     </div>
                     <div class="input-group-append d-flex align-items-center">
                         <button class="btn btn-secondary" type="submit"><i class="fa fa-search"></i></button>
-                        <a class="btn btn-secondary" th:href="@{/parametric/country}"><i class="fas fa-window-close"></i></a>
+                        <a class="btn btn-secondary" th:href="@{/parametric/sourceSystem}"><i class="fas fa-window-close"></i></a>
                     </div>
                 </div>
             </form>
