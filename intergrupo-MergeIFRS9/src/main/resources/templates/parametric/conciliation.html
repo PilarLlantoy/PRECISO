@@ -54,7 +54,7 @@
                         <th>Activo</th>
                         <th>Apl. Fest.</th>
                         <th>Fuente contable</th>
-                        <th></th>
+                        <th></th><th></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -71,6 +71,10 @@
                         <td>
                             <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
                                     th:onclick="|window.location.href='@{/parametric/modifyConciliation/{id}(id=${concil.id})}'|">Editar</button>
+                        </td>
+                        <td>
+                            <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
+                                    th:onclick="|window.location.href='@{/parametric/accountsConciliation/{id}(id=${concil.id})}'|">Cuentas</button>
                         </td>
                     </tr>
                     </tbody>

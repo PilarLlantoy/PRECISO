@@ -49,20 +49,21 @@ public class CampoRConcilService {
        return campo;
     }
 
+
     public List<String> validatePrincipal(String principal)
     {
-        Query validate = entityManager.createNativeQuery("SELECT nv.nombre FROM preciso_campos_rc as nv WHERE " +
-                "nv.visualizacion=1 and nv.estado=1 and nv.id_rc = 1");
-        //validate.setParameter(1,principal);
+        Query validate = entityManager.createNativeQuery("SELECT DISTINCT nv.nombre FROM preciso_campos_rc as nv \n" +
+                "inner join preciso_rutas_contables b on nv.id_rc = b.id_rc \n" +
+                "WHERE  nv.visualizacion=1 and nv.estado=1 and b.nombre = :principal");
+        validate.setParameter("principal", principal);
         return validate.getResultList();
     }
 
 
-    public List<String> validatePrincipal2(String principal)
-    {
-        Query validate = entityManager.createNativeQuery("SELECT nv.nombre FROM preciso_rutas_contables as nv WHERE " +
-                "nv.id_sf=1 and nv.activo=1");
-        //validate.setParameter(1,principal);
+    public List<String> validatePrincipal2(String principal) {
+        Query validate = entityManager.createNativeQuery(
+                "SELECT nv.nombre FROM preciso_rutas_contables nv WHERE nv.id_sf = :principal AND nv.activo = 1");
+        validate.setParameter("principal", principal);
         return validate.getResultList();
     }
 

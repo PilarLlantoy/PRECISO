@@ -48,8 +48,6 @@ public class Conciliation {
     @JoinColumn(name = "id_sfc", nullable = false)
     private SourceSystem sfc;
 
-
-
     @Column(name = "centro")
     private String centro;
 
@@ -61,7 +59,6 @@ public class Conciliation {
 
     @Column(name = "saldo")
     private String saldo;
-
 
     @Builder.Default
     @Column(name = "aplica_lunes", columnDefinition = "BIT DEFAULT 0")
@@ -94,4 +91,7 @@ public class Conciliation {
     @ManyToOne
     @JoinColumn(name = "id_rc")
     private AccountingRoute rutaContable;
+
+    @OneToMany(mappedBy = "conciliacion", cascade = CascadeType.ALL)
+    private List<AccountConcil> arregloCuentas;
 }

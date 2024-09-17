@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+
+<div class="main-container">
+    <style>
+        body, .btn, .form-control, p {
+            font-size: 12px;
+        }
+
+        h2{
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .big-checkbox {width: 1rem; height: 1rem; top:0.5rem}
+    </style>
+    <div class="row m-0 bg-primary fixed-top myNav">
+        <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
+            <h3 class="fw-bold text-white mx-4 my-3">Cargue de Cuentas</h3>
+        </div>
+    </div>
+
+    <div class="row m-0 px-4 mt-5">
+        <div class="text-left pr-3 col-md-12 my-3">
+            <form id="miFormulario" th:object="${cuenta}" th:action="@{/parametric/createAccountConcil}" method="POST">
+
+                <div class="mb-3">
+                    <a th:href="@{/parametric/conciliation}">
+                        <u>< Regresar</u>
+                    </a>
+                </div>
+
+                <h2>Cargue de Cuentas a Conciliación</h2>
+
+                <div class="mb-3" style="display: flex; gap: 10px;">
+                    <div hidden="">
+                        <div class="form-group mb-1">
+                            <label>ID</label>
+                            <input type="text" class="form-control" id="id" name="id" value="0">
+                        </div>
+                    </div>
+                    <div>
+                        <div class="form-group mb-1">
+                            <label>Cuenta Contable</label>
+                            <input type="text" class="form-control" th:field="*{valor}">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Campo oculto para el token CSRF -->
+                <input type="hidden" id="csrfToken" th:value="${_csrf.token}" />
+
+                <!-- Formulario oculto para pasar el objeto conciliacion -->
+                <input type="hidden" id="concilId" name="concilId" th:value="${conciliacion.id}" />
+
+                <div class="row">
+                    <div class="d-grid gap-2 col-2">
+                        <button th:disabled="${!p_modificar}" class="btn btn-primary" onclick="descartar()">Descartar</button>
+                    </div>
+                    <div class="d-grid gap-2 col-2">
+                        <button th:disabled="${!p_modificar}" type="submit" class="btn btn-primary">Agregar</button>
+                    </div>
+                </div>
+
+            </form>
+
+        </div>
+        <div class="col-md-12 p-0">
+            <div class="table-responsive rounded border-primary">
+                <h2>Cuentas registradas</h2>
+                <table id="example" class="table table-striped table-hover text-center table-bordered table-sm" width="100%">
+                    <thead class="bg-primary">
+                    <tr>
+                        <th>Item</th>
+                        <th style="width:50%">Cuenta</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="val : ${allCuentas}">
+                        <td th:text="${val.id}"></td>
+                        <td th:text="${val.valor}"></td>
+                        <td>
+                            <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
+                                    th:data-id="${val.id}"
+                                    th:data-valor="${val.valor}"
+                                    onclick="cargarCampos(this)">Seleccionar</button>
+                        </td>
+                        <td>
+                            <button th:disabled="${!p_modificar}" class="btn btn-danger"
+                                    data-toggle="modal" data-target="#eliminarModal"
+                                    th:onclick="'seleccionar(\''+ ${val.id}+'\')'">Eliminar</button>
+                        </td>
+
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="row" th:if="${last != 0}">
+                <div class="col-md-4 text-left">
+                    <nav arial-label="Pagination">
+                        <ul class="pagination">
+                            <li class="page-item" th:classappend="${prev == 0 ? 'disabled' : ''}">
+                                <a class="page-link"
+                                   th:href="@{/parametric/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${prev},dir=${directory},vId=${vId})}">Anterior</a>
+                            </li>
+                            <li class="page-item" th:classappend="${current == last ? 'disabled' : ''}">
+                                <a class="page-link"
+                                   th:href="@{/parametric/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${next},dir=${directory},vId=${vId})}">Siguiente</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="col-md-4 text-center">
+                    <h6 th:utext="${registers} + ' Registros Encontrados'"></h6>
+                </div>
+                <div class="col-md-4 text-right">
+                    <h6 class="mx-1" th:utext="'Página ' + ${current} + ' de ' + ${last}"></h6>
+                </div>
+            </div>
+            <div class="d-flex align-items-center justify-content-center" th:if="${filterExport != 'Original'}">
+                <h5><span class="badge badge-pill text-light badge-info py-2 px-5">¡La Tabla se encuentra Filtrada!</span>
+                </h5>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="eliminarModal" tabindex="-1" role="dialog" aria-labelledby="eliminarModal" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Eliminar</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        ¿Estás seguro de eliminar la cuenta seleccionada?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-danger" th:onclick="borrar()" data-dismiss="modal">
+                            Eliminar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+</div>
+<script>
+    function cargarCampos(button) {
+        var id = button.getAttribute("data-id");
+        var valor = button.getAttribute("data-valor");
+        // Asignar los valores a los campos del formulario
+        document.querySelector("input[name='id']").value = id;
+        document.querySelector("input[name='valor']").value = valor;
+    }
+
+    function descartar() {
+        document.getElementById('miFormulario').reset();
+    }
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"
+        integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"
+        integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
+        crossorigin="anonymous"></script>
+<script type="text/javascript">
+    //MODAL DE BORRAR
+
+    var cuentaId = -1;
+    var concilId = document.getElementById('concilId').value;
+    var csrfToken = $("#csrfToken").val(); // Obtener el token CSRF
+    function seleccionar(id) {
+        cuentaId=id
+    }
+
+    function borrar(){
+        var url = '/parametric/deleteAccountConcil/'+concilId+'/'+ cuentaId;
+        // Realizar la solicitud POST con el token CSRF
+        $.post(url, {_csrf: csrfToken})
+            .done(function(response) {
+                //console.log("Solicitud POST completada con éxito");
+                location.reload();
+            })
+            .fail(function(xhr, status, error) {
+                console.error("Ocurrió un error al enviar la solicitud POST: " + error);
+            });
+    }
+</script>
+</body>
+</html>

@@ -3,6 +3,7 @@ package com.inter.proyecto_intergrupo.service.parametricServices;
 import com.inter.proyecto_intergrupo.model.admin.Audit;
 import com.inter.proyecto_intergrupo.model.admin.TipoDocumento;
 import com.inter.proyecto_intergrupo.model.admin.User;
+import com.inter.proyecto_intergrupo.model.parametric.CampoRC;
 import com.inter.proyecto_intergrupo.model.parametric.SourceSystem;
 import com.inter.proyecto_intergrupo.repository.admin.AuditRepository;
 import com.inter.proyecto_intergrupo.repository.parametric.SourceSystemRepository;
@@ -36,6 +37,10 @@ public class SourceSystemService {
     @Autowired
     public SourceSystemService(SourceSystemRepository sourceSystemRepository) {
         this.sourceSystemRepository = sourceSystemRepository;
+    }
+
+    public SourceSystem findById(int id){
+        return sourceSystemRepository.findAllById(id);
     }
 
     public List <SourceSystem> findAll(){return sourceSystemRepository.findAllByOrderByNombreAsc();}
