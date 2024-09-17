@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+
+<div class="main-container">
+    <style>
+        body, .btn, .form-control, .badge, h6 {
+            font-size: 12px;
+        }
+
+        h2{
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .big-checkbox {width: 1rem; height: 1rem; top:0.5rem}
+
+        .contend{
+            border-style: solid;
+            padding: 20px;
+            border-radius: 20px;
+        }
+    </style>
+    <div class="row m-0 bg-primary fixed-top myNav">
+        <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
+            <h3 class="fw-bold text-white mx-4 my-3">Módulo de Cargue de Inventarios</h3>
+        </div>
+    </div>
+    <div class="row m-0 mt-5">
+        <div class="mb-1 mt-3 row">
+            <div class="col-3 ml-3">
+                <div class="contend mb-3">
+                    <h2>Fecha de Información</h2>
+                    <!-- <form th:object="${concil}" th:action="@{/parametric/createConcil}" method="POST">-->
+                    <div>
+                        <div class="form-group mb-1">
+                            <label>Conciliación</label>
+                            <!--<input type="text" class="form-control" th:field="*{nombre}" required> -->
+                            <input style="width: 100%; box-sizing: border-box;" type="text">
+                        </div>
+                        <div class="form-group mb-1">
+                            <label>Archivo Contable</label>
+                            <!--<input type="text" class="form-control" th:field="*{nombre}" required> -->
+                            <input style="width: 100%; box-sizing: border-box;" type="text">
+                        </div>
+                        <div class="form-group mb-1">
+                            <label>Fecha Información</label>
+                            <input style="width: 100%; box-sizing: border-box;" type="text">
+                        </div>
+
+                        <div class="d-grid gap-2 col-3 mt-1" style="padding-left:0px">
+                            <button type="submit" class="btn btn-primary">Volver</button>
+                        </div>
+                    </div>
+                    <!-- </form> -->
+                </div>
+
+                <div class="contend">
+                    <h2>Opciones</h2>
+                    <div>
+                        <div class="d-grid gap-2 col-3 mt-1" style="padding-left:0px">
+                            <button type="submit" class="btn btn-secondary">Trasladar Local</button>
+                        </div>
+                        <div class="d-grid gap-2 col-3 mt-1" style="padding-left:0px">
+                            <button type="submit" class="btn btn-secondary">Trasladar Servidor</button>
+                        </div>
+                        <div class="d-grid gap-2 col-3 mt-1" style="padding-left:0px">
+                            <button type="submit" class="btn btn-secondary">Validar Archivo</button>
+                        </div>
+                        <div class="d-grid gap-2 col-3 mt-1" style="padding-left:0px">
+                            <button type="submit" class="btn btn-secondary">Exportar Excel</button>
+                        </div>
+                        <div class="d-grid gap-2 col-3 mt-1" style="padding-left:0px">
+                            <button type="submit" class="btn btn-secondary">Confirmar Cargue</button>
+                        </div>
+                        <div class="d-grid gap-2 col-3 mt-1" style="padding-left:0px">
+                            <button type="submit" class="btn btn-secondary">Reaunudar Proceso</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-8">
+                <div class="col-md-12 contend mb-3">
+                    <h2>Log Cargue de Contabilidad</h2>
+                    <div class="table-responsive rounded border-primary">
+                        <table id="example" class="table table-striped table-hover text-center table-bordered table-sm" width="100%">
+                            <thead class="bg-primary">
+                            <tr>
+                                <th>Codigo</th>
+                                <th>Nombre</th>
+                                <th>Archivo</th>
+                                <th>Ruta de Acceso</th>
+                                <th>Tipo Archivo</th>
+                                <th>Activo</th>
+                                <th></th><th></th><th></th><th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="rc : ${allRCs}">
+                                <td th:text="${rc.id}"></td>
+                                <td th:text="${rc.nombre}"></td>
+                                <td th:text="${rc.nombreArchivo}"></td>
+                                <td th:text="${rc.ruta}"></td>
+                                <td th:text="${rc.tipoArchivo}"></td>
+                                <td th:if="${rc.activo == true}">Activo</td>
+                                <td th:if="${rc.activo == false}">Inactivo</td>
+                                <td>
+                                    <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
+                                            th:onclick="|window.location.href='@{/parametric/modifyAccountingRoute/{id}(id=${rc.id})}'|">Editar</button>
+                                </td>
+                                <td>
+                                    <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
+                                            th:onclick="|window.location.href='@{/parametric/fieldLoadingAccountingRoute/{id}(id=${rc.id})}'|">Cargar Campos</button>
+                                </td>
+                                <td>
+                                    <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
+                                            th:onclick="|window.location.href='@{/parametric/modifyAccountingRoute/{id}(id=${rc.id})}'|">Condiciones</button>
+                                </td>
+                                <td>
+                                    <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
+                                            th:onclick="|window.location.href='@{/parametric/modifyAccountingRoute/{id}(id=${rc.id})}'|">Validaciones</button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row" th:if="${last != 0}">
+                        <div class="col-md-4 text-left">
+                            <nav arial-label="Pagination">
+                                <ul class="pagination">
+                                    <li class="page-item" th:classappend="${prev == 0 ? 'disabled' : ''}">
+                                        <a class="page-link"
+                                           th:href="@{/admin/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${prev},dir=${directory},vId=${vId})}">Anterior</a>
+                                    </li>
+                                    <li class="page-item" th:classappend="${current == last ? 'disabled' : ''}">
+                                        <a class="page-link"
+                                           th:href="@{/admin/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${next},dir=${directory},vId=${vId})}">Siguiente</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <h6 th:utext="${registers} + ' Registros Encontrados'"></h6>
+                        </div>
+                        <div class="col-md-4 text-right">
+                            <h6 class="mx-1" th:utext="'Página ' + ${current} + ' de ' + ${last}"></h6>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center justify-content-center" th:if="${filterExport != 'Original'}">
+                        <h5><span class="badge badge-pill text-light badge-info py-2 px-5">¡La Tabla se encuentra Filtrada!</span>
+                        </h5>
+                    </div>
+
+                </div>
+
+                <div class="col-md-12 contend">
+                    <h2>Registros Cargados</h2>
+                    <div class="table-responsive rounded border-primary">
+                        <table id="example2" class="table table-striped table-hover text-center table-bordered table-sm" width="100%">
+                            <thead class="bg-primary">
+                            <tr>
+                                <th>Codigo</th>
+                                <th>Nombre</th>
+                                <th>Archivo</th>
+                                <th>Ruta de Acceso</th>
+                                <th>Tipo Archivo</th>
+                                <th>Activo</th>
+                                <th></th><th></th><th></th><th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="rc : ${allRCs}">
+                                <td th:text="${rc.id}"></td>
+                                <td th:text="${rc.nombre}"></td>
+                                <td th:text="${rc.nombreArchivo}"></td>
+                                <td th:text="${rc.ruta}"></td>
+                                <td th:text="${rc.tipoArchivo}"></td>
+                                <td th:if="${rc.activo == true}">Activo</td>
+                                <td th:if="${rc.activo == false}">Inactivo</td>
+                                <td>
+                                    <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
+                                            th:onclick="|window.location.href='@{/parametric/modifyAccountingRoute/{id}(id=${rc.id})}'|">Editar</button>
+                                </td>
+                                <td>
+                                    <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
+                                            th:onclick="|window.location.href='@{/parametric/fieldLoadingAccountingRoute/{id}(id=${rc.id})}'|">Cargar Campos</button>
+                                </td>
+                                <td>
+                                    <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
+                                            th:onclick="|window.location.href='@{/parametric/modifyAccountingRoute/{id}(id=${rc.id})}'|">Condiciones</button>
+                                </td>
+                                <td>
+                                    <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
+                                            th:onclick="|window.location.href='@{/parametric/modifyAccountingRoute/{id}(id=${rc.id})}'|">Validaciones</button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row" th:if="${last != 0}">
+                        <div class="col-md-4 text-left">
+                            <nav arial-label="Pagination">
+                                <ul class="pagination">
+                                    <li class="page-item" th:classappend="${prev == 0 ? 'disabled' : ''}">
+                                        <a class="page-link"
+                                           th:href="@{/admin/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${prev},dir=${directory},vId=${vId})}">Anterior</a>
+                                    </li>
+                                    <li class="page-item" th:classappend="${current == last ? 'disabled' : ''}">
+                                        <a class="page-link"
+                                           th:href="@{/admin/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${next},dir=${directory},vId=${vId})}">Siguiente</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <h6 th:utext="${registers} + ' Registros Encontrados'"></h6>
+                        </div>
+                        <div class="col-md-4 text-right">
+                            <h6 class="mx-1" th:utext="'Página ' + ${current} + ' de ' + ${last}"></h6>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center justify-content-center" th:if="${filterExport != 'Original'}">
+                        <h5><span class="badge badge-pill text-light badge-info py-2 px-5">¡La Tabla se encuentra Filtrada!</span>
+                        </h5>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+</div>
+</body>
+</html>
