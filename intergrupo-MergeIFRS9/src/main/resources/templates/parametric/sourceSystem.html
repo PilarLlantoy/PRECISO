@@ -7,6 +7,18 @@
 <body>
 <div th:replace="fragments/menuTemplate :: menuBody"></div>
 <div class="main-container">
+    <style>
+        body, .btn, .form-control, p {
+            font-size: 12px;
+        }
+
+        h2{
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .big-checkbox {width: 1rem; height: 1rem; top:0.5rem}
+    </style>
     <div class="row m-0 bg-primary fixed-top myNav">
         <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
             <h3 class="fw-bold text-white mx-4 my-3">Módulo de Sistemas Fuente</h3>
@@ -49,7 +61,7 @@
                             <th>Código País</th>
                             <th>País</th>
                             <th>Estado</th>
-                            <th COLSPAN="2">Acciones</th>
+                            <th COLSPAN="3">Acciones</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -66,6 +78,12 @@
                             <td>
                                 <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
                                         th:onclick="|window.location.href='@{/parametric/modifySourceSystem/{id}(id=${sf.id})}'|">Editar</button>
+                            </td>
+                            <td>
+                                <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
+                                        th:onclick="|window.location.href='@{/parametric/closeDateSF/{id}(id=${sf.id})}'|">Fechas Cierre</button>
+                            </td>
+                            <td>
                                 <button th:disabled="${!p_modificar}" type="button" class="btn btn-danger" data-toggle="modal" data-target="#eliminarModal"
                                         th:onclick="'seleccionar(\'' + ${sf.id} + '\')'">Eliminar</button>
                             </td>

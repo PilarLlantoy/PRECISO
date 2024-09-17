@@ -86,4 +86,7 @@ public class SourceSystem {
     private List<AccountingRoute> rutasContables;
     */
 
+    @OneToMany(mappedBy = "sistemaFuente", cascade = CascadeType.ALL)
+    private List<CloseDateSourceSystem> fechasCierre;
+
 }
