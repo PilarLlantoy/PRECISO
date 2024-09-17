@@ -120,22 +120,33 @@ public class CountryService {
 
     public List<Country> findByFilter(String value, String filter) {
         List<Country> list=new ArrayList<Country>();
-        switch (filter)
-        {
-            case "Código País":
+        switch (filter) {
+            case "Código":
                 Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_paises as em " +
                         "WHERE em.id_pais LIKE ?", Country.class);
                 query.setParameter(1, value );
-
                 list= query.getResultList();
-
                 break;
-            case "Nombre País":
+            case "Nombre":
                 Query query0 = entityManager.createNativeQuery("SELECT em.* FROM preciso_paises as em " +
                         "WHERE em.nombre_pais LIKE ?", Country.class);
                 query0.setParameter(1, value);
 
                 list= query0.getResultList();
+                break;
+            case "Sigla":
+                Query query2 = entityManager.createNativeQuery("SELECT em.* FROM preciso_paises as em " +
+                        "WHERE em.sigla_pais LIKE ?", Country.class);
+                query2.setParameter(1, value);
+                list= query2.getResultList();
+                break;
+            case "Estado":
+                Boolean valor = true;
+                if ("inactivo".equalsIgnoreCase(value)) valor = false;
+                Query query3 = entityManager.createNativeQuery(
+                        "SELECT em.* FROM preciso_paises as em WHERE em.activo_pais = ?", User.class);
+                query3.setParameter(1, valor);
+                list= query3.getResultList();
                 break;
             default:
                 break;
