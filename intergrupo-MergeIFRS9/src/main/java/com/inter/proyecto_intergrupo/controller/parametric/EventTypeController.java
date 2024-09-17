@@ -25,6 +25,7 @@ import java.util.stream.IntStream;
 @Controller
 public class EventTypeController {
     private static final int PAGINATIONCOUNT=12;
+    private List<String> listColumns=List.of("Código", "Nombre","Estado");
     Logger logger = LogManager.getLogger(LogManager.ROOT_LOGGER_NAME);
     @Autowired
     private UserService userService;
@@ -61,6 +62,7 @@ public class EventTypeController {
             modelAndView.addObject("registers",eventTypes.size());
             modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
+            modelAndView.addObject("columns", listColumns);
             modelAndView.addObject("p_modificar", p_modificar);
             modelAndView.setViewName("parametric/EventType");
         }
@@ -134,5 +136,50 @@ public class EventTypeController {
         }
         return modelAndView;
 
+    }
+
+    @GetMapping(value = "/parametric/searchEventType")
+    @ResponseBody
+    public ModelAndView searchEventType(@RequestParam Map<String, Object> params) {
+        ModelAndView modelAndView = new ModelAndView();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        System.out.println("PARAMS "+params.get("vId").toString()+" "+params.get("vFilter").toString());
+        int page=params.get("page")==null?0:(Integer.valueOf(params.get("page").toString())-1);
+        PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
+        List<EventType> list;
+        if(params==null)
+            list=eventTypeService.findByFilter("inactivo", "Estado");
+        else
+            list=eventTypeService.findByFilter(params.get("vId").toString(),params.get("vFilter").toString());
+
+        int start = (int)pageRequest.getOffset();
+        int end = Math.min((start + pageRequest.getPageSize()), list.size());
+        Page<EventType> pageTypeEntity = new PageImpl<>(list.subList(start, end), pageRequest, list.size());
+
+        int totalPage=pageTypeEntity.getTotalPages();
+        if(totalPage>0){
+            List<Integer> pages = IntStream.rangeClosed(1, totalPage).boxed().collect(Collectors.toList());
+            modelAndView.addObject("pages",pages);
+        }
+        modelAndView.addObject("allEventType",pageTypeEntity.getContent());
+        modelAndView.addObject("current",page+1);
+        modelAndView.addObject("next",page+2);
+        modelAndView.addObject("prev",page);
+        modelAndView.addObject("vId",params.get("vId").toString());
+        modelAndView.addObject("last",totalPage);
+        modelAndView.addObject("vFilter",params.get("vFilter").toString());
+        modelAndView.addObject("columns",listColumns);
+        modelAndView.addObject("directory","searchEventType");
+        modelAndView.addObject("registers",list.size());
+        User user = userService.findUserByUserName(auth.getName());
+        Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Tipos Eventos");
+
+        modelAndView.addObject("userName",user.getPrimerNombre());
+        modelAndView.addObject("userEmail",user.getCorreo());
+        modelAndView.addObject("p_modificar", p_modificar);
+
+        modelAndView.setViewName("parametric/eventType");
+        return modelAndView;
     }
 }

@@ -45,8 +45,8 @@ public class SourceSystemController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        Boolean p_modificar = userService.validateEndpointModificar(user.getId(), "Ver Países");
-        if (userService.validateEndpoint(user.getId(), "Ver Países")) { //CAMBIAR A VER Sistema fuente
+        Boolean p_modificar = userService.validateEndpointModificar(user.getId(), "Ver Sistemas Fuentes");
+        if (userService.validateEndpoint(user.getId(), "Ver Sistemas Fuentes")) {
 
             int page = params.get("page") != null ? (Integer.valueOf(params.get("page").toString()) - 1) : 0;
             PageRequest pageRequest = PageRequest.of(page, PAGINATIONCOUNT);

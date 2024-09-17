@@ -177,7 +177,7 @@ public class ConciliationRoutesController {
         User user = userService.findUserByUserName(auth.getName());
         modelAndView.addObject("userName", user.getPrimerNombre());
         modelAndView.addObject("userEmail", user.getCorreo());
-        Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Países");
+        Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Conciliaciones");
         modelAndView.addObject("p_modificar", p_modificar);
         CampoRConcil campoRConcil = new CampoRConcil();
         modelAndView.addObject("campoRC",campoRConcil);

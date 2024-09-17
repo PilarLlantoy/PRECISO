@@ -62,5 +62,36 @@ public class EventTypeService {
         return eventTypeRepository.findAll(pageable);
     }
 
+    public List<EventType> findByFilter(String value, String filter) {
+        List<EventType> list=new ArrayList<EventType>();
+        switch (filter)
+        {
+            case "Estado":
+                Boolean valor = true;
+                if ("inactivo".equalsIgnoreCase(value))
+                    valor = false;
+                Query quer = entityManager.createNativeQuery(
+                        "SELECT em.* FROM preciso_tipo_evento as em WHERE em.activo_tipo_evento = ?", EventType.class);
+                quer.setParameter(1, valor);
+                list = quer.getResultList();
+                break;
+            case "Código":
+                Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_tipo_evento as em " +
+                        "WHERE em.id_tipo_evento LIKE ?", EventType.class);
+                query.setParameter(1, value );
+                list= query.getResultList();
+                break;
+            case "Nombre":
+                Query query0 = entityManager.createNativeQuery("SELECT em.* FROM preciso_tipo_evento as em " +
+                        "WHERE em.nombre_tipo_evento LIKE ? ", EventType.class);
+                query0.setParameter(1, value);
+                list = query0.getResultList();
+                break;
+            default:
+                break;
+        }
+        return list;
+    }
+
 
 }
