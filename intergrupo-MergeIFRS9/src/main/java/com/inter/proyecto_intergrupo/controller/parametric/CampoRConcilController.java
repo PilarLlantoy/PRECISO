@@ -6,13 +6,16 @@ import com.inter.proyecto_intergrupo.service.parametricServices.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.http.ResponseEntity;
+import java.util.List;
+import java.util.Collections;
 
 
 @Controller
@@ -30,37 +33,36 @@ public class CampoRConcilController {
     private ConciliationRouteService conciliationRouteService;
 
 
-
-    @GetMapping(value = "/parametric/cargueCamposRConcil")
-    public ModelAndView cargueCamposRConcil(){
-        ModelAndView modelAndView = new ModelAndView();
-        Campo campo = new Campo();
-        modelAndView.addObject("campo",campo);
-        modelAndView.setViewName("/parametric/cargueCampos");
-        return modelAndView;
-    }
-
-
     @PostMapping(value = "/parametric/createCampoRConcil")
     public ModelAndView createCampoRConcil(@ModelAttribute CampoRConcil campoRC,
-                                      @RequestParam(name = "selectedTipoCampo") String tipo,
-                                      @RequestParam(name = "selectedFormatoFecha") String formFecha,
-                                      @RequestParam(name = "selectedIdiomaCampo") String idioma,
                                       @RequestParam(name = "crouteId") String crouteId,
                                       BindingResult bindingResult){
         ModelAndView modelAndView = new ModelAndView("redirect:/parametric/fieldLoadingConciliationRoute/" + crouteId);
-
         ConciliationRoute route = conciliationRouteService.findById(Integer.parseInt(crouteId));
         campoRC.setRutaConciliacion(route);
-        campoRC.setTipo(tipo);
-        campoRC.setFormatoFecha(formFecha);
-        campoRC.setIdioma(idioma);
         campoRCService.modificar(campoRC);
-
         return modelAndView;
-
     }
 
+    @DeleteMapping("/parametric/deleteCampoRConcil/{id}")
+    public ResponseEntity<?> deleteCampoRConcil(@PathVariable int id) {
+        try {
+            campoRCService.deleteById(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al eliminar el registro");
+        }
+    }
+
+    @GetMapping("/parametric/obtenerCamposFichero/{ficheroId}")
+    @ResponseBody
+    public List<Object[]> getCamposByFicheroId(@PathVariable("ficheroId") Integer ficheroId) {
+        System.out.println("FICHERO ID "+ ficheroId);
+        List<Object[]> campos = campoRCService.findCamposByRutaConcil(ficheroId);
+        System.out.println("CAMPOS "+campos.size());
+        return campos;
+    }
 
 
 }

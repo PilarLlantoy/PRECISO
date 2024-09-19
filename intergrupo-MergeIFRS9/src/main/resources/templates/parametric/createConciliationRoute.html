@@ -8,158 +8,145 @@
 <div th:replace="fragments/menuTemplate :: menuBody"></div>
 
 <div class="main-container">
-    <style>
-
-        body, .btn, .form-control {
-            font-size: 12px;
-        }
-
-        .big-checkbox {width: 1rem; height: 1rem; top:0.5rem}
-
-        .scrollable-menu {
-            height: auto;
-            max-height: 300px;
-            overflow-x: hidden;
-        }
-
-        .table-wrapper {
-            max-height: 250px;
-            overflow-y: auto;
-        }
-
-        input[type=checkbox] {
-            -ms-transform: scale(1.5); /* IE */
-            -moz-transform: scale(1.5); /* FF */
-            -webkit-transform: scale(1.5); /* Safari y Chrome */
-            margin: 10px;
-        }
-
-    </style>
     <div class="row m-0 bg-primary fixed-top myNav">
         <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
             <h3 class="fw-bold text-white mx-4 my-3">Creación de Ruta de Conciliación</h3>
         </div>
     </div>
     <div id="content">
-        <div class="row mt-5">
+        <div class="row mt-4 p-4">
             <form th:object="${croute}" th:action="@{/parametric/createConciliationRoute}" method="POST">
-                <div class="col-md-12 px-5 mb-3">
 
-                    <div class="row">
-                        <div class="col-md-3">
-                            <div class="form-group mb-1">
-                                <label>Conciliación:</label>
-                                <select class="form-control" name="selectedConcil" id="selectedConcil" required="" style="width: auto;">
-                                    <option disabled value="" selected hidden>Seleccione Conciliación</option>
-                                    <option th:each="concil : ${conciliations}" th:value="${concil.nombre}" th:text="${concil.nombre}"></option>
-                                </select>
-                            </div>
+                <h5 class="font-weight-bold">Opciones Registro</h5>
+                <div class="row p-2 mt-1 mb-2 border rounded">
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Activo</h6>
+                            <input id="activoInput" name="activo" th:field="*{activo}" th:id="${activo}"
+                                   th:value="${activo}" type="checkbox" class="styled-checkbox">
                         </div>
-                        <div class="col-md-4">
-                            <div class="form-group mb-1">
-                                <label>Detalle:</label>
-                                <input type="text" class="form-control"  th:field="*{detalle}"  required>
-                            </div>
-                        </div>
-                        <div class="col-md-1">
-                            <div class="form-group mb-1">
-                                <label>Activo:</label>
-                                <input id="activoInput" name="activo" th:field="*{activo}" th:id="${activo}"
-                                       th:value="${activo}" type="checkbox" class="styled-checkbox">
-                                <label>[[${activo}]]</label>
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="form-group mb-1">
-                                <label>Es fichero?:</label>
-                                <input id="ficehroInput" name="fichero" th:field="*{fichero}" th:id="${fichero}"
-                                       th:value="${fichero}" type="checkbox" class="styled-checkbox">
-                                <label>[[${fichero}]]</label>
-                            </div>
-                        </div>
-                        <input type="hidden" id="csrfToken" th:value="${_csrf.token}" />
                     </div>
-                    <div class="row">
-                        <div class="col-md-3">
-                            <div class="form-group mb-1">
-                                <label>Nombre Archivo:</label>
-                                <input type="text" class="form-control"  th:field="*{nombreArchivo}"  required>
-                            </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Es Fichero?</h6>
+                            <input id="ficehroInput" name="fichero" th:field="*{fichero}" th:id="${fichero}"
+                                   th:value="${fichero}" type="checkbox" class="styled-checkbox">
                         </div>
-                        <div class="col-md-3">
-                            <div class="form-group mb-1">
-                                <label>Tipo Archivo:</label>
-                                <select class="form-control" name="selectedTipoArchivo" id="tipoArchivo" required>
-                                    <option disabled value="" selected hidden>Seleccione formato</option>
-                                    <option th:value="XLS">ARCHIVO EXCEL XLS</option>
-                                    <option th:value="XLSX">ARCHIVO EXCEL XLSX</option>
-                                    <option th:value="CSV">ARCHIVO PLANO CSV</option>
-                                    <option th:value="TXT">ARCHIVO PLANO TXT</option>
-                                    <option th:value="TXT_SINDEL">ARCHIVO PLANO TXT SIN DEL.</option>
-                                </select>
-                            </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Maneja Siglas de Fechas</h6>
+                            <input id="siglasFechasInput" name="siglasFechas" th:field="*{siglasFechas}"
+                                   th:value="${siglasFechas}" type="checkbox" class="styled-checkbox" onchange="toggleFields()">
                         </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group mb-1">
+                            <!--<h6 class="font-weight-bold">Aplica Cargue Diario:</h6>
+                            <input id="cargueDiarioInput" name="cargueDiario" th:field="*{cargueDiario}" th:id="${cargueDiario}"
+                                   th:value="${cargueDiario}" type="checkbox" class="styled-checkbox">-->
+                        </div>
+                    </div>
+                </div>
 
-                        <div class="col-md-1">
-                            <div class="form-group mb-1">
-                                <label>Delimitador:</label>
-                                <input type="text" class="form-control"  th:field="*{delimitador}"  required>
-                            </div>
+                <h5 class="font-weight-bold">Información Registro</h5>
+                <div class="row p-2 border rounded">
+                    <div class="col-md-4">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Conciliación:<i class="bi bi-caret-down"></i></h6>
+                            <select class="form-control" required th:name="selectedConcil">
+                                <option disabled hidden selected value="">Seleccione una conciliación</option>
+                                <option th:each="concil : ${conciliations}" th:text="${concil.nombre}" th:value="${concil.nombre}"></option>
+                            </select>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-9">
-                            <div class="form-group">
-                                <label>Ruta: </label>
-                                <input type="text" class="form-control"  th:field="*{ruta}"  required>
-                            </div>
+                    <div class="col-md-4">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Detalle:</h6>
+                            <input type="text" class="form-control"  th:field="*{detalle}"  required>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-2">
-                            <div class="form-group mb-1">
-                                <label>Filas Omitidas:</label>
-                                <input type="text" class="form-control"  th:field="*{filasOmitidas}"  required>
-                            </div>
+                    <div class="col-md-4">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Tipo Archivo:<i class="bi bi-caret-down"></i></h6>
+                            <select class="form-control" name="selectedTipoArchivo" id="tipoArchivo" required th:field="*{tipoArchivo}">
+                                <option disabled value="" selected hidden>Seleccione formato</option>
+                                <option th:value="CRCC">ARCHIVO CRCC</option>
+                                <option th:value="CRCC_CUIF">ARCHIVO CRCC_CUIF</option>
+                                <option th:value="CRCC_NIIF">ARCHIVO CRCC_NIIF</option>
+                                <option th:value="DIALOGO">ARCHIVO DIALOGO</option>
+                                <option th:value="DIALOGO_CUIF">ARCHIVO DIALOGO_CUIF</option>
+                                <option th:value="DIALOGO_NIIF">ARCHIVO DIALOGO_NIIF</option>
+                                <option th:value="XLS">ARCHIVO EXCEL XLS</option>
+                                <option th:value="XLSX">ARCHIVO EXCEL XLSX</option>
+                                <option th:value="CSV">ARCHIVO PLANO CSV</option>
+                                <option th:value="TXT">ARCHIVO PLANO TXT</option>
+                                <option th:value="TXT_SINDEL">ARCHIVO PLANO TXT SIN DEL.</option>
+                            </select>
                         </div>
-                        <div class="col-md-2">
-                            <div class="form-group mb-1">
-                                <label>Maneja Siglas de Fechas:</label>
-                                <input id="siglasFechasInput" name="siglasFechas" th:field="*{siglasFechas}" th:id="${activo}"
-                                       th:value="${siglasFechas}" type="checkbox" class="styled-checkbox">
-                                <label>[[${siglasFechas}]]</label>
-                            </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Nombre Archivo:</h6>
+                            <input type="text" class="form-control"  th:field="*{nombreArchivo}"  required>
                         </div>
-                        <div class="col-md-3">
-                            <div class="form-group mb-1">
-                                <label>Formato Fecha:</label>
-                                <select class="form-control" name="selectedFormatoFecha" id="formatoFecha" required>
-                                    <option disabled value="" selected hidden>Seleccione formato</option>
-                                    <option th:value="YYYYMMDD">AÑO MES DIA CORTA (YYYYMMDD)</option>
-                                    <option th:value="YYMMDD">AÑO MES DIA RED (YYMMDD)</option>
-                                    <option th:value="DDMMMMYYYY">DIA MES AÑO COM. (DDMMMMYYYY)</option>
-                                    <option th:value="DDMMYYYY">DIA MES AÑO CORTA (DDMMYYYY)</option>
-                                    <option th:value="DDMMYY">DIA MES AÑO RED. (DDMMYY)</option>
-                                    <option th:value="DDMMMMYYYY">DIA MES AÑO SIMPLE (DDMMMMYYYY)</option>
-                                    <option th:value="MMDDYY">MES DIA AÑO (MMDDYY)</option>
-                                </select>
-                                <!-- <input type="text" class="form-control"  th:field="*{formatoFecha}"  required> -->
-                            </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="form-group">
+                            <h6 class="font-weight-bold">Ruta: </h6>
+                            <input type="text" class="form-control"  th:field="*{ruta}"  required>
                         </div>
-                        <div class="col-md-3">
-                            <div class="form-group mb-1">
-                                <label>Idioma Fecha:</label>
-                                <!-- <input type="text" class="form-control"  th:field="*{idiomaFecha}" required>-->
-                                <select class="form-control" name="selectedIdiomaFecha" id="idiomaFecha" required>
-                                    <option disabled value="" selected hidden>Seleccione formato</option>
-                                    <option th:value="EspañolColombia">Español - Colombia</option>
-                                    <option th:value="EspañolEspaña">Español - España</option>
-                                    <option th:value="InglésUSA">Inglés - USA</option>
-                                </select>
-                            </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Delimitador:</h6>
+                            <input type="text" class="form-control"  th:field="*{delimitador}">
+
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Hora Ejecución:</h6>
+                            <input type="time" class="form-control" th:id="selecthoraCargue" th:name="selecthoraCargue" th:value="${selecthoraCargue}" required>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Filas Omitidas:</h6>
+                            <input type="number" class="form-control"  th:field="*{filasOmitidas}" required>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group mb-1">
                         </div>
                     </div>
 
+                    <div class="col-md-4 hidden" id="formatoFechaContainer">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Formato Fecha:<i class="bi bi-caret-down"></i></h6>
+                            <select class="form-control" name="selectedFormatoFecha" id="formatoFecha" th:field="*{formatoFecha}" required>
+                                <option disabled value="" selected hidden>Seleccione formato</option>
+                                <option th:value="YYYYMMDD">AÑO MES DIA CORTA (YYYYMMDD)</option>
+                                <option th:value="YYMMDD">AÑO MES DIA RED (YYMMDD)</option>
+                                <option th:value="DDMMMMYYYY">DIA MES AÑO COM. (DDMMMMYYYY)</option>
+                                <option th:value="DDMMYYYY">DIA MES AÑO CORTA (DDMMYYYY)</option>
+                                <option th:value="DDMMYY">DIA MES AÑO RED. (DDMMYY)</option>
+                                <option th:value="DDMMMMYYYY">DIA MES AÑO SIMPLE (DDMMMMYYYY)</option>
+                                <option th:value="MMDDYY">MES DIA AÑO (MMDDYY)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4 hidden" id="idiomaFechaContainer">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Idioma Fecha:<i class="bi bi-caret-down"></i></h6>
+                            <select class="form-control" name="selectedIdiomaFecha" id="idiomaFecha" th:field="*{idiomaFecha}" required>
+                                <option disabled value="" selected hidden>Seleccione formato</option>
+                                <option th:value="EspañolColombia">Español - Colombia</option>
+                                <option th:value="EspañolEspaña">Español - España</option>
+                                <option th:value="InglésUSA">Inglés - USA</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="row pt-3 py-3">
@@ -168,7 +155,7 @@
                             <button type="submit" class="btn btn-primary">Agregar</button>
                         </div>
                         <div class="d-grid gap-2 col-3">
-                            <a class="btn btn-danger" th:href="@{/parametric/conciliation}">Cancelar</a>
+                            <a class="btn btn-danger" th:href="@{/parametric/conciliationRoutes}">Cancelar</a>
                         </div>
                     </div>
                 </div>
@@ -184,7 +171,24 @@
         integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
         crossorigin="anonymous"></script>
 <script>
+    function toggleFields() {
+        var siglasFechasCheckbox = document.getElementById('siglasFechasInput');
+        var formatoFechaContainer = document.getElementById('formatoFechaContainer');
+        var idiomaFechaContainer = document.getElementById('idiomaFechaContainer');
 
+        if (siglasFechasCheckbox.checked) {
+            formatoFechaContainer.classList.remove('hidden');
+            idiomaFechaContainer.classList.remove('hidden');
+        } else {
+            formatoFechaContainer.classList.add('hidden');
+            idiomaFechaContainer.classList.add('hidden');
+        }
+    }
+
+    // Inicializar el estado de los campos cuando la página se carga
+    window.onload = function() {
+        toggleFields();
+    };
 </script>
 </body>
 </html>

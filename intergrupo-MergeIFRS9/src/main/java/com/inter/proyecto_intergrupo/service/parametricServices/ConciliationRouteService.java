@@ -16,6 +16,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -161,6 +162,32 @@ public class ConciliationRouteService {
 
     }
 
+    public List<ConciliationRoute> findByFilter(String value, String filter) {
+        List<ConciliationRoute> list=new ArrayList<ConciliationRoute>();
+        switch (filter) {
+            case "Conciliación":
+                Query query = entityManager.createNativeQuery("SELECT a.* FROM preciso_rutas_conciliaciones a \n" +
+                        "inner join preciso_conciliaciones b on a.id_conciliacion = b.id\n" +
+                        "where b.nombre = ?", ConciliationRoute.class);
+                query.setParameter(1, value );
+                list= query.getResultList();
+                break;
+            case "Estado":
+                Boolean valor = true;
+                if ("inactivo".equalsIgnoreCase(value)) valor = false;
+                Query query3 = entityManager.createNativeQuery(
+                        "SELECT em.* FROM preciso_rutas_conciliaciones as em WHERE em.activo = ?", ConciliationRoute.class);
+                query3.setParameter(1, valor);
+                list= query3.getResultList();
+                break;
+            default:
+                break;
+        }
+        return list;
+    }
 
+    public List <ConciliationRoute> findFicherosActivos(){
+        return conciliationRouteRepository.findByEstadoAndFichero(true, true);
+    }
 
 }

@@ -43,4 +43,9 @@ public class ValidationRConcilService {
        return campo;
     }
 
+    public void deleteById(int id){
+        validationRCRepository.deleteById(id);
+    }
+
+
 }

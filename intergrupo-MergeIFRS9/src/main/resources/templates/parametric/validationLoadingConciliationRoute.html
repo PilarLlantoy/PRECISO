@@ -8,116 +8,85 @@
 <div th:replace="fragments/menuTemplate :: menuBody"></div>
 
 <div class="main-container">
-    <style>
-        body, .btn, .form-control, p {
-            font-size: 12px;
-        }
-
-        h2{
-            font-size: 18px;
-            font-weight: bold;
-        }
-
-        .big-checkbox {width: 1rem; height: 1rem; top:0.5rem}
-    </style>
     <div class="row m-0 bg-primary fixed-top myNav">
         <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
-            <h3 class="fw-bold text-white mx-4 my-3">Cargue de Validaciones Ruta Conciliacion</h3>
+            <h3 class="fw-bold text-white mx-4 my-3">Cargue de Validaciones Ruta Conciliación</h3>
         </div>
     </div>
-
-    <div class="row m-0 px-4 mt-5">
+    <div class="row mt-5 pt-3 pb-1 px-4">
+        <div class="text-left col-md-6">
+            <h2>Cargue de Validaciones a Campos</h2>
+        </div>
+        <div class="text-right col-md-6">
+            <a class="btn btn-primary mx-1" th:href="@{/parametric/conciliationRoutes}"><i class="fa-solid fa-left-long"></i> Regresar</a>
+            <button type="button" class="btn btn-primary mx-2" onclick="Limpiar()">Deseleccionar Item</button>
+        </div>
+    </div>
+    <div class="row px-4">
         <div class="text-left pr-3 col-md-12 my-3">
             <form id="miFormulario" th:object="${validationRC}" th:action="@{/parametric/createValidacionRConcil}" method="POST">
-
-                <div class="mb-3">
-                    <a th:href="@{/parametric/conciliationRoutes}">
-                        <u>< Regresar</u>
-                    </a>
-                </div>
-
-                <h2>Cargue de Validaciones a Campos</h2>
-
-                <div class="mb-3" style="display: flex; gap: 10px;">
-                    <div hidden="">
+                <div class="mb-3 p-3 row border rounded">
+                    <div hidden class="col-md-2">
                         <div class="form-group mb-1">
-                            <label>ID</label>
-                            <input type="text" class="form-control" id="id" name="id" value="0">
+                            <h6 class="font-weight-bold">ID</h6>
+                            <input type="text" class="form-control" th:field="*{id}">
                         </div>
                     </div>
-                    <div>
-                        <div class="mb-1 mr-3" style="display: flex;">
-                            <label class="mr-2">Campo</label>
-                            <div>
-                                <select class="form-control" name="selectedCampoRef" id="selectedCampoRef" required="" style="width: auto;">
-                                    <option disabled value="" selected hidden>Seleccione Campo</option>
-                                    <option th:each="campo : ${camposRef}" th:value="${campo.id}" th:text="${campo.nombre}"></option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div style="display: flex;">
-                        <p>Aplica Fórmula?</p>
-                        <div class="form-check form-check-inline" style="margin-left: 10px;">
-                            <input id="formula" class="form-check-input" type="checkbox" name="formula" th:id="${formula}">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mb-3" style="display: flex; gap: 10px;">
-                    <div>
-                        <div class="form-group mb-1" style="display:flex">
-                            <label class="mr-2">Campo Validación</label>
-                            <div>
-                                <select class="form-control" name="selectedCampoVal" id="selectedCampoVal" required>
-                                    <option disabled value="" selected hidden>Seleccione Campo</option>
-                                    <option th:each="campoVal : ${campos}" th:value="${campoVal.id}" th:text="${campoVal.nombre}"></option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div>
+                    <div class="col-md-2">
                         <div class="form-group mb-1">
-                            <p>=</p>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="form-group mb-1">
-                            <input type="text" class="form-control" th:field="*{valorValidacion}">
-                        </div>
-                    </div>
-                </div>
-                <div class="mb-3" style="display: flex; gap: 10px;">
-                    <div>
-                        <div class="form-group mb-1" style="display:flex">
-                            <label class="mr-2">Operación:</label>
-                            <select class="form-control" name="selectedOperacion" id="selectedOperacion">
-                                <option disabled value="" selected hidden>Seleccione operación</option>
-                                <option th:value="Divida">Divida</option>
-                                <option th:value="Multiplica">Multiplica</option>
-                                <option th:value="Resta">Resta</option>
-                                <option th:value="Suma">Suma</option>
+                            <h6 class="font-weight-bold">Campo</h6>
+                            <select class="form-control" name="selectedCampoRef" id="selectedCampoRef" required>
+                                <option disabled value="" selected hidden>Seleccione Campo</option>
+                                <option th:each="campo : ${camposRef}" th:value="${campo.id}" th:text="${campo.nombre}"></option>
                             </select>
                         </div>
                     </div>
-                    <div>
-                        <div class="form-group mb-1">
-                            <p>=</p>
+                    <div class="col-md-2">
+                        <div class="col-12"><h6 class="font-weight-bold">Aplica Fórmula?</h6></div>
+                        <div class="form-group col-md-2">
+                            <div class="form-check form-check-inline">
+                                <input id="formula1" name="formula" th:field="*{formula}" th:id="${formula}"
+                                       th:value="${formula}" type="checkbox" class="styled-checkbox" onchange="toggleFields()">
+                            </div>
                         </div>
                     </div>
-                    <div>
+                    <div class="col-md-4" id="validacionContainer">
                         <div class="form-group mb-1">
-                            <input type="text" class="form-control" th:field="*{valorOperacion}">
+                            <h6 class="font-weight-bold">Campo Validación</h6>
+                            <div class="d-flex align-items-center">
+                                <select class="form-control" name="selectedCampoVal" id="selectedCampoVal" th:field="*{campoVal}">
+                                    <option disabled value="" selected hidden>Seleccione Campo</option>
+                                    <option th:each="campoVal : ${campos}" th:value="${campoVal.id}" th:text="${campoVal.nombre}"></option>
+                                </select>
+                                <p class="font-weight-bold mx-1 mb-0" style="line-height: 1.5;">=</p>
+                                <input type="text" class="form-control" th:field="*{valorValidacion}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Operación:</h6>
+                            <div class="d-flex align-items-center">
+                                <select class="form-control" name="selectedOperacion" id="selectedOperacion" required>
+                                    <option disabled value="" selected hidden>Seleccione operación</option>
+                                    <option th:value="Suma">Suma</option>
+                                    <option th:value="Resta">Resta</option>
+                                    <option th:value="Multiplica">Multiplica</option>
+                                    <option th:value="Divida">Divida</option>
+                                </select>
+                                <p class="font-weight-bold mx-1 mb-0" style="line-height: 1.5;">=</p>
+                                <input type="number" class="form-control" th:field="*{valorOperacion}" required>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Formulario oculto para pasar el objeto aroute -->
+                <!-- Formulario oculto para pasar el objeto croute -->
                 <input type="hidden" id="crouteId" name="crouteId" th:value="${croute.id}" />
 
                 <div class="row">
                     <div class="d-grid gap-2 col-2">
-                        <button th:disabled="${!p_modificar}" class="btn btn-primary" onclick="descartar()">Descartar</button>
+                        <button th:disabled="${!p_modificar}" type="button" class="btn btn-primary" onclick="descartar()">Eliminar</button>
                     </div>
                     <div class="d-grid gap-2 col-2">
                         <button th:disabled="${!p_modificar}" type="submit" class="btn btn-primary">Agregar</button>
@@ -139,7 +108,6 @@
                         <th>Operación</th>
                         <th>Valor Operación</th>
                         <th></th>
-                        <th></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -153,24 +121,14 @@
                         <td>
                             <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
                                     th:data-id="${val.id}"
-                                    th:data-campoRef="${val.campoRef.id}"
-                                    th:data-campoVal="${val.campoVal.id}"
+                                    th:data-campoRef="${val.campoRef.nombre}"
+                                    th:data-campoVal="${val.campoVal?.nombre ?: ''}"
                                     th:data-operacion="${val.operacion}"
                                     th:data-valorOperacion="${val.valorOperacion}"
                                     th:data-valorValidacion="${val.valorValidacion}"
                                     th:data-formula="${val.formula}"
                                     onclick="cargarCampos(this)">Seleccionar</button>
                         </td>
-                        <td>
-                            <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
-                                    th:data-id="${val.id}"
-                                    th:data-campoRef="${val.campoRef.id}"
-                                    th:data-campoVal="${val.campoVal.id}"
-                                    th:data-operacion="${val.operacion}"
-                                    th:data-valorOperacion="${val.valorOperacion}"
-                                    onclick="cargarCampos(this)">Eliminar</button>
-                        </td>
-
                     </tr>
                     </tbody>
                 </table>
@@ -224,15 +182,25 @@
         document.querySelector("input[name='formula']").checked = formula;
 
         var selectCampoRef = document.querySelector("select[name='selectedCampoRef']");
-        selectCampoRef.value = campoRef; // Asigna el valor directamente
-        if (!selectCampoRef.querySelector('option[value="' + campoRef + '"]')) {
-            console.error("El valor '" + campoRef + "' no está en las opciones del select.");
+        var optionsRef = selectCampoRef.options;
+
+        for (var i = 0; i < optionsRef.length; i++) {
+            if (optionsRef[i].text.trim() === campoRef.trim()) {
+                selectCampoRef.value = optionsRef[i].value; // Establece el valor de la opción encontrada
+                break;
+            }
         }
 
-        var selectCampoVal = document.querySelector("select[name='selectedCampoVal']");
-        selectCampoVal.value = campoVal; // Asigna el valor directamente
-        if (!selectCampoVal.querySelector('option[value="' + campoVal + '"]')) {
-            console.error("El valor '" + campoVal + "' no está en las opciones del select.");
+        var selectCampoVal = document.querySelector("select[name='campoVal']");
+        var optionsVal = selectCampoVal.options;
+
+        if(campoVal !=null && campoVal.length > 0){
+            for (var i = 0; i < optionsVal.length; i++) {
+                if (optionsVal[i].text.trim() === campoVal.trim()) {
+                    selectCampoVal.value = optionsVal[i].value; // Establece el valor de la opción encontrada
+                    break;
+                }
+            }
         }
 
         var selectOperacion = document.querySelector("select[name='selectedOperacion']");
@@ -241,12 +209,60 @@
             console.error("El valor '" + operacion + "' no está en las opciones del select.");
         }
 
+        toggleFields();
+
     }
 
     function descartar() {
-        document.getElementById('miFormulario').reset();
+        const id = document.querySelector("input[name='id']").value;
+        const selectCampo = document.querySelector("select[name='selectedCampoRef']");
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+        const crouteId = document.getElementById('crouteId').value;
+
+        if (id && selectCampo) {
+            fetch(`/parametric/deleteValidationRConcil/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                }
+            }).then(response => {
+                if (response.ok) {
+                    window.location.href = `/parametric/validationLoadingConciliationRoute/${crouteId}`;
+                }
+            }).catch(error => {
+                // Manejo de errores
+                console.error('Error:', error);
+            });
+        }
+    }
+</script>
+<script>
+    function toggleFields() {
+        var formulaCheckbox = document.getElementById('formula1');
+        var validacionContainer = document.getElementById('validacionContainer');
+        var valorValidacion = document.getElementById('valorValidacion');
+        var selectedCampoVal = document.getElementById('selectedCampoVal');
+
+        if (formulaCheckbox.checked) {
+            validacionContainer.classList.remove('hidden');
+        } else {
+            validacionContainer.classList.add('hidden');
+            valorValidacion.value = '';
+            selectedCampoVal.selectedIndex = 0;
+        }
     }
 
+    function Limpiar() {
+        document.getElementById('miFormulario').reset();
+        toggleFields();
+    }
+
+
+    window.onload = function() {
+        toggleFields();
+    };
 </script>
 </body>
 </html>

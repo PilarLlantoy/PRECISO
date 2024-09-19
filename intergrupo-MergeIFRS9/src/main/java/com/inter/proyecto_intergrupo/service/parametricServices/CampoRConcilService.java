@@ -1,5 +1,6 @@
 package com.inter.proyecto_intergrupo.service.parametricServices;
 
+import com.inter.proyecto_intergrupo.model.admin.Cargo;
 import com.inter.proyecto_intergrupo.model.parametric.CampoRConcil;
 import com.inter.proyecto_intergrupo.repository.admin.AuditRepository;
 import com.inter.proyecto_intergrupo.repository.parametric.CampoRCRepository;
@@ -49,6 +50,10 @@ public class CampoRConcilService {
        return campo;
     }
 
+    public void deleteById(int id){
+        campoRCRepository.deleteById(id);
+    }
+
 
     public List<String> validatePrincipal(String principal)
     {
@@ -59,7 +64,6 @@ public class CampoRConcilService {
         return validate.getResultList();
     }
 
-
     public List<String> validatePrincipal2(String principal) {
         Query validate = entityManager.createNativeQuery(
                 "SELECT nv.nombre FROM preciso_rutas_contables nv WHERE nv.id_sf = :principal AND nv.activo = 1");
@@ -67,5 +71,11 @@ public class CampoRConcilService {
         return validate.getResultList();
     }
 
+    public List<Object[]> findCamposByRutaConcil(int idRConcil) {
+        Query query = entityManager.createNativeQuery(
+                "SELECT id_campo, nombre FROM preciso_campos_rconcil WHERE id_rconcil = :idRConcil");
+        query.setParameter("idRConcil", idRConcil);
+        return query.getResultList();
+    }
 
 }

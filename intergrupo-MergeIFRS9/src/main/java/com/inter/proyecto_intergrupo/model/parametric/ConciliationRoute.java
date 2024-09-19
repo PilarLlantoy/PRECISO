@@ -2,6 +2,7 @@ package com.inter.proyecto_intergrupo.model.parametric;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalTime;
 import java.util.List;
 
 @Getter
@@ -43,6 +44,9 @@ public class ConciliationRoute {
     @Column(name = "idiomaFecha")
     private String idiomaFecha;
 
+    @Column(name = "hora_cargue")
+    private LocalTime horaCargue;
+
     @Column(name = "siglasFechas", columnDefinition = "BIT DEFAULT 0")
     private boolean siglasFechas = false;
 
@@ -59,11 +63,14 @@ public class ConciliationRoute {
     private Integer filasOmitidas;
 
     // Relación con CampoAC
-    @OneToMany(mappedBy = "rutaConciliacion", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "rutaConciliacion", cascade = CascadeType.ALL)
     private List<CampoRConcil> campos;
 
     @OneToMany(mappedBy = "rutaConciliacion", cascade = CascadeType.ALL)
     private List<ValidationRConcil> validaciones;
+
+    @OneToMany(mappedBy = "inventario", cascade = CascadeType.ALL)
+    private List<CrossesConcilRoute> cruces;
 
 
 }

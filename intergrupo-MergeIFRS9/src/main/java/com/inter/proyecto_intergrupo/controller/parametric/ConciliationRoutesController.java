@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +33,8 @@ import java.util.stream.IntStream;
 public class ConciliationRoutesController {
     private static final int PAGINATIONCOUNT=12;
     Logger logger = LogManager.getLogger(LogManager.ROOT_LOGGER_NAME);
+    private List<String> listColumns=List.of("Conciliación", "Estado");
+
     @Autowired
     private UserService userService;
 
@@ -66,6 +70,7 @@ public class ConciliationRoutesController {
             modelAndView.addObject("next",page+2);
             modelAndView.addObject("prev",page);
             modelAndView.addObject("last",totalPage);
+            modelAndView.addObject("columns",listColumns);
             modelAndView.addObject("filterExport","Original");
             modelAndView.addObject("directory","conciliationRoutes");
             modelAndView.addObject("registers",conciliations.size());
@@ -82,6 +87,49 @@ public class ConciliationRoutesController {
         return modelAndView;
     }
 
+    @GetMapping(value = "/parametric/searchConciliationRoutes")
+    @ResponseBody
+    public ModelAndView searchConciliationRoutes(@RequestParam Map<String, Object> params) {
+        ModelAndView modelAndView = new ModelAndView();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        int page=params.get("page")==null?0:(Integer.valueOf(params.get("page").toString())-1);
+        PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
+        List<ConciliationRoute> list;
+        if(params==null)
+            list=conciliationRouteService.findByFilter("inactivo", "Estado");
+        else
+            list=conciliationRouteService.findByFilter(params.get("vId").toString(),params.get("vFilter").toString());
+
+        int start = (int)pageRequest.getOffset();
+        int end = Math.min((start + pageRequest.getPageSize()), list.size());
+        Page<ConciliationRoute> pageTypeEntity = new PageImpl<>(list.subList(start, end), pageRequest, list.size());
+
+        int totalPage=pageTypeEntity.getTotalPages();
+        if(totalPage>0){
+            List<Integer> pages = IntStream.rangeClosed(1, totalPage).boxed().collect(Collectors.toList());
+            modelAndView.addObject("pages",pages);
+        }
+        modelAndView.addObject("allCRoutes",pageTypeEntity.getContent());
+        modelAndView.addObject("current",page+1);
+        modelAndView.addObject("next",page+2);
+        modelAndView.addObject("prev",page);
+        modelAndView.addObject("last",totalPage);
+        modelAndView.addObject("vFilter",params.get("vFilter").toString());
+        modelAndView.addObject("columns",listColumns);
+        modelAndView.addObject("directory","searchConciliationRoutes");
+        modelAndView.addObject("registers",list.size());
+        User user = userService.findUserByUserName(auth.getName());
+        Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Rutas Conciliaciones");
+
+        modelAndView.addObject("userName",user.getPrimerNombre());
+        modelAndView.addObject("userEmail",user.getCorreo());
+        modelAndView.addObject("p_modificar", p_modificar);
+
+        modelAndView.setViewName("parametric/conciliationRoutes");
+        return modelAndView;
+    }
+
     @GetMapping(value = "/parametric/createConciliationRoute")
     public ModelAndView showCreateConcilitionRoute(){
         ModelAndView modelAndView = new ModelAndView();
@@ -93,23 +141,40 @@ public class ConciliationRoutesController {
         return modelAndView;
     }
 
-
-
     @PostMapping(value = "/parametric/createConciliationRoute")
     public ModelAndView createConciliationRoute(@ModelAttribute ConciliationRoute croute,
-                                                @RequestParam(name = "selectedConcil") String concil,
-                                                @RequestParam(name = "selectedTipoArchivo") String tipoArchivo,
-                                                @RequestParam(name = "selectedFormatoFecha") String formatoFecha,
-                                                @RequestParam(name = "selectedIdiomaFecha") String idiomaFecha,
+                                                @RequestParam(defaultValue = "N" ,name = "selectedConcil") String concil,
+                                                @RequestParam(defaultValue = "N" ,name = "selectedTipoArchivo") String tipoArch,
+                                                @RequestParam(defaultValue = "N" ,name = "selectedFormatoFecha") String formFecha,
+                                                @RequestParam(defaultValue = "N" ,name = "selectedIdiomaFecha") String idiomFecha,
+                                                @RequestParam(defaultValue = "N" ,name = "selecthoraCargue") String horaCargue,
                                                 BindingResult bindingResult){
         ModelAndView modelAndView = new ModelAndView("redirect:/parametric/conciliationRoutes");
-        Conciliation conciliation = conciliationService.findByName(concil);
-        croute.setConciliacion(conciliation);
-        croute.setTipoArchivo(tipoArchivo);
-        croute.setFormatoFecha(formatoFecha);
-        croute.setIdiomaFecha(idiomaFecha);
-        conciliationRouteService.modificar(croute);
+        ConciliationRoute arouteExists = conciliationRouteService.findById(croute.getId());
+        if(arouteExists != null){
+            bindingResult
+                    .rejectValue("Ruta Conciliacion", "error.rutaConciliacion",
+                            "La ruta conciliacion ya se ha registrado");
+        }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        try {
+            croute.setHoraCargue(LocalTime.parse(horaCargue, formatter));;
 
+        } catch (Exception e) {
+            System.out.println("Error parsing time: " + e.getMessage());
+        }
+        if(bindingResult.hasErrors()){
+            modelAndView.setViewName("parametric/createConciliationRoute");
+        }else{
+            Conciliation conciliation = conciliationService.findByName(concil);
+            croute.setConciliacion(conciliation);
+            if(tipoArch!="N") croute.setTipoArchivo(tipoArch);
+            if(formFecha!="N") croute.setFormatoFecha(formFecha);
+            if(idiomFecha!="N") croute.setIdiomaFecha(idiomFecha);
+            conciliationRouteService.modificar(croute);
+        }
+        modelAndView.addObject("resp", "Add1");
+        modelAndView.addObject("data", croute.getDetalle());
         return modelAndView;
 
     }
@@ -129,18 +194,19 @@ public class ConciliationRoutesController {
 
     @PostMapping(value = "/parametric/modifyConciliationRoute")
     public ModelAndView modifyConciliationRoute(@ModelAttribute ConciliationRoute croute,
-                                                @RequestParam(name = "selectedConcil") String concil,
-                                                @RequestParam(name = "selectedTipoArchivo") String tipoArchivo,
-                                                @RequestParam(name = "selectedFormatoFecha") String formatoFecha,
-                                                @RequestParam(name = "selectedIdiomaFecha") String idiomaFecha,
-                                                BindingResult bindingResult){
+                                                @RequestParam(name = "selectedConcil") String concilId,
+                                                @RequestParam Map<String, Object> params){
         ModelAndView modelAndView = new ModelAndView("redirect:/parametric/conciliationRoutes");
-        Conciliation conciliation = conciliationService.findByName(concil);
-        croute.setConciliacion(conciliation);
-        croute.setTipoArchivo(tipoArchivo);
-        croute.setFormatoFecha(formatoFecha);
-        croute.setIdiomaFecha(idiomaFecha);
-        conciliationRouteService.modificar(croute);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        try {
+            croute.setHoraCargue(LocalTime.parse(params.get("selecthoraCargue").toString(), formatter));
+            croute.setConciliacion(conciliationService.findById(Integer.valueOf(concilId)));
+            conciliationRouteService.modificar(croute);
+        } catch (Exception e) {
+            System.out.println("Error parsing time: " + e.getMessage());
+        }
+        modelAndView.addObject("resp", "Modify1");
+        modelAndView.addObject("data", croute.getDetalle());
         return modelAndView;
     }
 
@@ -254,6 +320,63 @@ public class ConciliationRoutesController {
         }
 
         return;
+    }
+
+    @GetMapping(value = "/parametric/informationCrossingConciliationRoute/{id}")
+    public ModelAndView informationCrossingConciliationRoute(@PathVariable int id, @RequestParam Map<String, Object> params){
+        ModelAndView modelAndView = new ModelAndView();
+        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+        ConciliationRoute croute = conciliationRouteService.findById(id);
+        modelAndView.addObject("croute",croute);
+
+        List<CrossesConcilRoute> cruces = croute.getCruces();
+
+        int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
+        PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
+        int start = (int) pageRequest.getOffset();
+        int end = Math.min((start + pageRequest.getPageSize()), cruces.size());
+
+        Page<CrossesConcilRoute> pageConciliation = new PageImpl<>(cruces.subList(start, end), pageRequest, cruces.size());
+
+        List<ConciliationRoute> ficheros = conciliationRouteService.findFicherosActivos();
+        modelAndView.addObject("ficheros",ficheros);
+
+        List<CampoRConcil> camposInvActualiza = croute.getCampos();
+        modelAndView.addObject("camposInvActualiza",camposInvActualiza);
+
+        List<CampoRConcil> camposInvValid = croute.getCampos();
+        modelAndView.addObject("camposInvValid",camposInvValid);
+
+        //LISTAS QUE VAN A SER LLENADAS POR FRONT
+        List<CampoRConcil> campoFicValid = null;
+        List<CampoRConcil> campoFicResul = null;
+
+        int totalPage=pageConciliation.getTotalPages();
+        if(totalPage>0){
+            List<Integer> pages = IntStream.rangeClosed(1, totalPage).boxed().collect(Collectors.toList());
+            modelAndView.addObject("pages",pages);
+        }
+        modelAndView.addObject("current",page+1);
+        modelAndView.addObject("next",page+2);
+        modelAndView.addObject("prev",page);
+        modelAndView.addObject("last",totalPage);
+        modelAndView.addObject("directory","informationCrossingConciliationRoute/"+id);
+        modelAndView.addObject("allCruces",pageConciliation.getContent());
+        modelAndView.addObject("registers",cruces.size());
+        modelAndView.addObject("filterExport","Original");
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findUserByUserName(auth.getName());
+        modelAndView.addObject("userName", user.getPrimerNombre());
+        modelAndView.addObject("userEmail", user.getCorreo());
+        Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Países");
+        modelAndView.addObject("p_modificar", p_modificar);
+        ValidationRConcil validationRC = new ValidationRConcil();
+        modelAndView.addObject("validationRC",validationRC);
+
+
+        modelAndView.setViewName("parametric/informationCrossingConciliationRoute");
+        return modelAndView;
     }
 
 }

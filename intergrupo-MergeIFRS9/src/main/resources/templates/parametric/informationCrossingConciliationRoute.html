@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+
+<div class="main-container">
+    <div class="row m-0 bg-primary fixed-top myNav">
+        <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
+            <h3 class="fw-bold text-white mx-4 my-3">Cruce de Información Ruta Conciliación</h3>
+        </div>
+    </div>
+    <div class="row mt-5 pt-3 pb-1 px-4">
+        <div class="text-left col-md-6">
+            <h2>Cargue de Validaciones a Campos</h2>
+        </div>
+        <div class="text-right col-md-6">
+            <a class="btn btn-primary mx-1" th:href="@{/parametric/conciliationRoutes}"><i class="fa-solid fa-left-long"></i> Regresar</a>
+            <button type="button" class="btn btn-primary mx-2" onclick="Limpiar()">Deseleccionar Item</button>
+        </div>
+    </div>
+    <div class="row px-4">
+        <div class="text-left pr-3 col-md-12 my-3">
+            <form id="miFormulario" th:object="${validationRC}" th:action="@{/parametric/createValidacionRConcil}" method="POST">
+                <div class="mb-3 p-3 row border rounded">
+                    <div hidden class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">ID</h6>
+                            <input type="text" class="form-control" th:field="*{id}" id="id">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Fichero:</h6>
+                            <select class="form-control" name="selectedFichero" id="selectedFichero" required onchange="toggleFichero()">
+                                <option disabled value="" selected hidden>Seleccione Fichero</option>
+                                <option th:each="fichero : ${ficheros}" th:value="${fichero.id}" th:text="${fichero.detalle}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Campo Actualiza:</h6>
+                            <select class="form-control" name="selectedCampoInvActualiza" id="selectedCampoInvActualiza" required>
+                                <option disabled value="" selected hidden>Seleccione Campo</option>
+                                <option th:each="campo : ${camposInvActualiza}" th:value="${campo.id}" th:text="${campo.nombre}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Campo Inv. Vald.:</h6>
+                            <select class="form-control" name="selectedcampoInvValid" id="selectedcampoInvValid" required>
+                                <option disabled value="" selected hidden>Seleccione Campo</option>
+                                <option th:each="campo : ${camposInvValid}" th:value="${campo.id}" th:text="${campo.nombre}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Campo Fic. Vald.:</h6>
+                            <select class="form-control" name="selectedCampoFicVald" id="selectedCampoFicVald" required>
+                                <option disabled value="" selected hidden>Seleccione Campo</option>
+                                <option th:each="campo : ${campoFicValid}" th:value="${campo.id}" th:text="${campo.nombre}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Campo Fic. Resl.:</h6>
+                            <select class="form-control" name="selectedCampoFicResl" id="selectedCampoFicResl" required>
+                                <option disabled value="" selected hidden>Seleccione Campo</option>
+                                <option th:each="campo : ${campoFicResul}" th:value="${campo.id}" th:text="${campo.nombre}"></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Formulario oculto para pasar el objeto croute -->
+                <input type="hidden" id="crouteId" name="crouteId" th:value="${croute.id}" />
+
+                <div class="row">
+                    <div class="d-grid gap-2 col-2">
+                        <button th:disabled="${!p_modificar}" type="button" class="btn btn-primary" onclick="descartar()">Eliminar</button>
+                    </div>
+                    <div class="d-grid gap-2 col-2">
+                        <button th:disabled="${!p_modificar}" type="submit" class="btn btn-primary">Agregar</button>
+                    </div>
+                </div>
+
+            </form>
+
+        </div>
+        <div class="col-md-12 p-0">
+            <div class="table-responsive rounded border-primary">
+                <h2>Cruces registrados</h2>
+                <table id="example" class="table table-striped table-hover text-center table-bordered table-sm" width="100%">
+                    <thead class="bg-primary">
+                    <tr>
+                        <th>Item</th>
+                        <th>Campo Actualizar</th>
+                        <th>Campo Validación</th>
+                        <th>Campo Fic. Validación</th>
+                        <th>Campo Fic. Resultado</th>
+                        <th></th><th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="val : ${allCruces}">
+                        <td th:text="${val.id}"></td>
+                        <td th:text="${val.id}"></td>
+                        <td th:text="${val.id}"></td>
+                        <td th:text="${val.id}"></td>
+                        <td th:text="${val.id}"></td>
+
+                        <td>
+                            <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
+                                    th:data-id="${val.id}"
+                                    onclick="cargarCampos(this)">Seleccionar</button>
+                        </td>
+                        <td>
+                            <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
+                                    th:data-id="${val.id}"
+                                    onclick="cargarCampos(this)">Eliminar</button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="row" th:if="${last != 0}">
+                <div class="col-md-4 text-left">
+                    <nav arial-label="Pagination">
+                        <ul class="pagination">
+                            <li class="page-item" th:classappend="${prev == 0 ? 'disabled' : ''}">
+                                <a class="page-link"
+                                   th:href="@{/parametric/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${prev},dir=${directory},vId=${vId})}">Anterior</a>
+                            </li>
+                            <li class="page-item" th:classappend="${current == last ? 'disabled' : ''}">
+                                <a class="page-link"
+                                   th:href="@{/parametric/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${next},dir=${directory},vId=${vId})}">Siguiente</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="col-md-4 text-center">
+                    <h6 th:utext="${registers} + ' Registros Encontrados'"></h6>
+                </div>
+                <div class="col-md-4 text-right">
+                    <h6 class="mx-1" th:utext="'Página ' + ${current} + ' de ' + ${last}"></h6>
+                </div>
+            </div>
+            <div class="d-flex align-items-center justify-content-center" th:if="${filterExport != 'Original'}">
+                <h5><span class="badge badge-pill text-light badge-info py-2 px-5">¡La Tabla se encuentra Filtrada!</span>
+                </h5>
+            </div>
+        </div>
+
+    </div>
+</div>
+</div>
+<script>
+    function cargarCampos(button) {
+        var id = button.getAttribute("data-id");
+    }
+
+</script>
+<script>
+    function toggleFichero() {
+    const ficheroId = document.getElementById('selectedFichero').value;
+    const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+    const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+    if (ficheroId) {
+        fetch(`/parametric/obtenerCamposFichero/${ficheroId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                [csrfHeader]: csrfToken
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+
+            const campoFicResl = document.getElementById('selectedCampoFicResl');
+            const campoFicVald = document.getElementById('selectedCampoFicVald');
+
+            campoFicResl.innerHTML = '<option disabled value="" selected hidden>Seleccione Campo</option>';
+            campoFicVald.innerHTML = '<option disabled value="" selected hidden>Seleccione Campo</option>';
+
+            data.forEach(campo => {
+                const option = document.createElement('option');
+                option.value = campo[0];
+                option.text = campo[1];
+                campoFicResl.appendChild(option);
+
+                const option2 = option.cloneNode(true);
+                campoFicVald.appendChild(option2);
+            });
+        })
+        .catch(error => console.error('Error:', error));
+    }
+}
+
+
+   function Limpiar() {
+       document.getElementById('miFormulario').reset();
+
+   }
+
+   window.onload = function() {
+
+   };
+</script>
+</body>
+</html>

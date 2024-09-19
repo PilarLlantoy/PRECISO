@@ -8,143 +8,122 @@
 <div th:replace="fragments/menuTemplate :: menuBody"></div>
 
 <div class="main-container">
-    <style>
-        body, .btn, .form-control, p {
-            font-size: 12px;
-        }
-
-        h2{
-            font-size: 18px;
-            font-weight: bold;
-        }
-
-        .big-checkbox {width: 1rem; height: 1rem; top:0.5rem}
-    </style>
     <div class="row m-0 bg-primary fixed-top myNav">
         <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
             <h3 class="fw-bold text-white mx-4 my-3">Cargue Campos Ruta Conciliacion</h3>
         </div>
     </div>
+    <div class="row mt-5 py-3 px-4">
+        <div class="text-left col-md-6">
+            <h2>Cargue de campos</h2>
+        </div>
+        <div class="text-right col-md-6">
+            <a class="btn btn-primary mx-1" th:href="@{/parametric/conciliationRoutes}"><i class="fa-solid fa-left-long"></i> Regresar</a>
+            <button type="button" class="btn btn-primary mx-2" onclick="Limpiar()">Deseleccionar Item</button>
+        </div>
+    </div>
+    <div class="row px-4">
+        <div class="text-left col-md-12 mb-3">
+            <form id="miFormulario" th:object="${campoRC}" th:action="@{/parametric/createCampoRConcil}" method="POST">
 
-    <div class="row m-0 px-4 mt-5">
-        <div class="text-left pr-3 col-md-12 my-3">
-            <form id="formulario" th:object="${campoRC}" th:action="@{/parametric/createCampoRConcil}" method="POST">
-
-                <div class="mb-3">
-                    <a th:href="@{/parametric/conciliationRoutes}">
-                        <u>< Regresar</u>
-                    </a>
-                </div>
-
-                <h2>Cargue de campos</h2>
-
-                <div class="mb-3 row">
-
+                <div class="mb-3 p-3 row border rounded">
                     <div hidden class="col-md-2">
                         <div class="form-group mb-1">
-                            <label>ID</label>
+                            <h6 class="font-weight-bold">ID</h6>
                             <input type="text" class="form-control" th:field="*{id}">
                         </div>
                     </div>
-
                     <div class="col-md-2">
                         <div class="form-group mb-1">
-                            <label>Detalle Campo</label>
-                            <input type="text" class="form-control" th:field="*{nombre}">
+                            <h6 class="font-weight-bold">Detalle Campo</h6>
+                            <input type="text" class="form-control" th:field="*{nombre}" required>
                         </div>
                     </div>
-
-                    <div class="col-md-2">
-                        <div class="col-12"><p>Campo Primario</p></div>
-                        <div class="form-group col-md-2">
-                            <div class="form-check form-check-inline">
-                                <input id="primario" name="primario" th:field="*{primario}" th:id="${primario}"
-                                       th:value="${primario}" type="checkbox" class="styled-checkbox">
-                                <label>[[${primario}]]</label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-2">
-                        <div class="col-12"><p>Seleccionado Conciliación</p></div>
-                        <div class="form-group col-md-2">
-                            <div class="form-check form-check-inline">
-                                <input id="conciliacion" name="conciliacion" th:field="*{conciliacion}" th:id="${conciliacion}"
-                                       th:value="${conciliacion}" type="checkbox" class="styled-checkbox">
-                                <label>[[${conciliacion}]]</label>
-                            </div>
-                        </div>
-                    </div>
-
                     <div class="col-md-2">
                         <div class="form-group mb-1">
-                            <label>Tipo de Campo</label>
-                            <select class="form-control" name="selectedTipoCampo" id="selectedTipoCampo" required>
-                                <option disabled value="" selected hidden>Seleccione tipo</option>
-                                <option th:value="DOUBLE">DOUBLE</option>
-                                <option th:value="DATE">DATE</option>
-                                <option th:value="VARCHAR">VARCHAR</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="col-md-2">
-                        <div class="form-group mb-1">
-                            <label>Longitud de Campo</label>
-                            <input type="text" class="form-control" th:field="*{longitud}">
-                        </div>
-                    </div>
-
-                    <div class="col-md-2">
-                        <div class="col-12"><p>Nulo a moneda</p></div>
-                        <div class="form-group col-md-2">
-                            <div class="form-check form-check-inline">
-                                <input id="nuloMoneda" name="nuloMoneda" th:field="*{nuloMoneda}" th:id="${nuloMoneda}"
-                                       th:value="${nuloMoneda}" type="checkbox" class="styled-checkbox">
-                                <label>[[${nuloMoneda}]]</label>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-
-                <div class="mb-1 row">
-                    <div class="col-md-5">
-                        <div class="form-group mb-1">
-                            <label>Formato Fecha:</label>
-                            <select class="form-control" name="selectedFormatoFecha" id="selectedFormatoFecha" required>
-                                <option disabled value="" selected hidden>Seleccione formato</option>
-                                <option th:value="YYYYMMDD">AÑO MES DIA CORTA (YYYYMMDD)</option>
-                                <option th:value="YYMMDD">AÑO MES DIA RED (YYMMDD)</option>
-                                <option th:value="DDMMMMYYYY">DIA MES AÑO COM. (DDMMMMYYYY)</option>
-                                <option th:value="DDMMYYYY">DIA MES AÑO CORTA (DDMMYYYY)</option>
-                                <option th:value="DDMMYY">DIA MES AÑO RED. (DDMMYY)</option>
-                                <option th:value="DDMMMMYYYY">DIA MES AÑO SIMPLE (DDMMMMYYYY)</option>
-                                <option th:value="MMDDYY">MES DIA AÑO (MMDDYY)</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-5">
-                        <div class="form-group mb-1">
-                            <label>Idioma Campo:</label>
-                            <select class="form-control" name="selectedIdiomaCampo" id="selectedIdiomaCampo" required>
-                                <option disabled value="" selected hidden>Seleccione formato</option>
-                                <option th:value="EspañolColombia">Español - Colombia</option>
-                                <option th:value="EspañolEspaña">Español - España</option>
-                                <option th:value="InglésUSA">Inglés - USA</option>
+                            <h6 class="font-weight-bold">Tipo de Campo</h6>
+                            <select class="form-control" name="selectedTipoCampo" id="selectedTipoCampo" th:field="*{tipo}" required onchange="toggleFechaIdiomaFields()">
+                                <option th:if="${campoRC.tipo == null}" hidden selected disabled value="">Seleccione tipo</option>
+                                <option th:if="${campoRC.tipo != null}" hidden selected th:text="${campoRC.tipo}" th:value="${campoRC.tipo}"></option>
+                                <option th:value="Integer" th:text="Integer"></option>
+                                <option th:value="Bigint" th:text="Bigint"></option>
+                                <option th:value="Float" th:text="Float"></option>
+                                <option th:value="Varchar" th:text="Varchar"></option>
+                                <option th:value="Date" th:text="Date"></option>
+                                <option th:value="Time" th:text="Time"></option>
+                                <option th:value="Datetime" th:text="Datetime"></option>
+                                <option th:value="Bit" th:text="Bit"></option>
                             </select>
                         </div>
                     </div>
                     <div class="col-md-2">
                         <div class="form-group mb-1">
-                            <label>Separador</label>
+                            <h6 class="font-weight-bold">Longitud de Campo</h6>
+                            <input type="number" class="form-control" th:field="*{longitud}" required>
+                        </div>
+                    </div>
+                    <div class="col-md-2 hidden" id="separadorContainer">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Separador</h6>
                             <input type="text" class="form-control" th:field="*{separador}">
                         </div>
                     </div>
+                    <div class="col-md-2">
+                        <div class="col-12"><h6 class="font-weight-bold">Campo Primario</h6></div>
+                        <div class="form-group col-md-2">
+                            <div class="form-check form-check-inline">
+                                <input id="primario" name="primario" th:field="*{primario}" th:id="${primario}"
+                                       th:value="${primario}" type="checkbox" class="styled-checkbox ms-2">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="col-12"><h6 class="font-weight-bold">Seleccionado Conciliacion?</h6></div>
+                        <div class="form-group col-md-2">
+                            <div class="form-check form-check-inline">
+                                <input id="conciliacion" name="conciliacion" th:field="*{conciliacion}" th:id="${conciliacion}"
+                                       th:value="${conciliacion}" type="checkbox" class="styled-checkbox ms-2">
+                            </div>
+                        </div>
+                    </div>
 
+                    <div class="col-md-2">
+                        <div class="col-12"><h6 class="font-weight-bold">Nulo a moneda</h6></div>
+                        <div class="form-group col-md-2">
+                            <div class="form-check form-check-inline">
+                                <input id="nuloMoneda" name="nuloMoneda" th:field="*{nuloMoneda}" th:id="${nuloMoneda}"
+                                       th:value="${nuloMoneda}" type="checkbox" class="styled-checkbox ms-2">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3" id="formatoFechaContainer">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Formato Fecha:</h6>
+                            <select class="form-control" name="selectedFormatoFecha" id="selectedFormatoFecha" th:field="*{formatoFecha}">
+                                <option disabled value="" selected hidden>Seleccione formato</option>
+                                <option value="YYYYMMDD">AÑO MES DIA CORTA (YYYYMMDD)</option>
+                                <option value="YYMMDD">AÑO MES DIA RED (YYMMDD)</option>
+                                <option value="DDMMMMYYYY">DIA MES AÑO COM. (DDMMMMYYYY)</option>
+                                <option value="DDMMYYYY">DIA MES AÑO CORTA (DDMMYYYY)</option>
+                                <option value="DDMMYY">DIA MES AÑO RED. (DDMMYY)</option>
+                                <option value="MMDDYY">MES DIA AÑO (MMDDYY)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2" id="idiomaCampoContainer">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Idioma Campo:</h6>
+                            <select class="form-control" name="selectedIdiomaCampo" id="selectedIdiomaCampo" th:field="*{idioma}">
+                                <option disabled value="" selected hidden>Seleccione formato</option>
+                                <option value="EspañolColombia">Español - Colombia</option>
+                                <option value="EspañolEspaña">Español - España</option>
+                                <option value="InglésUSA">Inglés - USA</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Formulario oculto para pasar el objeto croute -->
+                <!-- miFormulario oculto para pasar el objeto croute -->
                 <input type="hidden" id="crouteId" name="crouteId" th:value="${croute.id}" />
 
                 <div class="row">
@@ -170,7 +149,7 @@
                         <th>Primario</th>
                         <th>Tipo Campo</th>
                         <th>Longitud</th>
-                        <th>Visualizado</th>
+                        <th>Conciliación</th>
                         <th></th>
                     </tr>
                     </thead>
@@ -193,6 +172,8 @@
                                     th:data-longitud="${camp.longitud}"
                                     th:data-formatoFecha="${camp.formatoFecha}"
                                     th:data-idioma="${camp.idioma}"
+                                    th:data-conciliacion="${camp.conciliacion}"
+                                    th:data-nuloMoneda="${camp.nuloMoneda}"
                                     onclick="cargarCampos(this)">Seleccionar</button>
                         </td>
 
@@ -238,46 +219,101 @@
     function cargarCampos(button) {
         var id = button.getAttribute("data-id");
         var nombre = button.getAttribute("data-nombre");
-        var primario = button.getAttribute("data-primario") === 'true';
         var tipo = button.getAttribute("data-tipo");
         var formatoFecha = button.getAttribute("data-formatoFecha");
         var idioma = button.getAttribute("data-idioma");
-        var conciliacion = button.getAttribute("data-conciliacion") === 'true';
-        var longitud = button.getAttribute("data-longitud");
-        var visualizacion = button.getAttribute("data-visualizacion") === 'true';
+        var longitud = button.getAttribute("data-longitud")
 
-        // Asignar los valores a los campos del formulario
+        var nuloMoneda = button.getAttribute("data-nuloMoneda") === 'true';
+        var conciliacion = button.getAttribute("data-conciliacion") === 'true';
+        var primario = button.getAttribute("data-primario") === 'true';
+
+        // Asignar los valores a los campos del miFormulario
         document.querySelector("input[name='id']").value = id;
         document.querySelector("input[name='nombre']").value = nombre;
+        document.querySelector("input[name='longitud']").value = longitud;
         document.querySelector("input[name='primario']").checked = primario;
         document.querySelector("input[name='conciliacion']").checked = conciliacion;
-        document.querySelector("input[name='longitud']").value = longitud;
+        document.querySelector("input[name='nuloMoneda']").checked = nuloMoneda;
 
         var selectTipoCampo = document.querySelector("select[name='selectedTipoCampo']");
-        selectTipoCampo.value = tipo; // Asigna el valor directamente
         if (!selectTipoCampo.querySelector('option[value="' + tipo + '"]')) {
             console.error("El valor '" + tipo + "' no está en las opciones del select.");
         }
-
+        else{
+            selectTipoCampo.value = tipo.trim(); // Asigna el valor directamente
+        }
         var selectFormatoFecha = document.querySelector("select[name='selectedFormatoFecha']");
         selectFormatoFecha.value = formatoFecha; // Asigna el valor directamente
         if (!selectFormatoFecha.querySelector('option[value="' + formatoFecha + '"]')) {
             console.error("El valor '" + formatoFecha + "' no está en las opciones del select.");
         }
-
         var selectIdioma = document.querySelector("select[name='selectedIdiomaCampo']");
         selectIdioma.value = idioma; // Asigna el valor directamente
         if (!selectIdioma.querySelector('option[value="' + idioma + '"]')) {
             console.error("El valor '" + idioma + "' no está en las opciones del select.");
         }
-
     }
 
     function descartar() {
-        document.getElementById('miFormulario').reset();
+        const id = document.querySelector("input[name='id']").value;
+        const nombre = document.querySelector("input[name='nombre']").value;
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+        const crouteId = document.getElementById('crouteId').value;
+
+        if (id && nombre) {
+            fetch(`/parametric/deleteCampoRConcil/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                }
+            }).then(response => {
+                if (response.ok) {
+                    // Verifica que la URL de redirección se construya correctamente
+                    window.location.href = `/parametric/fieldLoadingConciliationRoute/${crouteId}`;
+                } else {
+                    // Manejo de errores
+                    console.error('Error al eliminar el registro:', response.statusText);
+                }
+            }).catch(error => {
+                // Manejo de errores
+                console.error('Error:', error);
+            });
+        }
     }
 
 </script>
 
+<script>
+    function toggleFechaIdiomaFields() {
+       var tipoCampo = document.getElementById('selectedTipoCampo').value;
+       var formatoFechaContainer = document.getElementById('formatoFechaContainer');
+       var idiomaCampoContainer = document.getElementById('idiomaCampoContainer');
+       var separadorContainer = document.getElementById('separadorContainer');
+
+       if (tipoCampo === 'Date' || tipoCampo === 'Datetime') {
+           formatoFechaContainer.classList.remove('hidden');
+           idiomaCampoContainer.classList.remove('hidden');
+           separadorContainer.classList.remove('hidden');
+       } else {
+           formatoFechaContainer.classList.add('hidden');
+           idiomaCampoContainer.classList.add('hidden');
+           separadorContainer.classList.add('hidden');
+       }
+   }
+
+   function Limpiar() {
+       document.getElementById('miFormulario').reset();
+       toggleFields();
+       toggleFechaIdiomaFields();
+   }
+
+   window.onload = function() {
+       toggleFields();
+       toggleFechaIdiomaFields();
+   };
+</script>
 </body>
 </html>

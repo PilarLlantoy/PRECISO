@@ -1,20 +1,21 @@
 package com.inter.proyecto_intergrupo.model.parametric;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
+import java.io.Serializable;
+
 
 @Data
 @Builder
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "preciso_campos_rconcil")
-public class CampoRConcil {
+public class CampoRConcil implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
