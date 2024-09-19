@@ -10,12 +10,6 @@
 <div class="main-container">
     <style>
 
-        body, .btn, .form-control {
-            font-size: 12px;
-        }
-
-        .big-checkbox {width: 1rem; height: 1rem; top:0.5rem}
-
         .scrollable-menu {
             height: auto;
             max-height: 300px;
@@ -128,7 +122,7 @@
                     <div class="col-md-2">
                         <div class="form-group mb-1">
                             <h6 class="font-weight-bold">Filas Omitidas:</h6>
-                            <input type="text" class="form-control"  th:field="*{filasOmitidas}" required>
+                            <input type="number" class="form-control"  th:field="*{filasOmitidas}" required>
                         </div>
                     </div>
                     <div class="col-md-4">

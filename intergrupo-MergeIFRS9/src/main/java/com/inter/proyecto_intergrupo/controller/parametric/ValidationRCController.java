@@ -10,14 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
@@ -105,25 +104,33 @@ public class ValidationRCController {
     @PostMapping(value = "/parametric/createValidacionRC")
     public ModelAndView createValidacionRC(@ModelAttribute ValidationRC validationRC,
                                            @RequestParam(name = "selectedCampoRef") String campoRefid,
-                                           @RequestParam(name = "selectedCampoVal") String campoValid,
                                            @RequestParam(name = "selectedOperacion") String operacion,
                                            @RequestParam(name = "arouteId") String arouteId,
                                            BindingResult bindingResult){
         ModelAndView modelAndView = new ModelAndView("redirect:/parametric/validationLoadingAccountingRoute/" + arouteId);
-
-        AccountingRoute aroute = accountingRouteService.findById(Integer.parseInt(arouteId));
-        validationRC.setRutaContable(aroute);
-        CampoRC referencia = campoRCService.findById(Integer.valueOf(campoRefid));
-        validationRC.setCampoRef(referencia);
-        CampoRC validacion = campoRCService.findById(Integer.valueOf(campoValid));
-        validationRC.setCampoVal(validacion);
-        validationRC.setOperacion(operacion);
-        validationRCService.modificar(validationRC);
-
+        try{
+            AccountingRoute aroute = accountingRouteService.findById(Integer.parseInt(arouteId));
+            validationRC.setRutaContable(aroute);
+            CampoRC referencia = campoRCService.findById(Integer.valueOf(campoRefid));
+            validationRC.setCampoRef(referencia);
+            validationRC.setOperacion(operacion);
+            validationRCService.modificar(validationRC);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
         return modelAndView;
 
     }
-
-
-
+    @DeleteMapping("/parametric/deleteValidationRC/{id}")
+    public ResponseEntity<?> deleteValidationRC(@PathVariable int id) {
+        try {
+            validationRCService.deleteById(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al eliminar el registro");
+        }
+    }
 }

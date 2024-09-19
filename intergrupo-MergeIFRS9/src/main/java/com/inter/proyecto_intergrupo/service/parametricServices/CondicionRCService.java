@@ -47,5 +47,9 @@ public class CondicionRCService {
        return campo;
     }
 
+    public void deleteById(int id){
+        condicionRCRepository.deleteById(id);
+    }
+
 
 }

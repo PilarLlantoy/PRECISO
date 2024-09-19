@@ -144,7 +144,7 @@ public class CountryService {
                 Boolean valor = true;
                 if ("inactivo".equalsIgnoreCase(value)) valor = false;
                 Query query3 = entityManager.createNativeQuery(
-                        "SELECT em.* FROM preciso_paises as em WHERE em.activo_pais = ?", User.class);
+                        "SELECT em.* FROM preciso_paises as em WHERE em.activo_pais = ?", Country.class);
                 query3.setParameter(1, valor);
                 list= query3.getResultList();
                 break;

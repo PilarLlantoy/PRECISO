@@ -50,6 +50,10 @@ public class CampoRCService {
        return campo;
     }
 
+    public void deleteById(int id){
+        campoRCRepository.deleteById(id);
+    }
+
     public List<String> validatePrincipal(String principal)
     {
         Query validate = entityManager.createNativeQuery("SELECT nv.nombre FROM preciso_campos_rc as nv WHERE " +

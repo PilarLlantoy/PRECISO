@@ -1,7 +1,9 @@
 package com.inter.proyecto_intergrupo.service.parametricServices;
 
+import com.inter.proyecto_intergrupo.model.admin.User;
 import com.inter.proyecto_intergrupo.model.parametric.AccountingRoute;
 import com.inter.proyecto_intergrupo.model.parametric.CampoRC;
+import com.inter.proyecto_intergrupo.model.parametric.Country;
 import com.inter.proyecto_intergrupo.repository.admin.AuditRepository;
 import com.inter.proyecto_intergrupo.repository.parametric.AccountingRouteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -188,7 +191,52 @@ public class AccountingRouteService {
             throw new IOException("Error al generar el archivo de formato.", e);
         }
     }
+    public List<AccountingRoute> findByFilter(String value, String filter) {
+        List<AccountingRoute> list=new ArrayList<AccountingRoute>();
+        switch (filter) {
+            case "Código":
+                Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_rutas_contables as em " +
+                        "WHERE em.id_rc LIKE ?", AccountingRoute.class);
+                query.setParameter(1, value );
+                list= query.getResultList();
+                break;
+            case "Nombre":
+                Query query0 = entityManager.createNativeQuery("SELECT em.* FROM preciso_rutas_contables as em " +
+                        "WHERE em.nombre LIKE ?", AccountingRoute.class);
+                query0.setParameter(1, value);
 
-
+                list= query0.getResultList();
+                break;
+            case "Archivo":
+                Query query2 = entityManager.createNativeQuery("SELECT em.* FROM preciso_rutas_contables as em " +
+                        "WHERE em.nombre_archivo LIKE ?", AccountingRoute.class);
+                query2.setParameter(1, value);
+                list= query2.getResultList();
+                break;
+            case "Estado":
+                Boolean valor = true;
+                if ("inactivo".equalsIgnoreCase(value)) valor = false;
+                Query query3 = entityManager.createNativeQuery(
+                        "SELECT em.* FROM preciso_rutas_contables as em WHERE em.activo = ?", AccountingRoute.class);
+                query3.setParameter(1, valor);
+                list= query3.getResultList();
+                break;
+            case "Ruta de Acceso":
+                Query query4 = entityManager.createNativeQuery("SELECT em.* FROM preciso_rutas_contables as em " +
+                        "WHERE em.ruta LIKE ?", AccountingRoute.class);
+                query4.setParameter(1, value);
+                list= query4.getResultList();
+                break;
+            case "Tipo de Archivo":
+                Query query5 = entityManager.createNativeQuery("SELECT em.* FROM preciso_rutas_contables as em " +
+                        "WHERE em.tipo_archivo LIKE ?", AccountingRoute.class);
+                query5.setParameter(1, value);
+                list= query5.getResultList();
+                break;
+            default:
+                break;
+        }
+        return list;
+    }
 
 }

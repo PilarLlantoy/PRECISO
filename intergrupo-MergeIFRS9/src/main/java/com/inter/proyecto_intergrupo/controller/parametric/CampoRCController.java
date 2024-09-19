@@ -13,14 +13,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
@@ -101,10 +100,6 @@ public class CampoRCController {
 
     @PostMapping(value = "/parametric/createCampoRC")
     public ModelAndView createCampoRC(@ModelAttribute CampoRC campoRC,
-                                      @RequestParam(name = "selectedTipoCampo") String tipo,
-                                      @RequestParam(name = "selectedFormatoFecha") String formFecha,
-                                      @RequestParam(name = "selectedIdiomaCampo") String idioma,
-                                      @RequestParam(name = "selectedOperacion") String operacion,
                                       @RequestParam(name = "arouteId") String arouteId,
                                       BindingResult bindingResult){
         ModelAndView modelAndView = new ModelAndView("redirect:/parametric/fieldLoadingAccountingRoute/" + arouteId);
@@ -112,16 +107,21 @@ public class CampoRCController {
         AccountingRoute aroute = accountingRouteService.findById(Integer.parseInt(arouteId));
         System.out.println(campoRC.getId()+ " IDDDD "+arouteId);
         campoRC.setRutaContable(aroute);
-        campoRC.setTipo(tipo);
-        campoRC.setFormatoFecha(formFecha);
-        campoRC.setIdioma(idioma);
-        campoRC.setOperacion((operacion));
         campoRCService.modificar(campoRC);
 
         return modelAndView;
 
     }
 
-
+    @DeleteMapping("/parametric/deleteCampoRC/{id}")
+    public ResponseEntity<?> deleteCampoRC(@PathVariable int id) {
+        try {
+            campoRCService.deleteById(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al eliminar el registro");
+        }
+    }
 
 }

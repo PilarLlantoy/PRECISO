@@ -15,6 +15,7 @@ import com.inter.proyecto_intergrupo.repository.admin.UserRepository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.util.*;
@@ -188,11 +189,15 @@ public class    UserService {
     }
     public boolean validateEndpointModificar(int usuario,String vista)
     {
-        Query validate = entityManager.createNativeQuery("SELECT nrv.p_modificar FROM preciso_administracion_user_rol AS nur, preciso_administracion_rol_vista AS nrv, preciso_administracion_vistas AS nv\n" +
-                "WHERE nur.id_perfil = nrv.id_perfil AND nrv.id_vista = nv.id_vista AND nur.id_usuario = ? AND nv.nombre = ? ");
-        validate.setParameter(1,usuario);
-        validate.setParameter(2,vista);
-        return (boolean) validate.getSingleResult()==true;
+        try{
+            Query validate = entityManager.createNativeQuery("SELECT nrv.p_modificar FROM preciso_administracion_user_rol AS nur, preciso_administracion_rol_vista AS nrv, preciso_administracion_vistas AS nv\n" +
+                    "WHERE nur.id_perfil = nrv.id_perfil AND nrv.id_vista = nv.id_vista AND nur.id_usuario = ? AND nv.nombre = ? ");
+            validate.setParameter(1,usuario);
+            validate.setParameter(2,vista);
+            return (boolean) validate.getSingleResult();
+        } catch (NoResultException e) {
+            return false;
+        }
     }
 
     public List<String> validatePrincipal(String principal)

@@ -53,6 +53,7 @@ import org.springframework.http.HttpStatus;
 public class AccountingRoutesController {
     private static final int PAGINATIONCOUNT=12;
     Logger logger = LogManager.getLogger(LogManager.ROOT_LOGGER_NAME);
+    private List<String> listColumns=List.of("Código", "Nombre", "Archivo", "Ruta de Acceso", "Tipo de Archivo", "Estado");
 
     @Autowired
     private UserService userService;
@@ -74,8 +75,8 @@ public class AccountingRoutesController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Países");
-        if(userService.validateEndpoint(user.getId(),"Ver Países")) { //CAMBIAR A VER Conciliaciones
+        Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Rutas Contables");
+        if(userService.validateEndpoint(user.getId(),"Ver Rutas Contables")) { //CAMBIAR A VER Conciliaciones
 
             int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
             PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
@@ -95,6 +96,7 @@ public class AccountingRoutesController {
             modelAndView.addObject("next",page+2);
             modelAndView.addObject("prev",page);
             modelAndView.addObject("last",totalPage);
+            modelAndView.addObject("columns",listColumns);
             modelAndView.addObject("filterExport","Original");
             modelAndView.addObject("directory","country");
             modelAndView.addObject("registers",aroutes.size());
@@ -457,7 +459,7 @@ public class AccountingRoutesController {
         User user = userService.findUserByUserName(auth.getName());
         modelAndView.addObject("userName", user.getPrimerNombre());
         modelAndView.addObject("userEmail", user.getCorreo());
-        Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Países");
+        Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Rutas Contables");
         modelAndView.addObject("p_modificar", p_modificar);
         CampoRC campoRC = new CampoRC();
         modelAndView.addObject("campoRC",campoRC);
@@ -501,7 +503,7 @@ public class AccountingRoutesController {
         User user = userService.findUserByUserName(auth.getName());
         modelAndView.addObject("userName", user.getPrimerNombre());
         modelAndView.addObject("userEmail", user.getCorreo());
-        Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Países");
+        Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Rutas Contables");
         modelAndView.addObject("p_modificar", p_modificar);
         CondicionRC condicionRC = new CondicionRC();
         modelAndView.addObject("condicionRC",condicionRC);
@@ -549,13 +551,56 @@ public class AccountingRoutesController {
         User user = userService.findUserByUserName(auth.getName());
         modelAndView.addObject("userName", user.getPrimerNombre());
         modelAndView.addObject("userEmail", user.getCorreo());
-        Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Países");
+        Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Rutas Contables");
         modelAndView.addObject("p_modificar", p_modificar);
         ValidationRC validationRC = new ValidationRC();
         modelAndView.addObject("validationRC",validationRC);
 
 
         modelAndView.setViewName("parametric/validationLoadingAccountingRoute");
+        return modelAndView;
+    }
+
+    @GetMapping(value = "/parametric/searchAccountingRoutes")
+    @ResponseBody
+    public ModelAndView searchCountry(@RequestParam Map<String, Object> params) {
+        ModelAndView modelAndView = new ModelAndView();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        int page=params.get("page")==null?0:(Integer.valueOf(params.get("page").toString())-1);
+        PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
+        List<AccountingRoute> list;
+        if(params==null)
+            list=accountingRouteService.findByFilter("inactivo", "Estado");
+        else
+            list=accountingRouteService.findByFilter(params.get("vId").toString(),params.get("vFilter").toString());
+
+        int start = (int)pageRequest.getOffset();
+        int end = Math.min((start + pageRequest.getPageSize()), list.size());
+        Page<AccountingRoute> pageTypeEntity = new PageImpl<>(list.subList(start, end), pageRequest, list.size());
+
+        int totalPage=pageTypeEntity.getTotalPages();
+        if(totalPage>0){
+            List<Integer> pages = IntStream.rangeClosed(1, totalPage).boxed().collect(Collectors.toList());
+            modelAndView.addObject("pages",pages);
+        }
+        modelAndView.addObject("allRCs",pageTypeEntity.getContent());
+        modelAndView.addObject("current",page+1);
+        modelAndView.addObject("next",page+2);
+        modelAndView.addObject("prev",page);
+        modelAndView.addObject("last",totalPage);
+        modelAndView.addObject("vFilter",params.get("vFilter").toString());
+        modelAndView.addObject("columns",listColumns);
+        modelAndView.addObject("directory","searchAccountingRoutes");
+        modelAndView.addObject("registers",list.size());
+        User user = userService.findUserByUserName(auth.getName());
+        Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Rutas Contables");
+
+        modelAndView.addObject("userName",user.getPrimerNombre());
+        modelAndView.addObject("userEmail",user.getCorreo());
+        modelAndView.addObject("p_modificar", p_modificar);
+
+        modelAndView.setViewName("parametric/accountingRoutes");
         return modelAndView;
     }
 
