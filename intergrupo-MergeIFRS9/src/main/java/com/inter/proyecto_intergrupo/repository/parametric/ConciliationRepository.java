@@ -10,6 +10,7 @@ import java.util.List;
 public interface ConciliationRepository extends JpaRepository<Conciliation,Integer> {
     List<Conciliation> findAllByOrderByNombreAsc();
     Conciliation findAllById(int id);
-    List<Conciliation> findByEstado(boolean estado);
+    List<Conciliation> findByActivo(boolean estado);
     Conciliation findAllByNombre(String nombre);
+    List<Conciliation> findAllByOrderByIdAsc();
 }

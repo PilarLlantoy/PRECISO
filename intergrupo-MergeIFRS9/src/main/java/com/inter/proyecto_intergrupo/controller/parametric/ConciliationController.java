@@ -29,6 +29,9 @@ import java.util.stream.IntStream;
 @Controller
 public class ConciliationController {
     private static final int PAGINATIONCOUNT=12;
+
+    private List<String> listColumns=List.of("Nombre", "Estado", "Sistema Fuente", "Fuente Contable");
+
     Logger logger = LogManager.getLogger(LogManager.ROOT_LOGGER_NAME);
     @Autowired
     private UserService userService;
@@ -68,7 +71,7 @@ public class ConciliationController {
             int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
             PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
 
-            List<Conciliation> conciliations = conciliationService.findAllActive();
+            List<Conciliation> conciliations = conciliationService.findAll();
             int start = (int) pageRequest.getOffset();
             int end = Math.min((start + pageRequest.getPageSize()), conciliations.size());
             Page<Conciliation> pageConciliation = new PageImpl<>(conciliations.subList(start, end), pageRequest, conciliations.size());
@@ -83,6 +86,7 @@ public class ConciliationController {
             modelAndView.addObject("next",page+2);
             modelAndView.addObject("prev",page);
             modelAndView.addObject("last",totalPage);
+            modelAndView.addObject("columns",listColumns);
             modelAndView.addObject("filterExport","Original");
             modelAndView.addObject("directory","country");
             modelAndView.addObject("registers",conciliations.size());
@@ -132,14 +136,25 @@ public class ConciliationController {
     public ModelAndView showModifyConciliation(@PathVariable int id){
         ModelAndView modelAndView = new ModelAndView();
         Conciliation concil = conciliationService.findById(id);
+
         List<Country> allCountries = countryService.findAll();
         List<SourceSystem> allSFs = sourceSystemService.findAll();
         List<SourceSystem> allSFCCs = sourceSystemService.findAll();
         List<Currency> allDivisas = currencyService.findAll();
-        List<CampoRC> campos = concil.getRutaContable().getCampos();
         List<AccountingRoute> rutasContables = accountingRouteService.findAll();
+
+        //LISTAS QUE VAN A SER LLENADAS POR FRONT
+        List<CampoRC> campoCentro = concil.getRutaContable().getCampos();
+        List<CampoRC> campoCuenta = concil.getRutaContable().getCampos();
+        List<CampoRC> campoDivisa = concil.getRutaContable().getCampos();
+        List<CampoRC> campoSaldo = concil.getRutaContable().getCampos();
+        modelAndView.addObject("rutasContables", rutasContables);
+        modelAndView.addObject("camposCentro",campoCentro);
+        modelAndView.addObject("camposCuenta",campoCuenta);
+        modelAndView.addObject("camposDivisa",campoDivisa);
+        modelAndView.addObject("camposSaldo",campoSaldo);
+
         modelAndView.addObject("paises", allCountries);
-        modelAndView.addObject("campos", campos);
         modelAndView.addObject("sfs", allSFs);
         modelAndView.addObject("sfcs", allSFCCs);
         modelAndView.addObject("divisas", allDivisas);
@@ -199,7 +214,6 @@ public class ConciliationController {
     @GetMapping(value = "/parametric/validatePrincipal")
     @ResponseBody
     public List<String> validatePrincipal(@RequestParam("principalSelect") String principalSelect) {
-        System.out.println(principalSelect+"AYUDA");
         List<String> response = campoRConcilService.validatePrincipal(principalSelect);
         return response;
     }
@@ -275,45 +289,88 @@ public class ConciliationController {
 
     @PostMapping(value = "/parametric/modifyConcil")
     public ModelAndView modifyConcil(@ModelAttribute Conciliation concil,
-                                           @RequestParam(name = "selectedPeriodicidad") String periodicidad,
-                                           @RequestParam(name = "selectedPais") String pais,
-                                           @RequestParam(name = "selectedSF") String idsf,
-                                           @RequestParam(name = "selectedSFC") String idsfc,
-                                           @RequestParam(name = "selectedRutaContable") String rutaCont,
-                                           @RequestParam(name = "centroSelect") String centro,
-                                           @RequestParam(name = "divisaSelect") String divisa,
-                                           @RequestParam(name = "cuentaSelect") String cuenta,
-                                           @RequestParam(name = "saldoSelect") String saldo,
-                                           BindingResult bindingResult){
+                                     @RequestParam(name = "selectedPais") String pais,
+                                     @RequestParam(name = "selectedSF") String idsf,
+                                     @RequestParam(name = "selectedSFC") String idsfc,
+                                     @RequestParam(name = "selectedRutaContable") String rutaContId,
+                                     @RequestParam(name = "selectedCentro") String centro,
+                                     @RequestParam(name = "selectedCuenta") String divisa,
+                                     @RequestParam(name = "selectedDivisa") String cuenta,
+                                     @RequestParam(name = "selectedSaldo") String saldo,
+                                     BindingResult bindingResult){
+
         ModelAndView modelAndView = new ModelAndView("redirect:/parametric/conciliation/");
+        if(bindingResult.hasErrors()){
+            modelAndView.setViewName("parametric/createConciliation");
+        }else {
 
             concil.setNombre(concil.getDetalle());
-            concil.setPeriodicidad(periodicidad);
 
-        System.out.println(concil.getDetalle()+' '+concil.getPeriodicidad());
             Country paisSeleccionado = countryService.findCountryByName(pais);
             concil.setPais(paisSeleccionado);
-
             SourceSystem sistema = sourceSystemService.findById(Integer.valueOf(idsf));
             concil.setSf(sistema);
-
             SourceSystem sistemaContable = sourceSystemService.findById(Integer.valueOf(idsfc));
             concil.setSfc(sistemaContable);
-
-            AccountingRoute ruta = accountingRouteService.findByName(rutaCont);
+            AccountingRoute ruta = accountingRouteService.findById(Integer.valueOf(rutaContId));
             concil.setRutaContable(ruta);
 
-            concil.setCentro(centro);
-            concil.setCuenta(cuenta);
-            concil.setDivisa(divisa);
-            concil.setSaldo(saldo);
-
+            concil.setCentro((campoRCService.findById(Integer.valueOf(centro)).getNombre()));
+            concil.setCuenta((campoRCService.findById(Integer.valueOf(divisa)).getNombre()));
+            concil.setDivisa((campoRCService.findById(Integer.valueOf(cuenta)).getNombre()));
+            concil.setSaldo((campoRCService.findById(Integer.valueOf(saldo)).getNombre()));
             conciliationService.modificarConciliacion(concil);
+        }
 
+        modelAndView.addObject("resp", "Modify1");
+        modelAndView.addObject("data", concil.getNombre());
         return modelAndView;
     }
 
+    @GetMapping(value = "/parametric/searchConciliations")
+    @ResponseBody
+    public ModelAndView searchConciliations(@RequestParam Map<String, Object> params) {
+        ModelAndView modelAndView = new ModelAndView();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
+        int page=params.get("page")==null?0:(Integer.valueOf(params.get("page").toString())-1);
+        PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
+        List<Conciliation> list;
+        if(params==null) list=conciliationService.findAll();
+        else list=conciliationService.findByFilter(params.get("vId").toString(),params.get("vFilter").toString());
+        System.out.println(list.size());
+
+        int start = (int)pageRequest.getOffset();
+        int end = Math.min((start + pageRequest.getPageSize()), list.size());
+        Page<Conciliation> pageTypeEntity = new PageImpl<>(list.subList(start, end), pageRequest, list.size());
+
+        int totalPage=pageTypeEntity.getTotalPages();
+        if(totalPage>0){
+            List<Integer> pages = IntStream.rangeClosed(1, totalPage).boxed().collect(Collectors.toList());
+            modelAndView.addObject("pages",pages);
+        }
+        modelAndView.addObject("allConcils",pageTypeEntity.getContent());
+        modelAndView.addObject("current",page+1);
+        modelAndView.addObject("next",page+2);
+        modelAndView.addObject("prev",page);
+        modelAndView.addObject("vId",params.get("vId").toString());
+        modelAndView.addObject("last",totalPage);
+        modelAndView.addObject("vFilter",params.get("vFilter").toString());
+        modelAndView.addObject("columns",listColumns);
+        modelAndView.addObject("directory","searchConciliations");
+        modelAndView.addObject("registers",list.size());
+        User user = userService.findUserByUserName(auth.getName());
+        Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Conciliaciones");
+
+        modelAndView.addObject("userName",user.getPrimerNombre());
+        modelAndView.addObject("userEmail",user.getCorreo());
+        modelAndView.addObject("p_modificar", p_modificar);
+
+
+
+        modelAndView.setViewName("parametric/conciliation");
+        return modelAndView;
+    }
 
 
 }

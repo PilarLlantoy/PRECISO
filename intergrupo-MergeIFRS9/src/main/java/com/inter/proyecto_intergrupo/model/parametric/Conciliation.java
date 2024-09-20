@@ -38,9 +38,6 @@ public class Conciliation {
     @Column(name = "activo", columnDefinition = "BIT DEFAULT 1")
     private boolean activo = true;
 
-    @Column(name = "estado", columnDefinition = "BIT DEFAULT 1")
-    private boolean estado = true;
-
     @Column(name = "festivo")
     private boolean festivo;
 
