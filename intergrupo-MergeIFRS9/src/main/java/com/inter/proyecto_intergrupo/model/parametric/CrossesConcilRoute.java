@@ -1,8 +1,6 @@
 package com.inter.proyecto_intergrupo.model.parametric;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
 import javax.persistence.*;
 
 @Data
@@ -10,6 +8,8 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Getter
+@Setter
 @Table(name = "preciso_cruces_ruta_conciliacion")
 public class CrossesConcilRoute {
 

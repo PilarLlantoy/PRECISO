@@ -44,5 +44,10 @@ public class CrossesConcilRouteService {
        return campo;
     }
 
+    public void deleteById(int id){
+        crossesRepository.deleteById(id);
+    }
+
+
 
 }

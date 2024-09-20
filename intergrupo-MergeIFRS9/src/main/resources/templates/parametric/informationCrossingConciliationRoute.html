@@ -24,7 +24,7 @@
     </div>
     <div class="row px-4">
         <div class="text-left pr-3 col-md-12 my-3">
-            <form id="miFormulario" th:object="${validationRC}" th:action="@{/parametric/createValidacionRConcil}" method="POST">
+            <form id="miFormulario" th:object="${validationRC}" th:action="@{/parametric/createCrossingRConcil}" method="POST">
                 <div class="mb-3 p-3 row border rounded">
                     <div hidden class="col-md-2">
                         <div class="form-group mb-1">
@@ -105,26 +105,26 @@
                         <th>Campo Validación</th>
                         <th>Campo Fic. Validación</th>
                         <th>Campo Fic. Resultado</th>
-                        <th></th><th></th>
+                        <th></th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr th:each="val : ${allCruces}">
                         <td th:text="${val.id}"></td>
-                        <td th:text="${val.id}"></td>
-                        <td th:text="${val.id}"></td>
-                        <td th:text="${val.id}"></td>
-                        <td th:text="${val.id}"></td>
+                        <td th:text="${val.campoInvActualiza.nombre}"></td>
+                        <td th:text="${val.campoInvValid.nombre}"></td>
+                        <td th:text="${val.campoFicValid.nombre}"></td>
+                        <td th:text="${val.campoFicResul.nombre}"></td>
 
                         <td>
                             <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
                                     th:data-id="${val.id}"
+                                    th:data-fichero="${val.fichero?.detalle ?: ''}"
+                                    th:data-campoInvActualiza="${val.campoInvActualiza?.nombre ?: ''}"
+                                    th:data-campoInvValid="${val.campoInvValid?.nombre ?: ''}"
+                                    th:data-campoFicValid="${val.campoFicValid?.nombre ?: ''}"
+                                    th:data-campoFicResul="${val.campoFicResul?.nombre ?: ''}"
                                     onclick="cargarCampos(this)">Seleccionar</button>
-                        </td>
-                        <td>
-                            <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
-                                    th:data-id="${val.id}"
-                                    onclick="cargarCampos(this)">Eliminar</button>
                         </td>
                     </tr>
                     </tbody>
@@ -161,28 +161,66 @@
     </div>
 </div>
 </div>
+
 <script>
-    function cargarCampos(button) {
+    async function cargarCampos(button) {
+
         var id = button.getAttribute("data-id");
+        document.querySelector("input[name='id']").value = id;
+
+        // Asignación de otros campos antes de toggleFichero
+        var campoVal = button.getAttribute("data-fichero");
+        var selectCampoVal = document.querySelector("select[name='selectedFichero']");
+        setSelectValue(selectCampoVal, campoVal);
+
+        campoVal = button.getAttribute("data-campoInvActualiza");
+        selectCampoVal = document.querySelector("select[name='selectedCampoInvActualiza']");
+        setSelectValue(selectCampoVal, campoVal);
+
+        campoVal = button.getAttribute("data-campoInvValid");
+        selectCampoVal = document.querySelector("select[name='selectedcampoInvValid']");
+        setSelectValue(selectCampoVal, campoVal);
+
+        // Llamamos a toggleFichero y esperamos a que termine
+        await toggleFichero();
+
+        // Una vez que toggleFichero haya terminado, podemos continuar con el resto de las asignaciones
+        campoVal = button.getAttribute("data-campoFicValid");
+        selectCampoVal = document.querySelector("select[name='selectedCampoFicVald']");
+        setSelectValue(selectCampoVal, campoVal);
+
+        campoVal = button.getAttribute("data-campoFicResul");
+        selectCampoVal = document.querySelector("select[name='selectedCampoFicResl']");
+        setSelectValue(selectCampoVal, campoVal);
     }
 
-</script>
-<script>
-    function toggleFichero() {
-    const ficheroId = document.getElementById('selectedFichero').value;
-    const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
-    const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
-
-    if (ficheroId) {
-        fetch(`/parametric/obtenerCamposFichero/${ficheroId}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                [csrfHeader]: csrfToken
+    function setSelectValue(selectElement, value) {
+        var options = selectElement.options;
+        if (value != null && value.length > 0) {
+            for (var i = 0; i < options.length; i++) {
+                if (options[i].text.trim() === value.trim()) {
+                    selectElement.value = options[i].value;
+                    break;
+                }
             }
-        })
-        .then(response => response.json())
-        .then(data => {
+        }
+    }
+
+    async function toggleFichero() {
+        const ficheroId = document.getElementById('selectedFichero').value;
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+        if (ficheroId) {
+            const response = await fetch(`/parametric/obtenerCamposFichero/${ficheroId}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                }
+            });
+
+            const data = await response.json();
 
             const campoFicResl = document.getElementById('selectedCampoFicResl');
             const campoFicVald = document.getElementById('selectedCampoFicVald');
@@ -191,28 +229,58 @@
             campoFicVald.innerHTML = '<option disabled value="" selected hidden>Seleccione Campo</option>';
 
             data.forEach(campo => {
-                const option = document.createElement('option');
-                option.value = campo[0];
-                option.text = campo[1];
-                campoFicResl.appendChild(option);
+                const optionResl = document.createElement('option');
+                optionResl.value = campo[0];
+                optionResl.text = campo[1];
+                campoFicResl.appendChild(optionResl);
 
-                const option2 = option.cloneNode(true);
-                campoFicVald.appendChild(option2);
+                const optionVald = document.createElement('option');
+                optionVald.value = campo[0];
+                optionVald.text = campo[1];
+                campoFicVald.appendChild(optionVald);
             });
-        })
-        .catch(error => console.error('Error:', error));
+        }
     }
-}
 
 
    function Limpiar() {
        document.getElementById('miFormulario').reset();
-
+       const campoFicResl = document.getElementById('selectedCampoFicResl');
+       const campoFicVald = document.getElementById('selectedCampoFicVald');
+       campoFicResl.innerHTML = '';
+       campoFicVald.innerHTML = '';
+       campoFicResl.innerHTML = '<option disabled value="" selected hidden>Seleccione Campo</option>';
+       campoFicVald.innerHTML = '<option disabled value="" selected hidden>Seleccione Campo</option>';
    }
 
-   window.onload = function() {
+    function descartar() {
+        const id = document.getElementById('id').value;
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+        const crouteId = document.getElementById('crouteId').value;
 
-   };
+        if (id) {
+            fetch(`/parametric/deleteCrossingRConcil/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                }
+            }).then(response => {
+                if (response.ok) {
+                    // Verifica que la URL de redirección se construya correctamente
+                    window.location.href = `/parametric/informationCrossingConciliationRoute/${crouteId}`;
+                } else {
+                    // Manejo de errores
+                    console.error('Error al eliminar el registro:', response.statusText);
+                }
+            }).catch(error => {
+                // Manejo de errores
+                console.error('Error:', error);
+            });
+        }
+    }
+
 </script>
 </body>
 </html>
