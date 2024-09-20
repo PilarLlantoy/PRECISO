@@ -31,6 +31,10 @@ public class EventType {
     private boolean estado = true;
 
     @Builder.Default
+    @Column(name = "valida_cruce", columnDefinition = "BIT DEFAULT 0")
+    private boolean validaCruce = false;
+
+    @Builder.Default
     @Column(name = "activo_tipo_evento", columnDefinition = "BIT DEFAULT 1")
     private boolean activo = true;
 
