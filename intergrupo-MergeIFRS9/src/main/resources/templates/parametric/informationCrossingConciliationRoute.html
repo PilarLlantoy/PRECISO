@@ -64,7 +64,7 @@
                             <h6 class="font-weight-bold">Campo Fic. Vald.:</h6>
                             <select class="form-control" name="selectedCampoFicVald" id="selectedCampoFicVald" required>
                                 <option disabled value="" selected hidden>Seleccione Campo</option>
-                                <option th:each="campo : ${campoFicValid}" th:value="${campo.id}" th:text="${campo.nombre}"></option>
+                                <option th:each="campo : ${camposFicValid}" th:value="${campo.id}" th:text="${campo.nombre}"></option>
                             </select>
                         </div>
                     </div>
@@ -73,7 +73,7 @@
                             <h6 class="font-weight-bold">Campo Fic. Resl.:</h6>
                             <select class="form-control" name="selectedCampoFicResl" id="selectedCampoFicResl" required>
                                 <option disabled value="" selected hidden>Seleccione Campo</option>
-                                <option th:each="campo : ${campoFicResul}" th:value="${campo.id}" th:text="${campo.nombre}"></option>
+                                <option th:each="campo : ${camposFicResul}" th:value="${campo.id}" th:text="${campo.nombre}"></option>
                             </select>
                         </div>
                     </div>

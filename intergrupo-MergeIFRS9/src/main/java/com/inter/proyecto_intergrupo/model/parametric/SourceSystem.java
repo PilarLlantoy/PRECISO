@@ -42,11 +42,6 @@ public class SourceSystem {
     private boolean activo = true;
 
     @Builder.Default
-    @Column(name = "estado", columnDefinition = "BIT DEFAULT 1")
-    private boolean estado = true;
-
-
-    @Builder.Default
     @Column(name = "aplica_lunes", columnDefinition = "BIT DEFAULT 0")
     private boolean lunes = false;
 

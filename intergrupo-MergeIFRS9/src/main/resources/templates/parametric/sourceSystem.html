@@ -84,8 +84,8 @@
                                         th:onclick="|window.location.href='@{/parametric/closeDateSF/{id}(id=${sf.id})}'|">Fechas Cierre</button>
                             </td>
                             <td>
-                                <button th:disabled="${!p_modificar}" type="button" class="btn btn-danger" data-toggle="modal" data-target="#eliminarModal"
-                                        th:onclick="'seleccionar(\'' + ${sf.id} + '\')'">Eliminar</button>
+                                <button th:disabled="${!p_modificar || !sf.activo}" type="button" class="btn btn-danger" data-toggle="modal" data-target="#eliminarModal"
+                                        th:onclick="'seleccionar(\'' + ${sf.id} + '\')'">Inactivar</button>
                             </td>
                         </tr>
                         </tbody>
@@ -98,13 +98,13 @@
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Eliminar</h5>
+                            <h5 class="modal-title" id="exampleModalLabel">Inactivar</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
                         <div class="modal-body">
-                            ¿Estás seguro de eliminar el pais seleccionado?
+                            ¿Estás seguro de inactivar el pais seleccionado?
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

@@ -52,7 +52,7 @@ public class CountryController {
             int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
             PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
 
-            List<Country> countries = countryService.findAllActiveCountries();
+            List<Country> countries = countryService.findAll();
             int start = (int) pageRequest.getOffset();
             int end = Math.min((start + pageRequest.getPageSize()), countries.size());
             Page<Country> pageCountry = new PageImpl<>(countries.subList(start, end), pageRequest, countries.size());

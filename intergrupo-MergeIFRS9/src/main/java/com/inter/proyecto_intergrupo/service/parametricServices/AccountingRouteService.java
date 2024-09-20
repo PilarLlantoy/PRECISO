@@ -58,7 +58,7 @@ public class AccountingRouteService {
        return conciliacion;
     }
 
-   public void createTableTemporal(AccountingRoute data, List<CampoRC> columns) {
+    public void createTableTemporal(AccountingRoute data, List<CampoRC> columns) {
         Query queryDrop = entityManager.createNativeQuery("IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '"+(data.getNombreArchivo()+"_TEMPORAL")+"' AND TABLE_SCHEMA = 'dbo') BEGIN DROP TABLE "+(data.getNombreArchivo()+"_TEMPORAL") +" END;");
         queryDrop.executeUpdate();
 
@@ -237,6 +237,14 @@ public class AccountingRouteService {
                 break;
         }
         return list;
+    }
+
+
+    public List<Object[]> findRutasBySFC(int SFCid) {
+        Query query = entityManager.createNativeQuery(
+                "SELECT id_rc, nombre FROM preciso_rutas_contables WHERE id_sf = :SFCid");
+        query.setParameter("SFCid", SFCid);
+        return query.getResultList();
     }
 
 }

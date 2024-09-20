@@ -187,7 +187,15 @@ public class ConciliationRoutesController {
         List<Conciliation> conciliations = conciliationService.findAllActive();
         modelAndView.addObject("croute",croute);
         modelAndView.addObject("conciliations",conciliations);
-
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        try {
+            String selecthoraCargue = croute.getHoraCargue().format(formatter);
+            modelAndView.addObject("selecthoraCargue", selecthoraCargue);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
         modelAndView.setViewName("parametric/modifyConciliationRoute");
         return modelAndView;
     }
@@ -350,6 +358,8 @@ public class ConciliationRoutesController {
         //LISTAS QUE VAN A SER LLENADAS POR FRONT
         List<CampoRConcil> campoFicValid = null;
         List<CampoRConcil> campoFicResul = null;
+        modelAndView.addObject("camposFicValid",campoFicValid);
+        modelAndView.addObject("camposFicResul",campoFicResul);
 
         int totalPage=pageConciliation.getTotalPages();
         if(totalPage>0){

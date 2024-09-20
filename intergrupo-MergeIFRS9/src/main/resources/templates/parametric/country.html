@@ -54,8 +54,8 @@
                             <td th:text="${country.id}"></td>
                             <td th:text="${country.nombre}"></td>
                             <td th:text="${country.sigla}"></td>
-                            <td th:if="${country.activo == true}">Activo</td>
-                            <td th:if="${country.activo == false}">Inactivo</td>
+                            <td th:if="${country.estado == true}">Activo</td>
+                            <td th:if="${country.estado == false}">Inactivo</td>
                             <td>
                                 <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
                                         th:onclick="|window.location.href='@{/parametric/modifyCountry/{id}(id=${country.id})}'|">Editar</button>

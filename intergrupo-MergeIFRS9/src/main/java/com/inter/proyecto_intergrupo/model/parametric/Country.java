@@ -34,10 +34,6 @@ public class Country{
     @Column(name = "estado_pais", columnDefinition = "BIT DEFAULT 1")
     private boolean estado = true;
 
-    @Builder.Default
-    @Column(name = "activo_pais", columnDefinition = "BIT DEFAULT 1")
-    private boolean activo = true;
-
     @OneToMany(mappedBy = "pais", cascade = CascadeType.ALL)
     private List<YntpSociety> yntpSocietyList;
 

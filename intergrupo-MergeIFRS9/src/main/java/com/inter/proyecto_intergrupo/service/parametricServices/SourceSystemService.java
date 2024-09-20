@@ -39,7 +39,7 @@ public class SourceSystemService {
 
     public List <SourceSystem> findAll(){return sourceSystemRepository.findAllByOrderByNombreAsc();}
     public List<SourceSystem> findAllActive() {
-        return sourceSystemRepository.findByEstado(true);
+        return sourceSystemRepository.findByActivo(true);
     }
 
     public SourceSystem findSourceSystemById(int id){

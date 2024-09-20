@@ -104,20 +104,26 @@ public class ConciliationController {
         ModelAndView modelAndView = new ModelAndView();
         Conciliation concil = new Conciliation();
 
-        List<Country> allCountries = countryService.findAll();
-        List<SourceSystem> allSFs = sourceSystemService.findAll();
-        List<SourceSystem> allSFCCs = sourceSystemService.findAll();
-        List<Currency> allDivisas = currencyService.findAll();
-        List<AccountingRoute> rutasContables = accountingRouteService.findAll();
-
+        List<Country> allCountries = countryService.findAllActiveCountries();
+        List<SourceSystem> allSFs = sourceSystemService.findAllActive();
+        List<SourceSystem> allSFCCs = sourceSystemService.findAllActive();
         modelAndView.addObject("paises", allCountries);
         modelAndView.addObject("sfs", allSFs);
         modelAndView.addObject("sfcs", allSFCCs);
-        modelAndView.addObject("divisas", allDivisas);
-        modelAndView.addObject("rutasContables", rutasContables);
-
-
         modelAndView.addObject("concil",concil);
+
+        //LISTAS QUE VAN A SER LLENADAS POR FRONT
+        List<AccountingRoute> rutasContables = null;
+        List<CampoRC> campoCentro = null;
+        List<CampoRC> campoCuenta = null;
+        List<CampoRC> campoDivisa = null;
+        List<CampoRC> campoSaldo = null;
+        modelAndView.addObject("rutasContables", rutasContables);
+        modelAndView.addObject("camposCentro",campoCentro);
+        modelAndView.addObject("camposCuenta",campoCuenta);
+        modelAndView.addObject("camposDivisa",campoDivisa);
+        modelAndView.addObject("camposSaldo",campoSaldo);
+
         modelAndView.setViewName("/parametric/createConciliation");
         return modelAndView;
     }
@@ -145,41 +151,48 @@ public class ConciliationController {
 
     @PostMapping(value = "/parametric/createConcil")
     public ModelAndView createConciliation(@ModelAttribute Conciliation conciliacion,
-                                           @RequestParam(name = "selectedPeriodicidad") String periodicidad,
                                            @RequestParam(name = "selectedPais") String pais,
                                            @RequestParam(name = "selectedSF") String idsf,
                                            @RequestParam(name = "selectedSFC") String idsfc,
-                                           @RequestParam(name = "selectedRutaContable") String rutaCont,
-                                           @RequestParam(name = "centroSelect") String centro,
-                                           @RequestParam(name = "divisaSelect") String divisa,
-                                           @RequestParam(name = "cuentaSelect") String cuenta,
-                                           @RequestParam(name = "saldoSelect") String saldo,
+                                           @RequestParam(name = "selectedRutaContable") String rutaContId,
+                                           @RequestParam(name = "selectedCentro") String centro,
+                                           @RequestParam(name = "selectedCuenta") String divisa,
+                                           @RequestParam(name = "selectedDivisa") String cuenta,
+                                           @RequestParam(name = "selectedSaldo") String saldo,
                                            BindingResult bindingResult){
         ModelAndView modelAndView = new ModelAndView("redirect:/parametric/conciliation/");
 
         Conciliation concil = conciliationService.findById(conciliacion.getId());
-        if(concil!=null) System.out.println("ERROR");
-        else{
+        if(concil != null){
+            bindingResult
+                    .rejectValue("Conciliacion", "error.conciliacion",
+                            "Conciliacion ya se ha registrado");
+        }
+
+        if(bindingResult.hasErrors()){
+            modelAndView.setViewName("parametric/createConciliation");
+        }else{
             concil=conciliacion;
             concil.setNombre(concil.getDetalle());
-            concil.setPeriodicidad(periodicidad);
+
             Country paisSeleccionado = countryService.findCountryByName(pais);
             concil.setPais(paisSeleccionado);
             SourceSystem sistema = sourceSystemService.findById(Integer.valueOf(idsf));
             concil.setSf(sistema);
             SourceSystem sistemaContable = sourceSystemService.findById(Integer.valueOf(idsfc));
             concil.setSfc(sistemaContable);
-            AccountingRoute ruta = accountingRouteService.findByName(rutaCont);
+            AccountingRoute ruta = accountingRouteService.findById(Integer.valueOf(rutaContId));
             concil.setRutaContable(ruta);
 
-            concil.setCentro(centro);
-            concil.setCuenta(cuenta);
-            concil.setDivisa(divisa);
-            concil.setSaldo(saldo);
+            concil.setCentro((campoRCService.findById(Integer.valueOf(centro)).getNombre()));
+            concil.setCuenta((campoRCService.findById(Integer.valueOf(divisa)).getNombre()));
+            concil.setDivisa((campoRCService.findById(Integer.valueOf(cuenta)).getNombre()));
+            concil.setSaldo((campoRCService.findById(Integer.valueOf(saldo)).getNombre()));
             conciliationService.modificarConciliacion(concil);
         }
 
-
+        modelAndView.addObject("resp", "Add1");
+        modelAndView.addObject("data", conciliacion.getNombre());
         return modelAndView;
     }
 
@@ -248,8 +261,6 @@ public class ConciliationController {
 
     @PostMapping(value = "/parametric/deleteAccountConcil/{idConcil}/{idCuenta}")
     public ModelAndView deleteAccountConcil(@PathVariable int idConcil, @PathVariable int idCuenta){
-
-        System.out.println(idConcil+idCuenta+"RA");
         ModelAndView modelAndView = new ModelAndView("redirect:/parametric/accountsConciliation/"+idConcil);
         try {
             AccountConcil cuenta = accountConcilService.findById(idCuenta);

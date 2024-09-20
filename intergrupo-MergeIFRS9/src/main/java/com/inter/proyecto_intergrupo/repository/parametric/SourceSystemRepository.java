@@ -10,6 +10,6 @@ import java.util.List;
 public interface SourceSystemRepository extends JpaRepository<SourceSystem,Integer> {
     List<SourceSystem> findAllByOrderByNombreAsc();
     SourceSystem findAllById(int id);
-    List<SourceSystem> findByEstado(boolean estado);
+    List<SourceSystem> findByActivo(boolean estado);
     SourceSystem findAllByNombre(String id);
 }

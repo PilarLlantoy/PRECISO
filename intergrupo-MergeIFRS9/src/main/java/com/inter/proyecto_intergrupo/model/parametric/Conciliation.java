@@ -47,6 +47,23 @@ public class Conciliation {
     @ManyToOne
     @JoinColumn(name = "id_sfc", nullable = false)
     private SourceSystem sfc;
+    /*
+
+    @ManyToOne
+    @JoinColumn(name = "centro")
+    private CampoRC centro;
+
+    @ManyToOne
+    @JoinColumn(name = "cuenta")
+    private AccountingRoute cuenta;
+
+    @ManyToOne
+    @JoinColumn(name = "divisa")
+    private AccountingRoute divisa;
+
+    @ManyToOne
+    @JoinColumn(name = "saldo")
+    private AccountingRoute saldo;*/
 
     @Column(name = "centro")
     private String centro;

@@ -604,4 +604,11 @@ public class AccountingRoutesController {
         return modelAndView;
     }
 
+    @GetMapping("/parametric/obtenerRutasCont/{sfcID}")
+    @ResponseBody
+    public List<Object[]> obtenerRutasCont(@PathVariable("sfcID") Integer sfcID) {
+        List<Object[]> campos = accountingRouteService.findRutasBySFC(sfcID);
+        return campos;
+    }
+
 }
