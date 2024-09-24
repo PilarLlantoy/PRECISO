@@ -10,6 +10,6 @@ import java.util.List;
 public interface AccountingRouteRepository extends JpaRepository<AccountingRoute,Integer> {
     List<AccountingRoute> findAllByOrderByNombreAsc();
     AccountingRoute findAllById(int id);
-    List<AccountingRoute> findByEstado(boolean estado);
+    List<AccountingRoute> findByActivo(boolean activo);
     AccountingRoute findAllByNombre(String nombre);
 }

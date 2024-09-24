@@ -3,9 +3,7 @@ package com.inter.proyecto_intergrupo.controller.parametric;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.inter.proyecto_intergrupo.model.admin.User;
-import com.inter.proyecto_intergrupo.model.parametric.AccountingRoute;
-import com.inter.proyecto_intergrupo.model.parametric.CampoRC;
-import com.inter.proyecto_intergrupo.model.parametric.SourceSystem;
+import com.inter.proyecto_intergrupo.model.parametric.*;
 import com.inter.proyecto_intergrupo.service.adminServices.UserService;
 import com.inter.proyecto_intergrupo.service.parametricServices.AccountingRouteService;
 import com.inter.proyecto_intergrupo.service.parametricServices.SourceSystemService;
@@ -15,13 +13,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.persistence.PersistenceException;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -29,14 +33,11 @@ import java.util.stream.IntStream;
 
 @Controller
 public class AccountingLoadController {
-    private static final int PAGINATIONCOUNT=12;
+    private static final int PAGINATIONCOUNT=5;
     Logger logger = LogManager.getLogger(LogManager.ROOT_LOGGER_NAME);
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private AccountingRouteService conciliationService;
 
     @Autowired
     private AccountingRouteService accountingRouteService;
@@ -49,30 +50,42 @@ public class AccountingLoadController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Países");
-        if(userService.validateEndpoint(user.getId(),"Ver Países")) { //CAMBIAR A VER Conciliaciones
+        Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Cargue Contable");
+        if(userService.validateEndpoint(user.getId(),"Ver Cargue Contable")) {
 
             int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
             PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
-
-            List<AccountingRoute> aroutes = conciliationService.findAllActive();
+            List<AccountingRoute> listAroutes = accountingRouteService.findAllActive();
+            List<Object> aroutes = new ArrayList<>();
+            List<LogAccountingLoad> logAroutes = new ArrayList<>();
+            if(params.get("arhcont") != null && params.get("arhcont").toString() != null && params.get("period") != null && params.get("period").toString() != null)
+            {
+                System.out.println(params.get("arhcont").toString());
+                modelAndView.addObject("period",params.get("period").toString());
+                AccountingRoute ac = accountingRouteService.findById(Integer.parseInt(params.get("arhcont").toString()));
+                modelAndView.addObject("arhcont",ac);
+                logAroutes = accountingRouteService.findAllLog(ac,params.get("period").toString());
+            }
             int start = (int) pageRequest.getOffset();
-            int end = Math.min((start + pageRequest.getPageSize()), aroutes.size());
-            Page<AccountingRoute> pageAR= new PageImpl<>(aroutes.subList(start, end), pageRequest, aroutes.size());
+            int end = Math.min((start + pageRequest.getPageSize()), logAroutes.size());
+            Page<LogAccountingLoad> pageLog= new PageImpl<>(logAroutes.subList(start, end), pageRequest, logAroutes.size());
 
-            int totalPage=pageAR.getTotalPages();
+            int totalPage=pageLog.getTotalPages();
             if(totalPage>0){
                 List<Integer> pages = IntStream.rangeClosed(1, totalPage).boxed().collect(Collectors.toList());
                 modelAndView.addObject("pages",pages);
             }
-            modelAndView.addObject("allRCs",pageAR.getContent());
+
+            modelAndView.addObject("allLog",pageLog.getContent());
+            modelAndView.addObject("allRCs",aroutes);
             modelAndView.addObject("current",page+1);
             modelAndView.addObject("next",page+2);
             modelAndView.addObject("prev",page);
             modelAndView.addObject("last",totalPage);
             modelAndView.addObject("filterExport","Original");
-            modelAndView.addObject("directory","country");
-            modelAndView.addObject("registers",aroutes.size());
+            modelAndView.addObject("listRouteCont",listAroutes);
+            modelAndView.addObject("directory","accountingLoad");
+            modelAndView.addObject("registers",logAroutes.size());
             modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.addObject("p_modificar", p_modificar);
@@ -84,6 +97,29 @@ public class AccountingLoadController {
             modelAndView.setViewName("admin/errorMenu");
         }
         return modelAndView;
+    }
+
+    @GetMapping("/parametric/accountingLoad/leerArchivoS")
+    @ResponseBody
+    public ResponseEntity<String> leerArchivoServidor(@RequestParam int id, @RequestParam String fecha) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findUserByUserName(auth.getName());
+        AccountingRoute ac = accountingRouteService.findById(id);
+        try {
+            String rutaArchivoFormato = "D:\\archivo.fmt";
+            accountingRouteService.createTableTemporal(ac);
+            accountingRouteService.generarArchivoFormato(ac.getCampos(), rutaArchivoFormato);
+            accountingRouteService.bulkImport(ac,rutaArchivoFormato,fecha);
+            accountingRouteService.conditionData(ac);
+            accountingRouteService.validationData(ac);
+            accountingRouteService.loadLogCargue(user,ac,fecha,"Trasladar Servidor","Exitoso","");
+            return ResponseEntity.ok("Bulk1");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            accountingRouteService.loadLogCargue(user,ac,fecha,"Trasladar Servidor","Fallido","Verifique el fichero se encuetre en la ruta y la estructura de los campos este correcta.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk-1");
+        }
     }
 
 /*

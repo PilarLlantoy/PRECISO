@@ -71,7 +71,7 @@
                     <div class="col-md-4">
                         <div class="form-group mb-1">
                             <h6 class="font-weight-bold">Complemento Archivo:</h6>
-                            <input type="text" class="form-control"  th:field="*{complementoArchivo}"  required>
+                            <input type="text" class="form-control"  th:field="*{complementoArchivo}" >
                         </div>
                     </div>
                     <div class="col-md-4">
@@ -126,13 +126,13 @@
                             <h6 class="font-weight-bold">Formato Fecha:<i class="bi bi-caret-down"></i></h6>
                             <select class="form-control" name="selectedFormatoFecha" id="formatoFecha" required th:field="*{formatoFecha}">
                                 <option disabled value="" selected hidden>Seleccione formato</option>
-                                <option value="YYYYMMDD">AÑO MES DIA CORTA (YYYYMMDD)</option>
-                                <option value="YYMMDD">AÑO MES DIA RED (YYMMDD)</option>
-                                <option value="DDMMMMYYYY">DIA MES AÑO COM. (DDMMMMYYYY)</option>
-                                <option value="DDMMYYYY">DIA MES AÑO CORTA (DDMMYYYY)</option>
-                                <option value="DDMMYY">DIA MES AÑO RED. (DDMMYY)</option>
-                                <option value="DDMMMMYYYY">DIA MES AÑO SIMPLE (DDMMMMYYYY)</option>
-                                <option value="MMDDYY">MES DIA AÑO (MMDDYY)</option>
+                                <option value="yyyyMMdd">AÑO MES DIA CORTA (YYYYMMDD)</option>
+                                <option value="yyMMdd">AÑO MES DIA RED (YYMMDD)</option>
+                                <option value="ddMMyyyy">DIA MES AÑO CORTA (DDMMYYYY)</option>
+                                <option value="ddMMyy">DIA MES AÑO RED. (DDMMYY)</option>
+                                <option value="ddMMMMyyyy">DIA MES AÑO SIMPLE (DDMMMMYYYY)</option>
+                                <option value="ddMMMyyyy">DIA MES AÑO SIMPLE (DDMMMYYYY)</option>
+                                <option value="MMddyy">MES DIA AÑO (MMDDYY)</option>
                             </select>
                         </div>
                     </div>

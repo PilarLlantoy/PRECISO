@@ -1,12 +1,16 @@
 package com.inter.proyecto_intergrupo.service.parametricServices;
 
+import com.inter.proyecto_intergrupo.model.admin.Audit;
 import com.inter.proyecto_intergrupo.model.admin.User;
 import com.inter.proyecto_intergrupo.model.parametric.AccountingRoute;
 import com.inter.proyecto_intergrupo.model.parametric.CampoRC;
 import com.inter.proyecto_intergrupo.model.parametric.Country;
+import com.inter.proyecto_intergrupo.model.parametric.LogAccountingLoad;
 import com.inter.proyecto_intergrupo.repository.admin.AuditRepository;
 import com.inter.proyecto_intergrupo.repository.parametric.AccountingRouteRepository;
+import com.inter.proyecto_intergrupo.repository.parametric.LogAccountingLoadRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,12 +18,15 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 
 @Service
@@ -36,13 +43,17 @@ public class AccountingRouteService {
     private AuditRepository auditRepository;
 
     @Autowired
+    private LogAccountingLoadRepository logAccountingLoadRepository;
+
+    @Autowired
     public AccountingRouteService(AccountingRouteRepository accountingRouteRepository) {
         this.accountingRouteRepository = accountingRouteRepository;
     }
 
     public List <AccountingRoute> findAll(){return accountingRouteRepository.findAllByOrderByNombreAsc();}
+
     public List<AccountingRoute> findAllActive() {
-        return accountingRouteRepository.findByEstado(true);
+        return accountingRouteRepository.findByActivo(true);
     }
 
     public AccountingRoute findById(int id){
@@ -58,15 +69,29 @@ public class AccountingRouteService {
        return conciliacion;
     }
 
-    public void createTableTemporal(AccountingRoute data, List<CampoRC> columns) {
-        Query queryDrop = entityManager.createNativeQuery("IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '"+(data.getNombreArchivo()+"_TEMPORAL")+"' AND TABLE_SCHEMA = 'dbo') BEGIN DROP TABLE "+(data.getNombreArchivo()+"_TEMPORAL") +" END;");
+    public List<LogAccountingLoad> findAllLog(AccountingRoute ac, String fecha) {
+        LocalDate localDate = LocalDate.parse(fecha);
+        Date fechaDate = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        return logAccountingLoadRepository.findAllByIdRcAndFechaCargueOrderByIdDesc(ac,fechaDate);
+    }
+
+    public String ensureTrailingSlash(String path) {
+        if (!path.endsWith("\\")) {
+            path += "\\";
+        }
+        return path;
+    }
+
+   public void createTableTemporal(AccountingRoute data) {
+        String nombreTabla = "PRECISO_TEMP_CONTABLES";
+        Query queryDrop = entityManager.createNativeQuery("IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '"+(nombreTabla)+"' AND TABLE_SCHEMA = 'dbo') BEGIN DROP TABLE "+(nombreTabla) +" END;");
         queryDrop.executeUpdate();
 
         StringBuilder createTableQuery = new StringBuilder("CREATE TABLE ");
-        createTableQuery.append(data.getNombreArchivo()+"_TEMPORAL").append(" (");
+        createTableQuery.append(nombreTabla).append(" (");
 
-        for (int i = 0; i < columns.size(); i++) {
-            CampoRC column = columns.get(i);
+        for (int i = 0; i < data.getCampos().size(); i++) {
+            CampoRC column = data.getCampos().get(i);
             createTableQuery.append(column.getNombre())
                     .append(" ")
                     .append(column.getTipo());
@@ -75,7 +100,7 @@ public class AccountingRouteService {
                 createTableQuery.append("(").append(column.getLongitud()).append(")");
             }
 
-            if (i < columns.size() - 1) {
+            if (i < data.getCampos().size() - 1) {
                 createTableQuery.append(", ");
             }
         }
@@ -90,24 +115,43 @@ public class AccountingRouteService {
         }
     }
 
-    public String todayDateConvert(String formato) {
+    public String todayDateConvert(String formato,String fecha) {
         LocalDate today = LocalDate.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyy");
-
-        System.out.println("FORMATOOOO "+formato +" "+ today.format(formatter));
-        return today.format(formatter);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(formato);
+        if(fecha.isEmpty()) {
+            return today.format(formatter);
+        }
+        else
+        {
+            LocalDate fechaCast = LocalDate.parse(fecha);
+            return fechaCast.format(formatter);
+        }
     }
 
-    public void bulkImport(AccountingRoute data, String ruta){
-        String extension=".txt";
-        Query queryBulk = entityManager.createNativeQuery("BULK INSERT " + (data.getNombreArchivo() + "_TEMPORAL") +
-                " FROM '" + data.getRuta() + "\\" + data.getNombreArchivo() + todayDateConvert(data.getFormatoFecha()) +
+    public void bulkImport(AccountingRoute data, String ruta,String fecha) throws PersistenceException  {
+        String nombreTabla = "PRECISO_TEMP_CONTABLES";
+        String extension="";
+        String delimitador=data.getDelimitador();
+
+        if(data.getTipoArchivo().equals("XLS") || data.getTipoArchivo().equals("XLSX"))
+            delimitador=";";
+
+        String complement = "FIELDTERMINATOR = '"+delimitador+"', ROWTERMINATOR = '\\n', FIRSTROW = "+data.getFilasOmitidas();
+
+        if(data.getTipoArchivo().equals("XLS") || data.getTipoArchivo().equals("XLSX") || data.getTipoArchivo().equals("CSV") || data.getTipoArchivo().equals("TXT"))
+            extension="."+data.getTipoArchivo();
+        if(delimitador.equalsIgnoreCase(""))
+            complement="FORMATFILE = '" + ruta + "', ROWTERMINATOR = '\\r\\n', FIRSTROW = " + data.getFilasOmitidas();
+
+        Query queryBulk = entityManager.createNativeQuery("BULK INSERT " + (nombreTabla) +
+                " FROM '" + ensureTrailingSlash(data.getRuta()) + data.getNombreArchivo() + todayDateConvert(data.getFormatoFecha(),fecha) +
                 data.getComplementoArchivo() + extension +
-                "' WITH (FORMATFILE = '" + ruta + "', FIRSTROW = " + data.getFilasOmitidas() + ")");
+                "' WITH ("+complement+ ")");
         queryBulk.executeUpdate();
     }
 
     public void conditionData(AccountingRoute data){
+        String nombreTabla = "PRECISO_TEMP_CONTABLES";
         Query querySelect = entityManager.createNativeQuery("SELECT a.valor_condicion, a.id_campo, b.nombre FROM PRECISO.dbo.preciso_condiciones_rc a \n" +
                 "left join PRECISO.dbo.preciso_campos_rc b on a.id_rc = b.id_rc and a.id_campo=b.id_campo\n" +
                 "where a.id_rc = ? and a.estado=1 order by a.id_campo\n");
@@ -127,7 +171,7 @@ public class AccountingRouteService {
                 condicion=condicion+obj[2]+" = '"+obj[0].toString()+"'";
             }
 
-            Query deleteSelect = entityManager.createNativeQuery("DELETE FROM "+data.getNombreArchivo() + "_TEMPORAL WHERE NOT("+ condicion +"));");
+            Query deleteSelect = entityManager.createNativeQuery("DELETE FROM "+nombreTabla+" WHERE NOT("+ condicion +"));");
             deleteSelect.executeUpdate();
 
         }
@@ -135,6 +179,7 @@ public class AccountingRouteService {
     }
 
     public void validationData(AccountingRoute data){
+        String nombreTabla = "PRECISO_TEMP_CONTABLES";
         Query querySelect = entityManager.createNativeQuery("SELECT b.nombre as referencia, c.nombre as validacion, a.valor_validacion, a.valor_operacion, \n" +
                 "CASE a.operacion when 'Suma' then '+' when 'Resta' then '-' when 'Multiplica' then '*' when 'Divida' then '/' END as Operacion\n" +
                 "FROM PRECISO.dbo.preciso_validaciones_rc a \n" +
@@ -145,14 +190,14 @@ public class AccountingRouteService {
         List<Object[]> validacionLista = querySelect.getResultList();
         if(!validacionLista.isEmpty()){
             for(Object[] obj : validacionLista){
-                Query deleteSelect = entityManager.createNativeQuery("UPDATE "+data.getNombreArchivo() + "_TEMPORAL SET "+obj[0].toString()+" = "+obj[0].toString()+obj[4].toString()+obj[3].toString()+" WHERE "+obj[1].toString()+"='"+obj[2].toString()+"';");
+                Query deleteSelect = entityManager.createNativeQuery("UPDATE "+nombreTabla+" SET "+obj[0].toString()+" = "+obj[0].toString()+obj[4].toString()+obj[3].toString()+" WHERE "+obj[1].toString()+"='"+obj[2].toString()+"';");
                 deleteSelect.executeUpdate();
             }
         }
 
     }
 
-    public void generarArchivoFormato(List<CampoRC> campos, String rutaArchivoFormato) throws IOException {
+    public void generarArchivoFormato(List<CampoRC> campos, String rutaArchivoFormato) throws IOException, PersistenceException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(rutaArchivoFormato))) {
 
             // Escribir encabezado del archivo de formato
@@ -160,15 +205,15 @@ public class AccountingRouteService {
             writer.write(campos.size()+1 + "\n"); // Número de campos
 
             int fieldIndex = 1;
-            for (CampoRC campo : campos) {
+            for (int i = 0; i < campos.size();i++) {
                 // Cada línea sigue la estructura:
                 // <FieldID> SQLCHAR 0 <LongitudCampo> "" <IndexCampo> <NombreCampo> Latin1_General_CI_AS
                 String line = String.format(
                         "%d\tSQLCHAR\t0\t%d\t\"\"\t%d\t%s\tLatin1_General_CI_AS",
                         fieldIndex,
-                        Integer.parseInt(campo.getLongitud()),
+                        Integer.parseInt(campos.get(i).getLongitud()),
                         fieldIndex,
-                        campo.getNombre()
+                        campos.get(i).getNombre()
                 );
 
                 // Añadir salto de línea
@@ -245,6 +290,51 @@ public class AccountingRouteService {
                 "SELECT id_rc, nombre FROM preciso_rutas_contables WHERE id_sf = :SFCid");
         query.setParameter("SFCid", SFCid);
         return query.getResultList();
+    }
+
+    public List<Object> findTemporal(){
+        List<Object> listTemp = new ArrayList<>();
+        try {
+            Query querySelect = entityManager.createNativeQuery("SELECT * FROM PRECISO_TEMP_CONTABLES ");
+            listTemp = querySelect.getResultList();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        return listTemp;
+    }
+
+    public void loadLogCargue(User user,AccountingRoute ac, String fecha, String tipo, String estado, String mensaje)
+    {
+        LocalDate localDate = LocalDate.parse(fecha);
+        Date fechaDate = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        List<Object> listTemp =findTemporal();
+        Date today=new Date();
+        LogAccountingLoad insert = new LogAccountingLoad();
+        insert.setFechaCargue(fechaDate);
+        insert.setFechaPreciso(today);
+        insert.setCantidadRegistros((long) listTemp.size());
+        insert.setUsuario(user.getUsuario());
+        insert.setTipoProceso(tipo);
+        insert.setNovedad(mensaje);
+        insert.setEstadoProceso(estado);
+        insert.setUsuario(user.getUsuario());
+        insert.setIdRc(ac);
+        logAccountingLoadRepository.save(insert);
+    }
+
+    public void loadAudit(User user, String mensaje)
+    {
+        Date today=new Date();
+        Audit insert = new Audit();
+        insert.setAccion(mensaje);
+        insert.setCentro(user.getCentro());
+        insert.setComponente("Data Quality");
+        insert.setFecha(today);
+        insert.setInput("Reglas DQ");
+        insert.setNombre(user.getPrimerNombre());
+        insert.setUsuario(user.getUsuario());
+        auditRepository.save(insert);
     }
 
 }

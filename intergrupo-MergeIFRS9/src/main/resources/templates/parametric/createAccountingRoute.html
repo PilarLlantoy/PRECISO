@@ -84,7 +84,7 @@
                     <div class="col-md-4">
                         <div class="form-group mb-1">
                             <h6 class="font-weight-bold">Complemento Archivo:</h6>
-                            <input type="text" class="form-control"  th:field="*{complementoArchivo}"  required>
+                            <input type="text" class="form-control"  th:field="*{complementoArchivo}" >
                         </div>
                     </div>
                     <div class="col-md-4">
@@ -102,7 +102,6 @@
                                 <option th:value="XLSX">ARCHIVO EXCEL XLSX</option>
                                 <option th:value="CSV">ARCHIVO PLANO CSV</option>
                                 <option th:value="TXT">ARCHIVO PLANO TXT</option>
-                                <option th:value="TXT_SINDEL">ARCHIVO PLANO TXT SIN DEL.</option>
                             </select>
                         </div>
                     </div>
@@ -141,10 +140,9 @@
                                 <option disabled value="" selected hidden>Seleccione formato</option>
                                 <option th:value="YYYYMMDD">AÑO MES DIA CORTA (YYYYMMDD)</option>
                                 <option th:value="YYMMDD">AÑO MES DIA RED (YYMMDD)</option>
-                                <option th:value="DDMMMMYYYY">DIA MES AÑO COM. (DDMMMMYYYY)</option>
                                 <option th:value="DDMMYYYY">DIA MES AÑO CORTA (DDMMYYYY)</option>
                                 <option th:value="DDMMYY">DIA MES AÑO RED. (DDMMYY)</option>
-                                <option th:value="DDMMMMYYYY">DIA MES AÑO SIMPLE (DDMMMMYYYY)</option>
+                                <option th:value="DDMMMYYYY">DIA MES AÑO SIMPLE (DDMMMYYYY)</option>
                                 <option th:value="MMDDYY">MES DIA AÑO (MMDDYY)</option>
                             </select>
                         </div>

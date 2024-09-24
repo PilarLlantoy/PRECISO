@@ -88,7 +88,7 @@ public class ConciliationController {
             modelAndView.addObject("last",totalPage);
             modelAndView.addObject("columns",listColumns);
             modelAndView.addObject("filterExport","Original");
-            modelAndView.addObject("directory","country");
+            modelAndView.addObject("directory","conciliation");
             modelAndView.addObject("registers",conciliations.size());
             modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());

@@ -44,7 +44,7 @@ public class EventTypeController {
             int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
             PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
 
-            List<EventType> eventTypes = eventTypeService.findAllActive();
+            List<EventType> eventTypes = eventTypeService.findAll();
             int start = (int) pageRequest.getOffset();
             int end = Math.min((start + pageRequest.getPageSize()), eventTypes.size());
             Page<EventType> pageET = new PageImpl<>(eventTypes.subList(start, end), pageRequest, eventTypes.size());

@@ -59,8 +59,8 @@
                             <tr th:each="eventType : ${allEventType}">
                                 <td th:text="${eventType.id}"></td>
                                 <td th:text="${eventType.nombre}"></td>
-                                <td th:if="${eventType.activo == true}">Activo</td>
-                                <td th:if="${eventType.activo == false}">Inactivo</td>
+                                <td th:if="${eventType.estado == true}">Activo</td>
+                                <td th:if="${eventType.estado == false}">Inactivo</td>
                                 <td>
                                     <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
                                             th:onclick="|window.location.href='@{/parametric/modifyEventType/{id}(id=${eventType.id})}'|">Editar</button>

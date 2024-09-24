@@ -81,7 +81,7 @@ public class AccountingRoutesController {
             int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
             PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
 
-            List<AccountingRoute> aroutes = conciliationService.findAllActive();
+            List<AccountingRoute> aroutes = conciliationService.findAll();
             int start = (int) pageRequest.getOffset();
             int end = Math.min((start + pageRequest.getPageSize()), aroutes.size());
             Page<AccountingRoute> pageAR= new PageImpl<>(aroutes.subList(start, end), pageRequest, aroutes.size());
@@ -257,34 +257,6 @@ public class AccountingRoutesController {
 
         return new ResponseEntity<>(new InputStreamResource(bais), headers, HttpStatus.OK);
     }
-
-
-
-    @GetMapping("/leer-archivo")
-    @ResponseBody
-    public void leerArchivoTXT(@RequestParam String id) throws IOException {
-        AccountingRoute ac = accountingRouteService.findById(Integer.valueOf(id));
-        String filePath = ac.getRuta();
-        List<CampoRC> campos = ac.getCampos();
-        List<CondicionRC> condiciones = ac.getCondiciones();
-        List<ValidationRC> validaciones = ac.getValidaciones();
-        List<Map<String, String>> lineasMap = new ArrayList<>();
-        String rutaArchivoFormato = "D:\\archivo.fmt"; // Cambia esto a la ruta deseada
-
-        try {
-            accountingRouteService.createTableTemporal(ac, campos);
-            accountingRouteService.generarArchivoFormato(campos, rutaArchivoFormato);
-            System.out.println("Archivo de formato generado con éxito.");
-            accountingRouteService.bulkImport(ac,rutaArchivoFormato);
-            accountingRouteService.conditionData(ac);
-            accountingRouteService.validationData(ac);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return;
-    }
-
 
     public static void leerArchivoXLSX(String ruta) {
         String excelFilePath  = "D:\\DATOS_OPERACIONES.xlsx";
