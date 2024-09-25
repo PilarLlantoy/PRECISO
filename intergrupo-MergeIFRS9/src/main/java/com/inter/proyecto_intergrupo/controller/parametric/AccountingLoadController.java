@@ -159,7 +159,7 @@ public class AccountingLoadController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
         AccountingRoute ac = accountingRouteService.findById(Integer.parseInt(id));
-        String rutaArchivo = "D:\\PRECISO\\" + file.getOriginalFilename();
+        String rutaArchivo = "D:\\" + file.getOriginalFilename();
         try {
             File dest = new File(rutaArchivo);
             file.transferTo(dest);
