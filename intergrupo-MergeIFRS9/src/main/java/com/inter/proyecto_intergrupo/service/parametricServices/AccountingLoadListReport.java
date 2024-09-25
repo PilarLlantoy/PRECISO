@@ -83,6 +83,8 @@ public class AccountingLoadListReport {
                     createCell(row,columnCount++,part.toString(),style);
                 else
                     createCell(row,columnCount++,"",style);
+                if(columnCount == 1000000)
+                    break;
             }
         }
     }
