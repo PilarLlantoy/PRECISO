@@ -71,7 +71,7 @@ public class AccountingRoute {
     private Integer filasOmitidas;
 
     // Relación con CampoAC
-    @OneToMany(mappedBy = "rutaContable", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "rutaContable", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private List<CampoRC> campos;
 
     @OneToMany(mappedBy = "rutaContable", cascade = CascadeType.ALL)

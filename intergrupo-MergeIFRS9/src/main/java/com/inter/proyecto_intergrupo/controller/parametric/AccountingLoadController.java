@@ -10,6 +10,7 @@ import com.inter.proyecto_intergrupo.service.parametricServices.AccountingRouteS
 import com.inter.proyecto_intergrupo.service.parametricServices.SourceSystemService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -142,6 +143,7 @@ public class AccountingLoadController {
         AccountingRoute ac = accountingRouteService.findById(id);
         try {
             String rutaArchivoFormato = "D:\\archivo.fmt";
+            Hibernate.initialize(ac.getCampos());
             accountingRouteService.createTableTemporal(ac);
             accountingRouteService.generarArchivoFormato(ac.getCampos(), rutaArchivoFormato);
             accountingRouteService.bulkImport(ac,rutaArchivoFormato,fecha,null);
@@ -158,7 +160,8 @@ public class AccountingLoadController {
         }
     }
 
-    @Scheduled(cron = "0 0/30 * * * ?")
+    //@Scheduled(cron = "0 0/30 * * * ?")
+    @Scheduled(cron = "0 * * * * ?")
     public void jobLeerArchivos() {
         LocalDateTime fechaHoy = LocalDateTime.now();
         DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");

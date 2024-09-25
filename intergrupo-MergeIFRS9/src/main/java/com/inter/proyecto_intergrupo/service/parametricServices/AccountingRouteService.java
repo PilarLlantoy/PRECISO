@@ -169,7 +169,7 @@ public class AccountingRouteService {
             complement="FORMATFILE = '" + ruta + "', ROWTERMINATOR = '\\r\\n', FIRSTROW = " + data.getFilasOmitidas();
 
         String fichero=ensureTrailingSlash(data.getRuta()) + data.getNombreArchivo() + todayDateConvert(data.getFormatoFecha(),fecha) + data.getComplementoArchivo() + extension;
-        if(!fuente.isEmpty())
+        if(fuente !=null)
             fichero=fuente;
 
         Query queryBulk = entityManager.createNativeQuery("BULK INSERT " + (nombreTabla) +
