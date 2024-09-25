@@ -97,7 +97,7 @@ public class AccountingRouteService {
         String campos = data.getCampos().stream()
                 .map(CampoRC::getNombre)
                 .collect(Collectors.joining(","));
-        Query querySelect = entityManager.createNativeQuery("SELECT "+campos+" FROM preciso_rc_"+data.getId()+" WHERE periodo_preciso = '"+fecha+"' ");
+        Query querySelect = entityManager.createNativeQuery("SELECT "+campos+",periodo_preciso FROM preciso_rc_"+data.getId()+" WHERE periodo_preciso = '"+fecha+"' ");
         return querySelect.getResultList();
     }
 

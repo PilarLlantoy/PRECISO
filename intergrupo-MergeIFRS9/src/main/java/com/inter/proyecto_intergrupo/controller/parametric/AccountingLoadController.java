@@ -80,6 +80,9 @@ public class AccountingLoadController {
                 modelAndView.addObject("arhcont",ac);
                 logAroutes = accountingRouteService.findAllLog(ac,params.get("period").toString());
                 aroutes = accountingRouteService.findAllData(ac,params.get("period").toString());
+                CampoRC crc= new CampoRC();
+                crc.setNombre("periodo_preciso");
+                ac.getCampos().add(crc);
                 colAroutes = ac.getCampos();
             }
             int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
@@ -226,6 +229,9 @@ public class AccountingLoadController {
         response.setHeader(headerKey, headerValue);
         List<Object[]> aroutes = accountingRouteService.findAllData(ac,fecha);
         List<CampoRC> colAroutes = ac.getCampos();
+        CampoRC crc= new CampoRC();
+        crc.setNombre("periodo_preciso");
+        ac.getCampos().add(crc);
         AccountingLoadListReport listReport = new AccountingLoadListReport(aroutes,colAroutes,ac);
         listReport.export(response);
     }
