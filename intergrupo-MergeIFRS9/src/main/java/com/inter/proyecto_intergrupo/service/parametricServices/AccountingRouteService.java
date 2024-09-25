@@ -18,6 +18,8 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -59,6 +61,22 @@ public class AccountingRouteService {
 
     public AccountingRoute findById(int id){
         return accountingRouteRepository.findAllById(id);
+    }
+
+    public List<AccountingRoute> findByJob() {
+        LocalTime now = LocalTime.now(); // Hora actual
+        LocalTime thirtyMinutesBefore = now.minusMinutes(30); // Hora hace 30 minutos
+        LocalTime thirtyMinutesAfter = now.plusMinutes(30);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+
+        String timeBefore = thirtyMinutesBefore.format(formatter);
+        String timeAfter = thirtyMinutesAfter.format(formatter);
+
+        String sql = "SELECT * FROM preciso_rutas_contables WHERE activo = 1 AND hora_cargue BETWEEN '"+timeBefore+"' AND '"+timeAfter+"'";
+
+        Query querySelect = entityManager.createNativeQuery(sql, AccountingRoute.class);
+        return querySelect.getResultList();
     }
 
     public AccountingRoute findByName(String nombre){
@@ -335,11 +353,17 @@ public class AccountingRouteService {
         insert.setFechaCargue(fechaDate);
         insert.setFechaPreciso(today);
         insert.setCantidadRegistros((long) listTemp.size());
-        insert.setUsuario(user.getUsuario());
+        if(user!=null)
+            insert.setUsuario(user.getUsuario());
+        else
+            insert.setUsuario("Automático");
         insert.setTipoProceso(tipo);
         insert.setNovedad(mensaje);
         insert.setEstadoProceso(estado);
-        insert.setUsuario(user.getUsuario());
+        if(user!=null)
+            insert.setUsuario(user.getUsuario());
+        else
+            insert.setUsuario("Automático");
         insert.setIdRc(ac);
         logAccountingLoadRepository.save(insert);
     }

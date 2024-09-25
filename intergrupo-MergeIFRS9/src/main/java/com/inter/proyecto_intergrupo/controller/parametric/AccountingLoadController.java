@@ -16,6 +16,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -32,6 +34,9 @@ import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -40,6 +45,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Controller
+@EnableScheduling
 public class AccountingLoadController {
     private static final int PAGINATIONCOUNT=5;
     private static final int PAGINATIONCOUNTDATA=500;
@@ -149,6 +155,32 @@ public class AccountingLoadController {
             e.printStackTrace();
             accountingRouteService.loadLogCargue(user,ac,fecha,"Trasladar Servidor","Fallido","Verifique el fichero se encuetre en la ruta y la estructura de los campos este correcta en el tamaño de los campos.");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk-1");
+        }
+    }
+
+    @Scheduled(cron = "0 0 * * * ?")
+    public void jobLeerArchivos() {
+        LocalDateTime fechaHoy = LocalDateTime.now();
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String fecha = fechaHoy.format(formato);
+
+        List<AccountingRoute> list = accountingRouteService.findByJob();
+        for (AccountingRoute ac :list)
+        {
+            try {
+                String rutaArchivoFormato = "D:\\archivo.fmt";
+                accountingRouteService.createTableTemporal(ac);
+                accountingRouteService.generarArchivoFormato(ac.getCampos(), rutaArchivoFormato);
+                accountingRouteService.bulkImport(ac,rutaArchivoFormato,fecha,null);
+                accountingRouteService.conditionData(ac);
+                accountingRouteService.validationData(ac);
+                accountingRouteService.copyData(ac,fecha);
+                accountingRouteService.loadLogCargue(null,ac,fecha,"Automático","Exitoso","");
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+                accountingRouteService.loadLogCargue(null,ac,fecha,"Automático","Fallido","Verifique el fichero se encuetre en la ruta y la estructura de los campos este correcta en el tamaño de los campos.");
+            }
         }
     }
 
