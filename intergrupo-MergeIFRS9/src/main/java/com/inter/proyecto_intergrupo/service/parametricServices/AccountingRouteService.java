@@ -65,15 +65,14 @@ public class AccountingRouteService {
 
     public List<AccountingRoute> findByJob() {
         LocalTime now = LocalTime.now(); // Hora actual
-        LocalTime thirtyMinutesBefore = now.minusMinutes(30); // Hora hace 30 minutos
-        LocalTime thirtyMinutesAfter = now.plusMinutes(30);
+        LocalTime thirtyMinutesBefore = now.minusMinutes(29); // Hora hace 30 minutos
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
 
         String timeBefore = thirtyMinutesBefore.format(formatter);
-        String timeAfter = thirtyMinutesAfter.format(formatter);
+        String timeNow = now.format(formatter);
 
-        String sql = "SELECT * FROM preciso_rutas_contables WHERE activo = 1 AND hora_cargue BETWEEN '"+timeBefore+"' AND '"+timeAfter+"'";
+        String sql = "SELECT * FROM preciso_rutas_contables WHERE activo = 1 AND hora_cargue BETWEEN '"+timeBefore+"' AND '"+timeNow+"'";
 
         Query querySelect = entityManager.createNativeQuery(sql, AccountingRoute.class);
         return querySelect.getResultList();
