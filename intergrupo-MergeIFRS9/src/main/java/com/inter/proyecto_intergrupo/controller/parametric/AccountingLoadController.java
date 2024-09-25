@@ -170,12 +170,12 @@ public class AccountingLoadController {
             accountingRouteService.conditionData(ac);
             accountingRouteService.validationData(ac);
             accountingRouteService.copyData(ac,fecha);
-            accountingRouteService.loadLogCargue(user,ac,fecha,"Trasladar Servidor","Exitoso","");
+            accountingRouteService.loadLogCargue(user,ac,fecha,"Trasladar Local","Exitoso","");
             return ResponseEntity.ok("Bulk1");
         }
         catch (Exception e) {
             e.printStackTrace();
-            accountingRouteService.loadLogCargue(user,ac,fecha,"Trasladar Servidor","Fallido","Verifique el fichero se encuetre en la ruta y la estructura de los campos este correcta en el tamaño de los campos.");
+            accountingRouteService.loadLogCargue(user,ac,fecha,"Trasladar Local","Fallido","Verifique el fichero se encuetre en la ruta y la estructura de los campos este correcta en el tamaño de los campos.");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk-1");
         }
     }
