@@ -1,5 +1,6 @@
 package com.inter.proyecto_intergrupo.service.parametricServices;
 
+import com.inter.proyecto_intergrupo.model.parametric.AccountingRoute;
 import com.inter.proyecto_intergrupo.model.parametric.Campo;
 import com.inter.proyecto_intergrupo.model.parametric.CampoRC;
 import com.inter.proyecto_intergrupo.repository.admin.AuditRepository;
@@ -48,6 +49,32 @@ public class CampoRCService {
     public CampoRC modificar(CampoRC campo){
         campoRCRepository.save(campo);
        return campo;
+    }
+
+    public void recreateTable(AccountingRoute data){
+        StringBuilder createTableQuery = new StringBuilder("CREATE TABLE ");
+        createTableQuery.append("preciso_rc_"+data.getId()).append(" (");
+
+        for (int i = 0; i < data.getCampos().size(); i++) {
+            CampoRC column = data.getCampos().get(i);
+            createTableQuery.append(column.getNombre())
+                    .append(" ")
+                    .append(column.getTipo());
+
+            if (column.getTipo().equalsIgnoreCase("VARCHAR")) {
+                createTableQuery.append("(").append(column.getLongitud()).append(")");
+            }
+
+            if (i < data.getCampos().size() - 1) {
+                createTableQuery.append(", ");
+            }
+        }
+        if(!data.getCampos().isEmpty())
+            createTableQuery.append(",");
+        createTableQuery.append("periodo_preciso DATE ,id_preciso BIGINT IDENTITY(1,1) PRIMARY KEY);");
+
+        Query queryTable = entityManager.createNativeQuery("IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'preciso_rc_"+data.getId()+"' AND TABLE_SCHEMA = 'dbo') BEGIN DROP TABLE preciso_rc_"+data.getId()+"; END; \n "+createTableQuery.toString());
+        queryTable.executeUpdate();
     }
 
     public void deleteById(int id){

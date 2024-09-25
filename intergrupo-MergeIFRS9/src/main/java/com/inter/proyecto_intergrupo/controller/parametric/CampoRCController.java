@@ -105,10 +105,9 @@ public class CampoRCController {
         ModelAndView modelAndView = new ModelAndView("redirect:/parametric/fieldLoadingAccountingRoute/" + arouteId);
 
         AccountingRoute aroute = accountingRouteService.findById(Integer.parseInt(arouteId));
-        System.out.println(campoRC.getId()+ " IDDDD "+arouteId);
         campoRC.setRutaContable(aroute);
         campoRCService.modificar(campoRC);
-
+        campoRCService.recreateTable(aroute);
         return modelAndView;
 
     }
@@ -116,7 +115,9 @@ public class CampoRCController {
     @DeleteMapping("/parametric/deleteCampoRC/{id}")
     public ResponseEntity<?> deleteCampoRC(@PathVariable int id) {
         try {
+            AccountingRoute ac = campoRCService.findById(id).getRutaContable();
             campoRCService.deleteById(id);
+            campoRCService.recreateTable(ac);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             e.printStackTrace();

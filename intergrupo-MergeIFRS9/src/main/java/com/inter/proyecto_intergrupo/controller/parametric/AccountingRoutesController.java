@@ -318,39 +318,13 @@ public class AccountingRoutesController {
     }
 
     @PostMapping(value = "/parametric/createAccountingRoute")
-    public ModelAndView createAccountingRoute(
-            @ModelAttribute AccountingRoute aroute,
-            @RequestParam(defaultValue = "N" ,name = "selectedSF") String sistFuente,
-            @RequestParam(defaultValue = "N" ,name = "selectedTipoArchivo") String tipoArch,
-            @RequestParam(defaultValue = "N" ,name = "selectedFormatoFecha") String formFecha,
-            @RequestParam(defaultValue = "N" ,name = "selectedIdiomaFecha") String idiomFecha,
-            @RequestParam(defaultValue = "N" ,name = "selecthoraCargue") String horaCargue,
-
-            BindingResult bindingResult){
+    public ModelAndView createAccountingRoute(@ModelAttribute AccountingRoute aroute, @RequestParam Map<String, Object> params){
         ModelAndView modelAndView = new ModelAndView("redirect:/parametric/accountingRoutes");
-        AccountingRoute arouteExists = accountingRouteService.findById(aroute.getId());
-        if(arouteExists != null){
-            bindingResult
-                    .rejectValue("pais", "error.pais",
-                            "El pais ya se ha registrado");
-        }
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
-        try {
-            aroute.setHoraCargue(LocalTime.parse(horaCargue, formatter));;
-
-        } catch (Exception e) {
-            System.out.println("Error parsing time: " + e.getMessage());
-        }
-        if(bindingResult.hasErrors()){
-            modelAndView.setViewName("parametric/createAccountingRoute");
-        }else{
-            SourceSystem SF = sourceSystemService.findByNombre(sistFuente);
-            aroute.setSfrc(SF);
-            if(tipoArch!="N") aroute.setTipoArchivo(tipoArch);
-            if(formFecha!="N") aroute.setFormatoFecha(formFecha);
-            if(idiomFecha!="N") aroute.setIdiomaFecha(idiomFecha);
-            accountingRouteService.modificar(aroute);
-        }
+        aroute.setHoraCargue(LocalTime.now());
+        /*SourceSystem SF = sourceSystemService.findByNombre(sistFuente);
+        aroute.setSfrc(SF);*/
+        accountingRouteService.modificar(aroute);
         modelAndView.addObject("resp", "Add1");
         modelAndView.addObject("data", aroute.getNombre());
         return modelAndView;

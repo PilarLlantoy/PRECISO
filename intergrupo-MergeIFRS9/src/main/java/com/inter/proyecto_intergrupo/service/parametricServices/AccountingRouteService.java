@@ -23,6 +23,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -75,6 +76,14 @@ public class AccountingRouteService {
         return logAccountingLoadRepository.findAllByIdRcAndFechaCargueOrderByIdDesc(ac,fechaDate);
     }
 
+    public List<Object[]> findAllData(AccountingRoute data, String fecha) {
+        String campos = data.getCampos().stream()
+                .map(CampoRC::getNombre)
+                .collect(Collectors.joining(","));
+        Query querySelect = entityManager.createNativeQuery("SELECT "+campos+" FROM preciso_rc_"+data.getId()+" WHERE periodo_preciso = '"+fecha+"' ");
+        return querySelect.getResultList();
+    }
+
     public String ensureTrailingSlash(String path) {
         if (!path.endsWith("\\")) {
             path += "\\";
@@ -109,7 +118,6 @@ public class AccountingRouteService {
 
         try {
             entityManager.createNativeQuery(createTableQuery.toString()).executeUpdate();
-            System.out.println("Tabla creada exitosamente: " + data.getNombre());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -128,7 +136,7 @@ public class AccountingRouteService {
         }
     }
 
-    public void bulkImport(AccountingRoute data, String ruta,String fecha) throws PersistenceException  {
+    public void bulkImport(AccountingRoute data, String ruta,String fecha, String fuente) throws PersistenceException  {
         String nombreTabla = "PRECISO_TEMP_CONTABLES";
         String extension="";
         String delimitador=data.getDelimitador();
@@ -143,9 +151,12 @@ public class AccountingRouteService {
         if(delimitador.equalsIgnoreCase(""))
             complement="FORMATFILE = '" + ruta + "', ROWTERMINATOR = '\\r\\n', FIRSTROW = " + data.getFilasOmitidas();
 
+        String fichero=ensureTrailingSlash(data.getRuta()) + data.getNombreArchivo() + todayDateConvert(data.getFormatoFecha(),fecha) + data.getComplementoArchivo() + extension;
+        if(!fuente.isEmpty())
+            fichero=fuente;
+
         Query queryBulk = entityManager.createNativeQuery("BULK INSERT " + (nombreTabla) +
-                " FROM '" + ensureTrailingSlash(data.getRuta()) + data.getNombreArchivo() + todayDateConvert(data.getFormatoFecha(),fecha) +
-                data.getComplementoArchivo() + extension +
+                " FROM '" + fichero +
                 "' WITH ("+complement+ ")");
         queryBulk.executeUpdate();
     }
@@ -195,6 +206,16 @@ public class AccountingRouteService {
             }
         }
 
+    }
+
+    public void copyData(AccountingRoute data,String fecha){
+        String nombreTabla = "PRECISO_TEMP_CONTABLES";
+        String campos = data.getCampos().stream()
+                .map(CampoRC::getNombre)
+                .collect(Collectors.joining(","));
+        Query querySelect = entityManager.createNativeQuery("DELETE FROM preciso_rc_"+data.getId()+" WHERE periodo_preciso = '"+fecha+"' ; \n" +
+                "INSERT INTO preciso_rc_"+data.getId()+" ("+campos+",periodo_preciso"+") SELECT "+campos+",CAST('"+fecha+"' AS DATE) FROM "+nombreTabla);
+        querySelect.executeUpdate();
     }
 
     public void generarArchivoFormato(List<CampoRC> campos, String rutaArchivoFormato) throws IOException, PersistenceException {

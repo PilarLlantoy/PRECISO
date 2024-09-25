@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.inter.proyecto_intergrupo.model.admin.User;
 import com.inter.proyecto_intergrupo.model.parametric.*;
 import com.inter.proyecto_intergrupo.service.adminServices.UserService;
+import com.inter.proyecto_intergrupo.service.parametricServices.AccountingLoadListReport;
 import com.inter.proyecto_intergrupo.service.parametricServices.AccountingRouteService;
 import com.inter.proyecto_intergrupo.service.parametricServices.SourceSystemService;
 import org.apache.logging.log4j.LogManager;
@@ -21,11 +22,18 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.persistence.PersistenceException;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -34,6 +42,7 @@ import java.util.stream.IntStream;
 @Controller
 public class AccountingLoadController {
     private static final int PAGINATIONCOUNT=5;
+    private static final int PAGINATIONCOUNTDATA=500;
     Logger logger = LogManager.getLogger(LogManager.ROOT_LOGGER_NAME);
 
     @Autowired
@@ -53,19 +62,21 @@ public class AccountingLoadController {
         Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Cargue Contable");
         if(userService.validateEndpoint(user.getId(),"Ver Cargue Contable")) {
 
-            int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
-            PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
             List<AccountingRoute> listAroutes = accountingRouteService.findAllActive();
-            List<Object> aroutes = new ArrayList<>();
+            List<Object[]> aroutes = new ArrayList<>();
+            List<CampoRC> colAroutes = new ArrayList<>();
             List<LogAccountingLoad> logAroutes = new ArrayList<>();
             if(params.get("arhcont") != null && params.get("arhcont").toString() != null && params.get("period") != null && params.get("period").toString() != null)
             {
-                System.out.println(params.get("arhcont").toString());
                 modelAndView.addObject("period",params.get("period").toString());
                 AccountingRoute ac = accountingRouteService.findById(Integer.parseInt(params.get("arhcont").toString()));
                 modelAndView.addObject("arhcont",ac);
                 logAroutes = accountingRouteService.findAllLog(ac,params.get("period").toString());
+                aroutes = accountingRouteService.findAllData(ac,params.get("period").toString());
+                colAroutes = ac.getCampos();
             }
+            int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
+            PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
             int start = (int) pageRequest.getOffset();
             int end = Math.min((start + pageRequest.getPageSize()), logAroutes.size());
             Page<LogAccountingLoad> pageLog= new PageImpl<>(logAroutes.subList(start, end), pageRequest, logAroutes.size());
@@ -76,16 +87,34 @@ public class AccountingLoadController {
                 modelAndView.addObject("pages",pages);
             }
 
+            int pageData=params.get("pageData")!=null?(Integer.valueOf(params.get("pageData").toString())-1):0;
+            PageRequest pageRequestData=PageRequest.of(pageData,PAGINATIONCOUNTDATA);
+            int startData = (int) pageRequestData.getOffset();
+            int endData = Math.min((startData + pageRequestData.getPageSize()), aroutes.size());
+            Page<Object[]> pageLogData= new PageImpl<>(aroutes.subList(startData, endData), pageRequestData, aroutes.size());
+
+            int totalPageData=pageLogData.getTotalPages();
+            if(totalPageData>0){
+                List<Integer> pagesData = IntStream.rangeClosed(1, totalPageData).boxed().collect(Collectors.toList());
+                modelAndView.addObject("pagesData",pagesData);
+            }
+
             modelAndView.addObject("allLog",pageLog.getContent());
-            modelAndView.addObject("allRCs",aroutes);
+            modelAndView.addObject("allRCs",pageLogData.getContent());
+            modelAndView.addObject("allColRCs",colAroutes);
             modelAndView.addObject("current",page+1);
             modelAndView.addObject("next",page+2);
             modelAndView.addObject("prev",page);
             modelAndView.addObject("last",totalPage);
+            modelAndView.addObject("currentData",pageData+1);
+            modelAndView.addObject("nextData",pageData+2);
+            modelAndView.addObject("prevData",pageData);
+            modelAndView.addObject("lastData",totalPageData);
             modelAndView.addObject("filterExport","Original");
             modelAndView.addObject("listRouteCont",listAroutes);
             modelAndView.addObject("directory","accountingLoad");
             modelAndView.addObject("registers",logAroutes.size());
+            modelAndView.addObject("registersData",aroutes.size());
             modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.addObject("p_modificar", p_modificar);
@@ -109,17 +138,62 @@ public class AccountingLoadController {
             String rutaArchivoFormato = "D:\\archivo.fmt";
             accountingRouteService.createTableTemporal(ac);
             accountingRouteService.generarArchivoFormato(ac.getCampos(), rutaArchivoFormato);
-            accountingRouteService.bulkImport(ac,rutaArchivoFormato,fecha);
+            accountingRouteService.bulkImport(ac,rutaArchivoFormato,fecha,null);
             accountingRouteService.conditionData(ac);
             accountingRouteService.validationData(ac);
+            accountingRouteService.copyData(ac,fecha);
             accountingRouteService.loadLogCargue(user,ac,fecha,"Trasladar Servidor","Exitoso","");
             return ResponseEntity.ok("Bulk1");
         }
         catch (Exception e) {
             e.printStackTrace();
-            accountingRouteService.loadLogCargue(user,ac,fecha,"Trasladar Servidor","Fallido","Verifique el fichero se encuetre en la ruta y la estructura de los campos este correcta.");
+            accountingRouteService.loadLogCargue(user,ac,fecha,"Trasladar Servidor","Fallido","Verifique el fichero se encuetre en la ruta y la estructura de los campos este correcta en el tamaño de los campos.");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk-1");
         }
+    }
+
+    @PostMapping("/parametric/accountingLoad/leerArchivoL")
+    @ResponseBody
+    public ResponseEntity<String> leerArchivoLocal(@RequestParam String id, @RequestParam String fecha, @RequestParam("file") MultipartFile file) {
+        System.out.println("ENTRO");
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findUserByUserName(auth.getName());
+        AccountingRoute ac = accountingRouteService.findById(Integer.parseInt(id));
+        String rutaArchivo = "D:\\PRECISO\\" + file.getOriginalFilename();
+        try {
+            File dest = new File(rutaArchivo);
+            file.transferTo(dest);
+            String rutaArchivoFormato = "D:\\archivo.fmt";
+            accountingRouteService.createTableTemporal(ac);
+            accountingRouteService.generarArchivoFormato(ac.getCampos(), rutaArchivoFormato);
+            accountingRouteService.bulkImport(ac,rutaArchivoFormato,fecha,rutaArchivo);
+            accountingRouteService.conditionData(ac);
+            accountingRouteService.validationData(ac);
+            accountingRouteService.copyData(ac,fecha);
+            accountingRouteService.loadLogCargue(user,ac,fecha,"Trasladar Servidor","Exitoso","");
+            return ResponseEntity.ok("Bulk1");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            accountingRouteService.loadLogCargue(user,ac,fecha,"Trasladar Servidor","Fallido","Verifique el fichero se encuetre en la ruta y la estructura de los campos este correcta en el tamaño de los campos.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk-1");
+        }
+    }
+
+    @GetMapping(value = "/parametric/accountingLoad/download")
+    @ResponseBody
+    public void exportToExcel(HttpServletResponse response,@RequestParam(defaultValue = "0") String id, @RequestParam(defaultValue = "0") String fecha) throws IOException {
+        response.setContentType("application/octet-stream");
+        AccountingRoute ac = accountingRouteService.findById(Integer.parseInt(id));
+        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+        String currentDateTime = dateFormatter.format(new Date());
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename="+ac.getNombre().replace(" ","_") + currentDateTime + ".xlsx";
+        response.setHeader(headerKey, headerValue);
+        List<Object[]> aroutes = accountingRouteService.findAllData(ac,fecha);
+        List<CampoRC> colAroutes = ac.getCampos();
+        AccountingLoadListReport listReport = new AccountingLoadListReport(aroutes,colAroutes,ac);
+        listReport.export(response);
     }
 
 /*

@@ -1,3 +1,23 @@
+function dialogOpen()
+{
+    Swal.fire({
+        title: "Cargando...",
+        width: 600,
+        padding: "3em",
+        color: "#0b5ed7",
+        background: "#fff",
+        allowOutsideClick: false, // Evitar que se cierre al hacer clic fuera
+        showConfirmButton: false, // Ocultar el botón de confirmación
+        backdrop: `
+          rgba(0,0,0,0.3)
+          left top
+          no-repeat
+        `,
+        didOpen: () => {
+            Swal.showLoading(); // Mostrar animación de carga
+        }
+    });
+}
 function validateAlerts(operacion,data)
 {
     if(operacion=='Modify1')
@@ -27,10 +47,13 @@ function validateAlerts(operacion,data)
             icon: 'success',
             title: '¡Ejecución Exitosa!',
             text: 'El Traslado desde el servidor se realizo de forma correcta en el sistema.',
-            showConfirmButton: true
+            showConfirmButton: true,
+            allowOutsideClick: false
         }).then((result) => {
             if (result.isConfirmed) {
-                window.location.reload();
+                const period = document.getElementById('period').value;
+                const arhcont = document.getElementById('arhcont').value;
+                window.location.href = window.location.origin + window.location.pathname + `?period=${encodeURIComponent(period)}&arhcont=${encodeURIComponent(arhcont)}`
             }
         });
     }
@@ -41,10 +64,13 @@ function validateAlerts(operacion,data)
             icon: 'error',
             title: '¡Ejecución Fallida!',
             text: 'No se encontro el fichero para la fecha deleccionada en la ruta.',
-            showConfirmButton: true
+            showConfirmButton: true,
+            allowOutsideClick: false
         }).then((result) => {
             if (result.isConfirmed) {
-                window.location.reload();
+                const period = document.getElementById('period').value;
+                const arhcont = document.getElementById('arhcont').value;
+                window.location.href = window.location.origin + window.location.pathname + `?period=${encodeURIComponent(period)}&arhcont=${encodeURIComponent(arhcont)}`;
             }
         });
     }
