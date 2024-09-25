@@ -160,8 +160,7 @@ public class AccountingLoadController {
         }
     }
 
-    //@Scheduled(cron = "0 0/30 * * * ?")
-    @Scheduled(cron = "0 * * * * ?")
+    @Scheduled(cron = "0 0/30 * * * ?")
     public void jobLeerArchivos() {
         LocalDateTime fechaHoy = LocalDateTime.now();
         DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
