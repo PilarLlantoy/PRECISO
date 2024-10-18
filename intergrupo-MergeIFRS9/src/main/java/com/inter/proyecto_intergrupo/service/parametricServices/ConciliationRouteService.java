@@ -1,24 +1,29 @@
 package com.inter.proyecto_intergrupo.service.parametricServices;
 
+import com.inter.proyecto_intergrupo.model.admin.User;
 import com.inter.proyecto_intergrupo.model.parametric.*;
 import com.inter.proyecto_intergrupo.repository.admin.AuditRepository;
-import com.inter.proyecto_intergrupo.repository.parametric.CampoRepository;
 import com.inter.proyecto_intergrupo.repository.parametric.ConciliationRouteRepository;
+import com.inter.proyecto_intergrupo.repository.parametric.LogInventoryLoadRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -38,6 +43,10 @@ public class ConciliationRouteService {
         this.conciliationRouteRepository = conciliationRouteRepository;
     }
 
+    @Autowired
+    private LogInventoryLoadRepository logInventoryLoadRepository;
+
+
     public List<ConciliationRoute> findAllActive() {
         return conciliationRouteRepository.findByEstado(true);
     }
@@ -56,15 +65,16 @@ public class ConciliationRouteService {
     }
 
 
-    public void createTableTemporal(ConciliationRoute data, List<CampoRConcil> columns) {
-        Query queryDrop = entityManager.createNativeQuery("IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '"+(data.getNombreArchivo()+"_TEMPORAL")+"' AND TABLE_SCHEMA = 'dbo') BEGIN DROP TABLE "+(data.getNombreArchivo()+"_TEMPORAL") +" END;");
+    public void createTableTemporal(ConciliationRoute data) {
+        String nombreTabla = "PRECISO_TEMP_INVENTARIOS";
+        Query queryDrop = entityManager.createNativeQuery("IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '"+(nombreTabla)+"' AND TABLE_SCHEMA = 'dbo') BEGIN DROP TABLE "+(nombreTabla) +" END;");
         queryDrop.executeUpdate();
 
         StringBuilder createTableQuery = new StringBuilder("CREATE TABLE ");
-        createTableQuery.append(data.getNombreArchivo()+"_TEMPORAL").append(" (");
+        createTableQuery.append(nombreTabla).append(" (");
 
-        for (int i = 0; i < columns.size(); i++) {
-            CampoRConcil column = columns.get(i);
+        for (int i = 0; i < data.getCampos().size(); i++) {
+            CampoRConcil column = data.getCampos().get(i);
             createTableQuery.append(column.getNombre())
                     .append(" ")
                     .append(column.getTipo());
@@ -73,7 +83,7 @@ public class ConciliationRouteService {
                 createTableQuery.append("(").append(column.getLongitud()).append(")");
             }
 
-            if (i < columns.size() - 1) {
+            if (i < data.getCampos().size() - 1) {
                 createTableQuery.append(", ");
             }
         }
@@ -82,18 +92,9 @@ public class ConciliationRouteService {
 
         try {
             entityManager.createNativeQuery(createTableQuery.toString()).executeUpdate();
-            System.out.println("Tabla creada exitosamente: " + data.getNombreArchivo()+"TEMPORAL");
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public String todayDateConvert(String formato) {
-        LocalDate today = LocalDate.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyy");
-
-        System.out.println("FORMATOOOO "+formato +" "+ today.format(formatter));
-        return today.format(formatter);
     }
 
     public void generarArchivoFormato(List<CampoRConcil> campos, String rutaArchivoFormato) throws IOException {
@@ -136,11 +137,50 @@ public class ConciliationRouteService {
         }
     }
 
-    public void bulkImport(ConciliationRoute data, String ruta){
-        String extension=".txt";
-        Query queryBulk = entityManager.createNativeQuery("BULK INSERT " + (data.getNombreArchivo() + "_TEMPORAL") +
-                " FROM '" + data.getRuta() + "\\" + data.getNombreArchivo() + todayDateConvert(data.getFormatoFecha()) + extension +
-                "' WITH (FORMATFILE = '" + ruta + "', FIRSTROW = " + data.getFilasOmitidas() + ")");
+    public String ensureTrailingSlash(String path) {
+        if (!path.endsWith("\\")) {
+            path += "\\";
+        }
+        return path;
+    }
+
+    public String todayDateConvert(String formato,String fecha) {
+        LocalDate today = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(formato);
+        if(fecha.isEmpty()) {
+            return today.format(formatter);
+        }
+        else
+        {
+            LocalDate fechaCast = LocalDate.parse(fecha);
+            return fechaCast.format(formatter);
+        }
+    }
+
+    public void bulkImport(ConciliationRoute data, String ruta,String fecha, String fuente) throws PersistenceException {
+        String nombreTabla = "PRECISO_TEMP_INVENTARIOS";
+        String extension="";
+        String delimitador=data.getDelimitador();
+
+        if(data.getTipoArchivo().equals("XLS") || data.getTipoArchivo().equals("XLSX"))
+            delimitador=";";
+
+        String complement = "FIELDTERMINATOR = '"+delimitador+"', ROWTERMINATOR = '\\n', FIRSTROW = "+data.getFilasOmitidas();
+
+        if(data.getTipoArchivo().equals("XLS") || data.getTipoArchivo().equals("XLSX") || data.getTipoArchivo().equals("CSV") || data.getTipoArchivo().equals("TXT"))
+            extension="."+data.getTipoArchivo();
+        if(delimitador.equalsIgnoreCase(""))
+            complement="FORMATFILE = '" + ruta + "', ROWTERMINATOR = '\\r\\n', FIRSTROW = " + data.getFilasOmitidas();
+
+        String fichero=ensureTrailingSlash(data.getRuta()) + data.getNombreArchivo() + todayDateConvert(data.getFormatoFecha(),fecha)+ extension;
+        if(fuente !=null)
+            fichero=fuente;
+
+        System.out.println(fichero+" "+ extension);
+
+        Query queryBulk = entityManager.createNativeQuery("BULK INSERT " + (nombreTabla) +
+                " FROM '" + fichero +
+                "' WITH ("+complement+ ")");
         queryBulk.executeUpdate();
     }
 
@@ -160,6 +200,53 @@ public class ConciliationRouteService {
             }
         }
 
+    }
+
+    public void copyData(ConciliationRoute data,String fecha){
+        String nombreTabla = "PRECISO_TEMP_INVENTARIOS";
+        String campos = data.getCampos().stream()
+                .map(CampoRConcil::getNombre)
+                .collect(Collectors.joining(","));
+        Query querySelect = entityManager.createNativeQuery("DELETE FROM preciso_rconcil_"+data.getId()+" WHERE periodo_preciso = '"+fecha+"' ; \n" +
+                "INSERT INTO preciso_rconcil_"+data.getId()+" ("+campos+",periodo_preciso"+") SELECT "+campos+",CAST('"+fecha+"' AS DATE) FROM "+nombreTabla);
+        querySelect.executeUpdate();
+    }
+
+    public List<Object> findTemporal(){
+        List<Object> listTemp = new ArrayList<>();
+        try {
+            Query querySelect = entityManager.createNativeQuery("SELECT * FROM PRECISO_TEMP_INVENTARIOS ");
+            listTemp = querySelect.getResultList();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        return listTemp;
+    }
+
+    public void loadLogCargue(User user, ConciliationRoute ac, String fecha, String tipo, String estado, String mensaje)
+    {
+        LocalDate localDate = LocalDate.parse(fecha);
+        Date fechaDate = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        List<Object> listTemp =findTemporal();
+        Date today=new Date();
+        LogInventoryLoad insert = new LogInventoryLoad();
+        insert.setFechaCargue(fechaDate);
+        insert.setFechaPreciso(today);
+        insert.setCantidadRegistros((long) listTemp.size());
+        if(user!=null)
+            insert.setUsuario(user.getUsuario());
+        else
+            insert.setUsuario("Automático");
+        insert.setTipoProceso(tipo);
+        insert.setNovedad(mensaje);
+        insert.setEstadoProceso(estado);
+        if(user!=null)
+            insert.setUsuario(user.getUsuario());
+        else
+            insert.setUsuario("Automático");
+        insert.setIdCR(ac);
+        logInventoryLoadRepository.save(insert);
     }
 
     public List<ConciliationRoute> findByFilter(String value, String filter) {
@@ -188,6 +275,29 @@ public class ConciliationRouteService {
 
     public List <ConciliationRoute> findFicherosActivos(){
         return conciliationRouteRepository.findByEstadoAndFichero(true, true);
+    }
+
+    public List<Object[]> findRutasByConcil(int concilId) {
+        Query query = entityManager.createNativeQuery(
+                "SELECT id, detalle FROM preciso_rutas_conciliaciones WHERE id_conciliacion = :concilId");
+        query.setParameter("concilId", concilId);
+        return query.getResultList();
+    }
+
+    //PARA CARGUE DE INVENTARIOS
+
+    public List<LogInventoryLoad> findAllLog(ConciliationRoute cr, String fecha) {
+        LocalDate localDate = LocalDate.parse(fecha);
+        Date fechaDate = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        return logInventoryLoadRepository.findAllByIdCRAndFechaCargueOrderByIdDesc(cr,fechaDate);
+    }
+
+    public List<Object[]> findAllData(ConciliationRoute data, String fecha) {
+        String campos = data.getCampos().stream()
+                .map(CampoRConcil::getNombre)
+                .collect(Collectors.joining(","));
+        Query querySelect = entityManager.createNativeQuery("SELECT "+campos+",periodo_preciso FROM preciso_rconcil_"+data.getId()+" WHERE periodo_preciso = '"+fecha+"' ");
+        return querySelect.getResultList();
     }
 
 }

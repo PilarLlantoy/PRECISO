@@ -17,18 +17,31 @@ public class EventMatrix {
     @Column(name = "id")
     private int id; //Matriz
 
-    @Column(name = "conciliacion")
-    private String conciliacion;
+    @ManyToOne
+    @JoinColumn(name = "id_conciliacion", nullable = false)
+    private Conciliation conciliacion;
 
-    @Column(name = "inventario_conciliacion")
-    private String inventarioConciliacion;
+    @ManyToOne
+    @JoinColumn(name = "id_inventario_conciliacion", nullable = false)
+    private ConciliationRoute inventarioConciliacion;
 
     @ManyToOne
     @JoinColumn(name = "id_tipo_evento", nullable = false)
     private EventType tipoEvento;
 
-    @Column(name = "operacion")
-    private String operacion;
+
+    @ManyToOne
+    @JoinColumn(name = "id_campo_centro_contable", nullable = false)
+    private CampoRConcil campoCC;
+
+    @ManyToOne
+    @JoinColumn(name = "id_campo_operacion", nullable = false)
+    private CampoRConcil campoOperacion;
+
+
+    @Column(name = "centro_contable")
+    private String centroContable;
+
 
     @Column(name = "aplica_PYG", columnDefinition = "BIT DEFAULT 1")
     private boolean PYG = true;
@@ -36,17 +49,9 @@ public class EventMatrix {
     @Column(name = "maneja_centro_contable", columnDefinition = "BIT DEFAULT 1")
     private boolean manejaCC = true;
 
-    @Column(name = "campo_centro_contable")
-    private String campoCC;
-
-    @Column(name = "centro_contable")
-    private String centroContable;
 
     @Column(name = "hom_centros", columnDefinition = "BIT DEFAULT 1")
     private boolean homCntros = true;
-
-    @Column(name = "activo", columnDefinition = "BIT DEFAULT 1")
-    private boolean activo = true;
 
     @Column(name = "estado", columnDefinition = "BIT DEFAULT 1")
     private boolean estado = true;

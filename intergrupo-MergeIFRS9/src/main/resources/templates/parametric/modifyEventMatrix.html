@@ -15,11 +15,17 @@
     </div>
     <div id="content">
         <div class="row mt-4 p-4">
-            <form th:object="${eventMatrix}" th:action="@{/parametric/createEventMatrix}" method="POST">
+            <form th:object="${eventMatrix}" th:action="@{/parametric/modifyEventMatrix}" method="POST">
 
 
                 <h5 class="font-weight-bold">Opciones Registro</h5>
                 <div class="row p-2 mt-1 mb-2 border rounded">
+                    <div hidden class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">ID</h6>
+                            <input type="text" class="form-control" th:field="*{id}">
+                        </div>
+                    </div>
                     <div class="col-md-1">
                         <div class="form-group mb-1">
                             <h6 class="font-weight-bold">Activo</h6>
@@ -60,7 +66,7 @@
                             <select class="form-control" required name="selectedConcil" id="selectedConcil" onchange="toggleConciliacion()">
                                 <option disabled value="" selected hidden>Seleccione una Conciliación</option>
                                 <option th:each="concil : ${conciliaciones}" th:value="${concil.id}" th:text="${concil.nombre}"
-                                    th:selected="${eventMatrix.conciliacion != null and concil.nombre == eventMatrix.conciliacion}"></option>
+                                    th:selected="${eventMatrix.conciliacion != null and concil.id == eventMatrix.conciliacion.id}"></option>
                             </select>
                         </div>
                     </div>
@@ -69,8 +75,8 @@
                             <h6 class="font-weight-bold">Inventario Conciliación:<i class="bi bi-caret-down"></i></h6>
                             <select class="form-control" required name="selectedRutaConcil" id="selectedRutaConcil" onchange="toggleRuta()">
                                 <option disabled value="" selected hidden>Seleccione un archivo</option>
-                                <option th:each="ruta : ${rutascs}" th:value="${ruta.id}" th:text="${ruta.nombre}"
-                                    th:selected="${eventMatrix.inventarioConciliacion != null and ruta.id == eventMatrix.inventarioConciliacion.id}"></option>
+                                <option th:each="ruta : ${rutascs}" th:value="${ruta[0]}" th:text="${ruta[1]}"
+                                    th:selected="${eventMatrix.inventarioConciliacion != null and ruta[0] == eventMatrix.inventarioConciliacion.id}"></option>
                             </select>
                         </div>
                     </div>
@@ -89,8 +95,8 @@
                             <h6 class="font-weight-bold">Campo Operación:<i class="bi bi-caret-down"></i></h6>
                             <select class="form-control" required name="campoOperacion" id="campoOperacion">
                                 <option disabled value="" selected hidden>Seleccione Campo</option>
-                                <option th:each="campo : ${campos}" th:value="${campo.id}" th:text="${campo.nombre}"
-                                    th:selected="${eventMatrix.campoOperacion != null and campo.id == eventMatrix.campoOperacion.id}"></option>
+                                <option th:each="campo : ${campos}" th:value="${campo[0]}" th:text="${campo[1]}"
+                                    th:selected="${eventMatrix.campoOperacion != null and campo[0] == eventMatrix.campoOperacion.id}"></option>
                             </select>
                         </div>
                     </div>
@@ -99,8 +105,8 @@
                             <h6 class="font-weight-bold">Campo Centro Contable:<i class="bi bi-caret-down"></i></h6>
                             <select class="form-control" name="campocontable" id="campocontable">
                                 <option disabled value="" selected hidden>Seleccione Campo</option>
-                                <option th:each="campo : ${campos}" th:value="${campo.id}" th:text="${campo.nombre}"
-                                    th:selected="${eventMatrix.campoCC != null and campo.id == eventMatrix.campoCC.id}"></option>
+                                <option th:each="campo : ${campos}" th:value="${campo[0]}" th:text="${campo[1]}"
+                                    th:selected="${eventMatrix.campoCC != null and campo[0] == eventMatrix.campoCC.id}"></option>
                             </select>
                         </div>
                     </div>

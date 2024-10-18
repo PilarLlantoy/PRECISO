@@ -8,65 +8,74 @@
 <div th:replace="fragments/menuTemplate :: menuBody"></div>
 
 <div class="main-container">
-    <style>
-        body, .btn, .form-control {
-            font-size: 12px;
-        }
-
-        h2{
-            font-size: 18px;
-            font-weight: bold;
-        }
-
-        .big-checkbox {width: 1rem; height: 1rem; top:0.5rem}
-    </style>
     <div class="row m-0 bg-primary fixed-top myNav">
-        <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
-            <h3 class="fw-bold text-white mx-4 my-3">Conciliacion: -</h3>
-            <h3 class="fw-bold text-white mx-4 my-3">Inventario: -</h3>
-            <h3 class="fw-bold text-white mx-4 my-3">Matriz: -</h3>
-            <h3 class="fw-bold text-white mx-4 my-3">Tipo Evento: -</h3>
+        <div class="col-md-12 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
+            <h3 class="fw-bold text-white ml-4 my-3">Condiciones (</h3>
+            <div class="d-flex " style="align-items">
+                <h3 class=" fw-bold text-white  my-3">Conciliacion: <span th:text="${matriz.conciliacion.nombre}"></span></h3>
+                <h3 class=" fw-bold text-white  my-3">, Inventario: <span th:text="${matriz.inventarioConciliacion.detalle}"></span></h3>
+                <h3 class=" fw-bold text-white  my-3">, Matriz: <span th:text="${matriz.id}"></span></h3>
+                <h3 class=" fw-bold text-white  my-3">, Tipo Evento: <span th:text="${matriz.tipoEvento.nombre}"></span>)</h3>
+            </div>
         </div>
     </div>
-
-    <div class="row m-0 px-4 mt-5">
-        <div class="text-left pr-3 col-md-12 my-3">
-
-            <!--SECCION DE FILTROS-->
+    <div class="row mt-5 py-3 px-4">
+        <div class="text-left col-md-6">
             <h2>Cargue de filtros segun campos</h2>
-
-            <div class="mb-1 row">
-                <div class="col-md-2">
-                    <div class="form-group mb-1">
-                        <label>Campo</label>
-                        <select class="form-control" name="selectedET" id="selectedET" required>
-                            <option disabled value="" selected hidden>Seleccione un tipo campo</option>
-                        </select>
+        </div>
+        <div class="text-right col-md-6">
+            <a class="btn btn-primary mx-1" th:href="@{/parametric/eventMatrix}"><i class="fa-solid fa-left-long"></i> Regresar</a>
+            <button type="button" class="btn btn-primary mx-2" onclick="Limpiar()">Deseleccionar Item</button>
+        </div>
+    </div>
+    <div class="row px-4">
+        <div class="text-left col-md-12 mb-3">
+            <form id="miFormulario" th:object="${condicion}" th:action="@{/parametric/createCondicionEventMatrix}" method="POST">
+                <div class="mb-3 p-3 row border rounded">
+                    <div hidden class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">ID</h6>
+                            <input type="text" class="form-control" th:field="*{id}">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Campo</h6>
+                            <select class="form-control" name="selectedCampo" id="selectedCampo" required>
+                                <option hidden selected disabled value="">Seleccione Campo</option>
+                                <option th:each="campo : ${campos}" th:value="${campo.id}" th:text="${campo.nombre}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Condición:<i class="bi bi-caret-down"></i></h6>
+                            <select class="form-control" name="selectedOperacion" id="selectedOperacion" required>
+                                <option disabled value="" selected hidden>Seleccione operación</option>
+                                <option th:value="igual">Igual a</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Valor</h6>
+                            <input type="text" class="form-control" th:field="*{valorCondicion}">
+                        </div>
                     </div>
                 </div>
 
-                <div class="col-md-2">
-                    <div class="form-group mb-1">
-                        <label>Condicion</label>
-                        <select class="form-control" name="selectedConcil" id="selectedConcil" required>
-                            <option disabled value="" selected hidden>Seleccione una condición</option>
-                        </select>
+                <!-- Formulario oculto para pasar el objeto matriz -->
+                    <input type="hidden" id="matrizId" name="matrizId" th:value="${matriz.id}" />
+
+                <div class="row">
+                    <div class="d-grid gap-2 col-2">
+                        <button th:disabled="${!p_modificar}" type="button" class="btn btn-primary" onclick="descartar()">Eliminar</button>
+                    </div>
+                    <div class="d-grid gap-2 col-2">
+                        <button th:disabled="${!p_modificar}" type="submit" class="btn btn-primary">Agregar</button>
                     </div>
                 </div>
-
-                <div class="col-md-2">
-                    <div class="form-group mb-1">
-                        <label>Valor</label>
-                        <input type="text" class="form-control">
-                    </div>
-                </div>
-
-                <div class="col-md-4" style="display: flex; align-items: center;">
-                    <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1" th:onclick="|window.location.href='@{/parametric/createEventMatrix}'|">Descartar</button>
-                    <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1" th:onclick="|window.location.href='@{/parametric/createEventMatrix}'|">Agregar</button>
-                </div>
-            </div>
-
+            </form>
         </div>
         <div class="col-md-12 p-0">
             <div class="table-responsive rounded border-primary">
@@ -77,14 +86,14 @@
                         <th>Campo filtrado</th>
                         <th>Condición</th>
                         <th>Valor de condición</th>
-                        <th></th> <th></th>
+                        <th COLSPAN="2">Acciones</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr th:each="event : ${allEvents}">
-                        <td th:text="${event.conciliacion}"></td>
-                        <td th:text="${event.inventarioConciliacion}"></td>
-                        <td th:text="${event.id}"></td>
+                        <td th:text="${event.campo.nombre}"></td>
+                        <td th:text="${event.condicion}"></td>
+                        <td th:text="${event.valorCondicion}"></td>
                         <td>
                             <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
                                     th:onclick="|window.location.href='@{/parametric/cargueCampos/{id}(id=${event.id})}'|">Seleccionar</button>
@@ -123,14 +132,9 @@
                 <h5><span class="badge badge-pill text-light badge-info py-2 px-5">¡La Tabla se encuentra Filtrada!</span>
                 </h5>
             </div>
-            <!--
-            <div class="d-flex align-items-center justify-content-center">
-                <a th:href="@{/admin/users/download/?vFilter={vFilter}&vId={vId}(vFilter=${vFilter},vId=${vId})}" class="btn btn-primary">Exportar a Excel</a>
-            </div>
-            -->
         </div>
-
     </div>
+
 </div>
 </div>
 </body>

@@ -1,14 +1,15 @@
 package com.inter.proyecto_intergrupo.service.parametricServices;
 
 import com.inter.proyecto_intergrupo.model.parametric.AccountingRoute;
-import com.inter.proyecto_intergrupo.model.parametric.Campo;
 import com.inter.proyecto_intergrupo.model.parametric.CampoRC;
 import com.inter.proyecto_intergrupo.repository.admin.AuditRepository;
 import com.inter.proyecto_intergrupo.repository.parametric.CampoRCRepository;
-import com.inter.proyecto_intergrupo.repository.parametric.CampoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -96,6 +97,13 @@ public class CampoRCService {
                 "nv.id_sf=1 and nv.activo=1");
         //validate.setParameter(1,principal);
         return validate.getResultList();
+    }
+
+    public List<Object[]> findCamposByRutaCont(int idRCont) {
+        Query query = entityManager.createNativeQuery(
+                "SELECT id_campo, nombre FROM preciso_campos_rc WHERE id_rc = :idRCont");
+        query.setParameter("idRCont", idRCont);
+        return query.getResultList();
     }
 
 

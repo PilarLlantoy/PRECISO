@@ -307,7 +307,7 @@ public class ConciliationRoutesController {
         return modelAndView;
     }
 
-    @GetMapping("/leer-archivo-rconcil")
+    /*@GetMapping("/leer-archivo-rconcil")
     @ResponseBody
     public void leerArchivoTXT(@RequestParam String id) throws IOException {
         ConciliationRoute route = conciliationRouteService.findById(Integer.valueOf(id));
@@ -318,7 +318,7 @@ public class ConciliationRoutesController {
         String rutaArchivoFormato = "D:\\archivo.fmt"; // Cambia esto a la ruta deseada
 
         try {
-            conciliationRouteService.createTableTemporal(route, campos);
+            //conciliationRouteService.createTableTemporal(route, campos);
             conciliationRouteService.generarArchivoFormato(campos, rutaArchivoFormato);
             conciliationRouteService.bulkImport(route,rutaArchivoFormato);
             conciliationRouteService.validationData(route);
@@ -328,7 +328,7 @@ public class ConciliationRoutesController {
         }
 
         return;
-    }
+    }*/
 
     @GetMapping(value = "/parametric/informationCrossingConciliationRoute/{id}")
     public ModelAndView informationCrossingConciliationRoute(@PathVariable int id, @RequestParam Map<String, Object> params){
@@ -387,6 +387,14 @@ public class ConciliationRoutesController {
 
         modelAndView.setViewName("parametric/informationCrossingConciliationRoute");
         return modelAndView;
+    }
+
+    @GetMapping("/parametric/obtenerRutasConcilByConcil/{concilID}")
+    @ResponseBody
+    public List<Object[]> obtenerRutasConcilByConcil(@PathVariable("concilID") Integer concilID) {
+        List<Object[]> campos = conciliationRouteService.findRutasByConcil(concilID);
+        System.out.println(campos.size());
+        return campos;
     }
 
 }

@@ -125,4 +125,12 @@ public class CampoRCController {
         }
     }
 
+    @GetMapping("/parametric/obtenerCamposRC/{idRCont}")
+    @ResponseBody
+    public List<Object[]> obtenerCamposRC(@PathVariable("idRCont") Integer idRCont) {
+        List<Object[]> campos = campoRCService.findCamposByRutaCont(idRCont);
+        System.out.println(campos.size());
+        return campos;
+    }
+
 }

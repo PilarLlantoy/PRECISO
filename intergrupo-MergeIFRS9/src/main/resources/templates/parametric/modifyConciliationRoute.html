@@ -132,13 +132,13 @@
                             <h6 class="font-weight-bold">Formato Fecha:<i class="bi bi-caret-down"></i></h6>
                             <select class="form-control" name="selectedFormatoFecha" id="formatoFecha" th:field="*{formatoFecha}" required>
                                 <option disabled value="" selected hidden>Seleccione formato</option>
-                                <option th:value="YYYYMMDD">AÑO MES DIA CORTA (YYYYMMDD)</option>
-                                <option th:value="YYMMDD">AÑO MES DIA RED (YYMMDD)</option>
-                                <option th:value="DDMMMMYYYY">DIA MES AÑO COM. (DDMMMMYYYY)</option>
-                                <option th:value="DDMMYYYY">DIA MES AÑO CORTA (DDMMYYYY)</option>
-                                <option th:value="DDMMYY">DIA MES AÑO RED. (DDMMYY)</option>
-                                <option th:value="DDMMMMYYYY">DIA MES AÑO SIMPLE (DDMMMMYYYY)</option>
-                                <option th:value="MMDDYY">MES DIA AÑO (MMDDYY)</option>
+                                <option value="yyyyMMdd">AÑO MES DIA CORTA (YYYYMMDD)</option>
+                                <option value="yyMMdd">AÑO MES DIA RED (YYMMDD)</option>
+                                <option value="ddMMyyyy">DIA MES AÑO CORTA (DDMMYYYY)</option>
+                                <option value="ddMMyy">DIA MES AÑO RED. (DDMMYY)</option>
+                                <option value="ddMMMMyyyy">DIA MES AÑO SIMPLE (DDMMMMYYYY)</option>
+                                <option value="ddMMMyyyy">DIA MES AÑO SIMPLE (DDMMMYYYY)</option>
+                                <option value="MMddyy">MES DIA AÑO (MMDDYY)</option>
                             </select>
                         </div>
                     </div>

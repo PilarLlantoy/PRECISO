@@ -38,16 +38,20 @@ public class CampoRConcilController {
                                       @RequestParam(name = "crouteId") String crouteId,
                                       BindingResult bindingResult){
         ModelAndView modelAndView = new ModelAndView("redirect:/parametric/fieldLoadingConciliationRoute/" + crouteId);
+
         ConciliationRoute route = conciliationRouteService.findById(Integer.parseInt(crouteId));
         campoRC.setRutaConciliacion(route);
         campoRCService.modificar(campoRC);
+        campoRCService.recreateTable(route);
         return modelAndView;
     }
 
     @DeleteMapping("/parametric/deleteCampoRConcil/{id}")
     public ResponseEntity<?> deleteCampoRConcil(@PathVariable int id) {
         try {
+            ConciliationRoute cr = campoRCService.findById(id).getRutaConciliacion();
             campoRCService.deleteById(id);
+            campoRCService.recreateTable(cr);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             e.printStackTrace();

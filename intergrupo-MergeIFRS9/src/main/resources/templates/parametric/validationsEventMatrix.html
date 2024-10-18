@@ -8,120 +8,129 @@
 <div th:replace="fragments/menuTemplate :: menuBody"></div>
 
 <div class="main-container">
-    <style>
-        body, .btn, .form-control {
-            font-size: 12px;
-        }
-
-        h2{
-            font-size: 18px;
-            font-weight: bold;
-        }
-
-        .big-checkbox {width: 1rem; height: 1rem; top:0.5rem}
-    </style>
     <div class="row m-0 bg-primary fixed-top myNav">
-        <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
-            <h3 class="fw-bold text-white mx-4 my-3">Conciliacion: -</h3>
-            <h3 class="fw-bold text-white mx-4 my-3">Inventario: -</h3>
-            <h3 class="fw-bold text-white mx-4 my-3">Matriz: -</h3>
-            <h3 class="fw-bold text-white mx-4 my-3">Tipo Evento: -</h3>
+        <div class="col-md-12 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
+            <h3 class="fw-bold text-white ml-4 my-3">Validaciones (</h3>
+            <div class="d-flex " style="align-items">
+                <h3 class=" fw-bold text-white  my-3">Conciliacion: <span th:text="${matriz.conciliacion.nombre}"></span></h3>
+                <h3 class=" fw-bold text-white  my-3">, Inventario: <span th:text="${matriz.inventarioConciliacion.detalle}"></span></h3>
+                <h3 class=" fw-bold text-white  my-3">, Matriz: <span th:text="${matriz.id}"></span></h3>
+                <h3 class=" fw-bold text-white  my-3">, Tipo Evento: <span th:text="${matriz.tipoEvento.nombre}"></span>)</h3>
+            </div>
         </div>
     </div>
 
-    <div class="row m-0 px-4 mt-5">
-        <div class="text-left pr-3 col-md-12 my-3">
+    <div class="row mt-5 pt-3 pb-1 px-4">
+        <div class="text-left col-md-6">
+            <h2>Cargue de Validaciones a Campos</h2>
+        </div>
+        <div class="text-right col-md-6">
+            <a class="btn btn-primary mx-1" th:href="@{/parametric/eventMatrix}"><i class="fa-solid fa-left-long"></i> Regresar</a>
+            <button type="button" class="btn btn-primary mx-2" onclick="Limpiar()">Deseleccionar Item</button>
+        </div>
+    </div>
 
-            <!--SECCION DE FILTROS-->
-            <h2>Cargue de validaciones a campos</h2>
+    <div class="row px-4">
+        <div class="text-left col-md-12 mb-3">
 
-            <div class="mb-1 row">
-                <div class="col-md-2">
-                    <div class="form-group mb-1">
-                        <label>Campo Validación</label>
-                        <select class="form-control" name="selectedET" id="selectedET" required>
-                            <option disabled value="" selected hidden>Seleccione un tipo campo</option>
-                        </select>
-                    </div>
-                </div>
+            <form id="miFormulario" th:object="${validationME}" th:action="@{/parametric/createValidacionME}" method="POST">
+                <!-- Formulario oculto para pasar el objeto matriz-->
+                <input type="hidden" id="matrizId" name="matrizId" th:value="${matriz.id}" />
 
-                <div class="col-md-1">
-                    <p>=</p>
-                </div>
-
-                <div class="col-md-2">
-                    <div class="form-group mb-1">
-                        <input type="text" class="form-control">
-                    </div>
-                </div>
-
-                <div class="col-md-2">
-                    <div class="col-12"><p>Aplica Fórmula?:</p></div>
-                    <div class="form-group col-md-2">
-                        <div class="form-check form-check-inline">
-                            <input id="aFormulaInput" class="form-check-input" type="checkbox" name="aFormula" th:id="${aFormula}">
+                <div class="mb-3 p-3 row border rounded">
+                    <div hidden class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">ID</h6>
+                            <input type="text" class="form-control" th:field="*{id}">
                         </div>
                     </div>
-                </div>
-
-                <div class="col-md-2">
-                    <div class="form-group mb-1">
-                        <label>Afecta a</label>
-                        <select class="form-control" name="selectedCRC" id="selectedCRC" required>
-                            <option disabled value="" selected hidden>Seleccione</option>
-                        </select>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="mb-1 row">
-                <div class="col-md-2">
-                    <div class="form-group mb-1">
-                        <label>Campo</label>
-                        <select class="form-control" name="selectedCampo" id="selectedCampo" required>
-                            <option disabled value="" selected hidden>Seleccione campo</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="col-md-2">
-                    <div class="form-group mb-1">
-                        <label>Operación</label>
-                        <select class="form-control" name="selectedOperación" id="selectedOperación" required>
-                            <option disabled value="" selected hidden>Seleccione operación</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="col-md-2">
-                    <label>Valor operación</label>
-                    <div class="form-group mb-1">
-                        <input type="text" class="form-control">
-                    </div>
-                </div>
-
-                <div class="col-md-2">
-                    <div class="col-12"><p>Se adiciona campo afecta:</p></div>
-                    <div class="form-group col-md-2">
-                        <div class="form-check form-check-inline">
-                            <input id="cAfectaInput" class="form-check-input" type="checkbox" name="cAfecta" th:id="${cAfecta}">
+                    <div class="col-md-4" id="validacionContainer">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Campo Validación</h6>
+                            <div class="d-flex align-items-center">
+                                <select class="form-control" name="selectedCampoVal" id="selectedCampoVal">
+                                    <option disabled value="" selected hidden>Seleccione Campo</option>
+                                    <option th:each="campoVal : ${campos}" th:value="${campoVal[0]}" th:text="${campoVal[1]}"></option>
+                                </select>
+                                <p class="font-weight-bold mx-1 mb-0" style="line-height: 1.5;">=</p>
+                                <input type="text" class="form-control" th:field="*{valorValidacion}">
+                            </div>
                         </div>
                     </div>
+                    <div class="col-md-2">
+                        <div class="col-12"><h6 class="font-weight-bold">Aplica Fórmula?</h6></div>
+                        <div class="form-group col-md-2">
+                            <div class="form-check form-check-inline">
+                                <input id="formula1" name="formula" th:field="*{aplicaFormula}" th:id="${aplicaFormula}"
+                                       th:value="${formula}" type="checkbox" class="styled-checkbox" onchange="toggleFields()">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="col-12"><h6 class="font-weight-bold">Se adiciona Campo Afecta?</h6></div>
+                        <div class="form-group col-md-2">
+                            <div class="form-check form-check-inline">
+                                <input id="adCampoAf" name="adCampoAf" th:field="*{adCampoAfecta}" th:id="${adCampoAfecta}"
+                                       th:value="${adCampoAfecta}" type="checkbox" class="styled-checkbox" onchange="toggleFields()">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Afecta a:</h6>
+                            <select class="form-control" required th:name="selectedCampoAf" id="selectedCampoAf">
+                                <option disabled selected value="">Seleccione un campo</option>
+                                <option th:each="campo : ${campos}" th:value="${campo[0]}" th:text="${campo[1]}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2"></div>
+
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Campo:<i class="bi bi-caret-down"></i></h6>
+                            <select class="form-control" required th:name="selectedCampo" id="selectedCampo">
+                                <option disabled  selected value="">Seleccione un campo</option>
+                                <option th:each="campo : ${campos}" th:value="${campo[0]}" th:text="${campo[1]}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Operacion:<i class="bi bi-caret-down"></i></h6>
+                            <select class="form-control" name="selectedOperacion" id="selectedOperacion">
+                                <option disabled value="" selected >Seleccione operación</option>
+                                <option th:value="Suma">Suma</option>
+                                <option th:value="Resta">Resta</option>
+                                <option th:value="Multiplica">Multiplica</option>
+                                <option th:value="Divida">Divida</option>
+                            </select>
+
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Valor Operación</h6>
+                            <input type="text" class="form-control"  th:field="*{valorOperacion}"  required>
+                        </div>
+                    </div>
+
                 </div>
 
-            </div>
+                <div class="row">
+                    <div class="d-grid gap-2 col-2">
+                        <button th:disabled="${!p_modificar}" type="button" class="btn btn-primary" onclick="descartar()">Eliminar</button>
+                    </div>
+                    <div class="d-grid gap-2 col-2">
+                        <button th:disabled="${!p_modificar}" type="submit" class="btn btn-primary">Agregar</button>
+                    </div>
+                </div>
 
-
-            <div class="col-md-4" style="display: flex; align-items: center;">
-                <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1" th:onclick="|window.location.href='@{/parametric/createEventMatrix}'|">Descartar</button>
-                <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1" th:onclick="|window.location.href='@{/parametric/createEventMatrix}'|">Agregar</button>
-            </div>
-
+            </form>
         </div>
         <div class="col-md-12 p-0">
             <div class="table-responsive rounded border-primary">
-                <h2>Filtros registrados</h2>
+                <h2>Validaciones registrados</h2>
                 <table id="example" class="table table-striped table-hover text-center table-bordered table-sm" width="100%">
                     <thead class="bg-primary">
                     <tr>
@@ -130,23 +139,28 @@
                         <th>Valor validación</th>
                         <th>Operación</th>
                         <th>Valor operación</th>
-                        <th></th> <th></th>
+                        <th></th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="event : ${allEvents}">
-                        <td th:text="${event.conciliacion}"></td>
-                        <td th:text="${event.inventarioConciliacion}"></td>
-                        <td th:text="${event.conciliacion}"></td>
-                        <td th:text="${event.inventarioConciliacion}"></td>
-                        <td th:text="${event.id}"></td>
+                    <tr th:each="val : ${validaciones}">
+                        <td th:text="${val.campoAfecta.nombre}"></td>
+                        <td th:text="${val.campoVal.nombre}"></td>
+                        <td th:text="${val.valorValidacion}"></td>
+                        <td th:text="${val.operacion}"></td>
+                        <td th:text="${val.valorOperacion}"></td>
                         <td>
                             <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
-                                    th:onclick="|window.location.href='@{/parametric/cargueCampos/{id}(id=${event.id})}'|">Seleccionar</button>
-                        </td>
-                        <td>
-                            <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
-                                    th:onclick="|window.location.href='@{/parametric/modifyAccountingRoute/{id}(id=${event.id})}'|">Borrar</button>
+                                    th:data-id="${val.id}"
+                                    th:data-campoAfecta="${val.campoAfecta.nombre}"
+                                    th:data-campoVal="${val.campoVal?.nombre ?: ''}"
+                                    th:data-campoRef="${val.campoRef?.nombre ?: ''}"
+                                    th:data-operacion="${val.operacion}"
+                                    th:data-valorOperacion="${val.valorOperacion}"
+                                    th:data-valorValidacion="${val.valorValidacion}"
+                                    th:data-aplicaFormula="${val.aplicaFormula}"
+                                    th:data-adCampoAfecta="${val.adCampoAfecta}"
+                                    onclick="cargarCampos(this)">Seleccionar</button>
                         </td>
                     </tr>
                     </tbody>
@@ -188,5 +202,127 @@
     </div>
 </div>
 </div>
+
+<script>
+    function cargarCampos(button) {
+
+        var id = button.getAttribute("data-id");
+        var valorOperacion = button.getAttribute("data-valorOperacion");
+        var valorValidacion = button.getAttribute("data-valorValidacion");
+
+        var campoAfecta = button.getAttribute("data-campoAfecta");
+        var campoRef = button.getAttribute("data-campoRef");
+        var campoVal = button.getAttribute("data-campoVal");
+        var operacion = button.getAttribute("data-operacion");
+
+        var aplicaFormula = button.getAttribute("data-aplicaFormula") === 'true';
+        var adCampoAfecta = button.getAttribute("data-adCampoAfecta") === 'true';
+
+        // Asignar los valores a los campos del formulario
+        document.querySelector("input[name='id']").value = id;
+        document.querySelector("input[name='valorOperacion']").value = valorOperacion;
+        document.querySelector("input[name='valorValidacion']").value = valorValidacion;
+
+        document.querySelector("input[name='aplicaFormula']").checked = aplicaFormula;
+        document.querySelector("input[name='adCampoAfecta']").checked = adCampoAfecta;
+
+        var selectCampoVal = document.querySelector("select[name='selectedCampoVal']");
+        var optionsVal = selectCampoVal.options;
+        if (campoVal != null && campoVal.trim().length > 0) {
+            for (var i = 0; i < optionsVal.length; i++) {
+                if (optionsVal[i].text.trim() === campoVal.trim()) {
+                    selectCampoVal.value = optionsVal[i].value; // Establece el valor de la opción encontrada
+                    break;
+                }
+            }
+        }
+
+        var selectCampoAf = document.querySelector("select[name='selectedCampoAf']");
+        var optionsCampoAf = selectCampoAf.options;
+        if (campoAfecta != null && campoAfecta.trim().length > 0) {
+            for (var i = 0; i < optionsCampoAf.length; i++) {
+                if (optionsCampoAf[i].text.trim() === campoAfecta.trim()) {
+                    selectCampoAf.value = optionsCampoAf[i].value; // Establece el valor de la opción encontrada
+                    break;
+                }
+            }
+        }
+
+        var selectCampo = document.querySelector("select[name='selectedCampo']");
+        var optionsCampo = selectCampo.options;
+        if (campoRef != null && campoRef.trim().length > 0) {
+            for (var i = 0; i < optionsCampo.length; i++) {
+                if (optionsCampo[i].text.trim() === campoRef.trim()) {
+                    selectCampo.value = optionsCampo[i].value; // Establece el valor de la opción encontrada
+                    break;
+                }
+            }
+        }
+
+        var selectOperacion = document.querySelector("select[name='selectedOperacion']");
+        var optionsOperacion = selectOperacion.options;
+        if (campoRef != null && campoRef.trim().length > 0) {
+            for (var i = 0; i < optionsOperacion.length; i++) {
+                if (optionsOperacion[i].text.trim() === operacion.trim()) {
+                    selectOperacion.value = optionsOperacion[i].value; // Establece el valor de la opción encontrada
+                    break;
+                }
+            }
+        }
+
+
+        //toggleFields();
+
+    }
+
+    function descartar() {
+        const id = document.querySelector("input[name='id']").value;
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+        const matrizId = document.getElementById('matrizId').value;
+
+        if (id) {
+            fetch(`/parametric/deleteValidationME/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                }
+            }).then(response => {
+                if (response.ok) {
+                    window.location.href = `/parametric/validationsEventMatrix/${matrizId}`;
+                }
+            }).catch(error => {
+                // Manejo de errores
+                console.error('Error:', error);
+            });
+        }
+    }
+
+    function toggleFields() {
+        var formulaCheckbox = document.getElementById('formula1');
+        var validacionContainer = document.getElementById('validacionContainer');
+        var valorValidacion = document.getElementById('valorValidacion');
+        var selectedCampoVal = document.getElementById('selectedCampoVal');
+
+        if (formulaCheckbox.checked) {
+            validacionContainer.classList.remove('hidden');
+        } else {
+            validacionContainer.classList.add('hidden');
+            valorValidacion.value = '';
+            selectedCampoVal.selectedIndex = 0;
+        }
+    }
+
+    function Limpiar() {
+        document.getElementById('miFormulario').reset();
+        //toggleFields();
+    }
+
+    window.onload = function() {
+        //toggleFields();
+    };
+
+</script>
 </body>
 </html>

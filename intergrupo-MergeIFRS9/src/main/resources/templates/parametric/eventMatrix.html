@@ -24,6 +24,7 @@
         <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
             <h3 class="fw-bold text-white mx-4 my-3">Módulo de Matriz de Eventos</h3>
         </div>
+        <!--
         <div class="col-md-6 d-flex align-items-center justify-content-end pe-5">
             <form class="form-inline" method="get" th:action="@{/parametric/searchConciliation}">
                 <div class="input-group">
@@ -41,6 +42,7 @@
                 </div>
             </form>
         </div>
+        -->
     </div>
     <div class="row m-0 px-4 mt-5">
         <div class="text-left pr-3 col-md-12 my-3">
@@ -48,63 +50,63 @@
             <!--SECCION DE FILTROS-->
             <h2>Registros Cargados</h2>
 
-            <div class="mb-1 row">
-                <div class="col-md-2">
-                    <div class="form-group mb-1">
-                        <label>Tipo Evento</label>
-                        <select class="form-control" name="selectedET" id="selectedET" required>
-                            <option disabled value="" selected hidden>Seleccione un tipo evento</option>
-                            <option th:each="TE : ${allTEs}" th:value="${TE.nombre}" th:text="${TE.nombre}"></option>
-                        </select>
+            <form method="get" th:action="@{/parametric/searchEventMatrix}">
+                <div class="mb-1 row">
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <label>Tipo Evento</label>
+                            <select class="form-control" name="selectedET" id="selectedET" required>
+                                <option disabled value="" selected hidden>Seleccione un tipo evento</option>
+                                <option th:each="TE : ${allTEs}" th:value="${TE.id}" th:text="${TE.nombre}"></option>
+                            </select>
+                        </div>
                     </div>
-                </div>
 
-                <div class="col-md-2">
-                    <div class="form-group mb-1">
-                        <label>Conciliacion</label>
-                        <select class="form-control" name="selectedConcil" id="selectedConcil" required>
-                            <option disabled value="" selected hidden>Seleccione una concicliación</option>
-                            <option th:each="concil : ${allConcils}" th:value="${concil.nombre}" th:text="${concil.nombre}"></option>
-                        </select>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <label>Conciliacion</label>
+                            <select class="form-control" name="selectedConcil" id="selectedConcil" onchange="toggleConciliacion()">
+                                <option disabled value="" selected hidden>Seleccione una conciliación</option>
+                                <option th:each="concil : ${allConcils}" th:value="${concil.id}" th:text="${concil.nombre}"></option>
+                            </select>
+                        </div>
                     </div>
-                </div>
 
-                <div class="col-md-2">
-                    <div class="form-group mb-1">
-                        <label>Inventario Conciliacion</label>
-                        <select class="form-control" name="selectedInv" id="selectedInv" required>
-                            <option disabled value="" selected hidden>Seleccione una I.C.</option>
-                        </select>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <label>Inventario Conciliacion</label>
+                            <select class="form-control" name="selectedInv" id="selectedInv" onchange="toggleInventario()">
+                                <option disabled value="" selected hidden>Seleccione un archivo</option>
+                            </select>
+                        </div>
                     </div>
-                </div>
 
-                <div class="col-md-2">
-                    <div class="form-group mb-1">
-                        <label>Cuentas</label>
-                        <select class="form-control" name="selectedCuenta" id="selectedCuenta" required>
-                            <option disabled value="" selected hidden>Seleccione una Cuenta</option>
-                        </select>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <label>Cuentas</label>
+                            <select class="form-control" name="selectedCuenta" id="selectedCuenta">
+                                <option disabled value="" selected hidden>Seleccione una Cuenta</option>
+                            </select>
+                        </div>
                     </div>
+
+                    <div class="col-md-2 d-flex align-items-center">
+                        <button class="btn btn-secondary mr-1" type="submit"><i class="fa fa-search"></i></button>
+                        <a class="btn btn-secondary" th:href="@{/parametric/eventMatrix}"><i class="fas fa-window-close"></i></a>
+                    </div>
+
+                    <!-- Campo oculto para el token CSRF -->
+                    <input type="hidden" id="csrfToken" th:value="${_csrf.token}" />
+
+                    <div class="col-md-10"></div>
+
+                    <div class="col-md-2" style="text-align: right;">
+                        <a class="btn btn-primary mx-1" th:href="@{/parametric/eventMatrix}"><i class="fas fa-redo-alt"></i></a>
+                        <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1" th:onclick="|window.location.href='@{/parametric/createEventMatrix}'|">Crear M.E.</button>
+                    </div>
+
                 </div>
-
-                <div class="col-md-4" style="text-align: right;">
-                    <a class="btn btn-primary mx-1" th:href="@{/parametric/eventMatrix}"><i class="fas fa-redo-alt"></i></a>
-                    <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1" th:onclick="|window.location.href='@{/parametric/createEventMatrix}'|">Crear M.E.</button>
-                </div>
-
-            </div>
-
-            <a th:href="@{/parametric/conditionsEventMatrix}">
-                <span class="links_name">condiciones</span>
-            </a>
-
-            <a th:href="@{/parametric/cuentasEventMatrix}">
-                <span class="links_name">cuentas</span>
-            </a>
-
-            <a th:href="@{/parametric/validationsEventMatrix}">
-                <span class="links_name">validaciones</span>
-            </a>
+            </form>
 
         </div>
         <div class="col-md-12 p-0">
@@ -121,34 +123,34 @@
                         <th>Hom. Cntros</th>
                         <th>PYG</th>
                         <th>Activo</th>
-                        <th></th> <th></th> <th></th> <th></th>
+                        <th COLSPAN="4">Acciones</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr th:each="event : ${allEvents}">
-                        <td th:text="${event.conciliacion}"></td>
-                        <td th:text="${event.inventarioConciliacion}"></td>
+                        <td th:text="${event.conciliacion.nombre}"></td>
+                        <td th:text="${event.inventarioConciliacion.detalle}"></td>
                         <td th:text="${event.id}"></td>
                         <td th:text="${event.tipoEvento.nombre}"></td>
-                        <td th:text="${event.campoCC} ?: ''"></td> <!--Cuenta Debito-->
-                        <td th:text="${event.campoCC} ?: ''"></td> <!--Cuenta Credito-->
+                        <td th:text="${@accountEventMatrixService.findByMatrizEventoTipo1(event)?.cuentaGanancia ?: ''}"></td>
+                        <td th:text="${@accountEventMatrixService.findByMatrizEventoTipo1(event)?.cuentaGanancia ?: ''}"></td>
                         <td th:if="${event.homCntros == true}">Activo</td>
                         <td th:if="${event.homCntros == false}">Inactivo</td>
                         <td th:if="${event.PYG == true}">Activo</td>
                         <td th:if="${event.PYG == false}">Inactivo</td>
-                        <td th:if="${event.activo == true}">Activo</td>
-                        <td th:if="${event.activo == false}">Inactivo</td>
+                        <td th:if="${event.estado == true}">Activo</td>
+                        <td th:if="${event.estado == false}">Inactivo</td>
                         <td>
                             <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
                                     th:onclick="|window.location.href='@{/parametric/conditionsEventMatrix/{id}(id=${event.id})}'|">Condiciones</button>
                         </td>
                         <td>
                             <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
-                                    th:onclick="|window.location.href='@{/parametric/modifyAccountingRoute/{id}(id=${event.id})}'|">Cuentas</button>
+                                    th:onclick="|window.location.href='@{/parametric/cuentasEventMatrix/{id}(id=${event.id})}'|">Cuentas</button>
                         </td>
                         <td>
                             <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
-                                    th:onclick="|window.location.href='@{/parametric/modifyAccountingRoute/{id}(id=${event.id})}'|">Validaciones</button>
+                                    th:onclick="|window.location.href='@{/parametric/validationsEventMatrix/{id}(id=${event.id})}'|">Validaciones</button>
                         <td>
                             <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
                                     th:onclick="|window.location.href='@{/parametric/modifyEventMatrix/{id}(id=${event.id})}'|">Editar</button>
@@ -183,15 +185,72 @@
                 <h5><span class="badge badge-pill text-light badge-info py-2 px-5">¡La Tabla se encuentra Filtrada!</span>
                 </h5>
             </div>
-            <!--
-            <div class="d-flex align-items-center justify-content-center">
-                <a th:href="@{/admin/users/download/?vFilter={vFilter}&vId={vId}(vFilter=${vFilter},vId=${vId})}" class="btn btn-primary">Exportar a Excel</a>
-            </div>
-            -->
         </div>
 
     </div>
 </div>
 </div>
+
+<script>
+    async function toggleConciliacion() {
+        const concilID = document.getElementById('selectedConcil').value;
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+        if (concilID) {
+            const response = await fetch(`/parametric/obtenerRutasConcilByConcil/${concilID}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                }
+            });
+
+            const data = await response.json();
+
+            const ruta = document.getElementById('selectedInv');
+            ruta.innerHTML = '<option disabled value="" selected hidden>Seleccione un archivo</option>';
+
+            data.forEach(campo => {
+                const optionRC = document.createElement('option');
+                optionRC.value = campo[0];
+                optionRC.text = campo[1];
+                ruta.appendChild(optionRC);
+            });
+
+        }
+    }
+
+    async function toggleInventario() {
+        const tipoEventoID = document.getElementById('selectedET').value;
+        const concilID = document.getElementById('selectedConcil').value;
+        const inventarioID = document.getElementById('selectedInv').value;
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+        console.log("ENTRA", "1",tipoEventoID, "2",concilID, "3",inventarioID);
+
+        if (tipoEventoID && concilID && inventarioID) {
+            const response = await fetch(`/parametric/obtenerCuentas/${tipoEventoID}/${concilID}/${inventarioID}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                }
+            });
+
+            const data = await response.json();
+
+            const cuentaSelect = document.getElementById('selectedCuenta');
+            cuentaSelect.innerHTML = '<option disabled value="" selected hidden>Seleccione una Cuenta</option>';
+
+            data.forEach(cuenta => {
+                const option = document.createElement('option');
+                option.value = cuenta;
+                option.text = cuenta;
+                cuentaSelect.appendChild(option);
+            });
+        }
+    }
+</script>
 </body>
 </html>

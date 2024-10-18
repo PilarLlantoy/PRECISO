@@ -1,7 +1,10 @@
 package com.inter.proyecto_intergrupo.service.parametricServices;
 
 import com.inter.proyecto_intergrupo.model.admin.Cargo;
+import com.inter.proyecto_intergrupo.model.parametric.AccountingRoute;
+import com.inter.proyecto_intergrupo.model.parametric.CampoRC;
 import com.inter.proyecto_intergrupo.model.parametric.CampoRConcil;
+import com.inter.proyecto_intergrupo.model.parametric.ConciliationRoute;
 import com.inter.proyecto_intergrupo.repository.admin.AuditRepository;
 import com.inter.proyecto_intergrupo.repository.parametric.CampoRCRepository;
 import com.inter.proyecto_intergrupo.repository.parametric.CampoRConcilRepository;
@@ -41,10 +44,6 @@ public class CampoRConcilService {
         return campoRCRepository.findAllById(id);
     }
 
-    public CampoRConcil findByName(String nombre){
-        return campoRCRepository.findAllByNombre(nombre);
-    }
-
     public CampoRConcil modificar(CampoRConcil campo){
         campoRCRepository.save(campo);
        return campo;
@@ -54,6 +53,31 @@ public class CampoRConcilService {
         campoRCRepository.deleteById(id);
     }
 
+    public void recreateTable(ConciliationRoute data){
+        StringBuilder createTableQuery = new StringBuilder("CREATE TABLE ");
+        createTableQuery.append("preciso_rconcil_"+data.getId()).append(" (");
+
+        for (int i = 0; i < data.getCampos().size(); i++) {
+            CampoRConcil column = data.getCampos().get(i);
+            createTableQuery.append(column.getNombre())
+                    .append(" ")
+                    .append(column.getTipo());
+
+            if (column.getTipo().equalsIgnoreCase("VARCHAR")) {
+                createTableQuery.append("(").append(column.getLongitud()).append(")");
+            }
+
+            if (i < data.getCampos().size() - 1) {
+                createTableQuery.append(", ");
+            }
+        }
+        if(!data.getCampos().isEmpty())
+            createTableQuery.append(",");
+        createTableQuery.append("periodo_preciso DATE ,id_preciso BIGINT IDENTITY(1,1) PRIMARY KEY);");
+
+        Query queryTable = entityManager.createNativeQuery("IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'preciso_rconcil_"+data.getId()+"' AND TABLE_SCHEMA = 'dbo') BEGIN DROP TABLE preciso_rconcil_"+data.getId()+"; END; \n "+createTableQuery.toString());
+        queryTable.executeUpdate();
+    }
 
     public List<String> validatePrincipal(String principal)
     {

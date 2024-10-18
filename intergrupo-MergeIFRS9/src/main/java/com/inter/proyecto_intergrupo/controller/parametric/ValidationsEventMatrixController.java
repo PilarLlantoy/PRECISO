@@ -1,24 +1,22 @@
 package com.inter.proyecto_intergrupo.controller.parametric;
 
 import com.inter.proyecto_intergrupo.model.admin.User;
-import com.inter.proyecto_intergrupo.model.parametric.Conciliation;
-import com.inter.proyecto_intergrupo.model.parametric.EventMatrix;
-import com.inter.proyecto_intergrupo.model.parametric.EventType;
+import com.inter.proyecto_intergrupo.model.parametric.*;
 import com.inter.proyecto_intergrupo.service.adminServices.UserService;
-import com.inter.proyecto_intergrupo.service.parametricServices.ConciliationService;
-import com.inter.proyecto_intergrupo.service.parametricServices.EventMatrixService;
-import com.inter.proyecto_intergrupo.service.parametricServices.EventTypeService;
+import com.inter.proyecto_intergrupo.service.parametricServices.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
@@ -44,8 +42,16 @@ public class ValidationsEventMatrixController {
     @Autowired
     private ConciliationService conciliationService;
 
-    @GetMapping(value="/parametric/validationsEventMatrix")
-    public ModelAndView showConditionsEventMatrix(@RequestParam Map<String, Object> params) {
+    @Autowired
+    private ValidationMEService validationMEService;
+
+    @Autowired
+    private CampoRConcilService campoRConcilService;
+
+
+
+    @GetMapping(value="/parametric/validationsEventMatrix/{id}")
+    public ModelAndView showConditionsEventMatrix(@PathVariable("id") int id, @RequestParam Map<String, Object> params) {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
@@ -83,6 +89,17 @@ public class ValidationsEventMatrixController {
             List<Conciliation> allConcils = conciliationService.findAll();
             modelAndView.addObject("allConcils", allConcils);
 
+            ValidationME validationME = new ValidationME();
+            modelAndView.addObject("validationME", validationME);
+
+            EventMatrix matriz = eventMatrixService.findById(id);
+            modelAndView.addObject("matriz", matriz);
+
+            List<ValidationME> validaciones= validationMEService.findByEventMatrix(matriz);
+            modelAndView.addObject("validaciones", validaciones);
+
+            List<Object[]> campos = campoRConcilService.findCamposByRutaConcil(matriz.getInventarioConciliacion().getId());
+            modelAndView.addObject("campos", campos);
 
             modelAndView.setViewName("parametric/validationsEventMatrix");
         }
@@ -92,6 +109,53 @@ public class ValidationsEventMatrixController {
             modelAndView.setViewName("admin/errorMenu");
         }
         return modelAndView;
+    }
+
+    @PostMapping(value = "/parametric/createValidacionME")
+    public ModelAndView createValidacionME(@ModelAttribute ValidationME validationME,
+            @RequestParam(name = "selectedCampoVal") Integer campoValidacion,
+            @RequestParam(name = "selectedCampoAf") Integer campoAfecta,
+            @RequestParam(name = "selectedCampo") Integer campo,
+            @RequestParam(name = "selectedOperacion") String operacion,
+            @RequestParam(name = "matrizId") String matrizId,
+            BindingResult bindingResult){
+
+        ModelAndView modelAndView = new ModelAndView("redirect:/parametric/validationsEventMatrix/" + matrizId);
+        try{
+
+            CampoRConcil campoVal = campoRConcilService.findById(campoValidacion);
+            validationME.setCampoVal(campoVal);
+
+            CampoRConcil campoAf = campoRConcilService.findById(campoAfecta);
+            validationME.setCampoAfecta(campoAf);
+
+            CampoRConcil camp = campoRConcilService.findById(campo);
+            validationME.setCampoRef(camp);
+
+            validationME.setOperacion(operacion);
+
+            EventMatrix matriz = eventMatrixService.findById(Integer.valueOf(matrizId));
+            validationME.setMatrizEvento(matriz);
+
+            validationMEService.modificar(validationME);
+
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return modelAndView;
+    }
+
+    @DeleteMapping("/parametric/deleteValidationME/{id}")
+    public ResponseEntity<?> deleteValidationME(@PathVariable int id) {
+        try {
+            validationMEService.deleteById(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al eliminar el registro");
+        }
     }
 
 }

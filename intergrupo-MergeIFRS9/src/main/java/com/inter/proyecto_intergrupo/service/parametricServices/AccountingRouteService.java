@@ -2,10 +2,7 @@ package com.inter.proyecto_intergrupo.service.parametricServices;
 
 import com.inter.proyecto_intergrupo.model.admin.Audit;
 import com.inter.proyecto_intergrupo.model.admin.User;
-import com.inter.proyecto_intergrupo.model.parametric.AccountingRoute;
-import com.inter.proyecto_intergrupo.model.parametric.CampoRC;
-import com.inter.proyecto_intergrupo.model.parametric.Country;
-import com.inter.proyecto_intergrupo.model.parametric.LogAccountingLoad;
+import com.inter.proyecto_intergrupo.model.parametric.*;
 import com.inter.proyecto_intergrupo.repository.admin.AuditRepository;
 import com.inter.proyecto_intergrupo.repository.parametric.AccountingRouteRepository;
 import com.inter.proyecto_intergrupo.repository.parametric.LogAccountingLoadRepository;
@@ -99,6 +96,14 @@ public class AccountingRouteService {
                 .collect(Collectors.joining(","));
         Query querySelect = entityManager.createNativeQuery("SELECT "+campos+",periodo_preciso FROM preciso_rc_"+data.getId()+" WHERE periodo_preciso = '"+fecha+"' ");
         return querySelect.getResultList();
+    }
+
+    public String encontrarUltimaFechaSubida(AccountingRoute data) {
+        Query querySelect = entityManager.createNativeQuery(
+                "SELECT MAX(periodo_preciso) AS ultimo_periodo_preciso FROM preciso_rc_" + data.getId()
+        );
+        Object result = querySelect.getSingleResult();
+        return result != null ? result.toString() : null;
     }
 
     public String ensureTrailingSlash(String path) {
@@ -324,6 +329,13 @@ public class AccountingRouteService {
 
 
     public List<Object[]> findRutasBySFC(int SFCid) {
+        Query query = entityManager.createNativeQuery(
+                "SELECT id_rc, nombre FROM preciso_rutas_contables WHERE id_sf = :SFCid");
+        query.setParameter("SFCid", SFCid);
+        return query.getResultList();
+    }
+
+    public List<Object[]> findRutasByConcil(int SFCid) {
         Query query = entityManager.createNativeQuery(
                 "SELECT id_rc, nombre FROM preciso_rutas_contables WHERE id_sf = :SFCid");
         query.setParameter("SFCid", SFCid);

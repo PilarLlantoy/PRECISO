@@ -9,348 +9,721 @@
 
 <div class="main-container">
     <style>
-        body, .btn, .form-control {
-            font-size: 12px;
+        .modal-xl {
+            max-width: 80% !important; /* Ajusta esto según el tamaño que prefieras */
+            width: 80% !important;
         }
-
-        h2{
-            font-size: 18px;
-            font-weight: bold;
-        }
-
-        .big-checkbox {width: 1rem; height: 1rem; top:0.5rem}
     </style>
     <div class="row m-0 bg-primary fixed-top myNav">
-        <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
-            <h3 class="fw-bold text-white mx-4 my-3">Conciliacion: -</h3>
-            <h3 class="fw-bold text-white mx-4 my-3">Inventario: -</h3>
-            <h3 class="fw-bold text-white mx-4 my-3">Matriz: -</h3>
-            <h3 class="fw-bold text-white mx-4 my-3">Tipo Evento: -</h3>
+        <div class="col-md-12 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
+            <h3 class="fw-bold text-white ml-4 my-3">Cuentas (</h3>
+            <div class="d-flex " style="align-items">
+                <h3 class=" fw-bold text-white  my-3">Conciliacion: <span th:text="${matriz.conciliacion.nombre}"></span></h3>
+                <h3 class=" fw-bold text-white  my-3">, Inventario: <span th:text="${matriz.inventarioConciliacion.detalle}"></span></h3>
+                <h3 class=" fw-bold text-white  my-3">, Matriz: <span th:text="${matriz.id}"></span></h3>
+                <h3 class=" fw-bold text-white  my-3">, Tipo Evento: <span th:text="${matriz.tipoEvento.nombre}"></span>)</h3>
+            </div>
         </div>
     </div>
 
-    <div class="row m-0 px-4 mt-5">
-        <div class="text-left pr-3 col-md-12 my-3">
+    <div id="content">
+        <div class="row px-4">
+            <form id="miFormularioCuenta1" th:object="${cuenta1}" th:action="@{/parametric/createCuenta1}" method="POST">
 
-            <h2>Cargue Cuenta N°1</h2>
 
-            <div class="mb-1 row">
-                <div class="col-md-2">
-                    <div class="form-group mb-1">
-                        <label>Ruta Contable</label>
-                        <select class="form-control" name="selectedRC" id="selectedRC" required>
-                            <option disabled value="" selected hidden>Seleccione una R.C.</option>
-                        </select>
+                <div class="row mt-5 ">
+                    <div class="row text-left col-md-6">
+                        <h5 class="font-weight-bold">Cargue Cuenta N°1</h5>
+                    </div>
+                    <div class="text-right col-md-6">
+                        <a class="btn btn-primary mx-1" th:href="@{/parametric/eventMatrix}">
+                            <i class="fa-solid fa-left-long"></i> Regresar
+                        </a>
                     </div>
                 </div>
-
-                <div class="col-md-2">
-                    <div class="form-group mb-1">
-                        <label>Campo Ruta Contable</label>
-                        <select class="form-control" name="selectedCRC" id="selectedCRC" required>
-                            <option disabled value="" selected hidden>Seleccione un C.R.C</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="col-md-2">
-                    <div class="col-12"><p>Construye Cuenta:</p></div>
-                    <div class="form-group col-md-2">
-                        <div class="form-check form-check-inline">
-                            <input id="cCuentaInput" class="form-check-input" type="checkbox" name="cCuenta" th:id="${cCuenta}">
+                <div class="row p-2 mt-1 mb-2 border rounded">
+                    <div hidden class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">ID</h6>
+                            <input type="text" class="form-control" th:field="*{id}">
                         </div>
                     </div>
-                </div>
 
-                <div class="col-md-2">
-                    <div class="form-group mb-1">
-                        <label>Cuenta Ganancia</label>
-                        <input type="text" class="form-control">
+                    <!-- miFormulario oculto para pasar el objeto croute -->
+                    <input type="hidden" id="matrizId" name="matrizId" th:value="${matrizId}" />
+
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Ruta Contable:<i class="bi bi-caret-down"></i></h6>
+                            <select class="form-control" required name="selectedRC1" id="selectedRC1" onchange="toggleRC1()">
+                                <option disabled value="0" selected hidden>Seleccione una R.C.</option>
+                                <option th:each="ruta : ${rutasContables}" th:value="${ruta.id}" th:text="${ruta.nombre}"
+                                        th:selected="${cuenta1.rutaContable != null and ruta.id == cuenta1.rutaContable.id}"
+                                ></option>
+                            </select>
+                        </div>
                     </div>
-                </div>
-
-                <div class="col-md-2">
-                    <div class="form-group mb-1">
-                        <label>Cuenta Perdida</label>
-                        <input type="text" class="form-control">
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Campo Ruta Contable:<i class="bi bi-caret-down"></i></h6>
+                            <select class="form-control" name="selectedCRC1" id="selectedCRC1">
+                                <option disabled value="0" selected hidden>Seleccione un campo</option>
+                                <option th:each="campo : ${campos}" th:value="${campo.id}" th:text="${campo.nombre}"
+                                        th:selected="${cuenta1.campoRutaContable != null and campo.id == cuenta1.campoRutaContable.id}"></option>
+                            </select>
+                        </div>
                     </div>
-                </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Construye Cuenta?</h6>
+                            <input id="constCuentaInput" name="constCuentaInput" th:id="${constCuentaInput}" type="checkbox" class="styled-checkbox"
+                                   th:field="*{construyeCuenta}" th:value="${construyeCuenta}">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Cuenta Ganancia:</h6>
+                            <div class="d-flex align-items-center">
+                                <input type="text" class="form-control" th:field="*{cuentaGanancia}" id="selectedCG1">
+                                <i class="bi bi-question-circle-fill ml-1"
+                                   type="button"
+                                   data-toggle="modal"
+                                   data-target="#cuentaModal"
+                                   data-parametro="ganancia1"
+                                ></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Cuenta Pérdida:</h6>
+                            <div class="d-flex align-items-center">
+                                <input type="text" class="form-control" th:field="*{cuentaPerdida}" id="selectedCP1">
+                                <i class="bi bi-question-circle-fill ml-1"
+                                   type="button"
+                                   data-toggle="modal"
+                                   data-target="#cuentaModal"
+                                   data-parametro="perdida1"
+                                ></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <a id="paramConsButon" class="btn btn-primary mx-1" data-toggle="modal" data-target="#parametrosModal" style="color:#fff">
+                            Param Construcción
+                        </a>
+                        <div class="mt-1 ml-2">
+                            <div class="form-group mb-1 d-flex align-items-center">
+                                <h6 class="font-weight-bold mb-0">Parametrizado:</h6>
+                                <input id="paramInput1" name="paramInput1" th:id="${paramInput1}" type="checkbox" class="styled-checkbox ml-2"
+                                       th:field="*{parametrizado}" th:value="${parametrizado}">
+                            </div>
+                        </div>
+                    </div>
 
-                <div class="col-md-2">
+
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Maneja Divisa:</h6>
+                            <input id="mDivisaInput" name="mDivisaInput" th:id="${mDivisaInput}" type="checkbox" class="styled-checkbox"
+                                th:field="*{manejaDivisa}" th:value="${manejaDivisa}">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Campo Divisa:<i class="bi bi-caret-down"></i></h6>
+                            <select class="form-control" name="selectedCD1" id="selectedCD1">
+                                <option value="0" th:selected="${cuenta1.campoDivisa == null}">Seleccione un campo</option>
+                                <option th:each="campo : ${campos}" th:value="${campo.id}" th:text="${campo.nombre}"
+                                        th:selected="${cuenta1.campoDivisa != null and campo.id == cuenta1.campoDivisa.id}">
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Convierte Divisa?</h6>
+                            <input id="convDivisaInput" name="convDivisaInput" th:id="${convDivisaInput}" type="checkbox" class="styled-checkbox"
+                                th:field="*{convierteDivisa}" th:value="${convierteDivisa}">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Convierte UVR a COP?</h6>
+                            <input id="UVRaCOPInput" name="UVRaCOPInput" th:id="${UVRaCOPInput}" type="checkbox" class="styled-checkbox"
+                                th:field="*{convierteUVRaCOP}" th:value="${convierteUVRaCOP}">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Maneja Fórmula?</h6>
+                            <input id="mFormulaInput" name="mFormulaInput" th:id="${mFormulaInput}" type="checkbox" class="styled-checkbox"
+                                th:field="*{manejaFormula}" th:value="${manejaFormula}">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Valor Absoluto?</h6>
+                            <input id="valAbsInput" name="valAbsInput" th:id="${valAbsInput}" type="checkbox" class="styled-checkbox"
+                                th:field="*{valorAbsoluto}" th:value="${valorAbsoluto}">
+                        </div>
+                    </div>
+
+
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Campo Valor Cuenta:<i class="bi bi-caret-down"></i></h6>
+                            <select class="form-control" name="selectedCVC1" id="selectedCVC1">
+                                <option value="0" th:selected="${cuenta1.campoValorCuenta == null}">Seleccione un campo</option>
+                                <option th:each="campo : ${campos}" th:value="${campo.id}" th:text="${campo.nombre}"
+                                        th:selected="${cuenta1.campoValorCuenta != null and campo.id == cuenta1.campoValorCuenta.id}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Campo Valor Operación 1:<i class="bi bi-caret-down"></i></h6>
+                            <select class="form-control" name="selectedCVOU1" id="selectedCVOU1">
+                                <option value="0" th:selected="${cuenta1.campoValorOp1 == null}">Seleccione un campo</option>
+                                <option th:each="campo : ${campos}" th:value="${campo.id}" th:text="${campo.nombre}"
+                                        th:selected="${cuenta1.campoValorOp1 != null and campo.id == cuenta1.campoValorOp1.id}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Operación:<i class="bi bi-caret-down"></i></h6>
+                            <select class="form-control" name="selectedOperacion1" id="selectedOperacion1">
+                                <option disabled value="0" selected hidden>Seleccione un campo</option>
+                                <!--
+                                <option th:each="concil : ${conciliaciones}" th:value="${concil.id}" th:text="${concil.nombre}"
+                                        th:selected="${eventMatrix.conciliacion != null and concil.nombre == eventMatrix.conciliacion}"></option>
+                                -->
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Campo Valor Operación 2:<i class="bi bi-caret-down"></i></h6>
+                            <input th:field="*{valorOp2}" th:value="${valorOp2}" type="text" class="form-control">
+                            <select class="form-control" name="selectedCVOD1" id="selectedCVOD1">
+                                <option value="0" th:selected="${cuenta1.campoValorOp2 == null}">Seleccione un campo</option>
+                                <option th:each="campo : ${campos}" th:value="${campo.id}" th:text="${campo.nombre}"
+                                        th:selected="${cuenta1.campoValorOp2 != null and campo.id == cuenta1.campoValorOp2.id}"></option>
+                            </select>
+                        </div>
+                    </div>
+
                     <div>
-                        <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
-                            th:onclick="|window.location.href='@{/parametric/createEventMatrix}'|">Param Construcción</button>
+                        <button class="btn btn-primary mx-1" th:onclick="|window.location.href='@{/parametric/createEventMatrix}'|">Descartar</button>
+                        <button class="btn btn-primary mx-1" type="submit">Agregar</button>
                     </div>
+
+
+                </div>
+
+            </form>
+
+            <form id="miFormularioCuenta2" th:object="${cuenta2}" th:action="@{/parametric/createCuenta2}" method="POST" class="mt-2">
+
+                <h5 class="font-weight-bold">Cargue Cuenta N°2</h5>
+                <div class="row p-2 mt-1 mb-2 border rounded">
+                    <div hidden class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">ID</h6>
+                            <input type="text" class="form-control" th:field="*{id}">
+                        </div>
+                    </div>
+
+                    <!-- miFormulario oculto para pasar el objeto croute -->
+                    <input type="hidden" id="matrizId" name="matrizId" th:value="${matrizId}" />
+
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Ruta Contable:<i class="bi bi-caret-down"></i></h6>
+                            <select class="form-control" required name="selectedRC2" id="selectedRC2" onchange="toggleRC1()">
+                                <option disabled value="0" selected hidden>Seleccione una R.C.</option>
+                                <option th:each="ruta : ${rutasContables}" th:value="${ruta.id}" th:text="${ruta.nombre}"
+                                        th:selected="${cuenta2.rutaContable != null and ruta.id == cuenta2.rutaContable.id}"
+                                ></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Campo Ruta Contable:<i class="bi bi-caret-down"></i></h6>
+                            <select class="form-control" name="selectedCRC2" id="selectedCRC2">
+                                <option disabled value="0" selected hidden>Seleccione un campo</option>
+                                <option th:each="campo : ${campos}" th:value="${campo.id}" th:text="${campo.nombre}"
+                                        th:selected="${cuenta2.campoRutaContable != null and campo.id == cuenta2.campoRutaContable.id}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Construye Cuenta?</h6>
+                            <input id="constCuentaInput2" name="constCuentaInput" th:id="${constCuentaInput2}" type="checkbox" class="styled-checkbox"
+                                   th:field="*{construyeCuenta}" th:value="${construyeCuenta}">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Cuenta Ganancia:</h6>
+                            <div class="d-flex align-items-center">
+                                <input type="text" class="form-control" th:field="*{cuentaGanancia}" id="selectedCG2">
+                                <i class="bi bi-question-circle-fill ml-1"
+                                   type="button"
+                                   data-toggle="modal"
+                                   data-target="#cuentaModal"
+                                   data-parametro="ganancia1"
+                                ></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Cuenta Pérdida:</h6>
+                            <div class="d-flex align-items-center">
+                                <input type="text" class="form-control" th:field="*{cuentaPerdida}" id="selectedCP2">
+                                <i class="bi bi-question-circle-fill ml-1"
+                                   type="button"
+                                   data-toggle="modal"
+                                   data-target="#cuentaModal"
+                                   data-parametro="perdida1"
+                                ></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-primary mx-1">
+                            Param Construcción
+                        </button>
+                        <div class="mt-1 ml-2">
+                            <div class="form-group mb-1 d-flex align-items-center">
+                                <h6 class="font-weight-bold mb-0">Parametrizado:</h6>
+                                <input id="paramInput2" name="paramInput1" th:id="${paramInput2}" type="checkbox" class="styled-checkbox ml-2"
+                                       th:field="*{parametrizado}" th:value="${parametrizado}">
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Maneja Divisa:</h6>
+                            <input id="mDivisaInput2" name="mDivisaInput2" th:id="${mDivisaInput2}" type="checkbox" class="styled-checkbox"
+                                   th:field="*{manejaDivisa}" th:value="${manejaDivisa}">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Campo Divisa:<i class="bi bi-caret-down"></i></h6>
+                            <select class="form-control" name="selectedCD2" id="selectedCD2">
+                                <option value="0" th:selected="${cuenta2.campoDivisa == null}">Seleccione un campo</option>
+                                <option th:each="campo : ${campos}" th:value="${campo.id}" th:text="${campo.nombre}"
+                                        th:selected="${cuenta2.campoDivisa != null and campo.id == cuenta2.campoDivisa.id}">
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Convierte Divisa?</h6>
+                            <input id="convDivisaInput2" name="convDivisaInput2" th:id="${convDivisaInput2}" type="checkbox" class="styled-checkbox"
+                                   th:field="*{convierteDivisa}" th:value="${convierteDivisa}">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Convierte UVR a COP?</h6>
+                            <input id="UVRaCOPInput2" name="UVRaCOPInput2" th:id="${UVRaCOPInput2}" type="checkbox" class="styled-checkbox"
+                                   th:field="*{convierteUVRaCOP}" th:value="${convierteUVRaCOP}">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Maneja Fórmula?</h6>
+                            <input id="mFormulaInput2" name="mFormulaInput2" th:id="${mFormulaInput2}" type="checkbox" class="styled-checkbox"
+                                   th:field="*{manejaFormula}" th:value="${manejaFormula}">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Valor Absoluto?</h6>
+                            <input id="valAbsInput2" name="valAbsInput2" th:id="${valAbsInput2}" type="checkbox" class="styled-checkbox"
+                                   th:field="*{valorAbsoluto}" th:value="${valorAbsoluto}">
+                        </div>
+                    </div>
+
+
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Campo Valor Cuenta:<i class="bi bi-caret-down"></i></h6>
+                            <select class="form-control" name="selectedCVC2" id="selectedCVC2">
+                                <option value="0" th:selected="${cuenta2.campoValorCuenta == null}">Seleccione un campo</option>
+                                <option th:each="campo : ${campos}" th:value="${campo.id}" th:text="${campo.nombre}"
+                                        th:selected="${cuenta2.campoValorCuenta != null and campo.id == cuenta2.campoValorCuenta.id}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Campo Valor Operación 1:<i class="bi bi-caret-down"></i></h6>
+                            <select class="form-control" name="selectedCVOU1" id="selectedCVOU2">
+                                <option value="0" th:selected="${cuenta2.campoValorOp1 == null}">Seleccione un campo</option>
+                                <option th:each="campo : ${campos}" th:value="${campo.id}" th:text="${campo.nombre}"
+                                        th:selected="${cuenta2.campoValorOp1 != null and campo.id == cuenta2.campoValorOp1.id}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Operación:<i class="bi bi-caret-down"></i></h6>
+                            <select class="form-control" name="selectedOperacion2" id="selectedOperacion2">
+                                <option disabled value="0" selected hidden>Seleccione un campo</option>
+                                <!--
+                                <option th:each="concil : ${conciliaciones}" th:value="${concil.id}" th:text="${concil.nombre}"
+                                        th:selected="${eventMatrix.conciliacion != null and concil.nombre == eventMatrix.conciliacion}"></option>
+                                -->
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Campo Valor Operación 2:<i class="bi bi-caret-down"></i></h6>
+                            <input th:field="*{valorOp2}" th:value="${valorOp2}" type="text" class="form-control">
+                            <select class="form-control" name="selectedCVOD2" id="selectedCVOD2">
+                                <option value="0" th:selected="${cuenta2.campoValorOp2 == null}">Seleccione un campo</option>
+                                <option th:each="campo : ${campos}" th:value="${campo.id}" th:text="${campo.nombre}"
+                                        th:selected="${cuenta2.campoValorOp2 != null and campo.id == cuenta2.campoValorOp2.id}"></option>
+                            </select>
+                        </div>
+                    </div>
+
                     <div>
-                        <div><label>Parametrizado: </label></div>
-                        <div>
-                            <input id="paramInput" class="form-check-input" type="checkbox" name="param" th:id="${param}">
-                        </div>
+                        <button class="btn btn-primary mx-1" th:onclick="|window.location.href='@{/parametric/createEventMatrix}'|">Descartar</button>
+                        <button class="btn btn-primary mx-1" type="submit">Agregar</button>
                     </div>
+
+
                 </div>
 
-            </div>
-
-            <div class="mb-1 row">
-
-                <div class="col-md-2">
-                    <div class="col-12"><p>Maneja Divisa:</p></div>
-                    <div class="form-group col-md-2">
-                        <div class="form-check form-check-inline">
-                            <input id="mDivisaInput" class="form-check-input" type="checkbox" name="mDivisa" th:id="${mDivisa}">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-2">
-                    <div class="form-group mb-1">
-                        <label>Campo Divisa</label>
-                        <select class="form-control" name="selectedCD" id="selectedCD" required>
-                            <option disabled value="" selected hidden>Seleccione un C.D.</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="col-md-2">
-                    <div class="col-12"><p>Convierte Divisa?:</p></div>
-                    <div class="form-group col-md-2">
-                        <div class="form-check form-check-inline">
-                            <input id="convDivisaInput" class="form-check-input" type="checkbox" name="convDivisa" th:id="${convDivisa}">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-2">
-                    <div class="col-12"><p>Convierte UVR a COP?:</p></div>
-                    <div class="form-group col-md-2">
-                        <div class="form-check form-check-inline">
-                            <input id="UVRaCOPInput" class="form-check-input" type="checkbox" name="UVRaCOP" th:id="${UVRaCOP}">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-2">
-                    <div class="col-12"><p>Maneja Fórmula?:</p></div>
-                    <div class="form-group col-md-2">
-                        <div class="form-check form-check-inline">
-                            <input id="mFormulaInput" class="form-check-input" type="checkbox" name="mFormula" th:id="${mFormula}">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-2">
-                    <div class="col-12"><p>Valor Absoluto?:</p></div>
-                    <div class="form-group col-md-2">
-                        <div class="form-check form-check-inline">
-                            <input id="valAbsInput" class="form-check-input" type="checkbox" name="valAbs" th:id="${valAbs}">
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="mb-1 row">
-
-                <div class="col-md-2">
-                    <div class="col-12"><p>Campo Valor Cuenta:</p></div>
-                    <select class="form-control" name="selectedCVC" id="selectedCVC" required>
-                        <option disabled value="" selected hidden>Seleccione un C.V.C.</option>
-                    </select>
-                </div>
-
-                <div class="col-md-2">
-                    <div class="col-12"><p>Campo Valor Operación 1:</p></div>
-                    <select class="form-control" name="selectedCVOU" id="selectedCVOU" required>
-                        <option disabled value="" selected hidden>Seleccione un C.V.O.1.</option>
-                    </select>
-                </div>
-
-                <div class="col-md-2">
-                    <div class="col-12"><p>Operación:</p></div>
-                    <select class="form-control" name="selectedOperacion" id="selectedOperacion" required>
-                        <option disabled value="" selected hidden>Seleccione una Operación</option>
-                    </select>
-                </div>
-
-
-                <div class="col-md-2">
-                    <div class="col-12"><p>Campo Valor Operación 2:</p></div>
-                    <select class="form-control" name="selectedCVOD" id="selectedCVOD" required>
-                        <option disabled value="" selected hidden>Seleccione un C.V.O.2.</option>
-                        <input type="text" class="form-control">
-                    </select>
-                </div>
-
-            </div>
-
-            <div>
-                <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1" th:onclick="|window.location.href='@{/parametric/createEventMatrix}'|">Descartar</button>
-                <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1" th:onclick="|window.location.href='@{/parametric/createEventMatrix}'|">Agregar</button>
-            </div>
+            </form>
 
         </div>
-        <div class="text-left pr-3 col-md-12 my-3">
 
-            <h2>Cargue Cuenta N°2</h2>
-
-            <div class="mb-1 row">
-                <div class="col-md-2">
-                    <div class="form-group mb-1">
-                        <label>Ruta Contable</label>
-                        <select class="form-control" name="selectedRC" id="selectedRC" required>
-                            <option disabled value="" selected hidden>Seleccione una R.C.</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="col-md-2">
-                    <div class="form-group mb-1">
-                        <label>Campo Ruta Contable</label>
-                        <select class="form-control" name="selectedCRC" id="selectedCRC" required>
-                            <option disabled value="" selected hidden>Seleccione un C.R.C</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="col-md-2">
-                    <div class="col-12"><p>Construye Cuenta:</p></div>
-                    <div class="form-group col-md-2">
-                        <div class="form-check form-check-inline">
-                            <input id="cCuentaInput" class="form-check-input" type="checkbox" name="cCuenta" th:id="${cCuenta}">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-2">
-                    <div class="form-group mb-1">
-                        <label>Cuenta Ganancia</label>
-                        <input type="text" class="form-control">
-                    </div>
-                </div>
-
-                <div class="col-md-2">
-                    <div class="form-group mb-1">
-                        <label>Cuenta Perdida</label>
-                        <input type="text" class="form-control">
-                    </div>
-                </div>
-
-                <div class="col-md-2">
-                    <div>
-                        <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
-                                th:onclick="|window.location.href='@{/parametric/createEventMatrix}'|">Param Construcción</button>
-                    </div>
-                    <div>
-                        <div><label>Parametrizado: </label></div>
-                        <div>
-                            <input id="paramInput" class="form-check-input" type="checkbox" name="param" th:id="${param}">
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="mb-1 row">
-
-                <div class="col-md-2">
-                    <div class="col-12"><p>Maneja Divisa:</p></div>
-                    <div class="form-group col-md-2">
-                        <div class="form-check form-check-inline">
-                            <input id="mDivisaInput" class="form-check-input" type="checkbox" name="mDivisa" th:id="${mDivisa}">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-2">
-                    <div class="form-group mb-1">
-                        <label>Campo Divisa</label>
-                        <select class="form-control" name="selectedCD" id="selectedCD" required>
-                            <option disabled value="" selected hidden>Seleccione un C.D.</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="col-md-2">
-                    <div class="col-12"><p>Convierte Divisa?:</p></div>
-                    <div class="form-group col-md-2">
-                        <div class="form-check form-check-inline">
-                            <input id="convDivisaInput" class="form-check-input" type="checkbox" name="convDivisa" th:id="${convDivisa}">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-2">
-                    <div class="col-12"><p>Convierte UVR a COP?:</p></div>
-                    <div class="form-group col-md-2">
-                        <div class="form-check form-check-inline">
-                            <input id="UVRaCOPInput" class="form-check-input" type="checkbox" name="UVRaCOP" th:id="${UVRaCOP}">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-2">
-                    <div class="col-12"><p>Maneja Fórmula?:</p></div>
-                    <div class="form-group col-md-2">
-                        <div class="form-check form-check-inline">
-                            <input id="mFormulaInput" class="form-check-input" type="checkbox" name="mFormula" th:id="${mFormula}">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-2">
-                    <div class="col-12"><p>Valor Absoluto?:</p></div>
-                    <div class="form-group col-md-2">
-                        <div class="form-check form-check-inline">
-                            <input id="valAbsInput" class="form-check-input" type="checkbox" name="valAbs" th:id="${valAbs}">
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="mb-1 row">
-
-                <div class="col-md-2">
-                    <div class="col-12"><p>Campo Valor Cuenta:</p></div>
-                    <select class="form-control" name="selectedCVC" id="selectedCVC" required>
-                        <option disabled value="" selected hidden>Seleccione un C.V.C.</option>
-                    </select>
-                </div>
-
-                <div class="col-md-2">
-                    <div class="col-12"><p>Campo Valor Operación 1:</p></div>
-                    <select class="form-control" name="selectedCVOU" id="selectedCVOU" required>
-                        <option disabled value="" selected hidden>Seleccione un C.V.O.1.</option>
-                    </select>
-                </div>
-
-                <div class="col-md-2">
-                    <div class="col-12"><p>Operación:</p></div>
-                    <select class="form-control" name="selectedOperacion" id="selectedOperacion" required>
-                        <option disabled value="" selected hidden>Seleccione una Operación</option>
-                    </select>
-                </div>
-
-
-                <div class="col-md-2">
-                    <div class="col-12"><p>Campo Valor Operación 2:</p></div>
-                    <select class="form-control" name="selectedCVOD" id="selectedCVOD" required>
-                        <option disabled value="" selected hidden>Seleccione un C.V.O.2.</option>
-                        <input type="text" class="form-control">
-                    </select>
-                </div>
-
-            </div>
-
-            <div>
-                <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1" th:onclick="|window.location.href='@{/parametric/createEventMatrix}'|">Descartar</button>
-                <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1" th:onclick="|window.location.href='@{/parametric/createEventMatrix}'|">Agregar</button>
-            </div>
-
-        </div>
+            <!-- Campo oculto para el token CSRF -->
+            <input type="hidden" id="csrfToken" th:value="${_csrf.token}" />
 
     </div>
+    </div>
+
+
+    <!-- Modal CUENTA-->
+    <div class="modal fade" id="cuentaModal" tabindex="-1" role="dialog" aria-labelledby="cuentaModal" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="font-weight-bold modal-title" id="exampleModalLabel">Consulta de Cuentas Contables</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="mt-1 mb-2">
+                        <div class="form-group mb-1 d-flex align-items-center">
+                            <h6 class="font-weight-bold mb-0">Cuenta Contable a buscar:</h6>
+                            <input type="text" class="form-control col-md-4 ml-2" id="selectedCuentaBusqueda">
+                            <button class="btn btn-primary mx-1" id="btnConsultar" onclick="consultarCuenta()">Consultar</button>
+                        </div>
+                    </div>
+                    <div class="col-md-12 p-0">
+                        <div class="table-responsive rounded border-primary" id="tablaCuentas">
+                            <h2>Resultado</h2>
+                            <table id="example2" class="table table-striped table-hover text-center table-bordered table-sm" width="100%" th:fragment="tablaCompleta">
+                                <thead class="bg-primary">
+                                <tr>
+                                    <th th:each="rc : ${allColRCs}" th:text="${rc.nombre}"></th> <!-- Encabezados dinámicos -->
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="row : ${allRCs}">
+                                    <td th:each="col : ${row}" th:text="${col}"></td> <!-- Filas dinámicas -->
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal PARAMETROS CONSTRUCCION-->
+    <div class="modal fade" id="parametrosModal" tabindex="-1" role="dialog" aria-labelledby="parametrosModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="font-weight-bold modal-title" id="exampleModalLabel2">Cargue Parámetros Construcción Cuenta Contable</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="mt-1 mb-2 row">
+                        <div class="col-md-3">
+                            <div class="form-group mb-1">
+                                <h6 class="font-weight-bold">Campo Conciliacion:<i class="bi bi-caret-down"></i></h6>
+                                <select class="form-control" required name="selectedRC1" id="selectedRC1" onchange="toggleRC1()">
+                                    <option disabled value="0" selected hidden>Seleccione una R.C.</option>
+                                    <option th:each="ruta : ${camposConcil}" th:value="${ruta[0]}" th:text="${ruta[1]}"
+                                            th:selected="${cuenta1.rutaContable != null and ruta[0] == cuenta1.rutaContable.id}"
+                                    ></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group mb-1">
+                                <h6 class="font-weight-bold">Ruta Contable:<i class="bi bi-caret-down"></i></h6>
+                                <select class="form-control" required name="selectedRC1" id="selectedRC1" onchange="toggleRC1()">
+                                    <option disabled value="0" selected hidden>Seleccione una R.C.</option>
+                                    <option th:each="ruta : ${rutasContables}" th:value="${ruta.id}" th:text="${ruta.nombre}"
+                                            th:selected="${cuenta1.rutaContable != null and ruta.id == cuenta1.rutaContable.id}"
+                                    ></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group mb-1">
+                                <h6 class="font-weight-bold">Campo Contable Validar:<i class="bi bi-caret-down"></i></h6>
+                                <select class="form-control" required name="selectedRC1" id="selectedRC1" onchange="toggleRC1()">
+                                    <option disabled value="0" selected hidden>Seleccione una R.C.</option>
+                                    <option th:each="ruta : ${campos}" th:value="${ruta.id}" th:text="${ruta.nombre}"
+                                            th:selected="${cuenta1.rutaContable != null and ruta.id == cuenta1.rutaContable.id}"
+                                    ></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group mb-1">
+                                <h6 class="font-weight-bold">Campo Contable Resultante:<i class="bi bi-caret-down"></i></h6>
+                                <select class="form-control" required name="selectedRC1" id="selectedRC1" onchange="toggleRC1()">
+                                    <option disabled value="0" selected hidden>Seleccione una R.C.</option>
+                                    <option th:each="ruta : ${rutasContables}" th:value="${ruta.id}" th:text="${ruta.nombre}"
+                                            th:selected="${cuenta1.rutaContable != null and ruta.id == cuenta1.rutaContable.id}"
+                                    ></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 p-0">
+                        <div class="table-responsive rounded border-primary" id="tablaParametros">
+                            <h2>Resultado</h2>
+                            <table id="parametros" class="table table-striped table-hover text-center table-bordered table-sm" width="100%">
+                                <thead class="bg-primary">
+                                <tr>
+                                    <th>Campo Conciliacion</th>
+                                    <th>Campo Ruta Contable</th>
+                                    <th>Campo Validar</th>
+                                    <th>Campo Resultado</th>
+                                    <th COLSPAN="2">Acciones</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="val : ${allValidaciones}">
+                                    <td th:text="${val.campoRef.nombre}"></td>
+                                    <td th:text="${val.campoVal.nombre}"></td>
+                                    <td th:text="${val.valorValidacion}"></td>
+                                    <td th:text="${val.operacion}"></td>
+                                    <td th:text="${val.valorOperacion}"></td>
+
+                                    <td>
+                                        <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
+                                                th:data-id="${val.id}"
+                                                th:data-campoRef="${val.campoRef.nombre}"
+                                                th:data-campoVal="${val.campoVal?.nombre ?: ''}"
+                                                th:data-operacion="${val.operacion}"
+                                                th:data-valorOperacion="${val.valorOperacion}"
+                                                th:data-valorValidacion="${val.valorValidacion}"
+                                                th:data-formula="${val.formula}"
+                                                onclick="cargarCampos(this)">Seleccionar</button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 </div>
+<!-- Bootstrap JS and dependencies -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script >
+
+    let selectedId;
+    let buttomModal;
+
+    function captarId(checkbox) {
+
+        const id = checkbox.value;
+
+        if (checkbox.checked) {
+            // Si el checkbox está marcado, agregar el ID al array
+            selectedId=id;
+        }
+
+        console.log(selectedId); // Aquí puedes ver los IDs seleccionados
+
+        // Asignar el valor del ID seleccionado al input con id 'selectedCG1'
+        if(buttomModal=="ganancia1")
+        document.getElementById('selectedCG1').value = selectedId;
+        if(buttomModal=="perdida1")
+        document.getElementById('selectedCP1').value = selectedId;
+
+        // Cerrar el modal
+        $('#cuentaModal').modal('hide');
+    }
+
+    // Función para marcar el checkbox correspondiente al abrir el modal
+    $('#cuentaModal').on('shown.bs.modal', function (event) {
+        /*
+        if (selectedId) {
+            // Recorrer todos los checkboxes y marcar el que tenga el valor igual a selectedId
+            $('input[type="checkbox"]').each(function() {
+                if (this.value === selectedId) {
+                    this.checked = true;
+                } else {
+                    this.checked = false; // Desmarcar los demás checkboxes
+                }
+            });
+        }
+        */
+        var button = $(event.relatedTarget);
+        buttomModal = button.data('parametro');
+        console.log("Parámetro recibido:", buttomModal);
+    });
+
+    function consultarCuenta() {
+
+        var cuentaContable = document.getElementById("selectedRC1").value;
+        var campoRutaContable = document.getElementById("selectedCRC1").value;
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+        console.log(buttomModal);
+
+        // Realizamos la llamada AJAX
+        $.ajax({
+            url: '/consultarCuenta', // URL del endpoint
+            type: 'POST',
+            data: { cuentaContable: cuentaContable , campoRutaContable: campoRutaContable},
+            headers: {
+            [csrfHeader]: csrfToken},
+            success: function(response) {
+                $('#example2').html(response); // Reemplaza la tabla completa
+            },
+            error: function(xhr, status, error) {
+                console.error("Error en la consulta: " + error);
+            }
+        });
+    }
+
+    function limpiarCampos(){
+        const campoRutaContable = document.getElementById('selectedCRC1');
+        const campoDivisa = document.getElementById('selectedCD1');
+        const campoValorCuenta = document.getElementById('selectedCVC1');
+        const campoValorOpUno = document.getElementById('selectedCVOU1');
+        const campoValorOpDos = document.getElementById('selectedCVOD1');
+
+        campoRutaContable.innerHTML = '';
+        campoDivisa.innerHTML = '';
+        campoValorCuenta.innerHTML = '';
+        campoValorOpUno.innerHTML = '';
+        campoValorOpDos.innerHTML = '';
+
+        campoRutaContable.innerHTML = '<option disabled value="0" selected hidden>Seleccione un campo</option>';
+        campoDivisa.innerHTML = '<option disabled value="0" selected hidden>Seleccione un campo</option>';
+        campoValorCuenta.innerHTML = '<option disabled value="0" selected hidden>Seleccione un campo</option>';
+        campoValorOpUno.innerHTML = '<option disabled value="0" selected hidden>Seleccione un campo</option>';
+        campoValorOpDos.innerHTML = '<option disabled value="0" selected hidden>Seleccione un campo</option>';
+    }
+
+    async function toggleRC1() {
+        const idRCont = document.getElementById('selectedRC1').value;
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+        if (idRCont) {
+            const response = await fetch(`/parametric/obtenerCamposRC/${idRCont}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                }
+            });
+
+            const data = await response.json();
+
+            const campoRutaContable = document.getElementById('selectedCRC1');
+            const campoDivisa = document.getElementById('selectedCD1');
+            const campoValorCuenta = document.getElementById('selectedCVC1');
+            const campoValorOpUno = document.getElementById('selectedCVOU1');
+            const campoValorOpDos = document.getElementById('selectedCVOD1');
+
+
+            campoRutaContable.innerHTML = '<option disabled value="0" selected hidden>Seleccione un campo</option>';
+            campoDivisa.innerHTML = '<option disabled value="0" selected hidden>Seleccione un campo</option>';
+            campoValorCuenta.innerHTML = '<option disabled value="0" selected hidden>Seleccione un campo</option>';
+            campoValorOpUno.innerHTML = '<option disabled value="0" selected hidden>Seleccione un campo</option>';
+            campoValorOpDos.innerHTML = '<option disabled value="0" selected hidden>Seleccione un campo</option>';
+
+
+            data.forEach(campo => {
+                const optionRutaContable = document.createElement('option');
+                optionRutaContable.value = campo[0];
+                optionRutaContable.text = campo[1];
+                campoRutaContable.appendChild(optionRutaContable);
+
+                const optionDivisa = document.createElement('option');
+                optionDivisa.value = campo[0];
+                optionDivisa.text = campo[1];
+                campoDivisa.appendChild(optionDivisa);
+
+                const optionValorCuenta = document.createElement('option');
+                optionValorCuenta.value = campo[0];
+                optionValorCuenta.text = campo[1];
+                campoValorCuenta.appendChild(optionValorCuenta);
+
+                const optionValorOpUno = document.createElement('option');
+                optionValorOpUno.value = campo[0];
+                optionValorOpUno.text = campo[1];
+                campoValorOpUno.appendChild(optionValorOpUno);
+
+                const optionValorOpDos = document.createElement('option');
+                optionValorOpDos.value = campo[0];
+                optionValorOpDos.text = campo[1];
+                campoValorOpDos.appendChild(optionValorOpDos);
+            });
+
+        }
+    }
+</script>
+
 </body>
 </html>

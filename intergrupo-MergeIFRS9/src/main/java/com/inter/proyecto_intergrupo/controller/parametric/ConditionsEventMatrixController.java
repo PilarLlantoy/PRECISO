@@ -1,13 +1,9 @@
 package com.inter.proyecto_intergrupo.controller.parametric;
 
 import com.inter.proyecto_intergrupo.model.admin.User;
-import com.inter.proyecto_intergrupo.model.parametric.Conciliation;
-import com.inter.proyecto_intergrupo.model.parametric.EventMatrix;
-import com.inter.proyecto_intergrupo.model.parametric.EventType;
+import com.inter.proyecto_intergrupo.model.parametric.*;
 import com.inter.proyecto_intergrupo.service.adminServices.UserService;
-import com.inter.proyecto_intergrupo.service.parametricServices.ConciliationService;
-import com.inter.proyecto_intergrupo.service.parametricServices.EventMatrixService;
-import com.inter.proyecto_intergrupo.service.parametricServices.EventTypeService;
+import com.inter.proyecto_intergrupo.service.parametricServices.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +14,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -47,8 +42,14 @@ public class ConditionsEventMatrixController {
     @Autowired
     private ConciliationService conciliationService;
 
-    @GetMapping(value="/parametric/conditionsEventMatrix")
-    public ModelAndView showConditionsEventMatrix(@RequestParam Map<String, Object> params) {
+    @Autowired
+    private CondicionMEService condicionMEService;
+
+    @Autowired
+    private CampoRConcilService campoRConcilService;
+
+    @GetMapping(value="/parametric/conditionsEventMatrix/{id}")
+    public ModelAndView showConditionsEventMatrix(@PathVariable("id") int id, @RequestParam Map<String, Object> params) {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
@@ -58,10 +59,12 @@ public class ConditionsEventMatrixController {
             int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
             PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
 
-            List<EventMatrix> eventMatrixes = eventMatrixService.findAllActive();
+            EventMatrix eventMatrix = eventMatrixService.findById(id);
+            List<CampoRConcil> campos = eventMatrix.getInventarioConciliacion().getCampos();
+            List<CondicionEventMatrix> condiciones = condicionMEService.findByMatrizEvento(eventMatrix);
             int start = (int) pageRequest.getOffset();
-            int end = Math.min((start + pageRequest.getPageSize()), eventMatrixes.size());
-            Page<EventMatrix> pageEventMatrix = new PageImpl<>(eventMatrixes.subList(start, end), pageRequest, eventMatrixes.size());
+            int end = Math.min((start + pageRequest.getPageSize()), condiciones.size());
+            Page<CondicionEventMatrix> pageEventMatrix = new PageImpl<>(condiciones.subList(start, end), pageRequest, condiciones.size());
 
             int totalPage=pageEventMatrix.getTotalPages();
             if(totalPage>0){
@@ -75,16 +78,23 @@ public class ConditionsEventMatrixController {
             modelAndView.addObject("last",totalPage);
             modelAndView.addObject("filterExport","Original");
             modelAndView.addObject("directory","country");
-            modelAndView.addObject("registers",eventMatrixes.size());
+            modelAndView.addObject("registers",condiciones.size());
             modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.addObject("p_modificar", p_modificar);
+
+
+            CondicionEventMatrix condicion = new CondicionEventMatrix();
+            modelAndView.addObject("condicion",condicion);
+            modelAndView.addObject("campos", campos);
 
             List<EventType> allTEs = eventTypeService.findAll();
             modelAndView.addObject("allTEs", allTEs);
 
             List<Conciliation> allConcils = conciliationService.findAll();
             modelAndView.addObject("allConcils", allConcils);
+
+            modelAndView.addObject("matriz", eventMatrix);
 
 
             modelAndView.setViewName("parametric/conditionsEventMatrix");
@@ -94,6 +104,26 @@ public class ConditionsEventMatrixController {
             modelAndView.addObject("anexo","/home");
             modelAndView.setViewName("admin/errorMenu");
         }
+        return modelAndView;
+    }
+
+
+    @PostMapping(value = "/parametric/createCondicionEventMatrix")
+    public ModelAndView createCondicionEventMatrix(@ModelAttribute CondicionEventMatrix condicion,
+                                                   @RequestParam(name = "matrizId") String matrixId,
+                                                   @RequestParam(name = "selectedOperacion") String operacion,
+                                                   @RequestParam(name = "selectedCampo") String idcampo,
+                                                   BindingResult bindingResult) {
+
+        ModelAndView modelAndView = new ModelAndView("redirect:/parametric/conditionsEventMatrix/" + matrixId);
+
+        EventMatrix matriz = eventMatrixService.findById(Integer.valueOf(matrixId));
+        CampoRConcil campo = campoRConcilService.findById(Integer.valueOf(idcampo));
+        condicion.setCampo(campo);
+        condicion.setCondicion(operacion);
+        condicion.setMatrizEvento(matriz);
+        condicionMEService.modificar(condicion);
+
         return modelAndView;
     }
 

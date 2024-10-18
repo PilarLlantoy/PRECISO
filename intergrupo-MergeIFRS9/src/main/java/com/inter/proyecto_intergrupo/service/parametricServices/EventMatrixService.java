@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import java.util.List;
 
 @Service
@@ -42,5 +43,72 @@ public class EventMatrixService {
         eventMatrixRepository.save(eventMatrix);
        return eventMatrix;
     }
+
+    public List<String> findCuentaGanancia(Integer idTipoEvento, Integer idConciliacion, Integer idInventarioConciliacion) {
+        StringBuilder queryBuilder = new StringBuilder("SELECT pcm.cuenta_ganancia FROM preciso_cuentas_matriz_eventos pcm " +
+                "JOIN preciso_matriz_eventos pme ON pcm.id_matriz_evento = pme.id WHERE 1=1");
+
+        // Agregar condiciones según los parámetros
+        if (idTipoEvento != null) {
+            queryBuilder.append(" AND pme.id_tipo_evento = ").append(idTipoEvento);
+        }
+        if (idConciliacion != null && idTipoEvento != null) {
+            queryBuilder.append(" AND pme.id_conciliacion = ").append(idConciliacion);
+        }
+        if (idInventarioConciliacion != null && idConciliacion != null && idTipoEvento != null) {
+            queryBuilder.append(" AND pme.id_inventario_conciliacion = ").append(idInventarioConciliacion);
+        }
+
+        // Ejecutar la consulta y devolver resultados
+        Query query = entityManager.createNativeQuery(queryBuilder.toString());
+        return query.getResultList();
+    }
+
+    public List<EventMatrix> findByParams(Integer idTipoEvento, Integer idConciliacion, Integer idInventarioConciliacion, String cuentaGanancia) {
+        // Primer query con LEFT JOIN
+        StringBuilder queryBuilder1 = new StringBuilder("SELECT pme.* FROM preciso_matriz_eventos pme " +
+                "LEFT JOIN preciso_cuentas_matriz_eventos pcm ON pcm.id_matriz_evento = pme.id WHERE tipo=1 ");
+
+        // Agregar condiciones según los parámetros para el primer query
+        if (idTipoEvento != null) {
+            queryBuilder1.append(" AND pme.id_tipo_evento = ").append(idTipoEvento);
+        }
+        if (idConciliacion != null && idTipoEvento != null) {
+            queryBuilder1.append(" AND pme.id_conciliacion = ").append(idConciliacion);
+        }
+        if (idInventarioConciliacion != null && idConciliacion != null && idTipoEvento != null) {
+            queryBuilder1.append(" AND pme.id_inventario_conciliacion = ").append(idInventarioConciliacion);
+        }
+        if (cuentaGanancia != null && !cuentaGanancia.isEmpty() && idInventarioConciliacion != null && idConciliacion != null && idTipoEvento != null) {
+            queryBuilder1.append(" AND pcm.cuenta_ganancia = '").append(cuentaGanancia).append("'");
+        }
+
+        // Segundo query sin LEFT JOIN
+        StringBuilder queryBuilder2 = new StringBuilder("SELECT pme.* FROM preciso_matriz_eventos pme WHERE 1=1 ");
+
+        // Agregar condiciones según los parámetros para el segundo query
+        if (idTipoEvento != null) {
+            queryBuilder2.append(" AND pme.id_tipo_evento = ").append(idTipoEvento);
+        }
+        if (idConciliacion != null && idTipoEvento != null) {
+            queryBuilder2.append(" AND pme.id_conciliacion = ").append(idConciliacion);
+        }
+        if (idInventarioConciliacion != null && idConciliacion != null && idTipoEvento != null) {
+            queryBuilder2.append(" AND pme.id_inventario_conciliacion = ").append(idInventarioConciliacion);
+        }
+
+        // Combinar ambas consultas usando UNION ALL
+        StringBuilder combinedQuery = new StringBuilder();
+        combinedQuery.append(queryBuilder1);
+        combinedQuery.append(" UNION ");
+        combinedQuery.append(queryBuilder2);
+
+        // Ejecutar la consulta combinada y devolver resultados
+        Query query = entityManager.createNativeQuery(combinedQuery.toString(), EventMatrix.class);
+        return query.getResultList();
+    }
+
+
+
 
 }
