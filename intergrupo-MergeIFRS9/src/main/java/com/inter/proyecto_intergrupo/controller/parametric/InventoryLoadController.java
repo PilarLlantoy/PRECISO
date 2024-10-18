@@ -58,8 +58,8 @@ public class InventoryLoadController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Cargue Contable");
-        if(userService.validateEndpoint(user.getId(),"Ver Cargue Contable")) {
+        Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Cargue Inventarios");
+        if(userService.validateEndpoint(user.getId(),"Ver Cargue Inventarios")) {
 
             List<Conciliation> listConciliations = conciliationService.findAllActive();
             List<AccountingRoute> listCroutes = accountingRouteService.findAllActive();
