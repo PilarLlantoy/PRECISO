@@ -76,7 +76,7 @@ public class AccountingRoutesController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
         Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Rutas Contables");
-        if(userService.validateEndpoint(user.getId(),"Ver Rutas Contables")) { //CAMBIAR A VER Conciliaciones
+        if(userService.validateEndpoint(user.getId(),"Ver Rutas Contables")) {
 
             int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
             PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);

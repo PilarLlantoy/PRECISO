@@ -66,7 +66,7 @@ public class ConciliationController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
         Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Conciliaciones");
-        if(userService.validateEndpoint(user.getId(),"Ver Conciliaciones")) { //CAMBIAR A VER Conciliaciones
+        if(userService.validateEndpoint(user.getId(),"Ver Conciliaciones")) {
 
             int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
             PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
