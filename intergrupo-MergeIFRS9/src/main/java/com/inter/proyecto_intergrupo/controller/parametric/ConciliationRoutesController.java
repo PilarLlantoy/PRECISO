@@ -393,7 +393,6 @@ public class ConciliationRoutesController {
     @ResponseBody
     public List<Object[]> obtenerRutasConcilByConcil(@PathVariable("concilID") Integer concilID) {
         List<Object[]> campos = conciliationRouteService.findRutasByConcil(concilID);
-        System.out.println(campos.size());
         return campos;
     }
 

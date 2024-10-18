@@ -172,12 +172,10 @@ public class InventoryLoadController {
     @PostMapping("/parametric/inventoryLoad/leerArchivoL")
     @ResponseBody
     public ResponseEntity<String> leerArchivoLocal(@RequestParam String id, @RequestParam String fecha, @RequestParam("file") MultipartFile file) {
-        System.out.println("ENTRO");
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
         ConciliationRoute cr = conciliationRouteService.findById(Integer.parseInt(id));
         String rutaArchivo = "D:\\" + file.getOriginalFilename();
-        System.out.println(rutaArchivo);
         try {
             File dest = new File(rutaArchivo);
             file.transferTo(dest);

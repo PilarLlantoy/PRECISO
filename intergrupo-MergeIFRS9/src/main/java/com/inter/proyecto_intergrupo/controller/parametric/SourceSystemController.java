@@ -171,7 +171,6 @@ public class SourceSystemController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-        System.out.println("PARAMS "+params.get("vId").toString()+" "+params.get("vFilter").toString());
         int page=params.get("page")==null?0:(Integer.valueOf(params.get("page").toString())-1);
         PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
         List<SourceSystem> list;

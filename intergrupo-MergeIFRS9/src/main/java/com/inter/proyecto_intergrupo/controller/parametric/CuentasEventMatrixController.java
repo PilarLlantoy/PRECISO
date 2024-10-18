@@ -129,6 +129,9 @@ public class CuentasEventMatrixController {
 
             List<Object[]> camposConcil = campoRConcilService.findCamposByRutaConcil(matriz.getInventarioConciliacion().getId());
             modelAndView.addObject("camposConcil", camposConcil);
+
+            ConstructionParameter parametro = new ConstructionParameter();
+            modelAndView.addObject("parametro", parametro);
         }
         else
         {
@@ -142,11 +145,10 @@ public class CuentasEventMatrixController {
     @ResponseBody
     public String consultarCuenta(@RequestParam("cuentaContable") String cuentaContable,
                                   @RequestParam("campoRutaContable") String campoRutaContable,
+                                  @RequestParam("busqueda") String cadenaBusqueda,
                                   Model model) {
 
         CampoRC campo = campoRCService.findById(Integer.valueOf(campoRutaContable));
-
-
         // Asegúrate de que el cuentaContable no sea nulo o vacío
         if (cuentaContable == null || cuentaContable.isEmpty()) {
             return "<tr><td colspan='100%'>Por favor ingrese una cuenta contable válida.</td></tr>";
@@ -160,7 +162,7 @@ public class CuentasEventMatrixController {
 
         String ultimaFecha = accountingRouteService.encontrarUltimaFechaSubida(ruta);
 
-        List<Object[]> aroutes = accountingRouteService.findAllData(ruta, ultimaFecha);
+        List<Object[]> aroutes = accountingRouteService.findAllData(ruta, ultimaFecha, cadenaBusqueda, campo.getNombre());
 
         CampoRC crc = new CampoRC();
         crc.setNombre("periodo_preciso");
@@ -186,8 +188,6 @@ public class CuentasEventMatrixController {
             tablaHtml.append("<td>").append(col.getNombre()).append("</td>");
         }
         tablaHtml.append("</tr></thead><tbody>");
-
-        System.out.println(indice);
 
         // Crear filas
         for (Object[] row : aroutes) {
@@ -241,12 +241,10 @@ public class CuentasEventMatrixController {
             }
 
             if(!campoDivisa.equals("0")) {
-                System.out.println("VER "+campoDivisa);
                 CampoRC cDivisa = campoRCService.findById(Integer.valueOf(campoDivisa));
                 cuenta.setCampoDivisa(cDivisa);
             }
 
-            System.out.println("VER1 "+campoValorCuenta);
             if(!campoValorCuenta.equals("0")) {
                 CampoRC cValorCuenta = campoRCService.findById(Integer.valueOf(campoValorCuenta));
                 cuenta.setCampoValorCuenta(cValorCuenta);

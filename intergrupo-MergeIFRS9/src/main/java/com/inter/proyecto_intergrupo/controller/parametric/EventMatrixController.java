@@ -224,7 +224,6 @@ public class EventMatrixController {
 
         // Llama al servicio para obtener la lista de cuentas basado en los parámetros.
         List<String> cuentas = eventMatrixService.findCuentaGanancia(idTipoEvento, idConciliacion, idInventarioConciliacion);
-        System.out.println(cuentas.size());
         // Retorna la lista de cuentas en formato JSON.
         return ResponseEntity.ok(cuentas);
     }
@@ -242,19 +241,9 @@ public class EventMatrixController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        System.out.println(tipoEvento);
-        System.out.println(concil);
-        System.out.println(inventario);
-        System.out.println(cuenta);
-
         Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Países");
 
         if(userService.validateEndpoint(user.getId(),"Ver Países")) { //CAMBIAR A VER Matriz de Eventos
-            System.out.println(tipoEvento);
-            System.out.println(concil);
-            System.out.println(inventario);
-            System.out.println(cuenta);
-
             int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
             PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
 

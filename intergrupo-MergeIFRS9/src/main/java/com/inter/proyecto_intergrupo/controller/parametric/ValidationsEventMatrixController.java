@@ -48,6 +48,12 @@ public class ValidationsEventMatrixController {
     @Autowired
     private CampoRConcilService campoRConcilService;
 
+    @Autowired
+    private CampoRCService campoRCService;
+
+    @Autowired
+    private ConstructionParameterService constructionParameterService;
+
 
 
     @GetMapping(value="/parametric/validationsEventMatrix/{id}")

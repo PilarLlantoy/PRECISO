@@ -241,7 +241,6 @@ public class ConciliationController {
         for(AccountConcil cuenta:allCuentas){
             System.out.println(cuenta.getValor());
         }
-        System.out.println(allCuentas.size());
         Page<AccountConcil> pageConciliation = new PageImpl<>(allCuentas.subList(start, end), pageRequest, allCuentas.size());
 
         int totalPage=pageConciliation.getTotalPages();
@@ -338,7 +337,6 @@ public class ConciliationController {
         List<Conciliation> list;
         if(params==null) list=conciliationService.findAll();
         else list=conciliationService.findByFilter(params.get("vId").toString(),params.get("vFilter").toString());
-        System.out.println(list.size());
 
         int start = (int)pageRequest.getOffset();
         int end = Math.min((start + pageRequest.getPageSize()), list.size());

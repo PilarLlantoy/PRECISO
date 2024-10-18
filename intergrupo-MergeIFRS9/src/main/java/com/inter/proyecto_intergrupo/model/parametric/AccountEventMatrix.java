@@ -2,6 +2,8 @@ package com.inter.proyecto_intergrupo.model.parametric;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -89,6 +91,10 @@ public class AccountEventMatrix {
 
     @Column(name = "estado", columnDefinition = "BIT DEFAULT 1")
     private boolean estado = true;
+
+
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ConstructionParameter> parametros = new ArrayList<>();
 
 
 }

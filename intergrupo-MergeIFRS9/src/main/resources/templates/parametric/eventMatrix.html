@@ -133,7 +133,7 @@
                         <td th:text="${event.id}"></td>
                         <td th:text="${event.tipoEvento.nombre}"></td>
                         <td th:text="${@accountEventMatrixService.findByMatrizEventoTipo1(event)?.cuentaGanancia ?: ''}"></td>
-                        <td th:text="${@accountEventMatrixService.findByMatrizEventoTipo1(event)?.cuentaGanancia ?: ''}"></td>
+                        <td th:text="${@accountEventMatrixService.findByMatrizEventoTipo2(event)?.cuentaGanancia ?: ''}"></td>
                         <td th:if="${event.homCntros == true}">Activo</td>
                         <td th:if="${event.homCntros == false}">Inactivo</td>
                         <td th:if="${event.PYG == true}">Activo</td>
@@ -227,7 +227,6 @@
         const inventarioID = document.getElementById('selectedInv').value;
         const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
         const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
-        console.log("ENTRA", "1",tipoEventoID, "2",concilID, "3",inventarioID);
 
         if (tipoEventoID && concilID && inventarioID) {
             const response = await fetch(`/parametric/obtenerCuentas/${tipoEventoID}/${concilID}/${inventarioID}`, {

@@ -63,7 +63,6 @@ public class ConciliationService {
                 if ("inactivo".equalsIgnoreCase(value)) {
                     valor = false;
                 }
-                System.out.println("valor: " + valor);
                 Query quer = entityManager.createNativeQuery(
                         "SELECT em.* FROM preciso_conciliaciones as em WHERE em.activo = ?", Conciliation.class);
                 quer.setParameter(1, valor);

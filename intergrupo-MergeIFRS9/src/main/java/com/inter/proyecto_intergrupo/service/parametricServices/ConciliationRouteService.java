@@ -176,8 +176,6 @@ public class ConciliationRouteService {
         if(fuente !=null)
             fichero=fuente;
 
-        System.out.println(fichero+" "+ extension);
-
         Query queryBulk = entityManager.createNativeQuery("BULK INSERT " + (nombreTabla) +
                 " FROM '" + fichero +
                 "' WITH ("+complement+ ")");

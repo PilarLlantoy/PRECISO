@@ -79,7 +79,7 @@ public class AccountingLoadController {
                 AccountingRoute ac = accountingRouteService.findById(Integer.parseInt(params.get("arhcont").toString()));
                 modelAndView.addObject("arhcont",ac);
                 logAroutes = accountingRouteService.findAllLog(ac,params.get("period").toString());
-                aroutes = accountingRouteService.findAllData(ac,params.get("period").toString());
+                aroutes = accountingRouteService.findAllData(ac,params.get("period").toString(), null, null);
                 CampoRC crc= new CampoRC();
                 crc.setNombre("periodo_preciso");
                 ac.getCampos().add(crc);
@@ -193,7 +193,6 @@ public class AccountingLoadController {
     @PostMapping("/parametric/accountingLoad/leerArchivoL")
     @ResponseBody
     public ResponseEntity<String> leerArchivoLocal(@RequestParam String id, @RequestParam String fecha, @RequestParam("file") MultipartFile file) {
-        System.out.println("ENTRO");
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
         AccountingRoute ac = accountingRouteService.findById(Integer.parseInt(id));
@@ -228,7 +227,7 @@ public class AccountingLoadController {
         String headerKey = "Content-Disposition";
         String headerValue = "attachment; filename="+ac.getNombre().replace(" ","_") + currentDateTime + ".xlsx";
         response.setHeader(headerKey, headerValue);
-        List<Object[]> aroutes = accountingRouteService.findAllData(ac,fecha);
+        List<Object[]> aroutes = accountingRouteService.findAllData(ac,fecha, null, null);
         List<CampoRC> colAroutes = ac.getCampos();
         CampoRC crc= new CampoRC();
         crc.setNombre("periodo_preciso");

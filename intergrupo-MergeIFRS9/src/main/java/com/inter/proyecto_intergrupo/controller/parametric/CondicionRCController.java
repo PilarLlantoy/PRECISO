@@ -117,7 +117,6 @@ public class CondicionRCController {
     @DeleteMapping("/parametric/deleteCondicionRC/{id}")
     public ResponseEntity<?> deleteCondicionRC(@PathVariable int id) {
         try {
-            System.out.println("Este es: "+id);
             condicionRCService.deleteById(id);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
