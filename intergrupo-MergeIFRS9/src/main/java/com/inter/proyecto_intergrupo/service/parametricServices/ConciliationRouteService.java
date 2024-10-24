@@ -290,6 +290,42 @@ public class ConciliationRouteService {
         return logInventoryLoadRepository.findAllByIdCRAndFechaCargueOrderByIdDesc(cr,fechaDate);
     }
 
+    public List<Object[]> findAllLogByDate() {
+        Query query = entityManager.createNativeQuery(
+                "WITH CTE AS (\n" +
+                        "    SELECT \n" +
+                        "        [id_lci],\n" +
+                        "        [cantidad_registros],\n" +
+                        "        [estado_proceso],\n" +
+                        "        [fecha_cargue],\n" +
+                        "        [fecha_preciso],\n" +
+                        "        [novedad],\n" +
+                        "        [tipo_proceso],\n" +
+                        "        [usuario],\n" +
+                        "        [idcr],\n" +
+                        "        COUNT(*) OVER (PARTITION BY [fecha_cargue], [idcr]) AS total_intentos,\n" +
+                        "        ROW_NUMBER() OVER (PARTITION BY [fecha_cargue], [idcr] ORDER BY [fecha_preciso] DESC) AS row_num\n" +
+                        "    FROM \n" +
+                        "        [PRECISO].[dbo].[preciso_log_cargues_inventarios]\n" +
+                        ")\n" +
+                        "SELECT [id_lci],\n" +              //0
+                        "    [cantidad_registros],\n" +     //1
+                        "    [estado_proceso],\n" +         //2
+                        "    [fecha_cargue],\n" +           //3
+                        "    [fecha_preciso],\n" +          //4
+                        "    [novedad],\n" +                //5
+                        "    [tipo_proceso],\n" +           //6
+                        "    [usuario],\n" +                //7
+                        "    [idcr],\n" +                   //8
+                        "    total_intentos\n" +           //9
+                        "FROM CTE\n" +
+                        "WHERE row_num = 1\n" +
+                        "ORDER BY \n" +
+                        "[fecha_cargue], [idcr];");
+        return query.getResultList();
+    }
+
+
     public List<Object[]> findAllData(ConciliationRoute data, String fecha) {
         String campos = data.getCampos().stream()
                 .map(CampoRConcil::getNombre)

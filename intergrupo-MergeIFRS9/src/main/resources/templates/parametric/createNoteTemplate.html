@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+
+<div class="main-container">
+    <div class="row m-0 bg-primary fixed-top myNav">
+        <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
+            <h3 class="fw-bold text-white mx-4 my-3">Creación de Plantilla de Notas</h3>
+        </div>
+    </div>
+    <div id="content">
+        <div class="row mt-4 p-4">
+            <form th:object="${noteTemplate}" th:action="@{/parametric/createNoteTemplate}" method="POST">
+
+
+                <h5 class="font-weight-bold">Opciones Registro</h5>
+                <div class="row p-2 mt-1 mb-2 border rounded">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <h6 class="font-weight-bold">Detalle:</h6>
+                            <input type="text" class="form-control" name="detalle" id="detalle" th:field="*{detalle}" >
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Activo</h6>
+                            <input id="activoInput" name="activo" th:field="*{estado}" th:id="${activo}"
+                                   th:value="${estado}" type="checkbox" class="styled-checkbox">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Plantilla Libre</h6>
+                            <input id="manejaCC" name="manejaCC" th:field="*{plantillaLibre}"
+                                   th:value="${plantillaLibre}" type="checkbox" class="styled-checkbox" onchange="toggleFields()">
+                        </div>
+                    </div>
+                </div>
+
+                <h5 class="font-weight-bold">Información Registro</h5>
+
+                <div class="row p-2 border rounded">
+                    <div class="col-md-3">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Conciliación:<i class="bi bi-caret-down"></i></h6>
+                            <select class="form-control" required name="selectedConcil" id="selectedConcil" onchange="toggleConciliacion()">
+                                <option disabled value="" selected hidden>Seleccione una Conciliación</option>
+                                <option th:each="concil : ${conciliaciones}" th:value="${concil.id}" th:text="${concil.nombre}"
+                                    th:selected="${noteTemplate.conciliacion != null and concil.nombre == noteTemplate.conciliacion}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Inventario:<i class="bi bi-caret-down"></i></h6>
+                            <select class="form-control" required name="selectedRutaConcil" id="selectedRutaConcil" onchange="actualizarTodo()">
+                                <option disabled value="" selected hidden>Seleccione un archivo</option>
+                                <option th:each="ruta : ${rutascs}" th:value="${ruta.id}" th:text="${ruta.nombre}"
+                                    th:selected="${noteTemplate.inventarioConciliacion != null and ruta.id == noteTemplate.inventarioConciliacion.id}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Matriz:<i class="bi bi-caret-down"></i></h6>
+                            <select class="form-control" required name="selectedMatriz" id="selectedMatriz">
+                                <option disabled value="" selected hidden>Seleccione matriz</option>
+                                <option th:each="matriz : ${matrices}" th:value="${matriz.id}" th:text="${matriz.nombre}"
+                                        th:selected="${noteTemplate.matriz != null and matriz.id == noteTemplate.matriz.id}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Referencia Tercero:<i class="bi bi-caret-down"></i></h6>
+                            <select class="form-control" required name="campoRefTercero" id="campoRefTercero">
+                                <option disabled value="" selected hidden>Seleccione Campo</option>
+                                <option th:each="campo : ${campos}" th:value="${campo.id}" th:text="${campo.nombre}"
+                                        th:selected="${noteTemplate.referenciaTercero != null and campo.id == noteTemplate.referenciaTercero.id}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Tipificación:<i class="bi bi-caret-down"></i></h6>
+                            <select class="form-control" name="selectedTip" id="selectedTip">
+                                <option disabled value="" selected hidden>Seleccione una Conciliación</option>
+                                <option th:each="concil : ${conciliaciones}" th:value="${concil.id}" th:text="${concil.nombre}"
+                                        th:selected="${noteTemplate.tipificacion != null and concil.id == noteTemplate.tipificacion.id}"></option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Evento:<i class="bi bi-caret-down"></i></h6>
+                            <select class="form-control" name="selectedTipoEvento" id="selectedTipoEvento">
+                                <option value="" selected>Seleccione un Evento</option>
+                                <option th:value="CONCILIACION" th:text="CONCILIACIÓN"></option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3" id="TextoCuenta1">
+                        <div class="form-group">
+                            <h6 class="font-weight-bold">Cuenta 1:</h6>
+                            <input type="text" class="form-control" name="cuenta1" id="cuenta1" th:field="*{cuenta1}" >
+                        </div>
+                    </div>
+                    <div class="col-md-3" id="TextoCuenta2">
+                        <div class="form-group">
+                            <h6 class="font-weight-bold">Cuenta 2:</h6>
+                            <input type="text" class="form-control" name="cuenta2" id="cuenta2" th:field="*{cuenta2}" >
+                        </div>
+                    </div>
+
+                    <!-- Campo oculto para el token CSRF -->
+                    <input type="hidden" id="csrfToken" th:value="${_csrf.token}" />
+                </div>
+
+                <div class="row pt-5 py-3">
+                    <div class="col-md-12 d-flex align-content-center justify-content-center">
+                        <div class="d-grid gap-2 col-3">
+                            <button type="submit" class="btn btn-primary">Agregar</button>
+                        </div>
+                        <div class="d-grid gap-2 col-3">
+                            <a class="btn btn-danger" th:href="@{/parametric/noteTemplates}">Cancelar</a>
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+<script>
+
+    // Inicializar el estado de los campos cuando la página se carga
+    window.onload = function() {
+        //toggleFields();
+    };
+
+    async function actualizarTodo() {
+        await actualizarMatriz();  // Luego llama a actualizarMatriz
+        await toggleRuta();  // Espera a que toggleRuta complete su ejecución
+
+    }
+
+
+    function updateFilePath() {
+        var fileInput = document.getElementById('file');
+        var filePath = document.getElementById('filePath');
+        var fakePath = fileInput.value;  // "ruta virtual"
+        filePath.value = fakePath;
+    }
+
+    function limpiarCampos(){
+        const campoCentroContable = document.getElementById('campocontable');
+        const campoRefTercero = document.getElementById('campoRefTercero');
+
+        campoCentroContable.innerHTML = '';
+        campoRefTercero.innerHTML = '';
+
+        campoCentroContable.innerHTML = '<option disabled value="" selected hidden>Seleccione Campo</option>';
+        campoRefTercero.innerHTML = '<option disabled value="" selected hidden>Seleccione Campo</option>';
+    }
+
+    async function toggleConciliacion() {
+        const concilID = document.getElementById('selectedConcil').value;
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+        if (concilID) {
+            const response = await fetch(`/parametric/obtenerRutasConcilByConcil/${concilID}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                }
+            });
+
+            const data = await response.json();
+
+            const ruta = document.getElementById('selectedRutaConcil');
+            ruta.innerHTML = '<option disabled value="" selected hidden>Seleccione un archivo</option>';
+
+            data.forEach(campo => {
+                const optionRC = document.createElement('option');
+                optionRC.value = campo[0];
+                optionRC.text = campo[1];
+                ruta.appendChild(optionRC);
+            });
+
+            limpiarCampos();
+        }
+    }
+
+    async function toggleRuta() {
+        const rutaID = document.getElementById('selectedRutaConcil').value;
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+        if (rutaID) {
+            const response = await fetch(`/parametric/obtenerCamposFichero/${rutaID}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                }
+            });
+
+            const data = await response.json();
+
+            const campoRefTercero = document.getElementById('campoRefTercero');
+
+            campoRefTercero.innerHTML = '<option disabled value="" selected hidden>Seleccione Campo</option>';
+
+            data.forEach(campo => {
+                const optionOperacion = document.createElement('option');
+                optionOperacion.value = campo[0];
+                optionOperacion.text = campo[1];
+                campoRefTercero.appendChild(optionOperacion);
+
+            });
+        }
+    }
+
+    function toggleFields() {
+        const isChecked = document.getElementById('manejaCC').checked;
+
+        // Obtener los campos a deshabilitar
+        const concilSelect = document.getElementById('selectedConcil');
+        const rutaConcilSelect = document.getElementById('selectedRutaConcil');
+        const campoOperacionSelect = document.getElementById('campoRefTercero');
+        const matrizSelect = document.getElementById('selectedMatriz');
+
+        // Alternar el estado disabled de los campos
+        concilSelect.disabled = isChecked;
+        rutaConcilSelect.disabled = isChecked;
+        campoOperacionSelect.disabled = isChecked;
+        matrizSelect.disabled = isChecked;
+    }
+
+    async function actualizarMatriz() {
+
+        console.log("MATRIZ")
+        const concilID = document.getElementById('selectedConcil').value;
+        const inventarioID = document.getElementById('selectedRutaConcil').value;
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+        if (concilID && inventarioID) {
+            const response = await fetch(`/parametric/obtenerMatrices/${concilID}/${inventarioID}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                }
+            });
+
+            const data = await response.json();
+            console.log(response, data)
+
+            const matrizSelect = document.getElementById('selectedMatriz');
+            matrizSelect.innerHTML = '<option disabled value="" selected hidden>Seleccione matriz</option>';
+
+            data.forEach(matriz => {
+            console.log(matriz)
+                const option = document.createElement('option');
+                option.value = matriz;
+                option.text = matriz;
+                matrizSelect.appendChild(option);
+            });
+        }
+    }
+
+
+</script>
+</body>
+</html>

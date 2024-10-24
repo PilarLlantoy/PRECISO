@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+
+<div class="main-container">
+    <style>
+        .modal-xl {
+            max-width: 80% !important; /* Ajusta esto según el tamaño que prefieras */
+            width: 80% !important;
+        }
+
+        .checkHorizontal {
+            display: flex;
+            align-items: baseline;
+        }
+    </style>
+    <div class="row m-0 bg-primary fixed-top myNav">
+        <div class="col-md-12 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
+            <h3 class="fw-bold text-white ml-4 my-3">Cuentas (</h3>
+            <div class="d-flex " style="align-items">
+                <h3 class=" fw-bold text-white  my-3">Plantilla: <span th:text="${matriz.conciliacion.nombre}"></span></h3>
+                <h3 class=" fw-bold text-white  my-3">, Inventario: <span th:text="${matriz.inventarioConciliacion.detalle}"></span></h3>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-5 py-3 px-4">
+        <div class="text-left col-md-6">
+            <h2>Cargue de Cuentas a Parametrizar</h2>
+        </div>
+        <div class="text-right col-md-6">
+            <a class="btn btn-primary mx-1" th:href="@{/parametric/noteTemplates}"><i class="fa-solid fa-left-long"></i> Regresar</a>
+            <button type="button" class="btn btn-primary mx-2" onclick="Limpiar()">Deseleccionar Item</button>
+        </div>
+    </div>
+
+
+    <div class="row px-4">
+        <div class="text-left col-md-12 mb-3">
+            <form id="miFormularioCuenta1" th:object="${cuenta1}" th:action="@{/parametric/createCuenta1}" method="POST">
+                <div class="mb-3 p-3 row border rounded">
+                    <div hidden class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">ID</h6>
+                            <input type="text" name="cuentaId" id="cuentaId1" class="form-control" th:field="*{id}">
+                        </div>
+                    </div>
+
+                    <!-- miFormulario oculto para pasar el objeto croute -->
+                    <input type="hidden" id="matrizId" name="matrizId" th:value="${matrizId}" />
+
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Cuenta Ganancia:</h6>
+                            <div class="d-flex align-items-center">
+                                <input type="text" class="form-control" th:field="*{cuentaGanancia}" id="selectedCG1">
+                                <i class="bi bi-question-circle-fill ml-1"
+                                   type="button"
+                                   data-toggle="modal"
+                                   data-target="#cuentaModal"
+                                   data-parametro="ganancia1"
+                                ></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Cuenta Pérdida:</h6>
+                            <div class="d-flex align-items-center">
+                                <input type="text" class="form-control" th:field="*{cuentaPerdida}" id="selectedCP1">
+                                <i class="bi bi-question-circle-fill ml-1"
+                                   type="button"
+                                   data-toggle="modal"
+                                   data-target="#cuentaModal"
+                                   data-parametro="perdida1"
+                                ></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Divisa Contable:<i class="bi bi-caret-down"></i></h6>
+                            <select class="form-control" name="selectedCD1" id="selectedCD1">
+                                <option value="0" th:selected="${cuenta1.campoDivisa == null}">Seleccione un campo</option>
+                                <option th:each="campo : ${campos}" th:value="${campo.id}" th:text="${campo.nombre}"
+                                        th:selected="${cuenta1.campoDivisa != null and campo.id == cuenta1.campoDivisa.id}">
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-2">
+                        <h6 class="font-weight-bold">Aplica a:</h6>
+                        <div>
+                            <div class="form-group mb-1 checkHorizontal">
+                                <h6 class="font-weight-bold">Campos Inventarios:</h6>
+                                <input id="lunesInput" name="lunes" th:field="*{manejaDivisa}" th:id="${lunes}"
+                                       th:value="${lunes}" type="checkbox">
+                            </div>
+                        </div>
+                        <div>
+                            <div class="form-group mb-1 checkHorizontal">
+                                <h6 class="font-weight-bold">Cuentas Matriz:</h6>
+                                <input id="lunesInput" name="lunes" th:field="*{manejaDivisa}" th:id="${lunes}"
+                                       th:value="${lunes}" type="checkbox">
+                            </div>
+                        </div>
+                        <div>
+                            <div class="form-group mb-1 checkHorizontal">
+                                <h6 class="font-weight-bold">Libre:</h6>
+                                <input id="lunesInput" name="lunes" th:field="*{manejaDivisa}" th:id="${lunes}"
+                                       th:value="${lunes}" type="checkbox">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div>
+                            <div class="form-group mb-1 checkHorizontal">
+                                <h6 class="font-weight-bold">Maneja Fórmula?</h6>
+                                <input id="lunesInput" name="lunes" th:field="*{manejaDivisa}" th:id="${lunes}"
+                                       th:value="${lunes}" type="checkbox">
+                            </div>
+                        </div>
+                        <div>
+                            <div class="form-group mb-1">
+                                <select class="form-control" name="selectedCD1" id="selectedCD1">
+                                    <option value="0" th:selected="${cuenta1.campoDivisa == null}">Seleccione un campo</option>
+                                    <option th:each="campo : ${campos}" th:value="${campo.id}" th:text="${campo.nombre}"
+                                            th:selected="${cuenta1.campoDivisa != null and campo.id == cuenta1.campoDivisa.id}">
+                                    </option>
+                                </select>
+                                <input th:field="*{valorOp2}" th:value="${valorOp2}" type="text" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2"></div>
+
+
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Campo Inv. 1:<i class="bi bi-caret-down"></i></h6>
+                            <select class="form-control" name="selectedCD1" id="selectedCD1">
+                                <option value="0" th:selected="${cuenta1.campoDivisa == null}">Seleccione un campo</option>
+                                <option th:each="campo : ${campos}" th:value="${campo.id}" th:text="${campo.nombre}"
+                                        th:selected="${cuenta1.campoDivisa != null and campo.id == cuenta1.campoDivisa.id}">
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Operación:<i class="bi bi-caret-down"></i></h6>
+                            <select class="form-control" name="selectedOperacion1" id="selectedOperacion1">
+                                <option disabled value="0" selected hidden>Seleccione un campo</option>
+                                <!--
+                                <option th:each="concil : ${conciliaciones}" th:value="${concil.id}" th:text="${concil.nombre}"
+                                        th:selected="${eventMatrix.conciliacion != null and concil.nombre == eventMatrix.conciliacion}"></option>
+                                -->
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Campo Inv. 2:<i class="bi bi-caret-down"></i></h6>
+                            <select class="form-control" name="selectedCD1" id="selectedCD1">
+                                <option value="0" th:selected="${cuenta1.campoDivisa == null}">Seleccione un campo</option>
+                                <option th:each="campo : ${campos}" th:value="${campo.id}" th:text="${campo.nombre}"
+                                        th:selected="${cuenta1.campoDivisa != null and campo.id == cuenta1.campoDivisa.id}">
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Centro Contable:<i class="bi bi-caret-down"></i></h6>
+                            <select class="form-control" name="selectedCD1" id="selectedCD1">
+                                <option value="0" th:selected="${cuenta1.campoDivisa == null}">Seleccione un campo</option>
+                                <option th:each="campo : ${campos}" th:value="${campo.id}" th:text="${campo.nombre}"
+                                        th:selected="${cuenta1.campoDivisa != null and campo.id == cuenta1.campoDivisa.id}">
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Número Referencia:</h6>
+                            <div class="d-flex align-items-center">
+                                <input type="text" class="form-control" th:field="*{cuentaGanancia}" id="selectedCG1">
+                                <i class="bi bi-question-circle-fill ml-1"
+                                   type="button"
+                                   data-toggle="modal"
+                                   data-target="#cuentaModal"
+                                   data-parametro="ganancia1"
+                                ></i>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row">
+                    <div class="d-grid gap-2 col-2">
+                        <button th:disabled="${!p_modificar}" type="button" class="btn btn-primary" onclick="descartar()">Eliminar</button>
+                    </div>
+                    <div class="d-grid gap-2 col-2">
+                        <button th:disabled="${!p_modificar}" type="submit" class="btn btn-primary">Agregar</button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+        <div class="col-md-12 p-0">
+            <div class="table-responsive rounded border-primary">
+                <h2>Campos registrados</h2>
+                <table id="example" class="table table-striped table-hover text-center table-bordered table-sm" width="100%">
+                    <thead class="bg-primary">
+                    <tr>
+                        <th>Item</th>
+                        <th>Divisa</th>
+                        <th>Cuenta Ganancia</th>
+                        <th>Cuenta Pérdida</th>
+                        <th>Centro</th>
+                        <th>Referencia</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="camp : ${allCampos}">
+                        <td th:text="${camp.id}"></td>
+                        <td th:text="${camp.nombre}"></td>
+                        <td th:if="${camp.primario == true}">Sí</td>
+                        <td th:if="${camp.primario == false}">No</td>
+                        <td th:text="${camp.tipo}"></td>
+                        <td th:text="${camp.longitud}"></td>
+                        <td th:if="${camp.visualizacion == true}">Sí</td>
+                        <td th:if="${camp.visualizacion == false}">No</td>
+                        <td>
+                            <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
+                                    th:data-id="${camp.id}"
+                                    th:data-nombre="${camp.nombre}"
+                                    th:data-primario="${camp.primario}"
+                                    th:data-visualizacion="${camp.visualizacion}"
+                                    th:data-tipo="${camp.tipo}"
+                                    th:data-longitud="${camp.longitud}"
+                                    th:data-formula="${camp.formula}"
+                                    th:data-formatoFecha="${camp.formatoFecha}"
+                                    th:data-idioma="${camp.idioma}"
+                                    th:data-separador="${camp.separador}"
+                                    th:data-operacion="${camp.operacion}"
+                                    th:data-valorOperacion="${camp.valorOperacion}"
+                                    onclick="cargarCampos(this)">Seleccionar</button>
+                        </td>
+
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="row" th:if="${last != 0}">
+                <div class="col-md-4 text-left">
+                    <nav arial-label="Pagination">
+                        <ul class="pagination">
+                            <li class="page-item" th:classappend="${prev == 0 ? 'disabled' : ''}">
+                                <a class="page-link"
+                                   th:href="@{/parametric/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${prev},dir=${directory},vId=${vId})}">Anterior</a>
+                            </li>
+                            <li class="page-item" th:classappend="${current == last ? 'disabled' : ''}">
+                                <a class="page-link"
+                                   th:href="@{/parametric/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${next},dir=${directory},vId=${vId})}">Siguiente</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="col-md-4 text-center">
+                    <h6 th:utext="${registers} + ' Registros Encontrados'"></h6>
+                </div>
+                <div class="col-md-4 text-right">
+                    <h6 class="mx-1" th:utext="'Página ' + ${current} + ' de ' + ${last}"></h6>
+                </div>
+            </div>
+            <div class="d-flex align-items-center justify-content-center" th:if="${filterExport != 'Original'}">
+                <h5><span class="badge badge-pill text-light badge-info py-2 px-5">¡La Tabla se encuentra Filtrada!</span>
+                </h5>
+            </div>
+            <!--
+            <div class="d-flex align-items-center justify-content-center">
+                <a th:href="@{/admin/users/download/?vFilter={vFilter}&vId={vId}(vFilter=${vFilter},vId=${vId})}" class="btn btn-primary">Exportar a Excel</a>
+            </div>
+            -->
+        </div>
+
+    </div>
+
+
+    <!-- Campo oculto para el token CSRF -->
+    <input type="hidden" id="csrfToken" th:value="${_csrf.token}" />
+
+
+    <!-- Modal CUENTA-->
+    <div class="modal fade" id="cuentaModal" tabindex="-1" role="dialog" aria-labelledby="cuentaModal" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="font-weight-bold modal-title" id="exampleModalLabel">Consulta de Cuentas Contables</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="mt-1 mb-2">
+                        <div class="form-group mb-1 d-flex align-items-center">
+                            <h6 class="font-weight-bold mb-0">Cuenta Contable a buscar:</h6>
+                            <input type="text" class="form-control col-md-4 ml-2" id="selectedCuentaBusqueda">
+                            <button class="btn btn-primary mx-1" id="btnConsultar" onclick="consultarCuenta()">Consultar</button>
+                        </div>
+                    </div>
+                    <div class="col-md-12 p-0">
+                        <div class="table-responsive rounded border-primary" id="tablaCuentas">
+                            <h2>Resultado</h2>
+                            <table id="example2" class="table table-striped table-hover text-center table-bordered table-sm" width="100%" th:fragment="tablaCompleta">
+                                <thead class="bg-primary">
+                                <tr>
+                                    <th th:each="rc : ${allColRCs}" th:text="${rc.nombre}"></th> <!-- Encabezados dinámicos -->
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="row : ${allRCs}">
+                                    <td th:each="col : ${row}" th:text="${col}"></td> <!-- Filas dinámicas -->
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal PARAMETROS CONSTRUCCION-->
+    <div class="modal fade" id="parametrosModal" tabindex="-1" role="dialog" aria-labelledby="parametrosModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="font-weight-bold modal-title" id="exampleModalLabel2">Parámetros Construcción</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row pb-2">
+                        <div class="text-left col-md-6">
+                            <h2>Cargue Parámetros Construcción Cuenta Contable</h2>
+                        </div>
+                        <div class="text-right col-md-6">
+                            <button type="button" class="btn btn-primary mx-2" onclick="limpiarCampParams()">Deseleccionar Item</button>
+                        </div>
+                    </div>
+                    <div class="mt-1 mb-2 row">
+                        <div class="col-md-3">
+                            <div hidden class="col-md-2">
+                                <div class="form-group mb-1">
+                                    <h6 class="font-weight-bold">ID</h6>
+                                    <input type="text" class="form-control" id="parametroId" name="parametroId" th:value="${parametro.id}">
+                                </div>
+                            </div>
+                            <div hidden class="col-md-2">
+                                <div class="form-group mb-1">
+                                    <h6 class="font-weight-bold">ID cuenta</h6>
+                                    <input type="text" class="form-control" id="idCuenta" name="idCuenta" th:value="${cuenta1.id}">
+                                </div>
+                            </div>
+                            <div class="form-group mb-1">
+                                <h6 class="font-weight-bold">Campo Conciliacion:<i class="bi bi-caret-down"></i></h6>
+                                <select class="form-control" required name="selectedPCCC" id="selectedPCCC">
+                                    <option disabled value="0" selected hidden>Seleccione un campo</option>
+                                    <option th:each="ruta : ${camposConcil}" th:value="${ruta[0]}" th:text="${ruta[1]}"
+                                            th:selected="${parametro.campoConciliacion != null and ruta[0] == parametro.campoConciliacion.id}"
+                                    ></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group mb-1">
+                                <h6 class="font-weight-bold">Ruta Contable:<i class="bi bi-caret-down"></i></h6>
+                                <select class="form-control" required name="selectedPCRC" id="selectedPCRC" onchange="togglePCRC()">
+                                    <option disabled value="0" selected hidden>Seleccione una R.C.</option>
+                                    <option th:each="ruta : ${rutasContables}" th:value="${ruta.id}" th:text="${ruta.nombre}"
+                                            th:selected="${parametro.rutaContable != null and ruta.id == parametro.rutaContable.id}"
+                                    ></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group mb-1">
+                                <h6 class="font-weight-bold">Campo Contable Validar:<i class="bi bi-caret-down"></i></h6>
+                                <select class="form-control" required name="selectedPCCCV" id="selectedPCCCV">
+                                    <option disabled value="0" selected hidden>Seleccione un campo</option>
+
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group mb-1">
+                                <h6 class="font-weight-bold">Campo Contable Resultante:<i class="bi bi-caret-down"></i></h6>
+                                <select class="form-control" required name="selectedPCCCR" id="selectedPCCCR">
+                                    <option disabled value="0" selected hidden>Seleccione un campo</option>
+
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="d-grid gap-2 col-2">
+                            <button th:disabled="${!p_modificar}" type="button" class="btn btn-primary" onclick="descartarParam()">Eliminar</button>
+                        </div>
+                        <div class="d-grid gap-2 col-2">
+                            <button th:disabled="${!p_modificar}" type="button" class="btn btn-primary" onclick="agregarParam()">Agregar</button>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 p-0">
+                        <div class="table-responsive rounded border-primary" id="tablaParametros">
+                            <h2>Resultado</h2>
+                            <table id="parametros" class="table table-striped table-hover text-center table-bordered table-sm" width="100%">
+                                <thead class="bg-primary">
+                                <tr>
+                                    <th>Campo Conciliacion</th>
+                                    <th>Campo Ruta Contable</th>
+                                    <th>Campo Validar</th>
+                                    <th>Campo Resultado</th>
+                                    <th COLSPAN="2">Acciones</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="val : ${allValidaciones}">
+                                    <td th:text="${val.campoRef.nombre}"></td>
+                                    <td th:text="${val.campoVal.nombre}"></td>
+                                    <td th:text="${val.valorValidacion}"></td>
+                                    <td th:text="${val.operacion}"></td>
+                                    <td th:text="${val.valorOperacion}"></td>
+
+                                    <td>
+                                        <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
+                                                th:data-id="${val.id}"
+                                                th:data-campoRef="${val.campoRef.nombre}"
+                                                th:data-campoVal="${val.campoVal?.nombre ?: ''}"
+                                                th:data-operacion="${val.operacion}"
+                                                th:data-valorOperacion="${val.valorOperacion}"
+                                                th:data-valorValidacion="${val.valorValidacion}"
+                                                th:data-formula="${val.formula}"
+                                                onclick="cargarCampos(this)">Seleccionar</button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<!-- Bootstrap JS and dependencies -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script >
+
+    let selectedId;
+    let buttomModal;
+
+    let cuentaSeleccionada;
+
+    function captarId(checkbox) {
+
+        const id = checkbox.value;
+
+        if (checkbox.checked) {
+            // Si el checkbox está marcado, agregar el ID al array
+            selectedId=id;
+        }
+
+        // Asignar el valor del ID seleccionado al input con id 'selectedCG1'
+        if(buttomModal=="ganancia1")
+        document.getElementById('selectedCG1').value = selectedId;
+        if(buttomModal=="perdida1")
+        document.getElementById('selectedCP1').value = selectedId;
+
+        // Cerrar el modal
+        $('#cuentaModal').modal('hide');
+    }
+
+    // Función para marcar el checkbox correspondiente al abrir el modal
+    $('#cuentaModal').on('shown.bs.modal', function (event) {
+        /*
+        if (selectedId) {
+            // Recorrer todos los checkboxes y marcar el que tenga el valor igual a selectedId
+            $('input[type="checkbox"]').each(function() {
+                if (this.value === selectedId) {
+                    this.checked = true;
+                } else {
+                    this.checked = false; // Desmarcar los demás checkboxes
+                }
+            });
+        }
+        */
+        var button = $(event.relatedTarget);
+        buttomModal = button.data('parametro');
+    });
+
+
+    //PARA OBTENER EL ID CUENTA
+    $('#parametrosModal').on('shown.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        cuentaSeleccionada = button.data('idcuenta');
+        if (cuentaSeleccionada === "cuenta1") {
+            cuentaSeleccionada = document.getElementById("cuentaId1").value;
+        } else{
+            cuentaSeleccionada = document.getElementById("cuentaId2").value;
+        }
+        actualizarTabla(); // Llama a la función al mostrar el modal
+    });
+
+    function consultarCuenta() {
+        var selectedCuentaBusqueda = document.getElementById("selectedCuentaBusqueda").value;
+        var cuentaContable = document.getElementById("selectedRC1").value;
+        var campoRutaContable = document.getElementById("selectedCRC1").value;
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+        // Realizamos la llamada AJAX
+        $.ajax({
+            url: '/consultarCuenta', // URL del endpoint
+            type: 'POST',
+            data: {
+                cuentaContable: cuentaContable ,
+                busqueda: selectedCuentaBusqueda ,
+                campoRutaContable: campoRutaContable
+            },
+            headers: {
+            [csrfHeader]: csrfToken},
+            success: function(response) {
+                $('#example2').html(response); // Reemplaza la tabla completa
+            },
+            error: function(xhr, status, error) {
+                console.error("Error en la consulta: " + error);
+            }
+        });
+    }
+
+    async function limpiarCampos(){
+        const campoRutaContable = document.getElementById('selectedCRC1');
+        const campoDivisa = document.getElementById('selectedCD1');
+        const campoValorCuenta = document.getElementById('selectedCVC1');
+        const campoValorOpUno = document.getElementById('selectedCVOU1');
+        const campoValorOpDos = document.getElementById('selectedCVOD1');
+
+        campoRutaContable.innerHTML = '';
+        campoDivisa.innerHTML = '';
+        campoValorCuenta.innerHTML = '';
+        campoValorOpUno.innerHTML = '';
+        campoValorOpDos.innerHTML = '';
+
+        campoRutaContable.innerHTML = '<option disabled value="0" selected hidden>Seleccione un campo</option>';
+        campoDivisa.innerHTML = '<option disabled value="0" selected hidden>Seleccione un campo</option>';
+        campoValorCuenta.innerHTML = '<option disabled value="0" selected hidden>Seleccione un campo</option>';
+        campoValorOpUno.innerHTML = '<option disabled value="0" selected hidden>Seleccione un campo</option>';
+        campoValorOpDos.innerHTML = '<option disabled value="0" selected hidden>Seleccione un campo</option>';
+    }
+
+    async function toggleRC1() {
+        const idRCont = document.getElementById('selectedRC1').value;
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+        if (idRCont) {
+            const response = await fetch(`/parametric/obtenerCamposRC/${idRCont}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                }
+            });
+
+            const data = await response.json();
+
+            const campoRutaContable = document.getElementById('selectedCRC1');
+            const campoDivisa = document.getElementById('selectedCD1');
+            const campoValorCuenta = document.getElementById('selectedCVC1');
+            const campoValorOpUno = document.getElementById('selectedCVOU1');
+            const campoValorOpDos = document.getElementById('selectedCVOD1');
+
+
+            campoRutaContable.innerHTML = '<option disabled value="0" selected hidden>Seleccione un campo</option>';
+            campoDivisa.innerHTML = '<option disabled value="0" selected hidden>Seleccione un campo</option>';
+            campoValorCuenta.innerHTML = '<option disabled value="0" selected hidden>Seleccione un campo</option>';
+            campoValorOpUno.innerHTML = '<option disabled value="0" selected hidden>Seleccione un campo</option>';
+            campoValorOpDos.innerHTML = '<option disabled value="0" selected hidden>Seleccione un campo</option>';
+
+
+            data.forEach(campo => {
+                const optionRutaContable = document.createElement('option');
+                optionRutaContable.value = campo[0];
+                optionRutaContable.text = campo[1];
+                campoRutaContable.appendChild(optionRutaContable);
+
+                const optionDivisa = document.createElement('option');
+                optionDivisa.value = campo[0];
+                optionDivisa.text = campo[1];
+                campoDivisa.appendChild(optionDivisa);
+
+                const optionValorCuenta = document.createElement('option');
+                optionValorCuenta.value = campo[0];
+                optionValorCuenta.text = campo[1];
+                campoValorCuenta.appendChild(optionValorCuenta);
+
+                const optionValorOpUno = document.createElement('option');
+                optionValorOpUno.value = campo[0];
+                optionValorOpUno.text = campo[1];
+                campoValorOpUno.appendChild(optionValorOpUno);
+
+                const optionValorOpDos = document.createElement('option');
+                optionValorOpDos.value = campo[0];
+                optionValorOpDos.text = campo[1];
+                campoValorOpDos.appendChild(optionValorOpDos);
+            });
+
+        }
+    }
+
+
+    async function togglePCRC() {
+        const idRCont = document.getElementById('selectedPCRC').value;
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+        if (idRCont) {
+            const response = await fetch(`/parametric/obtenerCamposRC/${idRCont}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                }
+            });
+
+            const data = await response.json();
+
+            const campoVal = document.getElementById('selectedPCCCV');
+            const campoRes = document.getElementById('selectedPCCCR');
+
+            campoVal.innerHTML = '<option disabled value="0" selected hidden>Seleccione un campo</option>';
+            campoRes.innerHTML = '<option disabled value="0" selected hidden>Seleccione un campo</option>';
+
+            data.forEach(campo => {
+                const option1 = document.createElement('option');
+                option1.value = campo[0];
+                option1.text = campo[1];
+                campoVal.appendChild(option1);
+
+                const option2 = document.createElement('option');
+                option2.value = campo[0];
+                option2.text = campo[1];
+                campoRes.appendChild(option2);
+            });
+
+        }
+    }
+
+    function descartarParam() {
+        const id = document.querySelector("input[name='parametroId']").value;
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+        if (id) {
+            fetch(`/parametric/deleteParam/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                }
+            }).then(response => {
+                if (response.ok) {
+                    // Actualizar la tabla sin recargar la página
+                    actualizarTabla();
+                }
+            }).then(() => {
+                // Solo después de actualizar la tabla, limpiar los campos
+                limpiarCampParams();
+            }).catch(error => {
+                console.error('Error:', error);
+            });
+
+        }
+
+    }
+
+    async function actualizarTabla() {
+        const id = cuentaSeleccionada;
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+        try {
+            // Llama al endpoint para obtener los parámetros de la cuenta
+            const response = await fetch(`/parametric/obtenerParamsCuenta/${id}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Error al obtener los parámetros de la cuenta');
+            }
+
+            const params = await response.json(); // Devuelve la respuesta como JSON
+
+            // Limpia el contenido actual de la tabla
+            const tbody = document.querySelector('#tablaParametros tbody');
+            tbody.innerHTML = '';
+
+            // Rellena la tabla con los nuevos datos
+            params.forEach(param => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${param[7]|| ''}</td>
+                    <td>${param[8]|| ''}</td>
+                    <td>${param[9]|| ''}</td>
+                    <td>${param[10]|| ''}</td>
+
+                    <td>
+                        <button class="btn btn-primary mx-1"
+                                data-id="${param[0]}"
+                                data-idcampoconciliacion="${param[3]|| ''}"
+                                data-idrutacontable="${param[6]|| ''}"
+                                data-idcampocontvalidar="${param[5] || ''}"
+                                data-idcampocontresultante="${param[4] || ''}"
+                                onclick="cargarCampos(this)">Seleccionar</button>
+                    </td>
+                `;
+                tbody.appendChild(row); // Añade la nueva fila al tbody
+            });
+        } catch (error) {
+            console.error('Error al actualizar la tabla:', error);
+        }
+
+    }
+
+    async function cargarCampos(button) {
+
+        var id = button.getAttribute("data-id");
+        var idcampoconciliacion = button.getAttribute("data-idcampoconciliacion");
+        var idrutacontable = button.getAttribute("data-idrutacontable");
+        var idcampocontvalidar = button.getAttribute("data-idcampocontvalidar");
+        var idcampocontresultante = button.getAttribute("data-idcampocontresultante");
+
+        // Asignar los valores a los campos del miFormulario
+        document.querySelector("input[name='parametroId']").value = id;
+
+        var selectidcampoconciliacion = document.querySelector("select[name='selectedPCCC']");
+        if (idcampoconciliacion) {
+            selectidcampoconciliacion.value = idcampoconciliacion; // Establece el valor directamente
+            if (!selectidcampoconciliacion.value) {
+                console.warn("El valor asignado no corresponde a ninguna opción del select.");
+            }
+        }
+
+        var selectidrutacontable = document.querySelector("select[name='selectedPCRC']");
+        if (idrutacontable) {
+            selectidrutacontable.value = idrutacontable; // Establece el valor directamente
+            if (!selectidrutacontable.value) {
+                console.warn("El valor asignado no corresponde a ninguna opción del select.");
+            }
+        }
+
+        await togglePCRC();
+
+        var selectidcampocontvalidar = document.querySelector("select[name='selectedPCCCV']");
+        if (idcampocontvalidar) {
+            selectidcampocontvalidar.value = idcampocontvalidar; // Establece el valor directamente
+            if (!selectidcampocontvalidar.value) {
+                console.warn("El valor asignado no corresponde a ninguna opción del select.");
+            }
+        }
+
+        var selectidcampocontresultante = document.querySelector("select[name='selectedPCCCR']");
+        if (idcampocontresultante) {
+            selectidcampocontresultante.value = idcampocontresultante; // Establece el valor directamente
+            if (!selectidcampocontresultante.value) {
+                console.warn("El valor asignado no corresponde a ninguna opción del select.");
+            }
+        }
+
+    }
+
+
+
+    function agregarParam() {
+        // Recopila los valores de los campos
+        const id = document.querySelector("input[name='parametroId']").value;
+        const cuentaId = cuentaSeleccionada;
+        const campoConciliacion = document.querySelector("#selectedPCCC").value; // Campo Conciliación
+        const rutaContable = document.querySelector("#selectedPCRC").value; // Ruta Contable
+        const campoContValidar = document.querySelector("#selectedPCCCV").value; // Campo Contable Validar
+        const campoContResultante = document.querySelector("#selectedPCCCR").value; // Campo Contable Resultante
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+        const nuevoParametro = {
+            id: id,
+            account: { id: cuentaId },
+            campoConciliacion: { id: campoConciliacion },
+            rutaContable: { id: rutaContable },
+            campoContValidar: { id: campoContValidar },
+            campoContResultante: { id: campoContResultante },
+            estado: true
+        };
+
+        // Envía la solicitud al servidor
+        fetch(`/parametric/agregarParametro`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                [csrfHeader]: csrfToken
+            },
+            body: JSON.stringify(nuevoParametro)
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error('Error al agregar el parámetro');
+            }
+            // No intentes analizar JSON si no hay cuerpo
+            return response; // Puedes omitir esta línea si no necesitas hacer nada con la respuesta
+        }).then(() => {
+            // Actualiza la tabla o realiza alguna otra acción
+            actualizarTabla();
+        }).then(() => {
+            // Solo después de actualizar la tabla, limpiar los campos
+            limpiarCampParams();
+        }).catch(error => {
+            console.error('Error:', error);
+        });
+
+    }
+
+    function limpiarCampParams(){
+        document.getElementById("parametroId").value = "";
+        document.getElementById("selectedPCCC").value = "0"; // Campo Conciliación
+        document.getElementById("selectedPCRC").value = "0"; // Ruta Contable
+
+        const campoContValidar = document.querySelector("#selectedPCCCV"); // Campo Contable Validar
+        const campoContResultante = document.querySelector("#selectedPCCCR"); // Campo Contable Resultante
+
+        campoContValidar.innerHTML = '';
+        campoContResultante.innerHTML = '';
+
+        campoContValidar.innerHTML = '<option disabled value="0" selected hidden>Seleccione un campo</option>';
+        campoContResultante.innerHTML = '<option disabled value="0" selected hidden>Seleccione un campo</option>';
+    }
+
+
+
+
+
+
+</script>
+
+</body>
+</html>

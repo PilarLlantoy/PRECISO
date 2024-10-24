@@ -1,17 +1,14 @@
 package com.inter.proyecto_intergrupo.service.parametricServices;
 
 
-import com.inter.proyecto_intergrupo.model.parametric.Conciliation;
-import com.inter.proyecto_intergrupo.model.parametric.ConciliationRoute;
 import com.inter.proyecto_intergrupo.model.parametric.EventMatrix;
+import com.inter.proyecto_intergrupo.model.parametric.NoteTemplate;
 import com.inter.proyecto_intergrupo.repository.admin.AuditRepository;
 import com.inter.proyecto_intergrupo.repository.parametric.EventMatrixRepository;
+import com.inter.proyecto_intergrupo.repository.parametric.NoteTemplateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -20,10 +17,10 @@ import java.util.List;
 
 @Service
 @Transactional
-public class EventMatrixService {
+public class NoteTemplateService {
 
     @Autowired
-    private final EventMatrixRepository eventMatrixRepository;
+    private final NoteTemplateRepository noteTemplateRepository;
 
     @PersistenceContext
     EntityManager entityManager;
@@ -32,54 +29,24 @@ public class EventMatrixService {
     private AuditRepository auditRepository;
 
     @Autowired
-    public EventMatrixService(EventMatrixRepository eventMatrixRepository) {
-        this.eventMatrixRepository = eventMatrixRepository;
+    public NoteTemplateService(NoteTemplateRepository noteTemplateRepository) {
+        this.noteTemplateRepository = noteTemplateRepository;
     }
 
-    public List<EventMatrix> findAllActive() {
-        return eventMatrixRepository.findByEstado(true);
-    }
-    public List<EventMatrix> findAllByEstadoAndConciliacionAndInventarioConciliacion(Conciliation concil, ConciliationRoute inv) {
-        return eventMatrixRepository.findAllByEstadoAndConciliacionAndInventarioConciliacion(true, concil, inv);
+    public List<NoteTemplate> findAllActive() {
+        return noteTemplateRepository.findByEstado(true);
     }
 
-    public List<Integer> findMatrices(int concil, int inv) {
-        Query query = entityManager.createNativeQuery(
-                "SELECT id FROM preciso_matriz_eventos WHERE id_conciliacion = :concil AND id_inventario_conciliacion= :inv");
-        query.setParameter("concil", concil);
-        query.setParameter("inv", inv);
-        return query.getResultList();
+    public NoteTemplate findById(int id){
+        return noteTemplateRepository.findAllById(id);
     }
 
-    public EventMatrix findById(int id){
-        return eventMatrixRepository.findAllById(id);
+    public NoteTemplate modificar(NoteTemplate noteTemplate){
+        noteTemplateRepository.save(noteTemplate);
+       return noteTemplate;
     }
 
-    public EventMatrix modificar(EventMatrix eventMatrix){
-        eventMatrixRepository.save(eventMatrix);
-       return eventMatrix;
-    }
-
-    public List<String> findCuentaGanancia(Integer idTipoEvento, Integer idConciliacion, Integer idInventarioConciliacion) {
-        StringBuilder queryBuilder = new StringBuilder("SELECT pcm.cuenta_ganancia FROM preciso_cuentas_matriz_eventos pcm " +
-                "JOIN preciso_matriz_eventos pme ON pcm.id_matriz_evento = pme.id WHERE 1=1");
-
-        // Agregar condiciones según los parámetros
-        if (idTipoEvento != null) {
-            queryBuilder.append(" AND pme.id_tipo_evento = ").append(idTipoEvento);
-        }
-        if (idConciliacion != null && idTipoEvento != null) {
-            queryBuilder.append(" AND pme.id_conciliacion = ").append(idConciliacion);
-        }
-        if (idInventarioConciliacion != null && idConciliacion != null && idTipoEvento != null) {
-            queryBuilder.append(" AND pme.id_inventario_conciliacion = ").append(idInventarioConciliacion);
-        }
-
-        // Ejecutar la consulta y devolver resultados
-        Query query = entityManager.createNativeQuery(queryBuilder.toString());
-        return query.getResultList();
-    }
-
+    /*
     public List<EventMatrix> findByParams(Integer idTipoEvento, Integer idConciliacion, Integer idInventarioConciliacion, String cuentaGanancia) {
         // Primer query con LEFT JOIN
         StringBuilder queryBuilder1 = new StringBuilder("SELECT pme.* FROM preciso_matriz_eventos pme " +
@@ -123,6 +90,10 @@ public class EventMatrixService {
         Query query = entityManager.createNativeQuery(combinedQuery.toString(), EventMatrix.class);
         return query.getResultList();
     }
+
+     */
+
+
 
 
 }

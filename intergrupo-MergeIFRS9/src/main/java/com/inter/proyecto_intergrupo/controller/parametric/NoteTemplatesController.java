@@ -1,8 +1,6 @@
 package com.inter.proyecto_intergrupo.controller.parametric;
 
-import com.inter.proyecto_intergrupo.model.admin.TipoDocumento;
 import com.inter.proyecto_intergrupo.model.admin.User;
-import com.inter.proyecto_intergrupo.model.admin.View;
 import com.inter.proyecto_intergrupo.model.parametric.*;
 import com.inter.proyecto_intergrupo.service.adminServices.UserService;
 import com.inter.proyecto_intergrupo.service.parametricServices.*;
@@ -26,7 +24,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Controller
-public class EventMatrixController {
+public class NoteTemplatesController {
     private static final int PAGINATIONCOUNT=12;
     Logger logger = LogManager.getLogger(LogManager.ROOT_LOGGER_NAME);
 
@@ -52,8 +50,11 @@ public class EventMatrixController {
     @Autowired
     private AccountEventMatrixService accountEventMatrixService;
 
-    @GetMapping(value="/parametric/eventMatrix")
-    public ModelAndView showEventMatrix(@RequestParam Map<String, Object> params) {
+    @Autowired
+    private NoteTemplateService noteTemplateService;
+
+    @GetMapping(value="/parametric/noteTemplates")
+    public ModelAndView shownoteTemplates(@RequestParam Map<String, Object> params) {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
@@ -63,38 +64,33 @@ public class EventMatrixController {
             int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
             PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
 
-            List<EventMatrix> eventMatrixes = eventMatrixService.findAllActive();
+            List<NoteTemplate> noteTemplates = noteTemplateService.findAllActive();
             int start = (int) pageRequest.getOffset();
-            int end = Math.min((start + pageRequest.getPageSize()), eventMatrixes.size());
-            Page<EventMatrix> pageEventMatrix = new PageImpl<>(eventMatrixes.subList(start, end), pageRequest, eventMatrixes.size());
+            int end = Math.min((start + pageRequest.getPageSize()), noteTemplates.size());
+            Page<NoteTemplate> pageEventMatrix = new PageImpl<>(noteTemplates.subList(start, end), pageRequest, noteTemplates.size());
 
             int totalPage=pageEventMatrix.getTotalPages();
             if(totalPage>0){
                 List<Integer> pages = IntStream.rangeClosed(1, totalPage).boxed().collect(Collectors.toList());
                 modelAndView.addObject("pages",pages);
             }
-            modelAndView.addObject("allEvents",pageEventMatrix.getContent());
+            modelAndView.addObject("allRegisters",pageEventMatrix.getContent());
             modelAndView.addObject("current",page+1);
             modelAndView.addObject("next",page+2);
             modelAndView.addObject("prev",page);
             modelAndView.addObject("last",totalPage);
             modelAndView.addObject("filterExport","Original");
             modelAndView.addObject("directory","country");
-            modelAndView.addObject("registers",eventMatrixes.size());
+            modelAndView.addObject("registers",noteTemplates.size());
             modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.addObject("p_modificar", p_modificar);
 
-            List<EventType> allTEs = eventTypeService.findAll();
-            modelAndView.addObject("allTEs", allTEs);
 
             List<Conciliation> allConcils = conciliationService.findAll();
             modelAndView.addObject("allConcils", allConcils);
 
-            List<AccountEventMatrix> cuentas = accountEventMatrixService.findAllActive();
-
-
-            modelAndView.setViewName("parametric/eventMatrix");
+            modelAndView.setViewName("parametric/noteTemplates");
         }
         else
         {
@@ -104,120 +100,157 @@ public class EventMatrixController {
         return modelAndView;
     }
 
-    @GetMapping(value = "/parametric/createEventMatrix")
-    public ModelAndView showCreateEventMatrix(){
+    @GetMapping(value = "/parametric/createNoteTemplate")
+    public ModelAndView showcreateNoteTemplate(){
         ModelAndView modelAndView = new ModelAndView();
-        EventMatrix eventMatrix = new EventMatrix();
+        NoteTemplate noteTemplate = new NoteTemplate();
         List<EventType> allETs = eventTypeService.findAll();
 
         List<Conciliation> allConciliations = conciliationService.findAllActive();
         List<ConciliationRoute> allConciliationRoutes = null;
         List<CampoRConcil> campos = null;
-        modelAndView.addObject("tipoEventos", allETs);
         modelAndView.addObject("conciliaciones", allConciliations);
         modelAndView.addObject("rutascs", allConciliationRoutes);
         modelAndView.addObject("campos", campos);
-        modelAndView.addObject("eventMatrix",eventMatrix);
-        modelAndView.setViewName("/parametric/createEventMatrix");
+        modelAndView.addObject("noteTemplate",noteTemplate);
+
+        modelAndView.setViewName("/parametric/createNoteTemplate");
         return modelAndView;
     }
 
-    @GetMapping(value = "/parametric/modifyEventMatrix/{id}")
-    public ModelAndView modifyEventMatrix(@PathVariable int id){
+    @GetMapping(value = "/parametric/modifyNoteTemplate/{id}")
+    public ModelAndView showModifyNoteTemplate(@PathVariable int id){
         ModelAndView modelAndView = new ModelAndView();
-        EventMatrix eventMatrix = eventMatrixService.findById(id);
+        NoteTemplate noteTemplate = noteTemplateService.findById(id);
         List<EventType> allETs = eventTypeService.findAll();
 
         List<Conciliation> allConciliations = conciliationService.findAllActive();
-        List<Object[]> allConciliationRoutes = conciliationRouteService.findRutasByConcil(eventMatrix.getConciliacion().getId());
-        List<Object[]> campos = campoRConcilService.findCamposByRutaConcil(eventMatrix.getInventarioConciliacion().getId());
-        modelAndView.addObject("tipoEventos", allETs);
+        List<Object[]> allConciliationRoutes = null;
+        if(noteTemplate.getConciliacion()!=null)
+            allConciliationRoutes = conciliationRouteService.findRutasByConcil(noteTemplate.getConciliacion().getId());
+        List<Object[]> campos = null;
+        if(noteTemplate.getInventarioConciliacion()!=null)
+            campos = campoRConcilService.findCamposByRutaConcil(noteTemplate.getInventarioConciliacion().getId());
+
+
+        List<Integer> matrices = null;
+        if(noteTemplate.getInventarioConciliacion()!=null && noteTemplate.getConciliacion()!=null)
+            matrices=eventMatrixService.findMatrices(noteTemplate.getConciliacion().getId(), noteTemplate.getInventarioConciliacion().getId());
+
         modelAndView.addObject("conciliaciones", allConciliations);
         modelAndView.addObject("rutascs", allConciliationRoutes);
+        modelAndView.addObject("matrices", matrices);
         modelAndView.addObject("campos", campos);
-        modelAndView.addObject("eventMatrix",eventMatrix);
-        modelAndView.setViewName("/parametric/modifyEventMatrix");
+        modelAndView.addObject("noteTemplate",noteTemplate);
+
+        modelAndView.setViewName("/parametric/modifyNoteTemplate");
         return modelAndView;
     }
 
-    @PostMapping(value = "/parametric/createEventMatrix")
-    public ModelAndView createEventMatrix(
-            @ModelAttribute EventMatrix eventMatrix,
+    @PostMapping(value = "/parametric/createNoteTemplate")
+    public ModelAndView createNoteTemplate(
+            @ModelAttribute NoteTemplate noteTemplate,
             @RequestParam(defaultValue = "N" ,name = "selectedConcil") String idconcil,
+            @RequestParam(defaultValue = "N" ,name = "selectedMatriz") String idMatriz,
+            @RequestParam(defaultValue = "N" ,name = "selectedTip") String idTipificacion,
             @RequestParam(defaultValue = "N" ,name = "selectedRutaConcil") String idrutaconcil,
-            @RequestParam(defaultValue = "N" ,name = "selectedTipoEvento") String idTipoEvento,
-            @RequestParam(defaultValue = "N" ,name = "campoOperacion") String idCampoOperacion,
-            @RequestParam(defaultValue = "N" ,name = "campocontable") String idCampoContable,
+            @RequestParam(defaultValue = "" ,name = "selectedTipoEvento") String TipoEvento,
+            @RequestParam(defaultValue = "N" ,name = "campoRefTercero") String campoRefTercero,
             BindingResult bindingResult){
-        ModelAndView modelAndView = new ModelAndView("redirect:/parametric/eventMatrix");
 
-
-        EventMatrix matrixExists = eventMatrixService.findById(eventMatrix.getId());
-        if(matrixExists != null){
-            bindingResult
-                    .rejectValue("matriz", "error.matriz",
-                            "La matriz ya se ha registrado");
-        }
-        if(bindingResult.hasErrors()){
-            modelAndView.setViewName("parametric/createEventMatrix");
-        }else{
-            Conciliation conciliation = conciliationService.findById(Integer.valueOf(idconcil));
-            eventMatrix.setConciliacion(conciliation);
-
-            ConciliationRoute croute = conciliationRouteService.findById(Integer.valueOf(idrutaconcil));
-            eventMatrix.setInventarioConciliacion(croute);
-
-            EventType tipoEvento = eventTypeService.findAllById(Integer.valueOf(idTipoEvento));
-            eventMatrix.setTipoEvento(tipoEvento);
-
-            CampoRConcil campoOperacion = campoRConcilService.findById(Integer.valueOf(idCampoOperacion));
-            eventMatrix.setCampoOperacion(campoOperacion);
-
-            CampoRConcil campoContable= campoRConcilService.findById(Integer.valueOf(idCampoContable));
-            eventMatrix.setCampoCC(campoContable);
-
-            eventMatrixService.modificar(eventMatrix);
-        }
-        return modelAndView;
-    }
-
-    @PostMapping(value = "/parametric/modifyEventMatrix")
-    public ModelAndView modifyEventMatrix(
-            @ModelAttribute EventMatrix eventMatrix,
-            @RequestParam(defaultValue = "N" ,name = "selectedConcil") String idconcil,
-            @RequestParam(defaultValue = "N" ,name = "selectedRutaConcil") String idrutaconcil,
-            @RequestParam(defaultValue = "N" ,name = "selectedTipoEvento") String idTipoEvento,
-            @RequestParam(defaultValue = "N" ,name = "campoOperacion") String idCampoOperacion,
-            @RequestParam(defaultValue = "N" ,name = "campocontable") String idCampoContable,
-            BindingResult bindingResult){
-        ModelAndView modelAndView = new ModelAndView("redirect:/parametric/eventMatrix");
+        ModelAndView modelAndView = new ModelAndView("redirect:/parametric/noteTemplates");
+        System.out.println(idconcil);
+        System.out.println(idTipificacion);
+        System.out.println(idrutaconcil);
+        System.out.println(TipoEvento);
 
 
         if(bindingResult.hasErrors()){
-            modelAndView.setViewName("parametric/createEventMatrix");
+            modelAndView.setViewName("parametric/createNoteTemplate");
         }else{
-            Conciliation conciliation = conciliationService.findById(Integer.valueOf(idconcil));
-            eventMatrix.setConciliacion(conciliation);
+            if(!idconcil.equals("N")) {
+                Conciliation conciliation = conciliationService.findById(Integer.valueOf(idconcil));
+                noteTemplate.setConciliacion(conciliation);
+            }
+            if(!idMatriz.equals("N")) {
+                EventMatrix matriz = eventMatrixService.findById(Integer.valueOf(idMatriz));
+                noteTemplate.setMatriz(matriz);
+            }
+            if(!idTipificacion.equals("N")) {
+            Conciliation tipificacion = conciliationService.findById(Integer.valueOf(idTipificacion));
+            noteTemplate.setTipificacion(tipificacion);
+            }
+            if(!idrutaconcil.equals("N")) {
+                ConciliationRoute croute = conciliationRouteService.findById(Integer.valueOf(idrutaconcil));
+                noteTemplate.setInventarioConciliacion(croute);
+            }
 
-            ConciliationRoute croute = conciliationRouteService.findById(Integer.valueOf(idrutaconcil));
-            eventMatrix.setInventarioConciliacion(croute);
+            noteTemplate.setEvento(TipoEvento);
 
-            EventType tipoEvento = eventTypeService.findAllById(Integer.valueOf(idTipoEvento));
-            eventMatrix.setTipoEvento(tipoEvento);
+            if(!campoRefTercero.equals("N")) {
+                CampoRConcil refTercero = campoRConcilService.findById(Integer.valueOf(campoRefTercero));
+                noteTemplate.setReferenciaTercero(refTercero);
+            }
 
-            CampoRConcil campoOperacion = campoRConcilService.findById(Integer.valueOf(idCampoOperacion));
-            eventMatrix.setCampoOperacion(campoOperacion);
-
-            CampoRConcil campoContable= campoRConcilService.findById(Integer.valueOf(idCampoContable));
-            eventMatrix.setCampoCC(campoContable);
-
-            eventMatrixService.modificar(eventMatrix);
+            noteTemplateService.modificar(noteTemplate);
         }
         return modelAndView;
     }
 
-    @GetMapping("/parametric/obtenerCuentas/{idTipoEvento}/{idConciliacion}/{idInventarioConciliacion}")
-    public ResponseEntity<List<String>> obtenerCuentas(
+    @PostMapping(value = "/parametric/modifyNoteTemplate")
+    public ModelAndView modifyNoteTemplate(
+            @ModelAttribute NoteTemplate noteTemplate,
+            @RequestParam(defaultValue = "N" ,name = "selectedConcil") String idconcil,
+            @RequestParam(defaultValue = "N" ,name = "selectedMatriz") String idMatriz,
+            @RequestParam(defaultValue = "N" ,name = "selectedTip") String idTipificacion,
+            @RequestParam(defaultValue = "N" ,name = "selectedRutaConcil") String idrutaconcil,
+            @RequestParam(defaultValue = "" ,name = "selectedTipoEvento") String TipoEvento,
+            @RequestParam(defaultValue = "N" ,name = "campoRefTercero") String campoRefTercero,
+            BindingResult bindingResult){
+
+        ModelAndView modelAndView = new ModelAndView("redirect:/parametric/noteTemplates");
+
+        if(bindingResult.hasErrors()){
+            modelAndView.setViewName("parametric/modifyNoteTemplate");
+        }else{
+            if(!idconcil.equals("N")) {
+                Conciliation conciliation = conciliationService.findById(Integer.valueOf(idconcil));
+                noteTemplate.setConciliacion(conciliation);
+            }
+            else noteTemplate.setConciliacion(null);
+            if(!idMatriz.equals("N")) {
+                EventMatrix matriz = eventMatrixService.findById(Integer.valueOf(idMatriz));
+                noteTemplate.setMatriz(matriz);
+            }
+            else noteTemplate.setMatriz(null);
+            if(!idTipificacion.equals("N")) {
+                Conciliation tipificacion = conciliationService.findById(Integer.valueOf(idTipificacion));
+                noteTemplate.setTipificacion(tipificacion);
+            }
+            else noteTemplate.setTipificacion(null);
+            if(!idrutaconcil.equals("N")) {
+                ConciliationRoute croute = conciliationRouteService.findById(Integer.valueOf(idrutaconcil));
+                noteTemplate.setInventarioConciliacion(croute);
+            }
+            else noteTemplate.setInventarioConciliacion(null);
+
+            noteTemplate.setEvento(TipoEvento);
+
+            if(!campoRefTercero.equals("N")) {
+                CampoRConcil refTercero = campoRConcilService.findById(Integer.valueOf(campoRefTercero));
+                noteTemplate.setReferenciaTercero(refTercero);
+            }
+            else noteTemplate.setReferenciaTercero(null);
+
+            noteTemplateService.modificar(noteTemplate);
+        }
+        return modelAndView;
+    }
+
+
+
+    @GetMapping("/parametric/obtenerCuentas2/{idTipoEvento}/{idConciliacion}/{idInventarioConciliacion}")
+    public ResponseEntity<List<String>> obtenerCuentas2(
             @PathVariable(required = false) Integer idTipoEvento,
             @PathVariable(required = false) Integer idConciliacion,
             @PathVariable(required = false) Integer idInventarioConciliacion) {
@@ -228,9 +261,9 @@ public class EventMatrixController {
         return ResponseEntity.ok(cuentas);
     }
 
-    @GetMapping(value = "/parametric/searchEventMatrix")
+    @GetMapping(value = "/parametric/searchNoteTemplate")
     @ResponseBody
-    public ModelAndView searchEventMatrix(
+    public ModelAndView searchNoteTemplate(
             @RequestParam(name = "selectedET") Integer  tipoEvento,
             @RequestParam(name = "selectedConcil", defaultValue= "") Integer  concil,
             @RequestParam(name = "selectedInv", defaultValue= "") Integer  inventario,
@@ -247,26 +280,26 @@ public class EventMatrixController {
             int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
             PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
 
-            List<EventMatrix> eventMatrixes = eventMatrixService.findByParams(tipoEvento, concil, inventario, cuenta);
-            //List<EventMatrix> eventMatrixes = eventMatrixService.findByParams(1, 1, 1, "0");
+            List<EventMatrix> noteTemplates = eventMatrixService.findByParams(tipoEvento, concil, inventario, cuenta);
+            //List<EventMatrix> noteTemplates = eventMatrixService.findByParams(1, 1, 1, "0");
 
             int start = (int) pageRequest.getOffset();
-            int end = Math.min((start + pageRequest.getPageSize()), eventMatrixes.size());
-            Page<EventMatrix> pageEventMatrix = new PageImpl<>(eventMatrixes.subList(start, end), pageRequest, eventMatrixes.size());
+            int end = Math.min((start + pageRequest.getPageSize()), noteTemplates.size());
+            Page<EventMatrix> pageEventMatrix = new PageImpl<>(noteTemplates.subList(start, end), pageRequest, noteTemplates.size());
 
             int totalPage=pageEventMatrix.getTotalPages();
             if(totalPage>0){
                 List<Integer> pages = IntStream.rangeClosed(1, totalPage).boxed().collect(Collectors.toList());
                 modelAndView.addObject("pages",pages);
             }
-            modelAndView.addObject("allEvents",pageEventMatrix.getContent());
+            modelAndView.addObject("allRegisters",pageEventMatrix.getContent());
             modelAndView.addObject("current",page+1);
             modelAndView.addObject("next",page+2);
             modelAndView.addObject("prev",page);
             modelAndView.addObject("last",totalPage);
             modelAndView.addObject("filterExport","Original");
             modelAndView.addObject("directory","country");
-            modelAndView.addObject("registers",eventMatrixes.size());
+            modelAndView.addObject("registers",noteTemplates.size());
             modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.addObject("p_modificar", p_modificar);
@@ -290,24 +323,5 @@ public class EventMatrixController {
         return modelAndView;
 
     }
-
-
-    @GetMapping("/parametric/obtenerMatrices/{idConciliacion}/{idInventarioConciliacion}")
-    @ResponseBody
-    public List<Integer> obtenerMatrices(
-            @PathVariable(required = false) Integer idConciliacion,
-            @PathVariable(required = false) Integer idInventarioConciliacion) {
-        List<Integer> matrices = eventMatrixService.findMatrices(idConciliacion, idInventarioConciliacion);
-        System.out.println(idConciliacion + " " + idInventarioConciliacion);
-        System.out.println(matrices.size());
-        for(Integer a:matrices){
-            System.out.println(a);
-        }
-
-        return matrices; // Asegúrate de que esto devuelva lo que esperas
-    }
-
-
-
 
 }

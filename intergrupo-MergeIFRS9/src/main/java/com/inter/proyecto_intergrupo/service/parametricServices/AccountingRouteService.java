@@ -90,6 +90,13 @@ public class AccountingRouteService {
         return logAccountingLoadRepository.findAllByIdRcAndFechaCargueOrderByIdDesc(ac,fechaDate);
     }
 
+    public List<LogAccountingLoad> findAllLogByDate() {
+        //LocalDate localDate = LocalDate.parse(fecha);
+        //Date fechaDate = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        //return logInventoryLoadRepository.findAllByFechaCargueOrderByIdDesc(fechaDate);
+        return logAccountingLoadRepository.findAllByOrderByFechaCargueAsc();
+    }
+
     public List<Object[]> findAllData(AccountingRoute data, String fecha, String cadena, String campo) {
         String campos = data.getCampos().stream()
                 .map(CampoRC::getNombre)

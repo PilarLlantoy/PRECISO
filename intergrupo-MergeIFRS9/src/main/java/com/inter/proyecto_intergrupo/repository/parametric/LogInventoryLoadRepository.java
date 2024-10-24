@@ -14,5 +14,6 @@ import java.util.List;
 public interface LogInventoryLoadRepository extends JpaRepository<LogInventoryLoad,Long> {
     List<LogInventoryLoad> findAllByOrderByFechaCargueAsc();
     List<LogInventoryLoad> findAllByIdCRAndFechaCargueOrderByIdDesc(ConciliationRoute conciliationRoute, Date fechaCargue);
+    List<LogInventoryLoad> findAllByFechaCargueOrderByIdDesc(Date fechaCargue);
     List<LogInventoryLoad> findAllByUsuario(String usuario);
 }
