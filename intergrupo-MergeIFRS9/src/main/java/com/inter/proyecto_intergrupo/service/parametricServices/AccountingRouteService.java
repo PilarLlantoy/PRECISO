@@ -11,23 +11,21 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
+import java.math.BigDecimal;
+
 
 @Service
 @Transactional
@@ -184,6 +182,7 @@ public class AccountingRouteService {
         }
     }
 
+    /*
     public void bulkImport(AccountingRoute data, String ruta,String fecha, String fuente) throws PersistenceException  {
         String nombreTabla = "PRECISO_TEMP_CONTABLES";
         String extension="";
@@ -208,6 +207,126 @@ public class AccountingRouteService {
                 "' WITH ("+complement+ ")");
         queryBulk.executeUpdate();
     }
+
+     */
+
+    public void bulkImport(AccountingRoute data, String ruta, String fecha, String fuente) throws PersistenceException {
+        String nombreTabla = "PRECISO_TEMP_CONTABLES";
+        String extension = "";
+        String delimitador = data.getDelimitador();
+
+        if (data.getTipoArchivo().equals("XLS") || data.getTipoArchivo().equals("XLSX")) {
+            delimitador = ";";
+        }
+
+        String complement = "FIELDTERMINATOR = '" + delimitador + "', ROWTERMINATOR = '\\n', FIRSTROW = " + data.getFilasOmitidas();
+        if (data.getTipoArchivo().equals("XLS") || data.getTipoArchivo().equals("XLSX") || data.getTipoArchivo().equals("CSV") || data.getTipoArchivo().equals("TXT")) {
+            extension = "." + data.getTipoArchivo();
+        }
+        if (delimitador.equalsIgnoreCase("")) {
+            complement = "FORMATFILE = '" + ruta + "', ROWTERMINATOR = '\\r\\n', FIRSTROW = " + data.getFilasOmitidas();
+        }
+
+        String fichero = ensureTrailingSlash(data.getRuta()) + data.getNombreArchivo() + todayDateConvert(data.getFormatoFecha(), fecha) + data.getComplementoArchivo() + extension;
+        if (fuente != null) {
+            fichero = fuente;
+        }
+
+        Integer longitud = 0;
+        for (CampoRC cam : data.getCampos()) {
+            longitud += Integer.valueOf(cam.getLongitud());
+        }
+        if(delimitador ==";") longitud+=data.getCampos().size()-1;
+
+        List<String> validLines = new ArrayList<>();
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(fichero))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String truncatedLine = line.length() > longitud ? line.substring(0, longitud) : line;
+                boolean validLine = true;
+                int start = 0;
+                for (CampoRC cam : data.getCampos()) {
+
+                    int length = Integer.valueOf(cam.getLongitud());
+                    String segment = truncatedLine.length() >= start + length ? truncatedLine.substring(start, start + length) : truncatedLine.substring(start);
+                    boolean valido = isValidField(segment, cam.getTipo());
+
+                    if (!valido) {
+                        validLine = false;
+                        break;
+                    }
+                    start += length;
+                }
+
+                if (validLine) {
+                    validLines.add(truncatedLine);
+                }
+            }
+        } catch (IOException e) {
+            throw new PersistenceException("Error al leer el archivo: " + e.getMessage(), e);
+        }
+
+        String archivoTemporal = "D:\\archivo_temporal.txt";
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(archivoTemporal))) {
+            for (String validLine : validLines) {
+                writer.write(validLine);
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            throw new PersistenceException("Error al escribir el archivo temporal: " + e.getMessage(), e);
+        }
+
+        Query queryBulk = entityManager.createNativeQuery("BULK INSERT " + nombreTabla +
+                " FROM '" + archivoTemporal +
+                "' WITH (" + complement + ")");
+        queryBulk.executeUpdate();
+    }
+
+    private boolean isValidField(String field, String tipoDato) {
+        try {
+            switch (tipoDato.toLowerCase()) {
+                case "integer":
+                    try {
+                        // Primero intentamos como Integer
+                        Integer.parseInt(field);
+                    } catch (NumberFormatException e) {
+                        // Si falla, intentamos como Long
+                        Long.parseLong(field);
+                    }
+                    break;
+                case "bigint":
+                    Long.parseLong(field.trim());
+                    break;
+                case "float":
+                    Float.parseFloat(field.trim());
+                    break;
+                case "varchar":
+                    break;
+                case "date":
+                    java.sql.Date.valueOf(field.trim());
+                    break;
+                case "time":
+                    java.sql.Time.valueOf(field.trim());
+                    break;
+                case "datetime":
+                    java.sql.Timestamp.valueOf(field.trim());
+                    break;
+                case "bit":
+                    if (!field.trim().equals("0") && !field.trim().equals("1")) {
+                        throw new NumberFormatException();
+                    }
+                    break;
+                default:
+                    throw new IllegalArgumentException("Tipo de dato no soportado: " + tipoDato);
+            }
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+
+
 
     public void conditionData(AccountingRoute data){
         String nombreTabla = "PRECISO_TEMP_CONTABLES";
@@ -237,7 +356,7 @@ public class AccountingRouteService {
 
     }
 
-    public void validationData(AccountingRoute data){
+    /*public void validationData(AccountingRoute data){
         String nombreTabla = "PRECISO_TEMP_CONTABLES";
         Query querySelect = entityManager.createNativeQuery("SELECT b.nombre as referencia, c.nombre as validacion, a.valor_validacion, a.valor_operacion, \n" +
                 "CASE a.operacion when 'Suma' then '+' when 'Resta' then '-' when 'Multiplica' then '*' when 'Divida' then '/' END as Operacion\n" +
@@ -255,12 +374,105 @@ public class AccountingRouteService {
         }
 
     }
+    */
+    public void validationData(AccountingRoute data) {
+
+        // Obtener el valor actual del campo para la conversión
+        // Paso 1: Obtener todos los valores que necesitan ser convertidos
+        String sqlObtenerValores0 = "SELECT * FROM PRECISO_TEMP_CONTABLES";
+        Query obtenerValoresQuery0 = entityManager.createNativeQuery(sqlObtenerValores0);
+        List<Object[]> resultados0 = obtenerValoresQuery0.getResultList();
+
+
+        String nombreTabla = "PRECISO_TEMP_CONTABLES";
+        Query querySelect = entityManager.createNativeQuery("SELECT b.nombre as referencia, c.nombre as validacion, a.valor_validacion, a.valor_operacion, \n" +
+                "CASE a.operacion when 'Suma' then '+' when 'Resta' then '-' when 'Multiplica' then '*' when 'Divida' then '/' END as Operacion\n" +
+                "FROM PRECISO.dbo.preciso_validaciones_rc a \n" +
+                "inner join PRECISO.dbo.preciso_campos_rc b on a.id_rc = b.id_rc and a.id_campo_referencia=b.id_campo \n" +
+                "inner join PRECISO.dbo.preciso_campos_rc c on a.id_rc = c.id_rc and a.id_campo_validacion=c.id_campo \n" +
+                "where a.id_rc = ? and a.estado=1");
+        querySelect.setParameter(1, data.getId());
+        List<Object[]> validacionLista = querySelect.getResultList();
+
+        List<CampoRC> campos = data.getCampos();
+
+        if (!validacionLista.isEmpty()) {
+            for (Object[] obj : validacionLista) {
+
+                String referencia = obj[0].toString(); // Nombre del campo de referencia
+                String validacion = obj[1].toString(); // Nombre del campo de validación
+                String valorValidacion = obj[2].toString(); // Valor de validación
+                String valorOperacion = obj[3].toString(); // Valor de la operación
+                String operacion = obj[4].toString(); // Operación (+, -, *, /)
+
+                // Encontrar el tipo de dato del campo 'referencia'
+                Optional<CampoRC> campoReferenciaOpt = campos.stream()
+                        .filter(campo -> campo.getNombre().equals(referencia))
+                        .findFirst();
+
+                // Paso 1: Definir la consulta para modificar la columna `Valor` a VARCHAR(MAX)
+                String sqlAlterTable = "ALTER TABLE PRECISO_TEMP_CONTABLES ALTER COLUMN "+referencia+" "+campoReferenciaOpt.get().getTipo()+"(MAX)";
+                Query alterTableQuery = entityManager.createNativeQuery(sqlAlterTable);
+                alterTableQuery.executeUpdate();
+
+                // Paso 2: Definir la consulta para modificar la columna `Valor` a VARCHAR(MAX) para preciso_rc_id
+                String sqlAlterTableRC = "ALTER TABLE preciso_rc_"+data.getId()+" ALTER COLUMN "+referencia+" "+campoReferenciaOpt.get().getTipo()+"(MAX)";
+                Query alterTableQueryRC = entityManager.createNativeQuery(sqlAlterTableRC);
+                alterTableQueryRC.executeUpdate();
+
+                if (campoReferenciaOpt.isPresent()) {
+                    String tipoCampo = campoReferenciaOpt.get().getTipo(); // Obtiene el tipo del campo
+                    String sqlUpdate;
+
+                    // Crear la consulta SQL según el tipo de dato
+                    if ("VARCHAR".equalsIgnoreCase(tipoCampo)) {
+                        // Para valores varchar, convierte temporalmente a double, realiza la operación, y convierte de nuevo a varchar
+                        sqlUpdate = "UPDATE " + nombreTabla +
+                                " SET " + referencia + " = CAST(TRY_CAST(" + referencia + " AS DECIMAL(38, 0)) " +
+                                operacion + " " + valorOperacion + " AS VARCHAR) " +
+                                " WHERE " + validacion + " = '" + valorValidacion + "';";
+                    } else {
+                        // Para valores numéricos (double, integer), realiza la operación directamente
+                        sqlUpdate = "UPDATE " + nombreTabla +
+                                " SET " + referencia + " = " + referencia + operacion + valorOperacion +
+                                " WHERE " + validacion + " = '" + valorValidacion + "';";
+                    }
+
+                    // Ejecutar la consulta de actualización
+                    Query deleteSelect = entityManager.createNativeQuery(sqlUpdate);
+                    deleteSelect.executeUpdate();
+
+                } else {
+                    // Manejar el caso en que no se encuentra el campo
+                    System.out.println("Campo " + referencia + " no encontrado en la lista de campos.");
+                }
+
+
+            }
+        }
+    }
+
+    private String convertirANumeroCompleto(String valor) {
+        try {
+            // Convertir el valor a BigDecimal para eliminar la notación científica
+            BigDecimal numeroCompleto = new BigDecimal(valor);
+            return numeroCompleto.toPlainString(); // Retorna la representación en cadena sin notación científica
+        } catch (NumberFormatException e) {
+            // Manejar el caso donde la conversión falla
+            System.err.println("Error al convertir el valor: " + valor);
+            return valor; // Retorna el valor original en caso de error
+        }
+    }
 
     public void copyData(AccountingRoute data,String fecha){
         String nombreTabla = "PRECISO_TEMP_CONTABLES";
         String campos = data.getCampos().stream()
                 .map(CampoRC::getNombre)
                 .collect(Collectors.joining(","));
+        System.out.println("DELETE FROM preciso_rc_" + data.getId() + " WHERE periodo_preciso = '" + fecha + "' ; \n" +
+                "INSERT INTO preciso_rc_" + data.getId() + " (" + campos + ",periodo_preciso" +
+                ") SELECT " + campos + ",CAST('" + fecha + "' AS DATE) FROM " + nombreTabla);
+
         Query querySelect = entityManager.createNativeQuery("DELETE FROM preciso_rc_"+data.getId()+" WHERE periodo_preciso = '"+fecha+"' ; \n" +
                 "INSERT INTO preciso_rc_"+data.getId()+" ("+campos+",periodo_preciso"+") SELECT "+campos+",CAST('"+fecha+"' AS DATE) FROM "+nombreTabla);
         querySelect.executeUpdate();

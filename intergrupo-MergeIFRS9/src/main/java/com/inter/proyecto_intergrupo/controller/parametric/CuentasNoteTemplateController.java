@@ -53,6 +53,9 @@ public class CuentasNoteTemplateController {
     @Autowired
     private AccountEventMatrixService accountEventMatrixService;
 
+    @Autowired
+    private AccountNoteTemplateService accountNoteTemplateService;
+
     @GetMapping(value="/parametric/cuentasNoteTemplate/{id}")
     public ModelAndView showcuentasNoteTemplate(@PathVariable("id") int id, @RequestParam Map<String, Object> params) {
         ModelAndView modelAndView = new ModelAndView();
@@ -64,10 +67,10 @@ public class CuentasNoteTemplateController {
             int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
             PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
 
-            List<EventMatrix> eventMatrixes = eventMatrixService.findAllActive();
+            List<AccountNoteTemplate> registros = accountNoteTemplateService.findAllActive();
             int start = (int) pageRequest.getOffset();
-            int end = Math.min((start + pageRequest.getPageSize()), eventMatrixes.size());
-            Page<EventMatrix> pageEventMatrix = new PageImpl<>(eventMatrixes.subList(start, end), pageRequest, eventMatrixes.size());
+            int end = Math.min((start + pageRequest.getPageSize()), registros.size());
+            Page<AccountNoteTemplate> pageEventMatrix = new PageImpl<>(registros.subList(start, end), pageRequest, registros.size());
 
             int totalPage=pageEventMatrix.getTotalPages();
             if(totalPage>0){
@@ -81,53 +84,24 @@ public class CuentasNoteTemplateController {
             modelAndView.addObject("last",totalPage);
             modelAndView.addObject("filterExport","Original");
             modelAndView.addObject("directory","country");
-            modelAndView.addObject("registers",eventMatrixes.size());
+            modelAndView.addObject("registers",registros.size());
             modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.addObject("p_modificar", p_modificar);
 
-            List<EventType> allTEs = eventTypeService.findAll();
-            modelAndView.addObject("allTEs", allTEs);
-
-            List<Conciliation> allConcils = conciliationService.findAll();
-            modelAndView.addObject("allConcils", allConcils);
-
-            List<AccountingRoute> rutasContables = accountingRouteService.findAllActive();
-            modelAndView.addObject("rutasContables", rutasContables);
-
             EventMatrix matriz = eventMatrixService.findById(id);
-            modelAndView.addObject("matrizId", id);
             modelAndView.addObject("matriz", matriz);
 
-            AccountEventMatrix cuenta1 = accountEventMatrixService.findByMatrizEventoTipo1(matriz);
-            List<CampoRC> campos = null;
-            if(cuenta1==null){
-                cuenta1 = new AccountEventMatrix();
-            }
-            else{
-                campos=cuenta1.getRutaContable().getCampos();
-            }
-            modelAndView.addObject("cuenta1", cuenta1);
-            modelAndView.addObject("campos", campos);
-
-            AccountEventMatrix cuenta2 = accountEventMatrixService.findByMatrizEventoTipo2(matriz);
-            List<CampoRC> campos2 = null;
-            if(cuenta2==null){
-                cuenta2 = new AccountEventMatrix();
-            }
-            else{
-                campos2=cuenta2.getRutaContable().getCampos();
-            }
-            modelAndView.addObject("cuenta2", cuenta2);
-            modelAndView.addObject("campos2", campos2);
+            modelAndView.addObject("plantillaId", id);
 
             modelAndView.setViewName("parametric/cuentasNoteTemplate");
 
             List<Object[]> camposConcil = campoRConcilService.findCamposByRutaConcil(matriz.getInventarioConciliacion().getId());
             modelAndView.addObject("camposConcil", camposConcil);
 
-            ConstructionParameter parametro = new ConstructionParameter();
-            modelAndView.addObject("parametro", parametro);
+            AccountNoteTemplate cuentaParam = new AccountNoteTemplate();
+            modelAndView.addObject("cuentaParam", cuentaParam);
+
         }
         else
         {
@@ -137,7 +111,73 @@ public class CuentasNoteTemplateController {
         return modelAndView;
     }
 
+    @PostMapping(value = "/parametric/createCuentaNT")
+    public ModelAndView createCuentaNT(@ModelAttribute AccountNoteTemplate cuenta,
+                                      @RequestParam(defaultValue = "0" ,name = "plantillaId") String plantillaId,
+                                      @RequestParam(defaultValue = "0" ,name = "selectedDivisa") String campoDivisa,
+                                      @RequestParam(defaultValue = "0" ,name = "selectedOperacion") String operacion,
+                                      @RequestParam(defaultValue = "0" ,name = "selectedCI1") String inv1,
+                                      @RequestParam(defaultValue = "0" ,name = "selectedOpInv") String operInv,
+                                      @RequestParam(defaultValue = "0" ,name = "selectedCI2") String inv2,
+                                      @RequestParam(defaultValue = "0" ,name = "selectedCentro") String centro,
+                                      BindingResult bindingResult){
 
+        ModelAndView modelAndView = new ModelAndView("redirect:/parametric/cuentasNoteTemplate/"+plantillaId);
+
+
+        if(bindingResult.hasErrors()){
+            modelAndView.setViewName("parametric/cuentasNoteTemplate/"+plantillaId);
+        }else{
+
+            /*
+            if(!campoDivisa.equals("0")){
+                AccountingRoute ruta = accountingRouteService.findById(Integer.valueOf(rutaContable));
+                cuenta.setRutaContable(ruta);
+            }
+
+            if(!campoRutaContable.equals("0")) {
+                CampoRC cRutaContable = campoRCService.findById(Integer.valueOf(campoRutaContable));
+                cuenta.setCampoRutaContable(cRutaContable);
+            }
+
+            if(!campoDivisa.equals("0")) {
+                CampoRC cDivisa = campoRCService.findById(Integer.valueOf(campoDivisa));
+                cuenta.setCampoDivisa(cDivisa);
+            }
+
+            if(!campoValorCuenta.equals("0")) {
+                CampoRC cValorCuenta = campoRCService.findById(Integer.valueOf(campoValorCuenta));
+                cuenta.setCampoValorCuenta(cValorCuenta);
+            }
+
+            if(!campoValOpUno.equals("0")) {
+                CampoRC cValOpUno = campoRCService.findById(Integer.valueOf(campoValOpUno));
+                cuenta.setCampoValorOp1(cValOpUno);
+            }
+
+            if(!campoValOpDos.equals("0")) {
+                CampoRC cValOpDos = campoRCService.findById(Integer.valueOf(campoValOpDos));
+                cuenta.setCampoValorOp2(cValOpDos);
+            }
+
+            cuenta.setOperacion(operacion);
+
+            cuenta.setTipo("1");
+
+            EventMatrix matrz = eventMatrixService.findById(Integer.valueOf(matrizId));
+            cuenta.setMatrizEvento(matrz);
+
+            accountEventMatrixService.modificar(cuenta);
+
+*/
+
+            System.out.println(cuenta.getCuentaGanancia());
+            System.out.println(cuenta.getCuentaPerdida());
+            System.out.println(cuenta.getAplicaA());
+        }
+
+        return modelAndView;
+    }
 
 
 }
