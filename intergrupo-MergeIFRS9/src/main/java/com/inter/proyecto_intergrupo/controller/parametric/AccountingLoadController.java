@@ -202,26 +202,13 @@ public class AccountingLoadController {
             File dest = new File(rutaArchivo);
             file.transferTo(dest);
             String rutaArchivoFormato = "D:\\archivo.fmt";
-            System.out.println("crearTabla");
             accountingRouteService.createTableTemporal(ac);
-            System.out.println("archivoformato");
             accountingRouteService.generarArchivoFormato(ac.getCampos(), rutaArchivoFormato);
-            System.out.println("bulk ");
             accountingRouteService.bulkImport(ac,rutaArchivoFormato,fecha,rutaArchivo);
-
-            System.out.println("condicion");
-
             accountingRouteService.conditionData(ac);
-
-            System.out.println("validacion");
             accountingRouteService.validationData(ac);
-
-            System.out.println("copia");
             accountingRouteService.copyData(ac,fecha);
-            System.out.println("loadLog");
             accountingRouteService.loadLogCargue(user,ac,fecha,"Trasladar Local","Exitoso","");
-
-
             return ResponseEntity.ok("Bulk1");
         }
         catch (Exception e) {
