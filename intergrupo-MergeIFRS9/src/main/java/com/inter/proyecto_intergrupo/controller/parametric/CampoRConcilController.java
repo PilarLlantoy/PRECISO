@@ -35,15 +35,46 @@ public class CampoRConcilController {
 
     @PostMapping(value = "/parametric/createCampoRConcil")
     public ModelAndView createCampoRConcil(@ModelAttribute CampoRConcil campoRC,
-                                      @RequestParam(name = "crouteId") String crouteId,
-                                      BindingResult bindingResult){
+                                            @RequestParam(name = "crouteId") String crouteId,
+                                            @RequestParam(name = "longitud") String longitud,
+                                            BindingResult bindingResult){
         ModelAndView modelAndView = new ModelAndView("redirect:/parametric/fieldLoadingConciliationRoute/" + crouteId);
 
+        if((longitud.toUpperCase()).equals("MAX")) {
+            var ll=getMaxCharacterLength(campoRC.getTipo());
+            campoRC.setLongitud(ll);
+        }
+        else
+            campoRC.setLongitud(longitud);
         ConciliationRoute route = conciliationRouteService.findById(Integer.parseInt(crouteId));
         campoRC.setRutaConciliacion(route);
         campoRCService.modificar(campoRC);
         campoRCService.recreateTable(route);
         return modelAndView;
+    }
+
+    public String getMaxCharacterLength(String dataType) {
+        System.out.println("RA");
+        switch (dataType.toUpperCase()) {
+            case "INTEGER":
+                return "11"; // Hasta 11 caracteres
+            case "BIGINT":
+                return "20"; // Hasta 20 caracteres
+            case "FLOAT":
+                return "16"; // Indefinido, depende de la precisión
+            case "VARCHAR":
+                return "2147483647"; // Hasta 2,147,483,647 caracteres
+            case "DATE":
+                return "10"; // Formato YYYY-MM-DD
+            case "TIME":
+                return "16"; // Formato HH:MM:SS.ffffff
+            case "DATETIME":
+                return "23"; // Formato YYYY-MM-DD HH:MM:SS.fff
+            case "BIT":
+                return "1"; // Representación como '0' o '1'
+            default:
+                return "Tipo de dato desconocido";
+        }
     }
 
     @DeleteMapping("/parametric/deleteCampoRConcil/{id}")

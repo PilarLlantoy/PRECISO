@@ -97,7 +97,7 @@ public class CampoRConcilService {
 
     public List<Object[]> findCamposByRutaConcil(int idRConcil) {
         Query query = entityManager.createNativeQuery(
-                "SELECT id_campo, nombre FROM preciso_campos_rconcil WHERE id_rconcil = :idRConcil");
+                "SELECT id_campo, nombre FROM preciso_campos_rc WHERE id_rc = :idRConcil");
         query.setParameter("idRConcil", idRConcil);
         return query.getResultList();
     }

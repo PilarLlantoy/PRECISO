@@ -57,6 +57,24 @@ function validateAlerts(operacion,data)
             }
         });
     }
+    else if(operacion=='Bulk2')
+        {
+            Swal.fire({
+                position: 'center',
+                icon: 'success',
+                title: '¡Ejecución Exitosa!',
+                text: 'El Traslado desde el servidor se realizo de forma correcta en el sistema.',
+                showConfirmButton: true,
+                allowOutsideClick: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const period = document.getElementById('period').value;
+                    const arhcont = document.getElementById('arhcont').value;
+                    const concil = document.getElementById('selectedConciliacion').value;
+                    window.location.href = window.location.origin + window.location.pathname + `?period=${encodeURIComponent(period)}&selectedConciliacion=${encodeURIComponent(concil)}&arhcont=${encodeURIComponent(arhcont)}`
+                }
+            });
+        }
     else if(operacion=='Bulk-1')
     {
         Swal.fire({
@@ -74,4 +92,22 @@ function validateAlerts(operacion,data)
             }
         });
     }
+    else if(operacion=='Bulk-2')
+        {
+            Swal.fire({
+                position: 'center',
+                icon: 'error',
+                title: '¡Ejecución Fallida!',
+                text: 'No se encontro el fichero para la fecha deleccionada en la ruta.',
+                showConfirmButton: true,
+                allowOutsideClick: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const period = document.getElementById('period').value;
+                    const arhcont = document.getElementById('arhcont').value;
+                    const concil = document.getElementById('selectedConciliacion').value;
+                    window.location.href = window.location.origin + window.location.pathname + `?period=${encodeURIComponent(period)}&selectedConciliacion=${encodeURIComponent(concil)}&arhcont=${encodeURIComponent(arhcont)}`;
+                }
+            });
+        }
 }

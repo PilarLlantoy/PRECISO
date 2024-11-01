@@ -82,6 +82,7 @@ public class InventoryLoadController {
 
                 Conciliation con = conciliationService.findById(Integer.parseInt(params.get("selectedConciliacion").toString()));
                 modelAndView.addObject("selectedConciliacion",con);
+                //modelAndView.addObject("ConArch",con.getId());
 
                 logConcilroutes = conciliationRouteService.findAllLog(cr,params.get("period").toString());
                 croutes = conciliationRouteService.findAllData(cr,params.get("period").toString());
@@ -160,12 +161,12 @@ public class InventoryLoadController {
             conciliationRouteService.validationData(cr);
             conciliationRouteService.copyData(cr,fecha);
             conciliationRouteService.loadLogCargue(user,cr,fecha,"Trasladar Servidor","Exitoso","");
-            return ResponseEntity.ok("Bulk1");
+            return ResponseEntity.ok("Bulk2");
         }
         catch (Exception e) {
             e.printStackTrace();
             conciliationRouteService.loadLogCargue(user,cr,fecha,"Trasladar Servidor","Fallido","Verifique el fichero se encuetre en la ruta y la estructura de los campos este correcta en el tamaño de los campos.");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk-1");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk-2");
         }
     }
 
@@ -186,12 +187,12 @@ public class InventoryLoadController {
             conciliationRouteService.validationData(cr);
             conciliationRouteService.copyData(cr,fecha);
             conciliationRouteService.loadLogCargue(user,cr,fecha,"Trasladar Local","Exitoso","");
-            return ResponseEntity.ok("Bulk1");
+            return ResponseEntity.ok("Bulk2");
         }
         catch (Exception e) {
             e.printStackTrace();
             conciliationRouteService.loadLogCargue(user,cr,fecha,"Trasladar Local","Fallido","Verifique el fichero se encuetre en la ruta y la estructura de los campos este correcta en el tamaño de los campos.");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk-1");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk-2");
         }
     }
 

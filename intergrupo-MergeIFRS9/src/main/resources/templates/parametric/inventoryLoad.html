@@ -126,11 +126,15 @@
                                 <ul class="pagination">
                                     <li class="page-item" th:classappend="${prev == 0 ? 'disabled' : ''}">
                                         <a class="page-link"
-                                           th:href="@{/parametric/{dir}/?page={page}&period={period}&arhcont={arhcont}(arhcont=${arhcont.id},page=${prev},dir=${directory},period=${period})}">Anterior</a>
+                                           th:href="@{/parametric/{dir}/(dir=${directory}, page=${prev}, period=${period}, selectedConciliacion=${selectedConciliacion.id}, arhcont=${arhcont.id})}">
+                                            Anterior
+                                        </a>
                                     </li>
                                     <li class="page-item" th:classappend="${current == last ? 'disabled' : ''}">
                                         <a class="page-link"
-                                           th:href="@{/parametric/{dir}/?page={page}&period={period}&arhcont={arhcont}(arhcont=${arhcont.id},page=${next},dir=${directory},period=${period})}">Siguiente</a>
+                                           th:href="@{/parametric/{dir}/(dir=${directory}, page=${next}, period=${period}, selectedConciliacion=${selectedConciliacion.id}, arhcont=${arhcont.id})}">
+                                            Siguiente
+                                        </a>
                                     </li>
                                 </ul>
                             </nav>

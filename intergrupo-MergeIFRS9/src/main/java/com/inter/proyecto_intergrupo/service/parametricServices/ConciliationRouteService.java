@@ -64,7 +64,7 @@ public class ConciliationRouteService {
        return croute;
     }
 
-
+/*
     public void createTableTemporal(ConciliationRoute data) {
         String nombreTabla = "PRECISO_TEMP_INVENTARIOS";
         Query queryDrop = entityManager.createNativeQuery("IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '"+(nombreTabla)+"' AND TABLE_SCHEMA = 'dbo') BEGIN DROP TABLE "+(nombreTabla) +" END;");
@@ -96,6 +96,59 @@ public class ConciliationRouteService {
             e.printStackTrace();
         }
     }
+     */
+
+    public void createTableTemporal(ConciliationRoute data) {
+        String nombreTabla = "PRECISO_TEMP_INVENTARIOS";
+        Query queryDrop = entityManager.createNativeQuery(
+                "IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '" + nombreTabla + "' AND TABLE_SCHEMA = 'dbo') " +
+                        "BEGIN DROP TABLE " + nombreTabla + " END;");
+        queryDrop.executeUpdate();
+
+        StringBuilder createTableQuery = new StringBuilder("CREATE TABLE ");
+        createTableQuery.append(nombreTabla).append(" (");
+
+        List<String> primaryKeys = new ArrayList<>(); // Almacenar nombres de columnas que son claves primarias
+
+        for (int i = 0; i < data.getCampos().size(); i++) {
+            CampoRConcil column = data.getCampos().get(i);
+
+            // Verificar si la columna es clave primaria y asignar tamaño limitado
+            if (column.getTipo().equalsIgnoreCase("VARCHAR")){
+                if (column.isPrimario()) {
+                    createTableQuery.append(column.getNombre()).append(" VARCHAR(255)");
+                    primaryKeys.add(column.getNombre());
+                } else {
+                    createTableQuery.append(column.getNombre()).append(" VARCHAR(MAX)");
+                }
+            }
+            else{
+                createTableQuery.append(column.getNombre())
+                        .append(" ")
+                        .append(column.getTipo());
+            }
+
+            if (i < data.getCampos().size() - 1) {
+                createTableQuery.append(", ");
+            }
+        }
+
+        // Si existen claves primarias, agregarlas a la consulta
+        if (!primaryKeys.isEmpty()) {
+            createTableQuery.append(", PRIMARY KEY (");
+            createTableQuery.append(String.join(", ", primaryKeys)); // Agregar las columnas de clave primaria
+            createTableQuery.append(")");
+        }
+
+        createTableQuery.append(");");
+
+        try {
+            entityManager.createNativeQuery(createTableQuery.toString()).executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public void generarArchivoFormato(List<CampoRConcil> campos, String rutaArchivoFormato) throws IOException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(rutaArchivoFormato))) {
@@ -157,6 +210,7 @@ public class ConciliationRouteService {
         }
     }
 
+    /*
     public void bulkImport(ConciliationRoute data, String ruta,String fecha, String fuente) throws PersistenceException {
         String nombreTabla = "PRECISO_TEMP_INVENTARIOS";
         String extension="";
@@ -181,7 +235,34 @@ public class ConciliationRouteService {
                 "' WITH ("+complement+ ")");
         queryBulk.executeUpdate();
     }
+     */
 
+    public void bulkImport(ConciliationRoute data, String ruta,String fecha, String fuente) throws PersistenceException  {
+        String nombreTabla = "PRECISO_TEMP_INVENTARIOS";
+        String extension="";
+        String delimitador=data.getDelimitador();
+
+        if(data.getTipoArchivo().equals("XLS") || data.getTipoArchivo().equals("XLSX"))
+            delimitador=";";
+
+        String complement = "FIELDTERMINATOR = '"+delimitador+"', ROWTERMINATOR = '\\n', FIRSTROW = "+data.getFilasOmitidas();
+
+        if(data.getTipoArchivo().equals("XLS") || data.getTipoArchivo().equals("XLSX") || data.getTipoArchivo().equals("CSV") || data.getTipoArchivo().equals("TXT"))
+            extension="."+data.getTipoArchivo();
+        if(delimitador.equalsIgnoreCase(""))
+            complement="FORMATFILE = '" + ruta + "', ROWTERMINATOR = '\\r\\n', FIRSTROW = " + data.getFilasOmitidas();
+
+        String fichero=ensureTrailingSlash(data.getRuta()) + data.getNombreArchivo() + todayDateConvert(data.getFormatoFecha(),fecha)+ extension;
+        if(fuente !=null)
+            fichero=fuente;
+
+        Query queryBulk = entityManager.createNativeQuery("BULK INSERT " + (nombreTabla) +
+                " FROM '" + fichero +
+                "' WITH ("+complement+ ")");
+        queryBulk.executeUpdate();
+    }
+
+    /*
     public void validationData(ConciliationRoute data){
         Query querySelect = entityManager.createNativeQuery("SELECT b.nombre as referencia, c.nombre as validacion, a.valor_validacion, a.valor_operacion, \n" +
                 "CASE a.operacion when 'Suma' then '+' when 'Resta' then '-' when 'Multiplica' then '*' when 'Divida' then '/' END as Operacion\n" +
@@ -193,12 +274,35 @@ public class ConciliationRouteService {
         List<Object[]> validacionLista = querySelect.getResultList();
         if(!validacionLista.isEmpty()){
             for(Object[] obj : validacionLista){
-                Query deleteSelect = entityManager.createNativeQuery("UPDATE "+data.getNombreArchivo() + "_TEMPORAL SET "+obj[0].toString()+" = "+obj[0].toString()+obj[4].toString()+obj[3].toString()+" WHERE "+obj[1].toString()+"='"+obj[2].toString()+"';");
+                Query deleteSelect = entityManager.createNativeQuery("UPDATE "+data.getNombreArchivo() + "_TEMPORAL SET "
+                        +obj[0].toString()+" = "+obj[0].toString()+obj[4].toString()+obj[3].toString()+" WHERE "+obj[1].toString()+"='"+obj[2].toString()+"';");
+                deleteSelect.executeUpdate();
+            }
+        }
+    }
+     */
+
+    public void validationData(ConciliationRoute data){
+        String nombreTabla = "PRECISO_TEMP_INVENTARIOS";
+        Query querySelect = entityManager.createNativeQuery("SELECT b.nombre as referencia, c.nombre as validacion, a.valor_validacion, a.valor_operacion, \n" +
+                "CASE a.operacion when 'Suma' then '+' when 'Resta' then '-' when 'Multiplica' then '*' when 'Divida' then '/' END as Operacion\n" +
+                "FROM PRECISO.dbo.preciso_validaciones_rconcil a \n" +
+                "inner join PRECISO.dbo.preciso_campos_rconcil b on a.id_rc = b.id_rconcil and a.id_campo_referencia=b.id_campo \n" +
+                "inner join PRECISO.dbo.preciso_campos_rconcil c on a.id_rc = c.id_rconcil and a.id_campo_validacion=c.id_campo \n" +
+                "where a.id_rc = ? and a.estado=1");
+        querySelect.setParameter(1,data.getId());
+        List<Object[]> validacionLista = querySelect.getResultList();
+        if(!validacionLista.isEmpty()){
+            for(Object[] obj : validacionLista){
+                Query deleteSelect = entityManager.createNativeQuery("UPDATE "+nombreTabla+" SET " +
+                        obj[0].toString()+" = CAST(TRY_CAST("+ obj[0].toString() + " AS DECIMAL(38, 0))*0.01 " +
+                        obj[4].toString() + obj[3].toString()+" AS VARCHAR) WHERE "+obj[1].toString()+"='"+obj[2].toString()+"';");
                 deleteSelect.executeUpdate();
             }
         }
 
     }
+
 
     public void copyData(ConciliationRoute data,String fecha){
         String nombreTabla = "PRECISO_TEMP_INVENTARIOS";

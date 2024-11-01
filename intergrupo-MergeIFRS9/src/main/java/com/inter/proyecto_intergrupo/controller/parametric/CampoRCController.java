@@ -111,7 +111,6 @@ public class CampoRCController {
         }
         else
             campoRC.setLongitud(longitud);
-        System.out.println(campoRC.getLongitud());
         AccountingRoute aroute = accountingRouteService.findById(Integer.parseInt(arouteId));
         campoRC.setRutaContable(aroute);
         campoRCService.modificar(campoRC);
