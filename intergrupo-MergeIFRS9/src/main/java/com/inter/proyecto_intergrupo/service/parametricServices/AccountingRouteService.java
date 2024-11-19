@@ -6,6 +6,10 @@ import com.inter.proyecto_intergrupo.model.parametric.*;
 import com.inter.proyecto_intergrupo.repository.admin.AuditRepository;
 import com.inter.proyecto_intergrupo.repository.parametric.AccountingRouteRepository;
 import com.inter.proyecto_intergrupo.repository.parametric.LogAccountingLoadRepository;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -203,13 +207,63 @@ public class AccountingRouteService {
         }
     }
 
+    public void importXlsx(AccountingRoute data, String ruta,String fecha, String filePath) throws PersistenceException, IOException {
+        if (filePath != null && !filePath.isEmpty()) {
+            StringBuilder sqlQueryBuilder = new StringBuilder("INSERT INTO PRECISO_TEMP_CONTABLES (");
+            List<CampoRC> campos = data.getCampos();
+            // Construir la parte de columnas dinámicamente
+            for (int i = 0; i < campos.size(); i++) {
+                sqlQueryBuilder.append(campos.get(i).getNombre());
+                if (i < campos.size() - 1) {
+                    sqlQueryBuilder.append(", ");
+                }
+            }
+            sqlQueryBuilder.append(") VALUES (");
+            // Construir los valores dinámicamente con placeholders
+            for (int i = 0; i < campos.size(); i++) {
+                sqlQueryBuilder.append("?");
+                if (i < campos.size() - 1) {
+                    sqlQueryBuilder.append(", ");
+                }
+            }
+            sqlQueryBuilder.append(")");
+
+            String sqlQuery = sqlQueryBuilder.toString();
+            Iterator<Row> rows;
+
+            try (FileInputStream fis = new FileInputStream(filePath)) {
+                Workbook workbook = WorkbookFactory.create(fis);
+                Sheet sheet = workbook.getSheetAt(0);
+                rows = sheet.iterator();
+
+                int firstRow = 1;
+                while (rows.hasNext()) {
+                    Row row = rows.next();
+                    if (firstRow > 1) {
+                        Query query = entityManager.createNativeQuery(sqlQuery);
+                        for (int i = 0; i < campos.size(); i++) {
+                            Cell cell = row.getCell(i);
+                            Object value = null;
+                            DataFormatter formatter = new DataFormatter();
+                            value = cell != null ? formatter.formatCellValue(cell) : null;
+                            query.setParameter(i + 1, value);
+                        }
+                        query.executeUpdate();
+                    } else {
+                        firstRow++;
+                    }
+                }
+            }
+        }
+    }
+
     public void bulkImport(AccountingRoute data, String ruta,String fecha, String fuente) throws PersistenceException  {
         String nombreTabla = "PRECISO_TEMP_CONTABLES";
         String extension="";
         String delimitador=data.getDelimitador();
 
-        if(data.getTipoArchivo().equals("XLS") || data.getTipoArchivo().equals("XLSX"))
-            delimitador=";";
+        /*if(data.getTipoArchivo().equals("XLS") || data.getTipoArchivo().equals("XLSX"))
+            delimitador=";";*/
 
         String complement = "FIELDTERMINATOR = '"+delimitador+"', ROWTERMINATOR = '\\n', FIRSTROW = "+data.getFilasOmitidas();
 

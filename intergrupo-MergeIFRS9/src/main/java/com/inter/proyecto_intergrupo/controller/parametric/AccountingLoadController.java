@@ -197,14 +197,16 @@ public class AccountingLoadController {
         User user = userService.findUserByUserName(auth.getName());
         AccountingRoute ac = accountingRouteService.findById(Integer.parseInt(id));
         String rutaArchivo = "D:\\" + file.getOriginalFilename();
-        String archivoTemporal = "D:\\archivo_temporal.txt";
         try {
             File dest = new File(rutaArchivo);
             file.transferTo(dest);
             String rutaArchivoFormato = "D:\\archivo.fmt";
             accountingRouteService.createTableTemporal(ac);
             accountingRouteService.generarArchivoFormato(ac.getCampos(), rutaArchivoFormato);
-            accountingRouteService.bulkImport(ac,rutaArchivoFormato,fecha,rutaArchivo);
+            if(ac.getTipoArchivo().equalsIgnoreCase("XLS") || ac.getTipoArchivo().equalsIgnoreCase("XLSX"))
+                accountingRouteService.importXlsx(ac,rutaArchivoFormato,fecha,rutaArchivo);
+            else
+                accountingRouteService.bulkImport(ac,rutaArchivoFormato,fecha,rutaArchivo);
             accountingRouteService.conditionData(ac);
             accountingRouteService.validationData(ac);
             accountingRouteService.copyData(ac,fecha);
