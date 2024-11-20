@@ -149,7 +149,10 @@ public class AccountingLoadController {
             Hibernate.initialize(ac.getCampos());
             accountingRouteService.createTableTemporal(ac);
             accountingRouteService.generarArchivoFormato(ac.getCampos(), rutaArchivoFormato);
-            accountingRouteService.bulkImport(ac,rutaArchivoFormato,fecha,null);
+            if(ac.getTipoArchivo().equalsIgnoreCase("XLS") || ac.getTipoArchivo().equalsIgnoreCase("XLSX"))
+                accountingRouteService.importXlsx(ac,rutaArchivoFormato,fecha,null);
+            else
+                accountingRouteService.bulkImport(ac,rutaArchivoFormato,fecha,null);
             accountingRouteService.conditionData(ac);
             accountingRouteService.validationData(ac);
             accountingRouteService.copyData(ac,fecha);
@@ -163,8 +166,7 @@ public class AccountingLoadController {
         }
     }
 
-    //@Scheduled(cron = "0 0/30 * * * ?")
-    //@Scheduled(cron = "0 * * * * ?")
+    @Scheduled(cron = "0 0/30 * * * ?")
     public void jobLeerArchivos() {
         LocalDateTime fechaHoy = LocalDateTime.now();
         DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -177,7 +179,10 @@ public class AccountingLoadController {
                 String rutaArchivoFormato = "D:\\archivo.fmt";
                 accountingRouteService.createTableTemporal(ac);
                 accountingRouteService.generarArchivoFormato(ac.getCampos(), rutaArchivoFormato);
-                accountingRouteService.bulkImport(ac,rutaArchivoFormato,fecha,null);
+                if(ac.getTipoArchivo().equalsIgnoreCase("XLS") || ac.getTipoArchivo().equalsIgnoreCase("XLSX"))
+                    accountingRouteService.importXlsx(ac,rutaArchivoFormato,fecha,null);
+                else
+                    accountingRouteService.bulkImport(ac,rutaArchivoFormato,fecha,null);
                 accountingRouteService.conditionData(ac);
                 accountingRouteService.validationData(ac);
                 accountingRouteService.copyData(ac,fecha);

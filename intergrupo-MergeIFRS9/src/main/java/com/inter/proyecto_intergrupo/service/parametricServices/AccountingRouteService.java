@@ -207,8 +207,11 @@ public class AccountingRouteService {
         }
     }
 
-    public void importXlsx(AccountingRoute data, String ruta,String fecha, String filePath) throws PersistenceException, IOException {
-        if (filePath != null && !filePath.isEmpty()) {
+    public void importXlsx(AccountingRoute data, String ruta,String fecha, String fuente) throws PersistenceException, IOException {
+        String fichero=ensureTrailingSlash(data.getRuta()) + data.getNombreArchivo() + todayDateConvert(data.getFormatoFecha(),fecha) + data.getComplementoArchivo() +"."+ data.getTipoArchivo();
+        if(fuente !=null)
+            fichero=fuente;
+        if (fichero != null && !fichero.isEmpty()) {
             StringBuilder sqlQueryBuilder = new StringBuilder("INSERT INTO PRECISO_TEMP_CONTABLES (");
             List<CampoRC> campos = data.getCampos();
             // Construir la parte de columnas dinámicamente
@@ -231,7 +234,7 @@ public class AccountingRouteService {
             String sqlQuery = sqlQueryBuilder.toString();
             Iterator<Row> rows;
 
-            try (FileInputStream fis = new FileInputStream(filePath)) {
+            try (FileInputStream fis = new FileInputStream(fichero)) {
                 Workbook workbook = WorkbookFactory.create(fis);
                 Sheet sheet = workbook.getSheetAt(0);
                 rows = sheet.iterator();
