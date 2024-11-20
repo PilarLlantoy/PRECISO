@@ -5,6 +5,7 @@ import com.inter.proyecto_intergrupo.model.parametric.*;
 import com.inter.proyecto_intergrupo.repository.admin.AuditRepository;
 import com.inter.proyecto_intergrupo.repository.parametric.ConciliationRouteRepository;
 import com.inter.proyecto_intergrupo.repository.parametric.LogInventoryLoadRepository;
+import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,15 +15,14 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import java.io.BufferedWriter;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -236,6 +236,74 @@ public class ConciliationRouteService {
         queryBulk.executeUpdate();
     }
      */
+
+    public List<ConciliationRoute> findByJob() {
+        LocalTime now = LocalTime.now(); // Hora actual
+        LocalTime thirtyMinutesBefore = now.minusMinutes(29); // Hora hace 30 minutos
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+
+        String timeBefore = thirtyMinutesBefore.format(formatter);
+        String timeNow = now.format(formatter);
+
+        String sql = "SELECT * FROM preciso_rutas_conciliaciones WHERE activo = 1 AND hora_cargue BETWEEN '"+timeBefore+"' AND '"+timeNow+"'";
+
+        Query querySelect = entityManager.createNativeQuery(sql, ConciliationRoute.class);
+        return querySelect.getResultList();
+    }
+
+    public void importXlsx(ConciliationRoute data, String ruta,String fecha, String fuente) throws PersistenceException, IOException {
+        String fichero=ensureTrailingSlash(data.getRuta()) + data.getNombreArchivo() + todayDateConvert(data.getFormatoFecha(),fecha) +"."+ data.getTipoArchivo();
+        if(fuente !=null)
+            fichero=fuente;
+        if (fichero != null && !fichero.isEmpty()) {
+            StringBuilder sqlQueryBuilder = new StringBuilder("INSERT INTO PRECISO_TEMP_INVENTARIOS (");
+            List<CampoRConcil> campos = data.getCampos();
+            // Construir la parte de columnas dinámicamente
+            for (int i = 0; i < campos.size(); i++) {
+                sqlQueryBuilder.append(campos.get(i).getNombre());
+                if (i < campos.size() - 1) {
+                    sqlQueryBuilder.append(", ");
+                }
+            }
+            sqlQueryBuilder.append(") VALUES (");
+            // Construir los valores dinámicamente con placeholders
+            for (int i = 0; i < campos.size(); i++) {
+                sqlQueryBuilder.append("?");
+                if (i < campos.size() - 1) {
+                    sqlQueryBuilder.append(", ");
+                }
+            }
+            sqlQueryBuilder.append(")");
+
+            String sqlQuery = sqlQueryBuilder.toString();
+            Iterator<Row> rows;
+
+            try (FileInputStream fis = new FileInputStream(fichero)) {
+                Workbook workbook = WorkbookFactory.create(fis);
+                Sheet sheet = workbook.getSheetAt(0);
+                rows = sheet.iterator();
+
+                int firstRow = 1;
+                while (rows.hasNext()) {
+                    Row row = rows.next();
+                    if (firstRow > 1) {
+                        Query query = entityManager.createNativeQuery(sqlQuery);
+                        for (int i = 0; i < campos.size(); i++) {
+                            Cell cell = row.getCell(i);
+                            Object value = null;
+                            DataFormatter formatter = new DataFormatter();
+                            value = cell != null ? formatter.formatCellValue(cell) : null;
+                            query.setParameter(i + 1, value);
+                        }
+                        query.executeUpdate();
+                    } else {
+                        firstRow++;
+                    }
+                }
+            }
+        }
+    }
 
     public void bulkImport(ConciliationRoute data, String ruta,String fecha, String fuente) throws PersistenceException  {
         String nombreTabla = "PRECISO_TEMP_INVENTARIOS";

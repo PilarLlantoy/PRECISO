@@ -13,6 +13,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -28,6 +29,8 @@ import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -157,7 +160,10 @@ public class InventoryLoadController {
             Hibernate.initialize(cr.getCampos());
             conciliationRouteService.createTableTemporal(cr);
             conciliationRouteService.generarArchivoFormato(cr.getCampos(), rutaArchivoFormato);
-            conciliationRouteService.bulkImport(cr,rutaArchivoFormato,fecha,null);
+            if(cr.getTipoArchivo().equalsIgnoreCase("XLS") || cr.getTipoArchivo().equalsIgnoreCase("XLSX"))
+                conciliationRouteService.importXlsx(cr,rutaArchivoFormato,fecha,null);
+            else
+                conciliationRouteService.bulkImport(cr,rutaArchivoFormato,fecha,null);
             conciliationRouteService.validationData(cr);
             conciliationRouteService.copyData(cr,fecha);
             conciliationRouteService.loadLogCargue(user,cr,fecha,"Trasladar Servidor","Exitoso","");
@@ -183,7 +189,10 @@ public class InventoryLoadController {
             String rutaArchivoFormato = "D:\\archivo.fmt";
             conciliationRouteService.createTableTemporal(cr);
             conciliationRouteService.generarArchivoFormato(cr.getCampos(), rutaArchivoFormato);
-            conciliationRouteService.bulkImport(cr,rutaArchivoFormato,fecha,rutaArchivo);
+            if(cr.getTipoArchivo().equalsIgnoreCase("XLS") || cr.getTipoArchivo().equalsIgnoreCase("XLSX"))
+                conciliationRouteService.importXlsx(cr,rutaArchivoFormato,fecha,rutaArchivo);
+            else
+                conciliationRouteService.bulkImport(cr,rutaArchivoFormato,fecha,rutaArchivo);
             conciliationRouteService.validationData(cr);
             conciliationRouteService.copyData(cr,fecha);
             conciliationRouteService.loadLogCargue(user,cr,fecha,"Trasladar Local","Exitoso","");
@@ -193,6 +202,35 @@ public class InventoryLoadController {
             e.printStackTrace();
             conciliationRouteService.loadLogCargue(user,cr,fecha,"Trasladar Local","Fallido","Verifique el fichero se encuetre en la ruta y la estructura de los campos este correcta en el tamaño de los campos.");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk-2");
+        }
+    }
+
+    @Scheduled(cron = "0 0/30 * * * ?")
+    public void jobLeerArchivos() {
+        LocalDateTime fechaHoy = LocalDateTime.now();
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String fecha = fechaHoy.format(formato);
+
+        List<ConciliationRoute> list = conciliationRouteService.findByJob();
+        for (ConciliationRoute cr :list)
+        {
+            try {
+                String rutaArchivoFormato = "D:\\archivo.fmt";
+                Hibernate.initialize(cr.getCampos());
+                conciliationRouteService.createTableTemporal(cr);
+                conciliationRouteService.generarArchivoFormato(cr.getCampos(), rutaArchivoFormato);
+                if(cr.getTipoArchivo().equalsIgnoreCase("XLS") || cr.getTipoArchivo().equalsIgnoreCase("XLSX"))
+                    conciliationRouteService.importXlsx(cr,rutaArchivoFormato,fecha,null);
+                else
+                    conciliationRouteService.bulkImport(cr,rutaArchivoFormato,fecha,null);
+                conciliationRouteService.validationData(cr);
+                conciliationRouteService.copyData(cr,fecha);
+                conciliationRouteService.loadLogCargue(null,cr,fecha,"Automático","Exitoso","");
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+                conciliationRouteService.loadLogCargue(null,cr,fecha,"Automático","Fallido","Verifique el fichero se encuetre en la ruta y la estructura de los campos este correcta en el tamaño de los campos.");
+            }
         }
     }
 
