@@ -201,12 +201,12 @@ public class ConciliationRouteService {
         LocalDate today = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(formato);
         if(fecha.isEmpty()) {
-            return today.format(formatter);
+            return today.format(formatter).replace(".","");
         }
         else
         {
             LocalDate fechaCast = LocalDate.parse(fecha);
-            return fechaCast.format(formatter);
+            return fechaCast.format(formatter).replace(".","");
         }
     }
 

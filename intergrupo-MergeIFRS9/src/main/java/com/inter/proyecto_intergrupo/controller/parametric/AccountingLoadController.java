@@ -145,7 +145,7 @@ public class AccountingLoadController {
         User user = userService.findUserByUserName(auth.getName());
         AccountingRoute ac = accountingRouteService.findById(id);
         try {
-            String rutaArchivoFormato = "D:\\archivo.fmt";
+            String rutaArchivoFormato = "\\\\co.igrupobbva\\svrfilesystem\\BBVA_VIC06\\DP10\\Preciso\\archivo.fmt";
             Hibernate.initialize(ac.getCampos());
             accountingRouteService.createTableTemporal(ac);
             accountingRouteService.generarArchivoFormato(ac.getCampos(), rutaArchivoFormato);
@@ -161,7 +161,7 @@ public class AccountingLoadController {
         }
         catch (Exception e) {
             e.printStackTrace();
-            accountingRouteService.loadLogCargue(user,ac,fecha,"Trasladar Servidor","Fallido","Verifique el fichero se encuetre en la ruta y la estructura de los campos este correcta en el tamaño de los campos.");
+            accountingRouteService.loadLogCargue(user,ac,fecha,"Trasladar Servidor","Fallido",e.getLocalizedMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk-1");
         }
     }
@@ -176,7 +176,7 @@ public class AccountingLoadController {
         for (AccountingRoute ac :list)
         {
             try {
-                String rutaArchivoFormato = "D:\\archivo.fmt";
+                String rutaArchivoFormato = "\\\\co.igrupobbva\\svrfilesystem\\BBVA_VIC06\\DP10\\Preciso\\archivo.fmt";
                 accountingRouteService.createTableTemporal(ac);
                 accountingRouteService.generarArchivoFormato(ac.getCampos(), rutaArchivoFormato);
                 if(ac.getTipoArchivo().equalsIgnoreCase("XLS") || ac.getTipoArchivo().equalsIgnoreCase("XLSX"))
@@ -190,7 +190,7 @@ public class AccountingLoadController {
             }
             catch (Exception e) {
                 e.printStackTrace();
-                accountingRouteService.loadLogCargue(null,ac,fecha,"Automático","Fallido","Verifique el fichero se encuetre en la ruta y la estructura de los campos este correcta en el tamaño de los campos.");
+                accountingRouteService.loadLogCargue(null,ac,fecha,"Automático","Fallido",e.getLocalizedMessage());
             }
         }
     }
@@ -205,7 +205,7 @@ public class AccountingLoadController {
         try {
             File dest = new File(rutaArchivo);
             file.transferTo(dest);
-            String rutaArchivoFormato = "D:\\archivo.fmt";
+            String rutaArchivoFormato = "\\\\co.igrupobbva\\svrfilesystem\\BBVA_VIC06\\DP10\\Preciso\\archivo.fmt";
             accountingRouteService.createTableTemporal(ac);
             accountingRouteService.generarArchivoFormato(ac.getCampos(), rutaArchivoFormato);
             if(ac.getTipoArchivo().equalsIgnoreCase("XLS") || ac.getTipoArchivo().equalsIgnoreCase("XLSX"))
@@ -220,7 +220,7 @@ public class AccountingLoadController {
         }
         catch (Exception e) {
             e.printStackTrace();
-            accountingRouteService.loadLogCargue(user,ac,fecha,"Trasladar Local","Fallido","Verifique el fichero se encuetre en la ruta y la estructura de los campos este correcta en el tamaño de los campos.");
+            accountingRouteService.loadLogCargue(user,ac,fecha,"Trasladar Local","Fallido",e.getLocalizedMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk-1");
         }
     }

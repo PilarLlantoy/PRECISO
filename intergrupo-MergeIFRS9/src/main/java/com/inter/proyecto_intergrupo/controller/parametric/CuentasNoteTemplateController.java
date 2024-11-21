@@ -96,8 +96,10 @@ public class CuentasNoteTemplateController {
 
             modelAndView.setViewName("parametric/cuentasNoteTemplate");
 
-            List<Object[]> camposConcil = campoRConcilService.findCamposByRutaConcil(matriz.getInventarioConciliacion().getId());
-            modelAndView.addObject("camposConcil", camposConcil);
+            if(matriz!=null) {
+                List<Object[]> camposConcil = campoRConcilService.findCamposByRutaConcil(matriz.getInventarioConciliacion().getId());
+                modelAndView.addObject("camposConcil", camposConcil);
+            }
 
             AccountNoteTemplate cuentaParam = new AccountNoteTemplate();
             modelAndView.addObject("cuentaParam", cuentaParam);
