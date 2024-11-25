@@ -18,6 +18,7 @@ import java.io.BufferedWriter;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
@@ -287,14 +288,33 @@ public class ConciliationRouteService {
                 int firstRow = 1;
                 while (rows.hasNext()) {
                     Row row = rows.next();
-                    if (firstRow > 1) {
+                    if (firstRow > data.getFilasOmitidas()) {
                         Query query = entityManager.createNativeQuery(sqlQuery);
+                        DataFormatter formatter = new DataFormatter();
                         for (int i = 0; i < campos.size(); i++) {
                             Cell cell = row.getCell(i);
                             Object value = null;
-                            DataFormatter formatter = new DataFormatter();
-                            value = cell != null ? formatter.formatCellValue(cell) : null;
+
+                            if (campos.get(i).getTipo().equalsIgnoreCase("Float")) {
+                                // Reemplazar separadores de miles y decimales
+                                value = cell != null ? formatter.formatCellValue(cell).replace(".", "").replace(",", ".") : null;
+                            } else if (campos.get(i).getTipo().equalsIgnoreCase("Date") || campos.get(i).getTipo().equalsIgnoreCase("Datetime")) {
+                                // Verificar si la celda es de tipo fecha
+                                if (cell != null && cell.getCellType() == CellType.NUMERIC && DateUtil.isCellDateFormatted(cell)) {
+                                    SimpleDateFormat formatoSalida = new SimpleDateFormat(campos.get(i).getFormatoFecha().replaceAll("YYYY", "yyyy").replaceAll("MM", "MM").replaceAll("DD", "dd"));
+                                    value = formatoSalida.format(cell.getDateCellValue());
+                                } else {
+                                    // Formatear el valor como texto y procesarlo
+                                    String rawDate = cell != null ? formatter.formatCellValue(cell) : null;
+                                    value = rawDate != null ? formatoFecha(rawDate, campos.get(i).getFormatoFecha(), campos.get(i).getSeparador()) : null;
+                                }
+                            } else {
+                                // Otros tipos
+                                value = cell != null ? formatter.formatCellValue(cell) : null;
+                            }
+
                             query.setParameter(i + 1, value);
+                            System.out.println(i + " -> " + value);
                         }
                         query.executeUpdate();
                     } else {
@@ -302,6 +322,28 @@ public class ConciliationRouteService {
                     }
                 }
             }
+        }
+    }
+
+    public static String formatoFecha(String fecha, String formatoActual, String separador) {
+        try {
+            // Ajustar el formato de entrada
+            SimpleDateFormat formatoEntrada = new SimpleDateFormat(formatoActual);
+            formatoEntrada.setLenient(false);
+
+            // Parsear la fecha
+            Date fechaDate = formatoEntrada.parse(fecha);
+
+            // Crear formato de salida con el separador
+            String formatoSalida = formatoActual.replaceAll("YYYY", "yyyy")
+                    .replaceAll("MM", "MM")
+                    .replaceAll("DD", "dd")
+                    .replace("", separador);
+            SimpleDateFormat formatoSalidaSDF = new SimpleDateFormat(formatoSalida);
+
+            return formatoSalidaSDF.format(fechaDate);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Fecha inválida o formato incorrecto: " + fecha + " con formato " + formatoActual, e);
         }
     }
 

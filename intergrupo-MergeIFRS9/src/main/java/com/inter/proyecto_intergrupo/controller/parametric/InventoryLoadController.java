@@ -43,6 +43,8 @@ public class InventoryLoadController {
     private static final int PAGINATIONCOUNT=5;
     private static final int PAGINATIONCOUNTDATA=500;
     Logger logger = LogManager.getLogger(LogManager.ROOT_LOGGER_NAME);
+    private static final String rutaArchivoFormato = "\\\\co.igrupobbva\\svrfilesystem\\BBVA_VIC06\\DP10\\Preciso\\archivo.fmt";
+    //private static final String rutaArchivoFormato = "D:\\archivo.fmt";
 
     @Autowired
     private UserService userService;
@@ -156,7 +158,6 @@ public class InventoryLoadController {
         User user = userService.findUserByUserName(auth.getName());
         ConciliationRoute cr = conciliationRouteService.findById(id);
         try {
-            String rutaArchivoFormato = "\\\\co.igrupobbva\\svrfilesystem\\BBVA_VIC06\\DP10\\Preciso\\archivo.fmt";
             Hibernate.initialize(cr.getCampos());
             conciliationRouteService.createTableTemporal(cr);
             conciliationRouteService.generarArchivoFormato(cr.getCampos(), rutaArchivoFormato);
@@ -186,7 +187,6 @@ public class InventoryLoadController {
         try {
             File dest = new File(rutaArchivo);
             file.transferTo(dest);
-            String rutaArchivoFormato = "\\\\co.igrupobbva\\svrfilesystem\\BBVA_VIC06\\DP10\\Preciso\\archivo.fmt";
             conciliationRouteService.createTableTemporal(cr);
             conciliationRouteService.generarArchivoFormato(cr.getCampos(), rutaArchivoFormato);
             if(cr.getTipoArchivo().equalsIgnoreCase("XLS") || cr.getTipoArchivo().equalsIgnoreCase("XLSX"))
@@ -215,7 +215,6 @@ public class InventoryLoadController {
         for (ConciliationRoute cr :list)
         {
             try {
-                String rutaArchivoFormato = "\\\\co.igrupobbva\\svrfilesystem\\BBVA_VIC06\\DP10\\Preciso\\archivo.fmt";
                 Hibernate.initialize(cr.getCampos());
                 conciliationRouteService.createTableTemporal(cr);
                 conciliationRouteService.generarArchivoFormato(cr.getCampos(), rutaArchivoFormato);

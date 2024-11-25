@@ -236,23 +236,25 @@
         document.querySelector("input[name='conciliacion']").checked = conciliacion;
         document.querySelector("input[name='nuloMoneda']").checked = nuloMoneda;
 
-        var selectTipoCampo = document.querySelector("select[name='selectedTipoCampo']");
+        var selectTipoCampo = document.querySelector("select[name='tipo']");
         if (!selectTipoCampo.querySelector('option[value="' + tipo + '"]')) {
             console.error("El valor '" + tipo + "' no está en las opciones del select.");
         }
         else{
             selectTipoCampo.value = tipo.trim(); // Asigna el valor directamente
         }
-        var selectFormatoFecha = document.querySelector("select[name='selectedFormatoFecha']");
+        var selectFormatoFecha = document.querySelector("select[name='formatoFecha']");
         selectFormatoFecha.value = formatoFecha; // Asigna el valor directamente
         if (!selectFormatoFecha.querySelector('option[value="' + formatoFecha + '"]')) {
             console.error("El valor '" + formatoFecha + "' no está en las opciones del select.");
         }
-        var selectIdioma = document.querySelector("select[name='selectedIdiomaCampo']");
+        var selectIdioma = document.querySelector("select[name='idioma']");
         selectIdioma.value = idioma; // Asigna el valor directamente
         if (!selectIdioma.querySelector('option[value="' + idioma + '"]')) {
             console.error("El valor '" + idioma + "' no está en las opciones del select.");
         }
+
+        toggleFechaIdiomaFields();
     }
 
     function descartar() {
@@ -287,6 +289,7 @@
 </script>
 
 <script>
+
     function toggleFechaIdiomaFields() {
        var tipoCampo = document.getElementById('selectedTipoCampo').value;
        var formatoFechaContainer = document.getElementById('formatoFechaContainer');
@@ -306,12 +309,10 @@
 
    function Limpiar() {
        document.getElementById('miFormulario').reset();
-       toggleFields();
        toggleFechaIdiomaFields();
    }
 
    window.onload = function() {
-       toggleFields();
        toggleFechaIdiomaFields();
    };
 </script>
