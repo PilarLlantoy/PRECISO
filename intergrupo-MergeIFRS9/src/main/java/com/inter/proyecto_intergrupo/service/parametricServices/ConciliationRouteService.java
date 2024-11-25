@@ -294,22 +294,16 @@ public class ConciliationRouteService {
                         for (int i = 0; i < campos.size(); i++) {
                             Cell cell = row.getCell(i);
                             Object value = null;
-
                             if (campos.get(i).getTipo().equalsIgnoreCase("Float")) {
-                                // Reemplazar separadores de miles y decimales
                                 value = cell != null ? formatter.formatCellValue(cell).replace(".", "").replace(",", ".") : null;
                             } else if (campos.get(i).getTipo().equalsIgnoreCase("Date") || campos.get(i).getTipo().equalsIgnoreCase("Datetime")) {
-                                // Verificar si la celda es de tipo fecha
-                                if (cell != null && cell.getCellType() == CellType.NUMERIC && DateUtil.isCellDateFormatted(cell)) {
-                                    SimpleDateFormat formatoSalida = new SimpleDateFormat(campos.get(i).getFormatoFecha().replaceAll("YYYY", "yyyy").replaceAll("MM", "MM").replaceAll("DD", "dd"));
-                                    value = formatoSalida.format(cell.getDateCellValue());
-                                } else {
-                                    // Formatear el valor como texto y procesarlo
-                                    String rawDate = cell != null ? formatter.formatCellValue(cell) : null;
-                                    value = rawDate != null ? formatoFecha(rawDate, campos.get(i).getFormatoFecha(), campos.get(i).getSeparador()) : null;
+                                String fechaLeida = cell != null ? formatter.formatCellValue(cell) : null;
+                                if (!fechaLeida.matches("\\d{2}/\\d{2}/\\d{4}")) {
+                                    // Por ejemplo, convierte de `1/18/99` a `18/01/1999` si es necesario
+                                    fechaLeida = convertirFormatoExcel(fechaLeida,campos.get(i).getFormatoFecha());
                                 }
+                                value = fechaLeida != null ?  formatoFecha(fechaLeida, campos.get(i).getFormatoFecha(), campos.get(i).getSeparador()) : null;
                             } else {
-                                // Otros tipos
                                 value = cell != null ? formatter.formatCellValue(cell) : null;
                             }
 
@@ -325,23 +319,45 @@ public class ConciliationRouteService {
         }
     }
 
-    public static String formatoFecha(String fecha, String formatoActual, String separador) {
+    private static String convertirFormatoExcel(String fechaExcel,String formato) {
         try {
-            // Ajustar el formato de entrada
-            SimpleDateFormat formatoEntrada = new SimpleDateFormat(formatoActual);
-            formatoEntrada.setLenient(false);
+            // Detección de formato "M/d/YY" (de Excel)
+            SimpleDateFormat sdfEntrada = new SimpleDateFormat("M/d/yy");
+            Date fechaDate = sdfEntrada.parse(fechaExcel);
 
-            // Parsear la fecha
-            Date fechaDate = formatoEntrada.parse(fecha);
-
-            // Crear formato de salida con el separador
-            String formatoSalida = formatoActual.replaceAll("YYYY", "yyyy")
+            // Convertir a formato `dd/MM/yyyy`
+            String data = formato.replaceAll("YYYY", "yyyy")
                     .replaceAll("MM", "MM")
                     .replaceAll("DD", "dd")
-                    .replace("", separador);
+                    .replaceAll("YY", "yy");
+            SimpleDateFormat sdfSalida = new SimpleDateFormat(data);
+            return sdfSalida.format(fechaDate);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("No se pudo convertir la fecha de Excel: " + fechaExcel, e);
+        }
+    }
+
+    public Date formatoFecha(String fecha, String formatoActual, String separador) {
+        try {
+            String formatoSalida1 = formatoActual.replaceAll("YYYY", "yyyy")
+                    .replaceAll("MM", "MM")
+                    .replaceAll("DD", "dd")
+                    .replaceAll("YY", "yy");
+            System.out.println(formatoSalida1);
+            SimpleDateFormat formatoEntrada = new SimpleDateFormat(formatoSalida1);
+            formatoEntrada.setLenient(false);
+
+            Date fechaDate = formatoEntrada.parse(fecha);
+
+            /*String formatoSalida = formatoActual.replaceAll("YYYY", "yyyy")
+                    .replaceAll("MM", "MM")
+                    .replaceAll("DD", "dd")
+                    .replaceAll("YY", "yy");
+            System.out.println(formatoSalida);
             SimpleDateFormat formatoSalidaSDF = new SimpleDateFormat(formatoSalida);
 
-            return formatoSalidaSDF.format(fechaDate);
+            return formatoSalidaSDF.format(fechaDate);*/
+            return fechaDate;
         } catch (Exception e) {
             throw new IllegalArgumentException("Fecha inválida o formato incorrecto: " + fecha + " con formato " + formatoActual, e);
         }
