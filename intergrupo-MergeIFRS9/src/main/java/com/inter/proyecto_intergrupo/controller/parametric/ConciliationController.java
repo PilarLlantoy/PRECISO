@@ -22,13 +22,16 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Controller
 public class ConciliationController {
-    private static final int PAGINATIONCOUNT=12;
+    //private static final int PAGINATIONCOUNT=12;
+    private static final int PAGINATIONCOUNT=5;
+    private static final int PAGINATIONCOUNTDATA=500;
 
     private List<String> listColumns=List.of("Nombre", "Estado", "Sistema Fuente", "Fuente Contable");
 
@@ -370,5 +373,80 @@ public class ConciliationController {
         return modelAndView;
     }
 
+
+    //PROCESO DE GENERACION DE CONCILIACION
+    @GetMapping(value="/parametric/generateConciliation")
+    public ModelAndView showGenerateConciliation(@RequestParam Map<String, Object> params) {
+        ModelAndView modelAndView = new ModelAndView();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findUserByUserName(auth.getName());
+        Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Cargue Contable");
+        if(userService.validateEndpoint(user.getId(),"Ver Cargue Contable")) {
+            List<Conciliation> listConcil = conciliationService.findAllActive();
+            List<Object[]> aroutes = new ArrayList<>();
+            List<CampoRC> colAroutes = new ArrayList<>();
+            List<LogInformationCrossing> logCruces = new ArrayList<>();
+            if(params.get("arhcont") != null && params.get("arhcont").toString() != null
+                    && params.get("period") != null && params.get("period").toString() != null
+                    && params.get("evento") != null && params.get("evento").toString() != null)
+            {
+                modelAndView.addObject("period",params.get("period").toString());
+                Conciliation concil = conciliationService.findById(Integer.parseInt(params.get("arhcont").toString()));
+                modelAndView.addObject("arhcont",concil);
+                logCruces = null;
+                /*aroutes = accountingRouteService.findAllData(ac,params.get("period").toString(), null, null);
+                CampoRC crc= new CampoRC();
+                crc.setNombre("periodo_preciso");
+                ac.getCampos().add(crc);
+                colAroutes = ac.getCampos();*/
+            }
+            int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
+            PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
+            int start = (int) pageRequest.getOffset();
+            int end = Math.min((start + pageRequest.getPageSize()), logCruces.size());
+            Page<LogInformationCrossing> pageLog= new PageImpl<>(logCruces.subList(start, end), pageRequest, logCruces.size());
+            int totalPage=pageLog.getTotalPages();
+            if(totalPage>0){
+                List<Integer> pages = IntStream.rangeClosed(1, totalPage).boxed().collect(Collectors.toList());
+                modelAndView.addObject("pages",pages);
+            }
+            int pageData=params.get("pageData")!=null?(Integer.valueOf(params.get("pageData").toString())-1):0;
+            PageRequest pageRequestData=PageRequest.of(pageData,PAGINATIONCOUNTDATA);
+            int startData = (int) pageRequestData.getOffset();
+            int endData = Math.min((startData + pageRequestData.getPageSize()), aroutes.size());
+            Page<Object[]> pageLogData= new PageImpl<>(aroutes.subList(startData, endData), pageRequestData, aroutes.size());
+            int totalPageData=pageLogData.getTotalPages();
+            if(totalPageData>0){
+                List<Integer> pagesData = IntStream.rangeClosed(1, totalPageData).boxed().collect(Collectors.toList());
+                modelAndView.addObject("pagesData",pagesData);
+            }
+            modelAndView.addObject("allLog",pageLog.getContent());
+            modelAndView.addObject("allRCs",pageLogData.getContent());
+            modelAndView.addObject("allColRCs",colAroutes);
+            modelAndView.addObject("current",page+1);
+            modelAndView.addObject("next",page+2);
+            modelAndView.addObject("prev",page);
+            modelAndView.addObject("last",totalPage);
+            modelAndView.addObject("currentData",pageData+1);
+            modelAndView.addObject("nextData",pageData+2);
+            modelAndView.addObject("prevData",pageData);
+            modelAndView.addObject("lastData",totalPageData);
+            modelAndView.addObject("filterExport","Original");
+            modelAndView.addObject("listConcil",listConcil);
+            modelAndView.addObject("directory","accountingLoad");
+            modelAndView.addObject("registers",logCruces.size());
+            modelAndView.addObject("registersData",aroutes.size());
+            modelAndView.addObject("userName", user.getPrimerNombre());
+            modelAndView.addObject("userEmail", user.getCorreo());
+            modelAndView.addObject("p_modificar", p_modificar);
+            modelAndView.setViewName("parametric/generateConciliation");
+        }
+        else
+        {
+            modelAndView.addObject("anexo","/home");
+            modelAndView.setViewName("admin/errorMenu");
+        }
+        return modelAndView;
+    }
 
 }

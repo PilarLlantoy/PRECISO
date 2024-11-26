@@ -153,8 +153,10 @@ public class AccountingLoadController {
                 accountingRouteService.importXlsx(ac,rutaArchivoFormato,fecha,null);
             else
                 accountingRouteService.bulkImport(ac,rutaArchivoFormato,fecha,null);
-            accountingRouteService.conditionData(ac);
-            accountingRouteService.validationData(ac);
+            if(ac.getCondiciones().size()!=0)
+                accountingRouteService.conditionData(ac);
+            if(ac.getValidaciones().size()!=0)
+                accountingRouteService.validationData(ac);
             accountingRouteService.copyData(ac,fecha);
             accountingRouteService.loadLogCargue(user,ac,fecha,"Trasladar Servidor","Exitoso","");
             return ResponseEntity.ok("Bulk1");
@@ -183,8 +185,10 @@ public class AccountingLoadController {
                     accountingRouteService.importXlsx(ac,rutaArchivoFormato,fecha,null);
                 else
                     accountingRouteService.bulkImport(ac,rutaArchivoFormato,fecha,null);
-                accountingRouteService.conditionData(ac);
-                accountingRouteService.validationData(ac);
+                if(ac.getCondiciones().size()!=0)
+                    accountingRouteService.conditionData(ac);
+                if(ac.getValidaciones().size()!=0)
+                    accountingRouteService.validationData(ac);
                 accountingRouteService.copyData(ac,fecha);
                 accountingRouteService.loadLogCargue(null,ac,fecha,"Automático","Exitoso","");
             }

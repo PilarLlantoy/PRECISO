@@ -105,11 +105,11 @@ public class CampoRCController {
                                       BindingResult bindingResult){
         ModelAndView modelAndView = new ModelAndView("redirect:/parametric/fieldLoadingAccountingRoute/" + arouteId);
 
-        if((longitud.toUpperCase()).equals("MAX")) {
+        /*if((longitud.toUpperCase()).equals("MAX")) {
             var ll=getMaxCharacterLength(campoRC.getTipo());
             campoRC.setLongitud(ll);
         }
-        else
+        else*/
             campoRC.setLongitud(longitud);
         AccountingRoute aroute = accountingRouteService.findById(Integer.parseInt(arouteId));
         campoRC.setRutaContable(aroute);

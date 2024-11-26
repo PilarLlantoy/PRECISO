@@ -40,11 +40,11 @@ public class CampoRConcilController {
                                             BindingResult bindingResult){
         ModelAndView modelAndView = new ModelAndView("redirect:/parametric/fieldLoadingConciliationRoute/" + crouteId);
 
-        if((longitud.toUpperCase()).equals("MAX")) {
+        /*if((longitud.toUpperCase()).equals("MAX")) {
             var ll=getMaxCharacterLength(campoRC.getTipo());
             campoRC.setLongitud(ll);
         }
-        else
+        else*/
             campoRC.setLongitud(longitud);
         ConciliationRoute route = conciliationRouteService.findById(Integer.parseInt(crouteId));
         campoRC.setRutaConciliacion(route);
@@ -54,7 +54,6 @@ public class CampoRConcilController {
     }
 
     public String getMaxCharacterLength(String dataType) {
-        System.out.println("RA");
         switch (dataType.toUpperCase()) {
             case "INTEGER":
                 return "11"; // Hasta 11 caracteres

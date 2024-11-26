@@ -159,7 +159,7 @@ public class AccountingRouteService {
             // Verificar si la columna es clave primaria y asignar tamaño limitado
             if (column.getTipo().equalsIgnoreCase("VARCHAR")){
                 if (column.isPrimario()) {
-                    createTableQuery.append(column.getNombre()).append(" VARCHAR(255)");
+                    createTableQuery.append(column.getNombre()).append(" VARCHAR(8000)");
                     primaryKeys.add(column.getNombre());
                 } else {
                     createTableQuery.append(column.getNombre()).append(" VARCHAR(MAX)");
@@ -354,18 +354,24 @@ public class AccountingRouteService {
 
             // Escribir encabezado del archivo de formato
             writer.write("13.0\n"); // Versión del archivo de formato
-            writer.write(campos.size()+1 + "\n"); // Número de campos
+            writer.write(campos.size() + 1 + "\n"); // Número de campos
 
             int fieldIndex = 1;
-            for (int i = 0; i < campos.size();i++) {
-                // Cada línea sigue la estructura:
-                // <FieldID> SQLCHAR 0 <LongitudCampo> "" <IndexCampo> <NombreCampo> Latin1_General_CI_AS
+            for (CampoRC campo : campos) {
+                int longitudCampo;
+                // Si la longitud es "MAX", usa 8000 como tamaño predeterminado para VARCHAR
+                if ("MAX".equalsIgnoreCase(campo.getLongitud())) {
+                    longitudCampo = 8000; // Longitud máxima para un campo VARCHAR no MAX
+                } else {
+                    longitudCampo = Integer.parseInt(campo.getLongitud());
+                }
+                // Generar la línea
                 String line = String.format(
                         "%d\tSQLCHAR\t0\t%d\t\"\"\t%d\t%s\tLatin1_General_CI_AS",
                         fieldIndex,
-                        Integer.parseInt(campos.get(i).getLongitud()),
+                        longitudCampo,
                         fieldIndex,
-                        campos.get(i).getNombre()
+                        campo.getNombre()
                 );
 
                 // Añadir salto de línea
@@ -374,20 +380,25 @@ public class AccountingRouteService {
                 fieldIndex++;
             }
 
-            // Si necesitas manejar el último campo con terminador de línea (por ejemplo, "\r\n")
+            // Última línea con terminador de fila
+            CampoRC ultimoCampo = campos.get(campos.size() - 1);
+            int longitudUltimoCampo = "MAX".equalsIgnoreCase(ultimoCampo.getLongitud()) ? 8000 : Integer.parseInt(ultimoCampo.getLongitud());
             String ultimaLinea = String.format(
                     "%d\tSQLCHAR\t0\t%d\t\"\\r\\n\"\t%d\t%s\tLatin1_General_CI_AS",
                     fieldIndex,
-                    Integer.parseInt(campos.get(campos.size() - 1).getLongitud()),
+                    longitudUltimoCampo,
                     fieldIndex,
-                    campos.get(campos.size() - 1).getNombre()
+                    ultimoCampo.getNombre()
             );
             writer.write(ultimaLinea + "\n");
 
         } catch (IOException e) {
             throw new IOException("Error al generar el archivo de formato.", e);
+        } catch (NumberFormatException e) {
+            throw new PersistenceException("Longitud de campo inválida en la lista de campos.", e);
         }
     }
+
     public List<AccountingRoute> findByFilter(String value, String filter) {
         List<AccountingRoute> list=new ArrayList<AccountingRoute>();
         switch (filter) {

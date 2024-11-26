@@ -60,6 +60,9 @@ public class InformationCrossingController {
     @Autowired
     private EventTypeService eventTypeService;
 
+    @Autowired
+    private InformationCrossingService informationCrossingService;
+
     @GetMapping(value="/parametric/informationCrossing")
     public ModelAndView showinformationCrossing(@RequestParam Map<String, Object> params) {
         ModelAndView modelAndView = new ModelAndView();
@@ -75,24 +78,28 @@ public class InformationCrossingController {
 
             List<Object[]> aroutes = new ArrayList<>();
             List<CampoRC> colAroutes = new ArrayList<>();
-            List<LogAccountingLoad> logAroutes = new ArrayList<>();
-            if(params.get("arhcont") != null && params.get("arhcont").toString() != null && params.get("period") != null && params.get("period").toString() != null)
+            List<LogInformationCrossing> logCruces = new ArrayList<>();
+            if(params.get("arhcont") != null && params.get("arhcont").toString() != null
+                    && params.get("period") != null && params.get("period").toString() != null
+                    && params.get("evento") != null && params.get("evento").toString() != null)
             {
                 modelAndView.addObject("period",params.get("period").toString());
-                AccountingRoute ac = accountingRouteService.findById(Integer.parseInt(params.get("arhcont").toString()));
-                modelAndView.addObject("arhcont",ac);
-                logAroutes = accountingRouteService.findAllLog(ac,params.get("period").toString());
-                aroutes = accountingRouteService.findAllData(ac,params.get("period").toString(), null, null);
+                Conciliation concil = conciliationService.findById(Integer.parseInt(params.get("arhcont").toString()));
+                EventType evento = eventTypeService.findAllById(Integer.parseInt(params.get("arhcont").toString()));
+                modelAndView.addObject("arhcont",concil);
+                modelAndView.addObject("evento",evento);
+                logCruces = informationCrossingService.findAllLog(concil,params.get("period").toString(), evento);
+                /*aroutes = accountingRouteService.findAllData(ac,params.get("period").toString(), null, null);
                 CampoRC crc= new CampoRC();
                 crc.setNombre("periodo_preciso");
                 ac.getCampos().add(crc);
-                colAroutes = ac.getCampos();
+                colAroutes = ac.getCampos();*/
             }
             int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
             PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
             int start = (int) pageRequest.getOffset();
-            int end = Math.min((start + pageRequest.getPageSize()), logAroutes.size());
-            Page<LogAccountingLoad> pageLog= new PageImpl<>(logAroutes.subList(start, end), pageRequest, logAroutes.size());
+            int end = Math.min((start + pageRequest.getPageSize()), logCruces.size());
+            Page<LogInformationCrossing> pageLog= new PageImpl<>(logCruces.subList(start, end), pageRequest, logCruces.size());
 
             int totalPage=pageLog.getTotalPages();
             if(totalPage>0){
@@ -128,7 +135,7 @@ public class InformationCrossingController {
             modelAndView.addObject("listConcil",listConcil);
             modelAndView.addObject("listTypeEvent",listTypeEvent);
             modelAndView.addObject("directory","accountingLoad");
-            modelAndView.addObject("registers",logAroutes.size());
+            modelAndView.addObject("registers",logCruces.size());
             modelAndView.addObject("registersData",aroutes.size());
             modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
@@ -143,6 +150,22 @@ public class InformationCrossingController {
         return modelAndView;
     }
 
+    @GetMapping("/parametric/informationCrossing/generateAccount")
+    @ResponseBody
+    public ResponseEntity<String> generarCuentas(@RequestParam int id, @RequestParam String fecha, @RequestParam int evento) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findUserByUserName(auth.getName());
+        AccountingRoute ac = accountingRouteService.findById(id);
+        try {
+            //accountingRouteService.loadLogCargue(user,ac,fecha,"Trasladar Servidor","Exitoso","");
+            return ResponseEntity.ok("Bulk1");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            //accountingRouteService.loadLogCargue(user,ac,fecha,"Trasladar Servidor","Fallido","Verifique el fichero se encuetre en la ruta y la estructura de los campos este correcta en el tamaño de los campos.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk-1");
+        }
+    }
 
 
 }
