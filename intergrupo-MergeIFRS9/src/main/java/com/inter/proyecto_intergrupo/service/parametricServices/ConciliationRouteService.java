@@ -162,10 +162,16 @@ public class ConciliationRouteService {
             for (CampoRConcil campo : campos) {
                 // Cada línea sigue la estructura:
                 // <FieldID> SQLCHAR 0 <LongitudCampo> "" <IndexCampo> <NombreCampo> Latin1_General_CI_AS
+                String value="2147483646";
+                if(campo.getLongitud()!=null && !campo.getLongitud().equalsIgnoreCase("MAX"))
+                {
+                    value=campo.getLongitud();
+                }
+
                 String line = String.format(
                         "%d\tSQLCHAR\t0\t%d\t\"\"\t%d\t%s\tLatin1_General_CI_AS",
                         fieldIndex,
-                        Integer.parseInt(campo.getLongitud()),
+                        Integer.parseInt(value),
                         fieldIndex,
                         campo.getNombre()
                 );
@@ -176,11 +182,17 @@ public class ConciliationRouteService {
                 fieldIndex++;
             }
 
+            String value="2147483646";
+            if(campos.get(campos.size() - 1).getLongitud()!=null && !campos.get(campos.size() - 1).getLongitud().equalsIgnoreCase("MAX"))
+            {
+                value=campos.get(campos.size() - 1).getLongitud();
+            }
+
             // Si necesitas manejar el último campo con terminador de línea (por ejemplo, "\r\n")
             String ultimaLinea = String.format(
                     "%d\tSQLCHAR\t0\t%d\t\"\\r\\n\"\t%d\t%s\tLatin1_General_CI_AS",
                     fieldIndex,
-                    Integer.parseInt(campos.get(campos.size() - 1).getLongitud()),
+                    Integer.parseInt(value),
                     fieldIndex,
                     campos.get(campos.size() - 1).getNombre()
             );

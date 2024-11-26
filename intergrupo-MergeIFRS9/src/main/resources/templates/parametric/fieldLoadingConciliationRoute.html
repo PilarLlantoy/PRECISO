@@ -58,8 +58,15 @@
                     </div>
                     <div class="col-md-2">
                         <div class="form-group mb-1">
-                            <h6 class="font-weight-bold">Longitud de Campo</h6>
-                            <input type="text" class="form-control" name="longitud" id="longitud" required>
+                            <h6 class="font-weight-bold">Longitud de Campo
+                            <i  class="fas fa-question-circle text-muted"
+                            data-bs-toggle="tooltip"
+                            data-bs-placement="top"
+                            title="Se debe diligenciar si el fichero no tiene delimitador.
+                            Si se deja en blanco, se considera como un MAX."
+                            ></i>
+                            </h6>
+                            <input type="number" class="form-control" name="longitud" id="longitud" min="1">
                         </div>
                     </div>
                     <div class="col-md-2 hidden" id="separadorContainer">

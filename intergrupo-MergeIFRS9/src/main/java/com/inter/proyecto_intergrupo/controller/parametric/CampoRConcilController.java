@@ -39,13 +39,12 @@ public class CampoRConcilController {
                                             @RequestParam(name = "longitud") String longitud,
                                             BindingResult bindingResult){
         ModelAndView modelAndView = new ModelAndView("redirect:/parametric/fieldLoadingConciliationRoute/" + crouteId);
-
-        /*if((longitud.toUpperCase()).equals("MAX")) {
-            var ll=getMaxCharacterLength(campoRC.getTipo());
-            campoRC.setLongitud(ll);
-        }
-        else*/
+        if(longitud!=null && longitud.length()>0 ){
             campoRC.setLongitud(longitud);
+        }
+        else {
+            campoRC.setLongitud("MAX");
+        }
         ConciliationRoute route = conciliationRouteService.findById(Integer.parseInt(crouteId));
         campoRC.setRutaConciliacion(route);
         campoRCService.modificar(campoRC);

@@ -74,13 +74,33 @@ public class InventoryLoadListReport {
         font.setFontHeight(10);
         style.setFont(font);
 
+
+        CellStyle style1 = workbook.createCellStyle();
+        style1.setFont(font);
+        style1.setDataFormat(workbook.createDataFormat().getFormat("#,##0.00"));
+
+        CellStyle style2 = workbook.createCellStyle();
+        style2.setFont(font);
+        style2.setDataFormat(workbook.createDataFormat().getFormat("#,##0"));
+
         for(Object[] data: aroutes){
             Row row = sheet.createRow(rowCount++);
             int columnCount = 0;
-            for (Object part:data)
+
+            for (int i =0;i<data.length;i++)
             {
-                if(part!=null)
-                    createCell(row,columnCount++,part.toString(),style);
+                if(data[i]!=null && colCroutes.get(i).getTipo()!=null && (colCroutes.get(i).getTipo().equalsIgnoreCase("Integer") || colCroutes.get(i).getTipo().equalsIgnoreCase("Bigint")))
+                    createCell(row,columnCount++,Integer.parseInt(data[i].toString()),style2);
+                else if(data[i]!=null && colCroutes.get(i).getTipo()!=null && (colCroutes.get(i).getTipo().equalsIgnoreCase("Float")))
+                    createCell(row,columnCount++,Double.parseDouble(data[i].toString()),style1);
+                else if(data[i]!=null && colCroutes.get(i).getTipo()!=null && (colCroutes.get(i).getTipo().equalsIgnoreCase("Date") || colCroutes.get(i).getTipo().equalsIgnoreCase("Datetime"))) {
+                    CellStyle style3 = workbook.createCellStyle();
+                    style3.setFont(font);
+                    style3.setDataFormat(workbook.createDataFormat().getFormat(colCroutes.get(i).getFormatoFecha()));
+                    createCell(row, columnCount++, data[i].toString(), style3);
+                }
+                else if(data[i]!=null)
+                    createCell(row,columnCount++,data[i].toString(),style);
                 else
                     createCell(row,columnCount++,"",style);
                 if(columnCount == 1000000)
