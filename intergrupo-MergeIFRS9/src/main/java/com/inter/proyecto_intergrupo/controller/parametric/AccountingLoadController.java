@@ -50,6 +50,8 @@ import java.util.stream.IntStream;
 public class AccountingLoadController {
     private static final int PAGINATIONCOUNT=5;
     private static final int PAGINATIONCOUNTDATA=500;
+    //private static final String rutaArchivoFormato = "\\\\co.igrupobbva\\svrfilesystem\\BBVA_VIC06\\DP10\\Preciso\\archivo.fmt";
+    private static final String rutaArchivoFormato = "D:\\archivo.fmt";
     Logger logger = LogManager.getLogger(LogManager.ROOT_LOGGER_NAME);
 
     @Autowired
@@ -145,7 +147,6 @@ public class AccountingLoadController {
         User user = userService.findUserByUserName(auth.getName());
         AccountingRoute ac = accountingRouteService.findById(id);
         try {
-            String rutaArchivoFormato = "\\\\co.igrupobbva\\svrfilesystem\\BBVA_VIC06\\DP10\\Preciso\\archivo.fmt";
             Hibernate.initialize(ac.getCampos());
             accountingRouteService.createTableTemporal(ac);
             accountingRouteService.generarArchivoFormato(ac.getCampos(), rutaArchivoFormato);
@@ -178,7 +179,6 @@ public class AccountingLoadController {
         for (AccountingRoute ac :list)
         {
             try {
-                String rutaArchivoFormato = "\\\\co.igrupobbva\\svrfilesystem\\BBVA_VIC06\\DP10\\Preciso\\archivo.fmt";
                 accountingRouteService.createTableTemporal(ac);
                 accountingRouteService.generarArchivoFormato(ac.getCampos(), rutaArchivoFormato);
                 if(ac.getTipoArchivo().equalsIgnoreCase("XLS") || ac.getTipoArchivo().equalsIgnoreCase("XLSX"))
@@ -209,7 +209,6 @@ public class AccountingLoadController {
         try {
             File dest = new File(rutaArchivo);
             file.transferTo(dest);
-            String rutaArchivoFormato = "\\\\co.igrupobbva\\svrfilesystem\\BBVA_VIC06\\DP10\\Preciso\\archivo.fmt";
             accountingRouteService.createTableTemporal(ac);
             accountingRouteService.generarArchivoFormato(ac.getCampos(), rutaArchivoFormato);
             if(ac.getTipoArchivo().equalsIgnoreCase("XLS") || ac.getTipoArchivo().equalsIgnoreCase("XLSX"))
