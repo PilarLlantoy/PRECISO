@@ -164,7 +164,11 @@ public class AccountingLoadController {
         }
         catch (Exception e) {
             e.printStackTrace();
-            accountingRouteService.loadLogCargue(user,ac,fecha,"Trasladar Servidor","Fallido",e.getLocalizedMessage());
+            Throwable rootCause = e;
+            while (rootCause.getCause() != null) {
+                rootCause = rootCause.getCause(); // Navega a la causa raíz
+            }
+            accountingRouteService.loadLogCargue(user,ac,fecha,"Trasladar Servidor","Fallido",rootCause.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk-1");
         }
     }
@@ -194,7 +198,11 @@ public class AccountingLoadController {
             }
             catch (Exception e) {
                 e.printStackTrace();
-                accountingRouteService.loadLogCargue(null,ac,fecha,"Automático","Fallido",e.getLocalizedMessage());
+                Throwable rootCause = e;
+                while (rootCause.getCause() != null) {
+                    rootCause = rootCause.getCause(); // Navega a la causa raíz
+                }
+                accountingRouteService.loadLogCargue(null,ac,fecha,"Automático","Fallido",rootCause.getMessage());
             }
         }
     }
@@ -223,7 +231,11 @@ public class AccountingLoadController {
         }
         catch (Exception e) {
             e.printStackTrace();
-            accountingRouteService.loadLogCargue(user,ac,fecha,"Trasladar Local","Fallido",e.getLocalizedMessage());
+            Throwable rootCause = e;
+            while (rootCause.getCause() != null) {
+                rootCause = rootCause.getCause(); // Navega a la causa raíz
+            }
+            accountingRouteService.loadLogCargue(user,ac,fecha,"Trasladar Local","Fallido",rootCause.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk-1");
         }
     }

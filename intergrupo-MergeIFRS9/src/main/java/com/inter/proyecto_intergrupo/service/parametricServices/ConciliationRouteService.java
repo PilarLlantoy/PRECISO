@@ -211,6 +211,7 @@ public class ConciliationRouteService {
     }
 
     public String todayDateConvert(String formato,String fecha) {
+        System.out.println(formato+" - "+fecha);
         LocalDate today = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(formato);
         if(fecha.isEmpty()) {

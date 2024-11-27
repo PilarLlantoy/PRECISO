@@ -172,7 +172,11 @@ public class InventoryLoadController {
         }
         catch (Exception e) {
             e.printStackTrace();
-            conciliationRouteService.loadLogCargue(user,cr,fecha,"Trasladar Servidor","Fallido",e.getLocalizedMessage());
+            Throwable rootCause = e;
+            while (rootCause.getCause() != null) {
+                rootCause = rootCause.getCause(); // Navega a la causa raíz
+            }
+            conciliationRouteService.loadLogCargue(user,cr,fecha,"Trasladar Servidor","Fallido",rootCause.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk-2");
         }
     }
@@ -200,7 +204,11 @@ public class InventoryLoadController {
         }
         catch (Exception e) {
             e.printStackTrace();
-            conciliationRouteService.loadLogCargue(user,cr,fecha,"Trasladar Local","Fallido",e.getLocalizedMessage());
+            Throwable rootCause = e;
+            while (rootCause.getCause() != null) {
+                rootCause = rootCause.getCause(); // Navega a la causa raíz
+            }
+            conciliationRouteService.loadLogCargue(user,cr,fecha,"Trasladar Local","Fallido",rootCause.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk-2");
         }
     }
@@ -228,7 +236,11 @@ public class InventoryLoadController {
             }
             catch (Exception e) {
                 e.printStackTrace();
-                conciliationRouteService.loadLogCargue(null,cr,fecha,"Automático","Fallido",e.getLocalizedMessage());
+                Throwable rootCause = e;
+                while (rootCause.getCause() != null) {
+                    rootCause = rootCause.getCause(); // Navega a la causa raíz
+                }
+                conciliationRouteService.loadLogCargue(null,cr,fecha,"Automático","Fallido",rootCause.getMessage());
             }
         }
     }
