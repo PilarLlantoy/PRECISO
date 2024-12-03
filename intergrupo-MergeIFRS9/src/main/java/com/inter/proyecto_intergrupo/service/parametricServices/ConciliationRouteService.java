@@ -124,6 +124,9 @@ public class ConciliationRouteService {
                 }
             }
             else{
+                if (column.isPrimario()) {
+                    primaryKeys.add(column.getNombre());
+                }
                 createTableQuery.append(column.getNombre())
                         .append(" ")
                         .append(column.getTipo());
@@ -421,6 +424,7 @@ public class ConciliationRouteService {
     }
      */
 
+    /*
     public void validationData(ConciliationRoute data){
         String nombreTabla = "PRECISO_TEMP_INVENTARIOS";
         Query querySelect = entityManager.createNativeQuery("SELECT b.nombre as referencia, c.nombre as validacion, a.valor_validacion, a.valor_operacion, \n" +
@@ -441,6 +445,45 @@ public class ConciliationRouteService {
         }
 
     }
+
+     */
+
+    public void validationData(ConciliationRoute data) {
+        String nombreTabla = "PRECISO_TEMP_INVENTARIOS";
+        Query querySelect = entityManager.createNativeQuery(
+                "SELECT b.nombre as referencia, c.nombre as validacion, a.valor_validacion, a.valor_operacion, " +
+                        "CASE a.operacion WHEN 'Suma' THEN '+' WHEN 'Resta' THEN '-' WHEN 'Multiplica' THEN '*' WHEN 'Divida' THEN '/' ELSE '' END as Operacion " +
+                        "FROM PRECISO.dbo.preciso_validaciones_rconcil a " +
+                        "INNER JOIN PRECISO.dbo.preciso_campos_rconcil b ON a.id_rc = b.id_rconcil AND a.id_campo_referencia = b.id_campo " +
+                        "INNER JOIN PRECISO.dbo.preciso_campos_rconcil c ON a.id_rc = c.id_rconcil AND a.id_campo_validacion = c.id_campo " +
+                        "WHERE a.id_rc = ? AND a.estado = 1");
+        querySelect.setParameter(1, data.getId());
+        List<Object[]> validacionLista = querySelect.getResultList();
+
+        if (!validacionLista.isEmpty()) {
+            for (Object[] obj : validacionLista) {
+                String operacion = obj[4] != null ? obj[4].toString() : "";
+
+                // Construir la consulta dependiendo de si hay operación o no
+                String queryUpdate;
+                if (!operacion.isEmpty()) {
+                    queryUpdate = "UPDATE " + nombreTabla + " SET " +
+                            obj[0].toString() + " = CAST(TRY_CAST(" + obj[0].toString() + " AS DECIMAL(38, 0)) * 0.01 " +
+                            operacion + obj[3].toString() + " AS VARCHAR) " +
+                            "WHERE " + obj[1].toString() + " = '" + obj[2].toString() + "';";
+                } else {
+                    queryUpdate = "UPDATE " + nombreTabla + " SET " +
+                            obj[0].toString() + " = '" + obj[3].toString() + "' " +
+                            "WHERE " + obj[1].toString() + " = '" + obj[2].toString() + "';";
+                }
+
+                // Ejecutar la consulta
+                Query deleteSelect = entityManager.createNativeQuery(queryUpdate);
+                deleteSelect.executeUpdate();
+            }
+        }
+    }
+
 
 
     public void copyData(ConciliationRoute data,String fecha){

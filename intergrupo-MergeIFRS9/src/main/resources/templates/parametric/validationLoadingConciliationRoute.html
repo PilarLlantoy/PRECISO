@@ -67,7 +67,7 @@
                         <div class="form-group mb-1">
                             <h6 class="font-weight-bold">Operación:</h6>
                             <div class="d-flex align-items-center">
-                                <select class="form-control" name="selectedOperacion" id="selectedOperacion" required>
+                                <select class="form-control" name="selectedOperacion" id="selectedOperacion">
                                     <option disabled value="" selected hidden>Seleccione operación</option>
                                     <option th:value="Suma">Suma</option>
                                     <option th:value="Resta">Resta</option>
@@ -75,7 +75,7 @@
                                     <option th:value="Divida">Divida</option>
                                 </select>
                                 <p class="font-weight-bold mx-1 mb-0" style="line-height: 1.5;">=</p>
-                                <input type="number" class="form-control" th:field="*{valorOperacion}" required>
+                                <input type="text" class="form-control" th:field="*{valorOperacion}" required>
                             </div>
                         </div>
                     </div>

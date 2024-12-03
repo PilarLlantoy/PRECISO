@@ -92,6 +92,7 @@ public class CampoRConcilController {
     @ResponseBody
     public List<Object[]> getCamposByFicheroId(@PathVariable("ficheroId") Integer ficheroId) {
         List<Object[]> campos = campoRCService.findCamposByRutaConcil(ficheroId);
+        System.out.println(campos.size());
         return campos;
     }
 

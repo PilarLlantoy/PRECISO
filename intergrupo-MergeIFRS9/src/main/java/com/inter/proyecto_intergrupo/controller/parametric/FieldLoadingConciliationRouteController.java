@@ -69,6 +69,7 @@ public class FieldLoadingConciliationRouteController {
             modelAndView.addObject("current",page+1);
             modelAndView.addObject("next",page+2);
             modelAndView.addObject("prev",page);
+            modelAndView.addObject("paginationCount",PAGINATIONCOUNT);
             modelAndView.addObject("last",totalPage);
             modelAndView.addObject("filterExport","Original");
             modelAndView.addObject("directory","country");

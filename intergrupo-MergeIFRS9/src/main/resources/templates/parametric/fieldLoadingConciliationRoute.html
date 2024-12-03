@@ -163,7 +163,7 @@
                     <tbody>
                     <tr th:each="camp, iter : ${allCampos}">
                         <!--<td th:text="${camp.id}"></td>-->
-                        <td th:text="${iter.count}"></td>
+                        <td th:text="${iter.count + ((current-1)*12)}"></td>
                         <td th:text="${camp.nombre}"></td>
                         <td th:if="${camp.primario == true}">Sí</td>
                         <td th:if="${camp.primario == false}">No</td>
@@ -178,6 +178,7 @@
                                     th:data-primario="${camp.primario}"
                                     th:data-tipo="${camp.tipo}"
                                     th:data-longitud="${camp.longitud}"
+                                    th:data-separador="${camp.separador}"
                                     th:data-formatoFecha="${camp.formatoFecha}"
                                     th:data-idioma="${camp.idioma}"
                                     th:data-conciliacion="${camp.conciliacion}"
@@ -231,6 +232,7 @@
         var formatoFecha = button.getAttribute("data-formatoFecha");
         var idioma = button.getAttribute("data-idioma");
         var longitud = button.getAttribute("data-longitud")
+        var separador = button.getAttribute("data-separador")
 
         var nuloMoneda = button.getAttribute("data-nuloMoneda") === 'true';
         var conciliacion = button.getAttribute("data-conciliacion") === 'true';
@@ -240,6 +242,7 @@
         document.querySelector("input[name='id']").value = id;
         document.querySelector("input[name='nombre']").value = nombre;
         document.querySelector("input[name='longitud']").value = longitud;
+        document.querySelector("input[name='separador']").value = separador;
         document.querySelector("input[name='primario']").checked = primario;
         document.querySelector("input[name='conciliacion']").checked = conciliacion;
         document.querySelector("input[name='nuloMoneda']").checked = nuloMoneda;

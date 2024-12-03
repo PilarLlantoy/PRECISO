@@ -35,7 +35,7 @@ public class ValidationRConcilController {
     @PostMapping(value = "/parametric/createValidacionRConcil")
     public ModelAndView createValidacionRConcil(@ModelAttribute ValidationRConcil validationRC,
                                            @RequestParam(name = "selectedCampoRef") String campoRefid,
-                                           @RequestParam(name = "selectedOperacion") String operacion,
+                                           @RequestParam(name = "selectedOperacion", defaultValue= "") String operacion,
                                            @RequestParam(name = "crouteId") String crouteId,
                                            BindingResult bindingResult){
         ModelAndView modelAndView = new ModelAndView("redirect:/parametric/validationLoadingConciliationRoute/" + crouteId);
