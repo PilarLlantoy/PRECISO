@@ -18,4 +18,6 @@ public interface ConciliationRouteRepository extends JpaRepository<ConciliationR
     ConciliationRoute findAllByDetalle(String detalle);
 
     List<ConciliationRoute> findByEstadoAndFichero(boolean estado, boolean fichero);
+    List<ConciliationRoute> findByActivoAndConciliacionId(boolean activo, int idConciliacion);
+
 }

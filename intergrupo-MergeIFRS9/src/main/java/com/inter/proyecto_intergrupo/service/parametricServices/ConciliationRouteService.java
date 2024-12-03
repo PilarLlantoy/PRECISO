@@ -56,6 +56,10 @@ public class ConciliationRouteService {
         return conciliationRouteRepository.findAllById(id);
     }
 
+    public List<ConciliationRoute> getRoutesByConciliation(int concil) {
+        return conciliationRouteRepository.findByActivoAndConciliacionId(true, concil);
+    }
+
     public ConciliationRoute findByName(String nombre){
         return conciliationRouteRepository.findAllByDetalle(nombre);
     }

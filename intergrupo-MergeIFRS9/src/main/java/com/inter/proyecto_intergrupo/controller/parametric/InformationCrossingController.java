@@ -56,6 +56,8 @@ public class InformationCrossingController {
 
     @Autowired
     private ConciliationService conciliationService;
+    @Autowired
+    private ConciliationRouteService conciliationRouteService;
 
     @Autowired
     private EventTypeService eventTypeService;
@@ -85,7 +87,7 @@ public class InformationCrossingController {
             {
                 modelAndView.addObject("period",params.get("period").toString());
                 Conciliation concil = conciliationService.findById(Integer.parseInt(params.get("arhcont").toString()));
-                EventType evento = eventTypeService.findAllById(Integer.parseInt(params.get("arhcont").toString()));
+                EventType evento = eventTypeService.findAllById(Integer.parseInt(params.get("evento").toString()));
                 modelAndView.addObject("arhcont",concil);
                 modelAndView.addObject("evento",evento);
                 logCruces = informationCrossingService.findAllLog(concil,params.get("period").toString(), evento);
@@ -155,16 +157,70 @@ public class InformationCrossingController {
     public ResponseEntity<String> generarCuentas(@RequestParam int id, @RequestParam String fecha, @RequestParam int evento) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        AccountingRoute ac = accountingRouteService.findById(id);
-        try {
-            //accountingRouteService.loadLogCargue(user,ac,fecha,"Trasladar Servidor","Exitoso","");
+        System.out.println("GENERACION CUENTAS");
+        Conciliation concil = conciliationService.findById(id);
+
+
+
+        //VALIDAR QUE LOS INVENTARIOS ESTEN SUBIDO
+        //-----------------------------------------------------------------------------------
+        ConciliationRoute concilRoute = conciliationRouteService.findById(id);
+        List<ConciliationRoute> listRoutes = conciliationRouteService.getRoutesByConciliation(id); //RUTAS CONCILIACIONES
+        System.out.println(listRoutes.size());
+        List<Object[]> croutes = new ArrayList<>();
+        List<String> faltaCarga = new ArrayList<>();
+
+
+        List<LogInventoryLoad> logConcilroutes = new ArrayList<>();
+            for(ConciliationRoute ruta:listRoutes){
+                croutes = conciliationRouteService.findAllData(ruta,fecha);
+                System.out.println(ruta.getDetalle()+" "+ croutes);
+                if(croutes.isEmpty()) {
+                    faltaCarga.add(ruta.getDetalle());
+                }
+            }
+            if(!faltaCarga.isEmpty()){
+                String message = "falta cargar archivos: ";
+                for(String error:faltaCarga)
+                    message+=(error)+" ";
+                informationCrossingService.loadLogInformationCrossing(user,id,evento,fecha,"Generar Cuentas","Fallido", message);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk-1");
+            }
+            else
+                System.out.println("NO falta cargar archivos");
+
+
+            //GENERAR CRUCE DE INVENTARIO
+            //-----------------------------------------------------------------------------------
+
+
+            //RESMIR POR CUENTA
+            //-----------------------------------------------------------------------------------
+
+            /*File dest = new File(rutaArchivo);
+            file.transferTo(dest);
+            accountingRouteService.createTableTemporal(ac);
+            accountingRouteService.generarArchivoFormato(ac.getCampos(), rutaArchivoFormato);
+            if(ac.getTipoArchivo().equalsIgnoreCase("XLS") || ac.getTipoArchivo().equalsIgnoreCase("XLSX"))
+                accountingRouteService.importXlsx(ac,rutaArchivoFormato,fecha,rutaArchivo);
+            else
+                accountingRouteService.bulkImport(ac,rutaArchivoFormato,fecha,rutaArchivo);
+            accountingRouteService.conditionData(ac);
+            accountingRouteService.validationData(ac);
+            accountingRouteService.copyData(ac,fecha);
+            accountingRouteService.loadLogCargue(user,ac,fecha,"Trasladar Local","Exitoso","");*/
             return ResponseEntity.ok("Bulk1");
-        }
+
+        /*
         catch (Exception e) {
             e.printStackTrace();
-            //accountingRouteService.loadLogCargue(user,ac,fecha,"Trasladar Servidor","Fallido","Verifique el fichero se encuetre en la ruta y la estructura de los campos este correcta en el tamaño de los campos.");
+            Throwable rootCause = e;
+            while (rootCause.getCause() != null) {
+                rootCause = rootCause.getCause(); // Navega a la causa raíz
+            }
+            accountingRouteService.loadLogCargue(user,ac,fecha,"Trasladar Local","Fallido",rootCause.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk-1");
-        }
+        }*/
     }
 
 

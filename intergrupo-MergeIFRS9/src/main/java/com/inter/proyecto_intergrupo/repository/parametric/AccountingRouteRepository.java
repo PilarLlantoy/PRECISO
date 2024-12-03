@@ -1,6 +1,7 @@
 package com.inter.proyecto_intergrupo.repository.parametric;
 
 import com.inter.proyecto_intergrupo.model.parametric.AccountingRoute;
+import com.inter.proyecto_intergrupo.model.parametric.Conciliation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -38,6 +38,14 @@ public class InformationCrossingService {
     private AuditRepository auditRepository;
     @Autowired
     private LogAccountingLoadRepository logAccountingLoadRepository;
+
+    @Autowired
+    private ConciliationService conciliationService;
+
+    @Autowired
+    private EventTypeService eventTypeService;
+
+
     @Autowired
     public InformationCrossingService(LogInformationCrossingRepository logInformationCrossingRepository) {
         this.logInformationCrossingRepository = logInformationCrossingRepository;
@@ -46,5 +54,32 @@ public class InformationCrossingService {
         LocalDate localDate = LocalDate.parse(fecha);
         Date fechaDate = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
         return logInformationCrossingRepository.findAllByIdConciliacionAndFechaProcesoAndIdEventoOrderByIdDesc(concil,fechaDate, evento);
+    }
+
+    public void loadLogInformationCrossing(User user,int concil, int event, String fecha, String tipo, String estado, String mensaje)
+    {
+        LocalDate localDate = LocalDate.parse(fecha);
+        Date fechaDate = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        Date today=new Date();
+        LogInformationCrossing insert = new LogInformationCrossing();
+
+        insert.setFechaProceso(fechaDate);
+        insert.setFechaPreciso(today);
+        if(user!=null)
+            insert.setUsuario(user.getUsuario());
+        else
+            insert.setUsuario("Automático");
+        insert.setTipoProceso(tipo);
+        insert.setNovedad(mensaje);
+        insert.setEstadoProceso(estado);
+        if(user!=null)
+            insert.setUsuario(user.getUsuario());
+        else
+            insert.setUsuario("Automático");
+        Conciliation conciliation = conciliationService.findById(concil);
+        insert.setIdConciliacion(conciliation);
+        EventType evento = eventTypeService.findAllById(event);
+        insert.setIdEvento(evento);
+        logInformationCrossingRepository.save(insert);
     }
 }

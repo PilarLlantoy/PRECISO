@@ -65,7 +65,7 @@
                     <div>
                         <div class="d-grid gap-2 col-3 mt-1" style="padding-left:0px">
                             <button th:disabled="${!p_modificar}" class="btn btn-primary"
-                                    th:onclick="|validarYSubirL()|" type="button">Generar Cuentas</button>
+                                    th:onclick="|generarCuentas()|" type="button">Generar Cuentas</button>
                         </div>
                         <div class="d-grid gap-2 col-3 mt-1" style="padding-left:0px">
                             <button th:disabled="${!p_modificar}" class="btn btn-primary"
@@ -106,8 +106,7 @@
                             <thead class="bg-primary">
                             <tr>
                                 <th>Código</th>
-                                <th>Fecha Cargue</th>
-                                <th>Cant. Registros</th>
+                                <th>Fecha Proceso</th>
                                 <th>Novedad Presentada</th>
                                 <th>Fecha Proceso</th>
                                 <th>Usuario</th>
@@ -118,8 +117,7 @@
                             <tbody>
                             <tr th:each="rc : ${allLog}">
                                 <td th:text="${rc.id}"></td>
-                                <td th:text="${#dates.format(rc.fechaCargue,'yyyy-MM-dd')}"></td>
-                                <td th:text="${#numbers.formatDecimal(rc.cantidadRegistros, 0, 'COMMA', -1, 'POINT')}"></td>
+                                <td th:text="${#dates.format(rc.fechaProceso,'yyyy-MM-dd')}"></td>
                                 <td th:text="${rc.novedad}"></td>
                                 <td th:text="${#dates.format(rc.fechaPreciso,'yyyy-MM-dd HH:mm:ss')}"></td>
                                 <td th:text="${rc.usuario}"></td>
@@ -209,16 +207,15 @@
     //GENERAR CUENTAS
     //---------------------------------------------------------------------
     function generarCuentas() {
-        var concilacion = document.getElementById("arhcont");
+        var conciliacion = document.getElementById("arhcont");
         var fechaInformacion = document.getElementById("period");
         var evento = document.getElementById("evento");
         var isValid = true;
-
-        if (concilacion !=null && !concilacion.value) {
+        if (conciliacion !=null && !conciliacion.value) {
             concilacion.classList.add("is-invalid");
             isValid = false;
         } else {
-            concilacion.classList.remove("is-invalid");
+            conciliacion.classList.remove("is-invalid");
         }
         if (fechaInformacion !=null && !fechaInformacion.value) {
             fechaInformacion.classList.add("is-invalid");
@@ -232,6 +229,7 @@
         } else {
            evento.classList.remove("is-invalid");
         }
+        console.log(conciliacion.value, fechaInformacion.value, evento.value);
         if (isValid) {
             dialogOpen();
             generacionCuenta(conciliacion.value, fechaInformacion.value, evento.value);

@@ -26,6 +26,8 @@ public class LogInformationCrossing {
     private String estadoProceso;
     @Column(name = "estadoConciliaicon")
     private String estadoConciliacion;
+    @Column(name = "tipoProceso")
+    private String tipoProceso;
     @ManyToOne
     @JoinColumn(name = "idConciliacion", nullable = false)
     private Conciliation idConciliacion;
