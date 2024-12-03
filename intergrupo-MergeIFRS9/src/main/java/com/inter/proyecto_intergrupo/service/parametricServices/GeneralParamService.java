@@ -53,4 +53,15 @@ public class GeneralParamService {
         generalParamRepository.save(parametro);
        return parametro;
     }
+
+    public void modificarValor(Long numero,String valor){
+        GeneralParam gp1 = findAllById(Long.valueOf(numero));
+        gp1.setValorUnidad(valor);
+        generalParamRepository.save(gp1);
+    }
+
+    public GeneralParam searchFirstLevel(GeneralParam parametro){
+        generalParamRepository.save(parametro);
+        return parametro;
+    }
 }

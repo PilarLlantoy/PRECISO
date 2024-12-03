@@ -15,68 +15,90 @@
         </div>
     </div>
     <div id="content">
-        <div class="row mt-5">
-            <div class="border rounded pt-3">
-                <div class="col-md-4">
+        <div class="row p-5">
+            <div class="row border mt-4 rounded p-2">
+                <div class="col-md-3">
                     <div class="form-group">
                         <label class="fw-bold" th:utext="${allParametrics.get(0).unidadSecundaria}"></label>
-                        <select class="form-control" name="centroContableSelect" id="centroContableSelect" th:each="data : ${parametricsData0}" required>
+                        <select class="form-control" name="centroContableSelect" id="centroContableSelect" required>
                             <option hidden selected th:text="${allParametrics.get(0).valorUnidad}" th:value="${allParametrics.get(0).valorUnidad}"></option>
-                            <option th:text="${data.detalle}" th:value="${data.detalle}"></option>
+                            <option th:each="data : ${parametricsData0}" th:text="${data.detalle}" th:value="${data.detalle}"></option>
                         </select>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div class="form-group">
                         <label class="fw-bold" th:utext="${allParametrics.get(1).unidadSecundaria}"></label>
-                        <select class="form-control" name="centroSelect" id="centroSelect" th:each="data : ${parametricsData1}"  required>
+                        <select class="form-control" name="centroSelect" id="centroSelect" required>
                             <option hidden selected th:text="${allParametrics.get(1).valorUnidad}" th:value="${allParametrics.get(1).valorUnidad}"></option>
-                            <option th:text="${data.nombre}" th:value="${data.nombre}"></option>
+                            <option th:each="data : ${parametricsData1}" th:text="${data.nombre}" th:value="${data.nombre}"></option>
                         </select>
                     </div>
                 </div>
-                <div class="col-md-4">
+            </div>
+            <div class="row border mt-1 rounded p-2">
+                <div class="col-md-3">
                     <div class="form-group">
                         <label class="fw-bold" th:utext="${allParametrics.get(2).unidadSecundaria}"></label>
-                        <select class="form-control" name="cuentaContableSelect" id="cuentaContableSelect" th:each="data : ${parametricsData2}" required>
+                        <select class="form-control" name="cuentaContableSelect" id="cuentaContableSelect" required>
                             <option hidden selected th:text="${allParametrics.get(2).valorUnidad}" th:value="${allParametrics.get(2).valorUnidad}"></option>
-                            <option th:text="${data.detalle}" th:value="${data.detalle}"></option>
+                            <option th:each="data : ${parametricsData2}" th:text="${data.detalle}" th:value="${data.detalle}"></option>
                         </select>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div class="form-group">
                         <label class="fw-bold" th:utext="${allParametrics.get(3).unidadSecundaria}"></label>
-                        <select class="form-control" name="cuentaSelect" id="cuentaSelect" th:each="data : ${parametricsData3}"  required>
+                        <select class="form-control" name="cuentaSelect" id="cuentaSelect" required>
                             <option hidden selected th:text="${allParametrics.get(3).valorUnidad}" th:value="${allParametrics.get(3).valorUnidad}"></option>
-                            <option th:text="${data.nombre}" th:value="${data.nombre}"></option>
+                            <option th:each="data : ${parametricsData3}" th:text="${data.nombre}" th:value="${data.nombre}"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label class="fw-bold" th:utext="${allParametrics.get(4).unidadSecundaria}"></label>
+                        <select class="form-control" name="contoSelect" id="contoSelect" required>
+                            <option hidden selected th:text="${allParametrics.get(4).valorUnidad}" th:value="${allParametrics.get(4).valorUnidad}"></option>
+                            <option th:each="data : ${parametricsData4}" th:text="${data.nombre}" th:value="${data.nombre}"></option>
                         </select>
                     </div>
                 </div>
             </div>
-            <!-- Modal -->
-            <div class="modal fade" id="eliminarModal" tabindex="-1" role="dialog" aria-labelledby="eliminarModal" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Eliminar</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            ¿Estás seguro de eliminar el tipo de evento seleccionado?
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-danger" th:onclick="borrar()" data-dismiss="modal">
-                                Eliminar
-                            </button>
-                        </div>
+            <div class="row border mt-1 rounded p-2">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label class="fw-bold" th:utext="${allParametrics.get(5).unidadSecundaria}"></label>
+                        <select class="form-control" name="cuentaDivisaSelect" id="cuentaDivisaSelect" required>
+                            <option hidden selected th:text="${allParametrics.get(5).valorUnidad}" th:value="${allParametrics.get(5).valorUnidad}"></option>
+                            <option th:each="data : ${parametricsData5}" th:text="${data.detalle}" th:value="${data.detalle}"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label class="fw-bold" th:utext="${allParametrics.get(6).unidadSecundaria}"></label>
+                        <select class="form-control" name="cuentaDSelect" id="cuentaDSelect" required>
+                            <option hidden selected th:text="${allParametrics.get(6).valorUnidad}" th:value="${allParametrics.get(6).valorUnidad}"></option>
+                            <option th:each="data : ${parametricsData6}" th:text="${data.nombre}" th:value="${data.nombre}"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label class="fw-bold" th:utext="${allParametrics.get(7).unidadSecundaria}"></label>
+                        <select class="form-control" name="divisaSelect" id="divisaSelect" required>
+                            <option hidden selected th:text="${allParametrics.get(7).valorUnidad}" th:value="${allParametrics.get(7).valorUnidad}"></option>
+                            <option th:each="data : ${parametricsData7}" th:text="${data.nombre}" th:value="${data.nombre}"></option>
+                        </select>
                     </div>
                 </div>
             </div>
-            <!-- Campo oculto para el token CSRF -->
+            <div class="row mt-3 justify-content-center">
+                <div class="col-md-auto">
+                    <button id="saveParamsBtn" class="btn btn-primary">Guardar Parámetros</button>
+                </div>
+            </div>
             <input type="hidden" id="csrfToken" th:value="${_csrf.token}" />
         </div>
     </div>
@@ -123,6 +145,236 @@
                 console.error("Ocurrió un error al enviar la solicitud POST: " + error);
             });
     }
+
+    // Select Centro
+    document.getElementById('centroContableSelect').addEventListener('change', function () {
+    const selectedValue = this.value;
+
+    fetch('/parametric/generalParam/firstLevel', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRF-TOKEN': csrfToken
+        },
+        body: `dataLevel=${encodeURIComponent(selectedValue)}`
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Error en la solicitud: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                const centroSelect = document.getElementById('centroSelect');
+
+                // Limpia las opciones existentes
+                centroSelect.innerHTML = '';
+
+                // Si no hay datos, muestra una opción predeterminada
+                if (!data || data.length === 0) {
+                    const option = document.createElement('option');
+                    option.textContent = 'No hay datos disponibles';
+                    centroSelect.appendChild(option);
+                    return;
+                }
+
+                // Agrega las nuevas opciones
+                data.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item.nombre; // Ajusta si hay otros campos relevantes
+                    option.textContent = item.nombre;
+                    centroSelect.appendChild(option);
+                });
+            })
+            .catch(error => {
+                console.error('Error al cargar los datos:', error);
+                alert('No se pudo actualizar el selector. Verifique la consola.');
+            });
+    });
+
+    // Select Cuenta
+    document.getElementById('cuentaContableSelect').addEventListener('change', function () {
+    const selectedValue = this.value;
+
+    fetch('/parametric/generalParam/firstLevel', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRF-TOKEN': csrfToken
+        },
+        body: `dataLevel=${encodeURIComponent(selectedValue)}`
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Error en la solicitud: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                const cuentaSelect = document.getElementById('cuentaSelect');
+
+                // Limpia las opciones existentes
+                cuentaSelect.innerHTML = '';
+
+                // Si no hay datos, muestra una opción predeterminada
+                if (!data || data.length === 0) {
+                    const option = document.createElement('option');
+                    option.textContent = 'No hay datos disponibles';
+                    cuentaSelect.appendChild(option);
+                    return;
+                }
+
+                // Agrega las nuevas opciones
+                data.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item.nombre; // Ajusta si hay otros campos relevantes
+                    option.textContent = item.nombre;
+                    cuentaSelect.appendChild(option);
+                });
+
+                const contoSelect = document.getElementById('contoSelect');
+
+                // Limpia las opciones existentes
+                contoSelect.innerHTML = '';
+
+                // Si no hay datos, muestra una opción predeterminada
+                if (!data || data.length === 0) {
+                    const option = document.createElement('option');
+                    option.textContent = 'No hay datos disponibles';
+                    contoSelect.appendChild(option);
+                    return;
+                }
+
+                // Agrega las nuevas opciones
+                data.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item.nombre; // Ajusta si hay otros campos relevantes
+                    option.textContent = item.nombre;
+                    contoSelect.appendChild(option);
+                });
+            })
+            .catch(error => {
+                console.error('Error al cargar los datos:', error);
+                alert('No se pudo actualizar el selector. Verifique la consola.');
+            });
+    });
+
+    // Select Cuenta y Divisa
+    document.getElementById('cuentaDivisaSelect').addEventListener('change', function () {
+    const selectedValue = this.value;
+
+    fetch('/parametric/generalParam/firstLevel', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRF-TOKEN': csrfToken
+        },
+        body: `dataLevel=${encodeURIComponent(selectedValue)}`
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Error en la solicitud: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                const cuentaDSelect = document.getElementById('cuentaDSelect');
+
+                // Limpia las opciones existentes
+                cuentaDSelect.innerHTML = '';
+
+                // Si no hay datos, muestra una opción predeterminada
+                if (!data || data.length === 0) {
+                    const option = document.createElement('option');
+                    option.textContent = 'No hay datos disponibles';
+                    cuentaDSelect.appendChild(option);
+                    return;
+                }
+
+                // Agrega las nuevas opciones
+                data.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item.nombre; // Ajusta si hay otros campos relevantes
+                    option.textContent = item.nombre;
+                    cuentaDSelect.appendChild(option);
+                });
+
+                const divisaSelect = document.getElementById('divisaSelect');
+
+                // Limpia las opciones existentes
+                divisaSelect.innerHTML = '';
+
+                // Si no hay datos, muestra una opción predeterminada
+                if (!data || data.length === 0) {
+                    const option = document.createElement('option');
+                    option.textContent = 'No hay datos disponibles';
+                    divisaSelect.appendChild(option);
+                    return;
+                }
+
+                // Agrega las nuevas opciones
+                data.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item.nombre; // Ajusta si hay otros campos relevantes
+                    option.textContent = item.nombre;
+                    divisaSelect.appendChild(option);
+                });
+            })
+            .catch(error => {
+                console.error('Error al cargar los datos:', error);
+                alert('No se pudo actualizar el selector. Verifique la consola.');
+            });
+    });
+
+    //Guardar
+
+    document.getElementById('saveParamsBtn').addEventListener('click', function () {
+    const params = {
+        centroContable: document.getElementById('centroContableSelect').value,
+        centro: document.getElementById('centroSelect').value,
+        cuentaContable: document.getElementById('cuentaContableSelect').value,
+        cuenta: document.getElementById('cuentaSelect').value,
+        conto: document.getElementById('contoSelect').value,
+        cuentaDivisa: document.getElementById('cuentaDivisaSelect').value,
+        cuentaD: document.getElementById('cuentaDSelect').value,
+        divisa: document.getElementById('divisaSelect').value
+    };
+
+    fetch('/parametric/generalParam/save', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': csrfToken
+        },
+        body: JSON.stringify(params)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Error en la solicitud: ${response.statusText}`);
+            }
+            return response.json(); // Suponiendo que el servidor devuelve un JSON válido
+        })
+        .then(data => {
+            // Pop-up de éxito
+            Swal.fire({
+                icon: 'success',
+                title: '¡Proceso Completado!',
+                text: 'Los parámetros han sido guardados con éxito.',
+                confirmButtonText: 'Aceptar'
+            });
+        })
+        .catch(error => {
+            // Pop-up de error
+            Swal.fire({
+                icon: 'error',
+                title: '¡Error!',
+                text: 'No se pudieron guardar los parámetros. Intente nuevamente.',
+                confirmButtonText: 'Aceptar'
+            });
+        });
+    });
+
+
 </script>
 </body>
 

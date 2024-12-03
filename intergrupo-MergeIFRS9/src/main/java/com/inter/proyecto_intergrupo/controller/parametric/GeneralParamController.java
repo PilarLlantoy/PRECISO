@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -56,6 +59,7 @@ public class GeneralParamController {
                 listCr0=crAll;
             modelAndView.addObject("parametricsData0",listCr0);
             modelAndView.addObject("parametricsData2",listCr0);
+            modelAndView.addObject("parametricsData5",listCr0);
 
             List<CampoRConcil> listCr1 = new ArrayList<>();
             ConciliationRoute cr1 = conciliationRouteService.findByName(parametrics.get(0).getValorUnidad());
@@ -68,6 +72,25 @@ public class GeneralParamController {
             if(cr3!=null)
                 listCr3=cr3.getCampos();
             modelAndView.addObject("parametricsData3",listCr3);
+
+            List<CampoRConcil> listCr4 = new ArrayList<>();
+            ConciliationRoute cr4 = conciliationRouteService.findByName(parametrics.get(2).getValorUnidad());
+            if(cr4!=null)
+                listCr4=cr4.getCampos();
+            modelAndView.addObject("parametricsData4",listCr4);
+
+            List<CampoRConcil> listCr6 = new ArrayList<>();
+            ConciliationRoute cr6 = conciliationRouteService.findByName(parametrics.get(5).getValorUnidad());
+            if(cr6!=null)
+                listCr6=cr6.getCampos();
+            modelAndView.addObject("parametricsData6",listCr6);
+
+            List<CampoRConcil> listCr7 = new ArrayList<>();
+            ConciliationRoute cr7 = conciliationRouteService.findByName(parametrics.get(5).getValorUnidad());
+            if(cr7!=null)
+                listCr7=cr7.getCampos();
+            modelAndView.addObject("parametricsData7",listCr7);
+
 
             modelAndView.addObject("p_modificar", p_modificar);
             modelAndView.setViewName("parametric/generalParam");
@@ -86,5 +109,31 @@ public class GeneralParamController {
         generalParamService.modificar(objeto);
         return modelAndView;
     }
+
+    @ResponseBody
+    @PostMapping(value = "/parametric/generalParam/firstLevel", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<Map<String, String>> searchGeneralParam(@RequestParam String dataLevel) {
+        ConciliationRoute crAll = conciliationRouteService.findByName(dataLevel);
+        return crAll.getCampos().stream()
+                .map(campo -> Map.of("nombre", campo.getNombre())) // Ajusta según los campos relevantes de tu objeto.
+                .collect(Collectors.toList());
+    }
+
+    @ResponseBody
+    @PostMapping("/parametric/generalParam/save")
+    public ResponseEntity<?> saveParams(@RequestBody Map<String, String> params) {
+        generalParamService.modificarValor(Long.valueOf(1),params.get("centroContable").toString());
+        generalParamService.modificarValor(Long.valueOf(2),params.get("centro").toString());
+        generalParamService.modificarValor(Long.valueOf(3),params.get("cuentaContable").toString());
+        generalParamService.modificarValor(Long.valueOf(4),params.get("cuenta").toString());
+        generalParamService.modificarValor(Long.valueOf(5),params.get("conto").toString());
+        generalParamService.modificarValor(Long.valueOf(6),params.get("cuentaDivisa").toString());
+        generalParamService.modificarValor(Long.valueOf(7),params.get("cuentaD").toString());
+        generalParamService.modificarValor(Long.valueOf(8),params.get("divisa").toString());
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Parámetros guardados con éxito.");
+        return ResponseEntity.ok(response);
+    }
+
 
 }
