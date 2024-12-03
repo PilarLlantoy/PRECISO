@@ -69,6 +69,40 @@ public class ConciliationRouteService {
        return croute;
     }
 
+    public String encontrarUltimaFechaSubida(ConciliationRoute data) {
+        Query querySelect = entityManager.createNativeQuery(
+                "SELECT MAX(periodo_preciso) AS ultimo_periodo_preciso FROM preciso_rconcil_" + data.getId()
+        );
+        Object result = querySelect.getSingleResult();
+        return result != null ? result.toString() : null;
+    }
+
+    public List<Object[]> findAllData(ConciliationRoute data, String fecha, String cadena, String campo) {
+        String campos = data.getCampos().stream()
+                .map(CampoRConcil::getNombre)
+                .collect(Collectors.joining(","));
+
+        // Construir la consulta básica
+        StringBuilder queryBuilder = new StringBuilder("SELECT " + campos + ", periodo_preciso " +
+                "FROM preciso_rconcil_" + data.getId() + " WHERE periodo_preciso = :fecha");
+
+        // Verificar si cadena no es nula o vacía
+        if (cadena != null && !cadena.isEmpty()) {
+            queryBuilder.append(" AND " + campo + " LIKE :cadena");
+        }
+
+        // Crear la consulta
+        Query querySelect = entityManager.createNativeQuery(queryBuilder.toString());
+        querySelect.setParameter("fecha", fecha);
+
+        // Si cadena no es nula, añadir el parámetro para LIKE
+        if (cadena != null && !cadena.isEmpty()) {
+            querySelect.setParameter("cadena", cadena + "%");
+        }
+
+        return querySelect.getResultList();
+    }
+
 /*
     public void createTableTemporal(ConciliationRoute data) {
         String nombreTabla = "PRECISO_TEMP_INVENTARIOS";
@@ -398,7 +432,10 @@ public class ConciliationRouteService {
         if(delimitador.equalsIgnoreCase(""))
             complement="FORMATFILE = '" + ruta + "', ROWTERMINATOR = '\\r\\n', FIRSTROW = " + data.getFilasOmitidas();
 
-        String fichero=ensureTrailingSlash(data.getRuta()) + data.getNombreArchivo() + todayDateConvert(data.getFormatoFecha(),fecha)+ extension;
+        String fechaConvert="";
+        if(data.isSiglasFechas()==true)
+            fechaConvert=todayDateConvert(data.getFormatoFecha(),fecha);
+        String fichero=ensureTrailingSlash(data.getRuta()) + data.getNombreArchivo() + fechaConvert + extension;
         if(fuente !=null)
             fichero=fuente;
 

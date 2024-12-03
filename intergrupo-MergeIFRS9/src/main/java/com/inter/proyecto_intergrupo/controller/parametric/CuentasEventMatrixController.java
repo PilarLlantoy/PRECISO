@@ -43,6 +43,9 @@ public class CuentasEventMatrixController {
     private EventTypeService eventTypeService;
 
     @Autowired
+    private GeneralParamService generalParamService;
+
+    @Autowired
     private ConciliationService conciliationService;
 
     @Autowired
@@ -50,6 +53,9 @@ public class CuentasEventMatrixController {
 
     @Autowired
     private CampoRCService campoRCService;
+
+    @Autowired
+    private ConciliationRouteService conciliationRouteService;
 
     @Autowired
     private CampoRConcilService campoRConcilService;
@@ -112,6 +118,7 @@ public class CuentasEventMatrixController {
                 campos=cuenta1.getRutaContable().getCampos();
             }
             modelAndView.addObject("cuenta1", cuenta1);
+            System.out.println(cuenta1.getOperacion());
             modelAndView.addObject("campos", campos);
 
             AccountEventMatrix cuenta2 = accountEventMatrixService.findByMatrizEventoTipo2(matriz);
@@ -148,30 +155,33 @@ public class CuentasEventMatrixController {
                                   @RequestParam("busqueda") String cadenaBusqueda,
                                   Model model) {
 
-        CampoRC campo = campoRCService.findById(Integer.valueOf(campoRutaContable));
+        //CampoRC campo = campoRCService.findById(Integer.valueOf(campoRutaContable));
         // Asegúrate de que el cuentaContable no sea nulo o vacío
         if (cuentaContable == null || cuentaContable.isEmpty()) {
             return "<tr><td colspan='100%'>Por favor ingrese una cuenta contable válida.</td></tr>";
         }
 
         // Ejecutar las operaciones
-        AccountingRoute ruta = accountingRouteService.findById(Integer.valueOf(cuentaContable));
+        //ConciliationRoute ruta = conciliationRouteService.findById(Integer.valueOf(cuentaContable));
+        GeneralParam generalParam = generalParamService.findAllById(3L);
+        String campo = generalParamService.findAllById(4L).getValorUnidad();
+        ConciliationRoute ruta = conciliationRouteService.findByName(generalParam.getValorUnidad());
         if (ruta == null) {
             return "<tr><td colspan='100%'>Cuenta contable no encontrada.</td></tr>"; // Mensaje de error en HTML
         }
 
-        String ultimaFecha = accountingRouteService.encontrarUltimaFechaSubida(ruta);
+        String ultimaFecha = conciliationRouteService.encontrarUltimaFechaSubida(ruta);
 
-        List<Object[]> aroutes = accountingRouteService.findAllData(ruta, ultimaFecha, cadenaBusqueda, campo.getNombre());
+        List<Object[]> aroutes = conciliationRouteService.findAllData(ruta, ultimaFecha, cadenaBusqueda, campo);
 
-        CampoRC crc = new CampoRC();
+        CampoRConcil crc = new CampoRConcil();
         crc.setNombre("periodo_preciso");
         ruta.getCampos().add(crc);
-        List<CampoRC> colAroutes = ruta.getCampos();
+        List<CampoRConcil> colAroutes = ruta.getCampos();
 
         int indice = 0; //para saber el indice del campo
-        for(CampoRC c:colAroutes){
-            if(c.getId() == Integer.valueOf(campoRutaContable)) break;
+        for(CampoRConcil c:colAroutes){
+            if(c.getNombre().equalsIgnoreCase(campo)) break;
             indice=indice+1;
         }
 
@@ -184,7 +194,7 @@ public class CuentasEventMatrixController {
         tablaHtml.append("<thead class='bg-primary'><tr><td></td>");
 
         // Crear encabezados
-        for (CampoRC col : colAroutes) {
+        for (CampoRConcil col : colAroutes) {
             tablaHtml.append("<td>").append(col.getNombre()).append("</td>");
         }
         tablaHtml.append("</tr></thead><tbody>");
@@ -260,6 +270,7 @@ public class CuentasEventMatrixController {
                 cuenta.setCampoValorOp2(cValOpDos);
             }
 
+            System.out.println(operacion);
             cuenta.setOperacion(operacion);
 
             cuenta.setTipo("1");
