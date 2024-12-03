@@ -200,11 +200,12 @@
                         <div class="form-group mb-1">
                             <h6 class="font-weight-bold">Operación:<i class="bi bi-caret-down"></i></h6>
                             <select class="form-control" name="selectedOperacion1" id="selectedOperacion1">
-                                <option disabled value="0" selected hidden>Seleccione un campo</option>
-                                <!--
-                                <option th:each="concil : ${conciliaciones}" th:value="${concil.id}" th:text="${concil.nombre}"
-                                        th:selected="${eventMatrix.conciliacion != null and concil.nombre == eventMatrix.conciliacion}"></option>
-                                -->
+                                <option hidden selected th:value="${cuenta1.operacion}" th:label="${cuenta1.operacion}" >Seleccione Operación</option>
+                                <option th:value="Suma">Suma</option>
+                                <option th:value="Resta">Resta</option>
+                                <option th:value="Multiplica">Multiplica</option>
+                                <option th:value="Divida">Divida</option>
+                            </select>
                             </select>
                         </div>
                     </div>
@@ -282,7 +283,7 @@
                                    type="button"
                                    data-toggle="modal"
                                    data-target="#cuentaModal"
-                                   data-parametro="ganancia1"
+                                   data-parametro="ganancia2"
                                 ></i>
                             </div>
                         </div>
@@ -296,7 +297,7 @@
                                    type="button"
                                    data-toggle="modal"
                                    data-target="#cuentaModal"
-                                   data-parametro="perdida1"
+                                   data-parametro="perdida2"
                                 ></i>
                             </div>
                         </div>
@@ -381,7 +382,7 @@
                     <div class="col-md-2">
                         <div class="form-group mb-1">
                             <h6 class="font-weight-bold">Campo Valor Operación 1:<i class="bi bi-caret-down"></i></h6>
-                            <select class="form-control" name="selectedCVOU1" id="selectedCVOU2">
+                            <select class="form-control" name="selectedCVOU2" id="selectedCVOU2">
                                 <option value="0" th:selected="${cuenta2.campoValorOp1 == null}">Seleccione un campo</option>
                                 <option th:each="campo : ${campos}" th:value="${campo.id}" th:text="${campo.nombre}"
                                         th:selected="${cuenta2.campoValorOp1 != null and campo.id == cuenta2.campoValorOp1.id}"></option>
@@ -392,11 +393,11 @@
                         <div class="form-group mb-1">
                             <h6 class="font-weight-bold">Operación:<i class="bi bi-caret-down"></i></h6>
                             <select class="form-control" name="selectedOperacion2" id="selectedOperacion2">
-                                <option disabled value="0" selected hidden>Seleccione un campo</option>
-                                <!--
-                                <option th:each="concil : ${conciliaciones}" th:value="${concil.id}" th:text="${concil.nombre}"
-                                        th:selected="${eventMatrix.conciliacion != null and concil.nombre == eventMatrix.conciliacion}"></option>
-                                -->
+                                <option hidden selected th:value="${cuenta2.operacion}" th:label="${cuenta2.operacion}" >Seleccione Operación</option>
+                                <option th:value="Suma">Suma</option>
+                                <option th:value="Resta">Resta</option>
+                                <option th:value="Multiplica">Multiplica</option>
+                                <option th:value="Divida">Divida</option>
                             </select>
                         </div>
                     </div>
@@ -634,6 +635,12 @@
         if(buttomModal=="perdida1")
         document.getElementById('selectedCP1').value = selectedId;
 
+        // Asignar el valor del ID seleccionado al input con id 'selectedCG2'
+        if(buttomModal=="ganancia2")
+        document.getElementById('selectedCG2').value = selectedId;
+        if(buttomModal=="perdida2")
+        document.getElementById('selectedCP2').value = selectedId;
+
         // Cerrar el modal
         $('#cuentaModal').modal('hide');
     }
@@ -702,18 +709,21 @@
         const campoValorCuenta = document.getElementById('selectedCVC1');
         const campoValorOpUno = document.getElementById('selectedCVOU1');
         const campoValorOpDos = document.getElementById('selectedCVOD1');
+        const campoValorOpTres = document.getElementById('selectedOperacion1');
 
         campoRutaContable.innerHTML = '';
         campoDivisa.innerHTML = '';
         campoValorCuenta.innerHTML = '';
         campoValorOpUno.innerHTML = '';
         campoValorOpDos.innerHTML = '';
+        campoValorOpTres.innerHTML = '';
 
         campoRutaContable.innerHTML = '<option disabled value="0" selected hidden>Seleccione un campo</option>';
         campoDivisa.innerHTML = '<option disabled value="0" selected hidden>Seleccione un campo</option>';
         campoValorCuenta.innerHTML = '<option disabled value="0" selected hidden>Seleccione un campo</option>';
         campoValorOpUno.innerHTML = '<option disabled value="0" selected hidden>Seleccione un campo</option>';
         campoValorOpDos.innerHTML = '<option disabled value="0" selected hidden>Seleccione un campo</option>';
+        campoValorOpTres.innerHTML = '<option disabled value="0" selected hidden>Seleccione un campo</option>';
     }
 
     async function toggleRC1() {
@@ -737,6 +747,7 @@
             const campoValorCuenta = document.getElementById('selectedCVC1');
             const campoValorOpUno = document.getElementById('selectedCVOU1');
             const campoValorOpDos = document.getElementById('selectedCVOD1');
+            const campoValorOpTres = document.getElementById('selectedOperacion1');
 
 
             campoRutaContable.innerHTML = '<option disabled value="0" selected hidden>Seleccione un campo</option>';
@@ -744,6 +755,7 @@
             campoValorCuenta.innerHTML = '<option disabled value="0" selected hidden>Seleccione un campo</option>';
             campoValorOpUno.innerHTML = '<option disabled value="0" selected hidden>Seleccione un campo</option>';
             campoValorOpDos.innerHTML = '<option disabled value="0" selected hidden>Seleccione un campo</option>';
+            campoValorOpTres.innerHTML = '<option disabled value="0" selected hidden>Seleccione un campo</option>';
 
 
             data.forEach(campo => {
@@ -771,6 +783,11 @@
                 optionValorOpDos.value = campo[0];
                 optionValorOpDos.text = campo[1];
                 campoValorOpDos.appendChild(optionValorOpDos);
+
+                const optionValorOpTres = document.createElement('option');
+                optionValorOpTres.value = campo[0];
+                optionValorOpTres.text = campo[1];
+                campoValorOpTres.appendChild(optionValorOpTres);
             });
 
         }
