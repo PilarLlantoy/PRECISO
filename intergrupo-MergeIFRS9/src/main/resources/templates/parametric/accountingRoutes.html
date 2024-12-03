@@ -50,8 +50,9 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="rc : ${allRCs}">
-                        <td th:text="${rc.id}"></td>
+                    <tr th:each="rc, iter : ${allRCs}">
+                        <td th:text="${iter.count}"></td>
+                        <!--<td th:text="${rc.id}"></td>-->
                         <td th:text="${rc.nombre}"></td>
                         <td th:text="${rc.nombreArchivo}"></td>
                         <td th:text="${rc.ruta}"></td>

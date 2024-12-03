@@ -161,8 +161,9 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="camp : ${allCampos}">
-                        <td th:text="${camp.id}"></td>
+                    <tr th:each="camp, iter : ${allCampos}">
+                        <!--<td th:text="${camp.id}"></td>-->
+                        <td th:text="${iter.count}"></td>
                         <td th:text="${camp.nombre}"></td>
                         <td th:if="${camp.primario == true}">Sí</td>
                         <td th:if="${camp.primario == false}">No</td>
