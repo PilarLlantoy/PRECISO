@@ -43,8 +43,8 @@ public class InventoryLoadController {
     private static final int PAGINATIONCOUNT=5;
     private static final int PAGINATIONCOUNTDATA=500;
     Logger logger = LogManager.getLogger(LogManager.ROOT_LOGGER_NAME);
-    //private static final String rutaArchivoFormato = "\\\\co.igrupobbva\\svrfilesystem\\BBVA_VIC06\\DP10\\Preciso\\archivo.fmt";
-    private static final String rutaArchivoFormato = "D:\\archivo.fmt";
+    private static final String rutaArchivoFormato = "\\\\co.igrupobbva\\svrfilesystem\\BBVA_VIC06\\DP10\\Preciso\\archivo.fmt";
+    //private static final String rutaArchivoFormato = "D:\\archivo.fmt";
 
     @Autowired
     private UserService userService;

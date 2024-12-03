@@ -37,8 +37,8 @@ public class LdapAuthenticationProvider implements AuthenticationProvider {
         System.out.println("VALIDAR "+username+password);
 
         ldap = new LDAP();
-        //String rta = ldap.inicializarLDAP(username,password);
-        String rta = "exitosa";
+        String rta = ldap.inicializarLDAP(username,password);
+        //String rta = "exitosa";
 
         //UserDetails u = userDetailsService.loadUserByUsername(username);
 
