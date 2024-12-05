@@ -2,6 +2,7 @@ package com.inter.proyecto_intergrupo.model.parametric;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -108,4 +109,8 @@ public class Conciliation {
 
     @OneToMany(mappedBy = "conciliacion", cascade = CascadeType.ALL)
     private List<AccountConcil> arregloCuentas;
+
+    @OneToMany(mappedBy = "conciliacion", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserConciliation> userConciliations = new ArrayList<>();
+
 }

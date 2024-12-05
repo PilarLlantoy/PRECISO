@@ -1,6 +1,7 @@
 package com.inter.proyecto_intergrupo.service.adminServices;
 
 import com.inter.proyecto_intergrupo.model.admin.*;
+import com.inter.proyecto_intergrupo.model.parametric.ConciliationRoute;
 import com.inter.proyecto_intergrupo.model.parametric.TypeEntity;
 import com.inter.proyecto_intergrupo.model.parametric.UserAccount;
 import com.inter.proyecto_intergrupo.repository.admin.AuditRepository;
@@ -37,6 +38,10 @@ public class    UserService {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+    }
+
+    public User findById(int id){
+        return userRepository.findAllById(id);
     }
 
     public User findUserByEmail(String email){

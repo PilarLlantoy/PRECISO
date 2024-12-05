@@ -3,8 +3,9 @@ package com.inter.proyecto_intergrupo.controller.admin;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.inter.proyecto_intergrupo.model.admin.*;
-import com.inter.proyecto_intergrupo.model.parametric.TypeEntity;
+import com.inter.proyecto_intergrupo.model.parametric.*;
 import com.inter.proyecto_intergrupo.service.adminServices.*;
+import com.inter.proyecto_intergrupo.service.parametricServices.ConciliationService;
 import com.inter.proyecto_intergrupo.service.parametricServices.TypeEntityListReport;
 import com.inter.proyecto_intergrupo.service.resourcesServices.SendEmailService;
 import com.inter.proyecto_intergrupo.utility.Utility;
@@ -13,17 +14,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.DateFormat;
@@ -53,8 +59,13 @@ public class UserController {
     private CargoService cargoService;
 
     @Autowired
-    SendEmailService sendEmailService;
+    private ConciliationService conciliationService;
 
+    @Autowired
+    private UserConciliationService userConciliationService;
+
+    @Autowired
+    SendEmailService sendEmailService;
 
 
     @RequestMapping(value="/home")
@@ -101,6 +112,8 @@ public class UserController {
                 List<Integer> pages = IntStream.rangeClosed(1, totalPage).boxed().collect(Collectors.toList());
                 modelAndView.addObject("pages", pages);
             }
+
+            List<Conciliation> conciliaciones = conciliationService.findAllActive();
             modelAndView.addObject("p_modificar", p_modificar);
             modelAndView.addObject("allUsers", pageType.getContent());
             modelAndView.addObject("current", page + 1);
@@ -111,6 +124,8 @@ public class UserController {
             modelAndView.addObject("filterExport", "Original");
             modelAndView.addObject("directory", "users");
             modelAndView.addObject("registers",list.size());
+            modelAndView.addObject("conciliaciones",conciliaciones);
+            System.out.println(conciliaciones.size());
 
             modelAndView.addObject("userName", user.getUsuario());
             modelAndView.addObject("userEmail", user.getCorreo());
@@ -417,6 +432,7 @@ public class UserController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
+
         System.out.println("PARAMS "+params.get("vId").toString()+" "+params.get("vFilter").toString());
         int page=params.get("page")==null?0:(Integer.valueOf(params.get("page").toString())-1);
         PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
@@ -433,6 +449,15 @@ public class UserController {
             List<Integer> pages = IntStream.rangeClosed(1, totalPage).boxed().collect(Collectors.toList());
             modelAndView.addObject("pages",pages);
         }
+
+        List<Conciliation> conciliaciones = conciliationService.findAllActive();
+
+        List<Conciliation> titulares = new ArrayList<>();
+        List<Conciliation> backups = new ArrayList<>();
+
+        System.out.println("Conciliaciones donde el usuario es titular: " + titulares);
+        System.out.println("Conciliaciones donde el usuario es backup: " + backups);
+
         modelAndView.addObject("allUsers",pageTypeEntity.getContent());
         modelAndView.addObject("current",page+1);
         modelAndView.addObject("next",page+2);
@@ -443,6 +468,12 @@ public class UserController {
         modelAndView.addObject("columns",listColumns);
         modelAndView.addObject("directory","searchUsers");
         modelAndView.addObject("registers",list.size());
+
+        modelAndView.addObject("conciliaciones",conciliaciones);
+        modelAndView.addObject("titulares",titulares);
+        modelAndView.addObject("backups",backups);
+
+
         User user = userService.findUserByUserName(auth.getName());
         Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Usuarios");
 
@@ -478,6 +509,123 @@ public class UserController {
         }
         return result;
     }
+
+/*
+    @PostMapping("/guardarConciliaciones")
+    public ResponseEntity<?> guardarConciliaciones(@RequestParam Integer usuarioId, @RequestParam List<String> titulares,
+                                                   @RequestParam List<String> backups) {
+
+        System.out.println(usuarioId+" "+ titulares.size()+" "+ backups.size());
+
+
+
+        // Buscar al usuario y la conciliación en la base de datos
+        User user = userService.findById(usuarioId);
+        Conciliation conciliacion = conciliationService.findById(conciliacionId);
+
+        if (rol.equals("TITULAR")) {
+            conciliationService.assignUserToConciliation(user, conciliacion, UserConciliation.RoleConciliation.TITULAR);
+        } else if (rol.equals("BACKUP")) {
+            conciliationService.assignUserToConciliation(user, conciliacion, UserConciliation.RoleConciliation.BACKUP);
+        }
+
+        return ResponseEntity.ok("Los cambios se guardaron correctamente.");
+    }
+*/
+    @ResponseBody
+    @PostMapping("/guardarConciliaciones")
+    public ResponseEntity<String> guardarConciliaciones(@RequestBody Map<String, List<String>> params) {
+
+        // Extraer titulares y backups del request
+
+        String usuario = params.get("usuario").get(0);
+        List<String> concilTitulares = params.get("titulares");
+        List<String> concilBackups = params.get("backups");
+        try {
+            System.out.println(usuario);
+            for(String e:concilTitulares)
+                System.out.println(e);
+            for(String i:concilBackups)
+                System.out.println(i);
+            conciliationService.generarRelacionUserConciliation(usuario, concilTitulares, concilBackups);
+            // Responder con éxito
+            return ResponseEntity.ok("Asignaciones correctas.");
+        } catch (Exception e) {
+            // Manejo de errores
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al asignar usuarios: " + e.getMessage());
+        }
+    }
+
+
+    @PostMapping("/parametric/obtenerTitularesBackups")
+    @ResponseBody
+    public String obtenerTitulares(@RequestParam("usuario") Integer id,
+                                  Model model) {
+
+        System.out.println("USUARIO: "+id);
+
+        List<Conciliation> titulares = userConciliationService.getConciliationsByUserAndRole(id, UserConciliation.RoleConciliation.TITULAR);
+        List<Conciliation> backups = userConciliationService.getConciliationsByUserAndRole(id, UserConciliation.RoleConciliation.BACKUP);
+
+        System.out.println(backups.size());
+        List<Conciliation> conciliaciones = conciliationService.findAllActive();
+
+        // Guardar los datos en el modelo para enviarlos de vuelta a la vista
+        model.addAttribute("titulares",titulares);
+        model.addAttribute("backups",backups);
+
+        StringBuilder tablaHtml = new StringBuilder();
+        tablaHtml.append("<table id='parametros' class='table table-striped table-hover text-center table-bordered table-sm' width='100%'>");
+        tablaHtml.append("<thead class=\"bg-primary\">\n" +
+                "                                    <tr>\n" +
+                "                                        <th>Código</th>\n" +
+                "                                        <th>Detalle Conciliación</th>\n" +
+                "                                        <th>Titular</th>\n" +
+                "                                        <th>Back Up</th>\n" +
+                "                                    </tr>\n" +
+                "                                    </thead>\n" +
+                "                                    <tbody>");
+
+
+
+        // Crear filas
+        for (int index = 0; index < conciliaciones.size(); index++) {
+            Conciliation concil = conciliaciones.get(index);
+            tablaHtml.append("<tr>");
+
+            // Agregar número de fila (código)
+            tablaHtml.append("<td>").append(index).append("</td>");
+            tablaHtml.append("<td>").append(concil.getNombre()).append("</td>");
+
+            // Agregar el checkbox para el titular
+            boolean isTitularChecked = titulares.stream().anyMatch(t -> t.getId() == concil.getId());
+            tablaHtml.append("<td><input class='big-checkbox ver-checkbox' type='checkbox' ")
+                    .append("value='").append(concil.getId()).append("' ")
+                    .append("name='titular' id='titular_").append(concil.getId()).append("' ")
+                    .append(isTitularChecked ? "checked" : "").append(" />")
+                    .append("</td>");
+
+            // Agregar el checkbox para el backup
+            boolean isBackupChecked = backups.stream().anyMatch(t -> t.getId() == concil.getId());
+            tablaHtml.append("<td><input class='big-checkbox modificar-checkbox' type='checkbox' ")
+                    .append("value='").append(concil.getId()).append("' ")
+                    .append("name='backup' id='backup_").append(concil.getId()).append("' ")
+                    .append(isBackupChecked ? "checked" : "").append(" />")
+                    .append("</td>");
+
+            tablaHtml.append("</tr>");
+        }
+
+        tablaHtml.append("</tbody></table>");
+
+        model.addAttribute("tablaHtml", tablaHtml.toString());
+
+        // Retorna la vista
+        return tablaHtml.toString(); // Ajusta esto según la vista que deseas retornar
+
+    }
+
+
 
 
 

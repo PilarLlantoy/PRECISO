@@ -3,8 +3,11 @@ package com.inter.proyecto_intergrupo.service.parametricServices;
 import com.inter.proyecto_intergrupo.model.admin.Audit;
 import com.inter.proyecto_intergrupo.model.admin.User;
 import com.inter.proyecto_intergrupo.model.parametric.Conciliation;
+import com.inter.proyecto_intergrupo.model.parametric.UserConciliation;
 import com.inter.proyecto_intergrupo.repository.admin.AuditRepository;
+import com.inter.proyecto_intergrupo.repository.admin.UserConciliationRepository;
 import com.inter.proyecto_intergrupo.repository.parametric.ConciliationRepository;
+import com.inter.proyecto_intergrupo.service.adminServices.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -31,6 +35,12 @@ public class ConciliationService {
 
     @Autowired
     private AuditRepository auditRepository;
+
+    @Autowired
+    private UserConciliationRepository userConciliationRepository;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     public ConciliationService(ConciliationRepository conciliationRepository) {
@@ -116,4 +126,60 @@ public class ConciliationService {
         auditRepository.save(insert);
     }
 */
+
+
+    @Transactional
+    public void generarRelacionUserConciliation(String usuario, List<String> titulares, List<String> backups) {
+        try {
+            User user = userService.findById(Integer.parseInt(usuario));
+            userConciliationRepository.deleteByUsuarioId(Integer.parseInt(usuario));
+            relacionPorCargo(user, titulares, UserConciliation.RoleConciliation.TITULAR);
+            relacionPorCargo(user, backups, UserConciliation.RoleConciliation.BACKUP);
+        }catch (Error e){
+            e.printStackTrace();
+        }
+
+    }
+
+    public void relacionPorCargo(User user, List<String> conciliations, UserConciliation.RoleConciliation role) {
+        try {
+            for (String concil : conciliations) {
+                Conciliation conciliacion = conciliationRepository.findAllById(Integer.valueOf(concil));
+                // Obtener las relaciones existentes de la conciliación
+                List<UserConciliation> existingRoles = conciliacion.getUserConciliations()
+                        .stream()
+                        .filter(uc -> uc.getRol() == role)
+                        .collect(Collectors.toList());
+
+                // Validar si ya existe un usuario asignado como titular o backup
+                if (role == UserConciliation.RoleConciliation.TITULAR && !existingRoles.isEmpty()) {
+                    throw new IllegalStateException("La conciliación con ID " + conciliacion.getId() + " ya tiene un usuario titular asignado.");
+                }
+
+                if (role == UserConciliation.RoleConciliation.BACKUP && !existingRoles.isEmpty()) {
+                    throw new IllegalStateException("La conciliación con ID " + conciliacion.getId() + " ya tiene un usuario backup asignado.");
+                }
+
+                // Crear la nueva relación usuario-conciliación
+                UserConciliation userConciliation = UserConciliation.builder()
+                        .usuario(user)
+                        .conciliacion(conciliacion)
+                        .rol(role)
+                        .build();
+
+                // Agregar la relación en ambas entidades
+                conciliacion.getUserConciliations().add(userConciliation);
+                user.getUserConciliations().add(userConciliation);
+
+                // Guardar la relación en la base de datos
+                userConciliationRepository.save(userConciliation);
+                conciliationRepository.save(conciliacion);
+            }
+        }catch (Error e){
+            e.printStackTrace();
+        }
+
+    }
+
+
 }

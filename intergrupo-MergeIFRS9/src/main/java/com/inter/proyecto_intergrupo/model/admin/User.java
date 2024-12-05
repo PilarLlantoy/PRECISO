@@ -1,6 +1,7 @@
 package com.inter.proyecto_intergrupo.model.admin;
 
 import com.inter.proyecto_intergrupo.model.parametric.UserAccount;
+import com.inter.proyecto_intergrupo.model.parametric.UserConciliation;
 import lombok.*;
 
 import javax.persistence.*;
@@ -10,6 +11,7 @@ import org.hibernate.validator.constraints.Length;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -95,6 +97,12 @@ public class User {
     @Column(name = "centro")
     //@NotEmpty(message = "Ingrese el centro")
     private String centro;
+
+
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserConciliation> userConciliations = new ArrayList<>();
+
+
 
     // Otros métodos y campos
 
