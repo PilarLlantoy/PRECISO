@@ -90,8 +90,17 @@ public class CloseDateSourceSystemController {
                                            BindingResult bindingResult){
         ModelAndView modelAndView = new ModelAndView("redirect:/parametric/closeDateSF/" + sfId);
         SourceSystem sistemaFuente= sourceSystemService.findById(Integer.valueOf(sfId));
-        fecha.setSistemaFuente(sistemaFuente);
-        closeDateSourceSystemService.modificar(fecha);
+
+        boolean exists = sistemaFuente.getFechasCierre().stream()
+                .anyMatch(closeDate -> closeDate.getValor().equals(fecha.getValor()));
+        if(!exists)
+        {
+            fecha.setSistemaFuente(sistemaFuente);
+            closeDateSourceSystemService.modificar(fecha);
+        }
+        else{
+            modelAndView.addObject("resp", "Date-1");
+        }
         return modelAndView;
     }
 
@@ -102,7 +111,7 @@ public class CloseDateSourceSystemController {
         try {
             CloseDateSourceSystem fecha = closeDateSourceSystemService.findById(fechaId);
             fecha.setEstado(false);
-            closeDateSourceSystemService.modificar(fecha);
+            closeDateSourceSystemService.deleteById(fecha.getId());
         }
         catch (Exception e) {
             e.printStackTrace();

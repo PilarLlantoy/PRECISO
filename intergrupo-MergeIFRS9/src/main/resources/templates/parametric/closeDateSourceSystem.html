@@ -40,7 +40,7 @@
                             <div>
                                 <div class="form-group form-group-sm">
                                     <h6 class="font-weight-bold">Fecha Cierre</h6>
-                                    <input type="date" class="form-control form-control-sm" th:field="*{valor}" pattern="\d{4}-\d{2}-\d{2}">
+                                    <input type="date" class="form-control form-control-sm" th:field="*{valor}" pattern="\d{4}-\d{2}-\d{2}" required>
                                 </div>
                             </div>
                         </div>
@@ -74,8 +74,9 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr th:each="val : ${allFechas}">
-                                <td th:text="${val.id}"></td>
+                            <tr th:each="val,iter : ${allFechas}">
+                                <td th:text="${iter.count + ((current-1)*12)}"></td>
+                                <!--<td th:text="${val.id}"></td>-->
                                 <td th:text="${val.valor}"></td>
                                 <td>
                                     <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm mx-1"
@@ -171,6 +172,19 @@
         integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
         crossorigin="anonymous"></script>
 <script type="text/javascript">
+
+    var queryString = window.location.search;
+    var urlParams = new URLSearchParams(queryString);
+    var respuesta = urlParams.get('resp');
+    var row = urlParams.get('row');
+    var column = urlParams.get('colum');
+    validateAlerts(respuesta, row, column);
+    $(document).ready(function () {
+        $('#sidebarCollapse').on('click', function () {
+            $('#sidebar').toggleClass('active');
+        });
+    });
+
     //MODAL DE BORRAR
 
     var fechaId = -1;

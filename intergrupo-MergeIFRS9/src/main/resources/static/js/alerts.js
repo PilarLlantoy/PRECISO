@@ -40,13 +40,13 @@ function validateAlerts(operacion,data)
             showConfirmButton: true
         })
     }
-    else if(operacion=='AddRep1')
+    else if(operacion=='Date-1')
     {
         Swal.fire({
             position: 'center',
-            icon: 'success',
-            title: '¡Cargue Masivo Exitoso!',
-            text: 'Los registros fueron agregados de forma correcta en el sistema.',
+            icon: 'error',
+            title: '¡Falló Fecha Cierre!',
+            text: 'Esta fecha ya se encuentra almacenada.',
             showConfirmButton: true
         })
     }

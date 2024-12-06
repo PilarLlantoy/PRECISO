@@ -42,6 +42,10 @@ public class CloseDateSourceSystemService {
         return closeDateSourceSystemRepository.findAllById(id);
     }
 
+    public void deleteById(int id){
+        closeDateSourceSystemRepository.deleteById(id);
+    }
+
     public List <CloseDateSourceSystem> findByEstadoAndSistemaFuente(SourceSystem sistemaFuente){return closeDateSourceSystemRepository.findByEstadoAndSistemaFuente(true, sistemaFuente);}
 
     public CloseDateSourceSystem modificar(CloseDateSourceSystem fecha){
