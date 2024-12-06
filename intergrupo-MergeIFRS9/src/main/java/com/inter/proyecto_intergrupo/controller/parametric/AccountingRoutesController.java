@@ -52,6 +52,7 @@ import org.springframework.http.HttpStatus;
 @Controller
 public class AccountingRoutesController {
     private static final int PAGINATIONCOUNT=12;
+    private static final String rutaArchivoFormato1 = "\\\\co.igrupobbva\\svrfilesystem\\BBVA_VIC06\\DP10\\Preciso\\";
     Logger logger = LogManager.getLogger(LogManager.ROOT_LOGGER_NAME);
     private List<String> listColumns=List.of("Código", "Nombre", "Archivo", "Ruta de Acceso", "Tipo de Archivo", "Estado");
 
@@ -259,7 +260,7 @@ public class AccountingRoutesController {
     }
 
     public static void leerArchivoXLSX(String ruta) {
-        String excelFilePath  = "D:\\DATOS_OPERACIONES.xlsx";
+        String excelFilePath  = rutaArchivoFormato1+"DATOS_OPERACIONES.xlsx";
         try (FileInputStream fis = new FileInputStream(new File(excelFilePath));
              Workbook workbook = new XSSFWorkbook(fis)) {
 
