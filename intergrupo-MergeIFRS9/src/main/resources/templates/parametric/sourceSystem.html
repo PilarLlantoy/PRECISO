@@ -21,33 +21,31 @@
     </style>
     <div class="row m-0 bg-primary fixed-top myNav">
         <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
-            <h3 class="fw-bold text-white mx-4 my-3">Módulo de Sistemas Fuente</h3>
+            <h2 class="fw-bold text-white mx-4 my-3">Módulo de Sistemas Fuente</h2>
         </div>
         <div class="col-md-6 d-flex align-items-center justify-content-end pe-5">
             <form class="form-inline" method="get" th:action="@{/parametric/searchSourceSystem}">
-                <div class="input-group">
-                    <input type="text" class="form-control" th:name="vId" placeholder="Buscar...">
+                <div class="input-group input-group-sm">
+                    <input type="text" class="form-control form-control-sm" th:name="vId" placeholder="Buscar...">
                     <div class="input-group-append">
-                        <select class="form-control" th:name="vFilter" required>
+                        <select class="form-control form-control-sm" th:name="vFilter" required>
                             <option disabled value="" selected hidden>Seleccione un filtro</option>
                             <option th:each="item : ${columns}" th:value="${item}" th:text="${item}"></option>
                         </select>
                     </div>
                     <div class="input-group-append d-flex align-items-center">
-                        <button class="btn btn-secondary" type="submit"><i class="fa fa-search"></i></button>
-                        <a class="btn btn-secondary" th:href="@{/parametric/sourceSystem}"><i class="fas fa-window-close"></i></a>
+                        <button class="btn btn-secondary btn-sm" type="submit"><i class="fa fa-search"></i></button>
+                        <a class="btn btn-secondary btn-sm" th:href="@{/parametric/sourceSystem}"><i class="fas fa-window-close"></i></a>
                     </div>
                 </div>
             </form>
         </div>
     </div>
     <div id="content">
-        <div class="row mt-5">
-            <div class="text-left pr-3 col-md-6 my-2">
-            </div>
-            <div class="text-right pr-3 col-md-6 my-2">
-                <a class="btn btn-primary mx-1" th:href="@{/parametric/sourceSystem}"><i class="fas fa-redo-alt"></i></a>
-                <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1" th:onclick="|window.location.href='@{/parametric/createSourceSystem}'|">Crear Sis. Fuente</button>
+        <div class="row px-4 mt-4">
+            <div class="text-right col-md-12 mt-3">
+                <a class="btn btn-primary btn-sm mx-1" th:href="@{/parametric/sourceSystem}"><i class="fas fa-redo-alt"></i></a>
+                <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm mx-1" th:onclick="|window.location.href='@{/parametric/createSourceSystem}'|">Crear Sis. Fuente</button>
             </div>
             <div class="col-md-12">
                 <div class="table-responsive rounded border-primary">
@@ -65,8 +63,9 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr th:each="sf : ${allSFS}">
-                            <td th:text="${sf.id}"></td>
+                        <tr th:each="sf,iter : ${allSFS}">
+                            <!--<td th:text="${sf.id}"></td>-->
+                            <td th:text="${iter.count + ((current-1)*12)}"></td>
                             <td th:text="${sf.nombre}"></td>
                             <td th:text="${sf.sigla}"></td>
                             <td th:if="${sf.festivo == true}">Aplica</td>
@@ -76,15 +75,15 @@
                             <td th:if="${sf.activo == true}">Activo</td>
                             <td th:if="${sf.activo == false}">Inactivo</td>
                             <td>
-                                <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
+                                <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm mx-1"
                                         th:onclick="|window.location.href='@{/parametric/modifySourceSystem/{id}(id=${sf.id})}'|">Editar</button>
                             </td>
                             <td>
-                                <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
+                                <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm mx-1"
                                         th:onclick="|window.location.href='@{/parametric/closeDateSF/{id}(id=${sf.id})}'|">Fechas Cierre</button>
                             </td>
                             <td>
-                                <button th:disabled="${!p_modificar || !sf.activo}" type="button" class="btn btn-danger" data-toggle="modal" data-target="#eliminarModal"
+                                <button th:disabled="${!p_modificar || !sf.activo}" type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#eliminarModal"
                                         th:onclick="'seleccionar(\'' + ${sf.id} + '\')'">Inactivar</button>
                             </td>
                         </tr>
@@ -98,7 +97,7 @@
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Inactivar</h5>
+                            <h2 class="modal-title" id="exampleModalLabel">Inactivar Sistema Fuente</h2>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
@@ -107,24 +106,21 @@
                             ¿Estás seguro de inactivar el pais seleccionado?
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-danger" th:onclick="borrar()" data-dismiss="modal">
-                                Eliminar
+                            <button type="button" class="btn btn-danger btn-sm" th:onclick="borrar()" data-dismiss="modal">
+                                Inactivar
                             </button>
+                            <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
                         </div>
                     </div>
                 </div>
             </div>
-
             <!-- Campo oculto para el token CSRF -->
             <input type="hidden" id="csrfToken" th:value="${_csrf.token}" />
-
-
         </div>
         <div class="row" th:if="${last != 0}">
             <div class="col-md-4 text-left">
                 <nav arial-label="Pagination">
-                    <ul class="pagination">
+                    <ul class="pagination pagination-sm">
                         <li class="page-item" th:classappend="${prev == 0 ? 'disabled' : ''}">
                             <a class="page-link"
                                th:href="@{/parametric/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${prev},dir=${directory},vId=${vId})}">Anterior</a>
@@ -144,13 +140,13 @@
             </div>
         </div>
         <div th:if="${filterExport != 'Original'}" class="d-flex align-items-center justify-content-center">
-            <h5><span class="badge badge-pill text-light badge-info py-2 px-5">¡La Tabla se encuentra Filtrada!</span>
+            <h5><span class="badge badge-pill text-light badge-info badge-sm py-2 px-5">¡La Tabla se encuentra Filtrada!</span>
             </h5>
         </div>
         <!--
         <div class="d-flex align-items-center justify-content-center">
             <a th:href="@{/parametric/country/download/?vFilter={vFilter}&vId={vId}(vFilter=${vFilter},vId=${vId})}"
-               class="btn btn-primary">Exportar a Excel</a>
+               class="btn btn-primary btn-sm">Exportar a Excel</a>
         </div>
         -->
     </div>

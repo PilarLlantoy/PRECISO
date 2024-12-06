@@ -9,43 +9,49 @@
 <div class="main-container">
     <div class="row m-0 bg-primary fixed-top myNav">
         <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
-            <h3 class="fw-bold text-white mx-4 my-3">Módulo de Tipos Eventos</h3>
+            <h2 class="fw-bold text-white mx-4 my-3">Módulo de Tipos Eventos</h2>
         </div>
         <div class="col-md-6 d-flex align-items-center justify-content-end pe-5">
             <form class="form-inline" method="get" th:action="@{/parametric/searchEventType}">
-                <div class="input-group">
-                    <input type="text" class="form-control" th:name="vId" placeholder="Buscar...">
+                <div class="input-group input-group-sm">
+                    <input type="text" class="form-control form-control-sm" th:name="vId" placeholder="Buscar..." required>
                     <div class="input-group-append">
-                        <select class="form-control" th:name="vFilter" required>
+                        <select class="form-control form-control-sm" th:name="vFilter" required>
                             <option disabled value="" selected hidden>Seleccione un filtro</option>
                             <option th:each="item : ${columns}" th:value="${item}" th:text="${item}"></option>
                         </select>
                     </div>
                     <div class="input-group-append d-flex align-items-center">
-                        <button class="btn btn-secondary" type="submit"><i class="fa fa-search"></i></button>
-                        <a class="btn btn-secondary" th:href="@{/parametric/eventType}"><i class="fas fa-window-close"></i></a>
+                        <button class="btn btn-secondary btn-sm" type="submit"><i class="fa fa-search"></i></button>
+                        <a class="btn btn-secondary btn-sm" th:href="@{/parametric/eventType}"><i class="fas fa-window-close"></i></a>
                     </div>
                 </div>
             </form>
         </div>
     </div>
     <div id="content">
-        <div class="row mt-5">
-            <div class="text-left pr-3 col-md-6 my-2">
+        <div class="row px-4 mt-4">
+            <div class="text-left col-md-6  mt-3">
+                <form enctype="multipart/form-data" id="fileUploadForm" method="post" th:action="@{/parametric/eventType}">
+                    <div class="form-group form-group-sm">
+                        <label>Cargue Masivo: </label>
+                        <input accept=".xls,.xlsx,.xlsm" class="custom-file-control"
+                                                               id="file"
+                                                               name="file" required type="file">
+                        <button class="btn btn-primary btn-sm" type="submit">Cargar</button>
+                    </div>
+                </form>
             </div>
-            <div class="text-right pr-3 col-md-6 my-2">
-                <a class="btn btn-primary mx-1" th:href="@{/parametric/eventType}"><i class="fas fa-redo-alt"></i></a>
-                <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1" th:onclick="|window.location.href='@{/parametric/createEventType}'|">Crear Tipo Evento</button>
+            <div class="text-right col-md-6  mt-3">
+                <a class="btn btn-primary btn-sm mx-1" th:href="@{/parametric/eventType}"><i class="fas fa-redo-alt"></i></a>
+                <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm mx-1" th:onclick="|window.location.href='@{/parametric/createEventType}'|">Crear Tipo Evento</button>
             </div>
             <div class="col-md-12">
                 <div class="table-responsive rounded border-primary">
-
                     <div th:if="${#lists.isEmpty(allEventType)}">
                         <div class="alert alert-info">No hay registros disponibles.</div>
                     </div>
                     <div th:unless="${#lists.isEmpty(allEventType)}">
-
-
                         <table id="example" class="table table-sm table-striped table-hover text-center table-bordered" width="100%">
                             <thead class="bg-primary">
                             <tr>
@@ -56,60 +62,54 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr th:each="eventType : ${allEventType}">
-                                <td th:text="${eventType.id}"></td>
+                            <tr th:each="eventType,iter : ${allEventType}">
+                                <td th:text="${iter.count + ((current-1)*12)}"></td>
+                               <!-- <td th:text="${eventType.id}"></td>-->
                                 <td th:text="${eventType.nombre}"></td>
                                 <td th:if="${eventType.estado == true}">Activo</td>
                                 <td th:if="${eventType.estado == false}">Inactivo</td>
                                 <td>
-                                    <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
+                                    <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm mx-1"
                                             th:onclick="|window.location.href='@{/parametric/modifyEventType/{id}(id=${eventType.id})}'|">Editar</button>
-                                    <button th:disabled="${!p_modificar}" type="button" class="btn btn-danger" data-toggle="modal" data-target="#eliminarModal"
-                                            th:onclick="'seleccionarTipoEvento(\'' + ${eventType.id} + '\')'">Eliminar</button>
+                                    <button th:disabled="${!p_modificar}" type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#eliminarModal"
+                                            th:onclick="'seleccionarTipoEvento(\'' + ${eventType.id} + '\')'" th:if="${eventType.estado==true}">Inactivar</button>
+                                    <button type="button" class="btn btn-danger btn-sm" th:if="${eventType.estado==false}" disabled> Inactivar</button>
                                 </td>
                             </tr>
                             </tbody>
                         </table>
-
-
                     </div>
-
-
                 </div>
             </div>
-
             <!-- Modal -->
             <div class="modal fade" id="eliminarModal" tabindex="-1" role="dialog" aria-labelledby="eliminarModal" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Eliminar</h5>
+                            <h2 class="modal-title" id="exampleModalLabel">Inactivar Tipo Evento</h2>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
                         <div class="modal-body">
-                            ¿Estás seguro de eliminar el tipo de evento seleccionado?
+                            ¿Estás seguro de inactivar el tipo de evento seleccionado?
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-danger" th:onclick="borrar()" data-dismiss="modal">
-                                Eliminar
+                            <button type="button" class="btn btn-danger btn-sm" th:onclick="borrar()" data-dismiss="modal">
+                                Inactivar
                             </button>
+                            <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Regresar</button>
                         </div>
                     </div>
                 </div>
             </div>
-
             <!-- Campo oculto para el token CSRF -->
             <input type="hidden" id="csrfToken" th:value="${_csrf.token}" />
-
-
         </div>
         <div class="row" th:if="${last != 0}">
             <div class="col-md-4 text-left">
                 <nav arial-label="Pagination">
-                    <ul class="pagination">
+                    <ul class="pagination pagination-sm">
                         <li class="page-item" th:classappend="${prev == 0 ? 'disabled' : ''}">
                             <a class="page-link"
                                th:href="@{/parametric/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${prev},dir=${directory},vId=${vId})}">Anterior</a>
@@ -128,17 +128,14 @@
                 <h6 class="mx-1" th:utext="'Página ' + ${current} + ' de ' + ${last}"></h6>
             </div>
         </div>
-        <!--
         <div th:if="${filterExport != 'Original'}" class="d-flex align-items-center justify-content-center">
-            <h5><span class="badge badge-pill text-light badge-info py-2 px-5">¡La Tabla se encuentra Filtrada!</span>
+            <h5><span class="badge badge-pill text-light badge-info badge-sm ">¡La Tabla se encuentra Filtrada!</span>
             </h5>
         </div>
-
         <div class="d-flex align-items-center justify-content-center">
-            <a th:href="@{/parametric/country/download/?vFilter={vFilter}&vId={vId}(vFilter=${vFilter},vId=${vId})}"
-               class="btn btn-primary">Exportar a Excel</a>
+            <a th:href="@{/parametric/eventType/download/?vFilter={vFilter}&vId={vId}(vFilter=${vFilter},vId=${vId})}"
+               class="btn btn-primary btn-sm">Exportar</a>
         </div>
-        -->
     </div>
 </div>
 

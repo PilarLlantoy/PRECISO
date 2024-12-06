@@ -51,7 +51,7 @@
                     </thead>
                     <tbody>
                     <tr th:each="rc, iter : ${allRCs}">
-                        <td th:text="${iter.count}"></td>
+                        <td th:text="${iter.count + ((current-1)*12)}"></td>
                         <!--<td th:text="${rc.id}"></td>-->
                         <td th:text="${rc.nombre}"></td>
                         <td th:text="${rc.nombreArchivo}"></td>

@@ -199,7 +199,7 @@ public class    UserService {
                     "WHERE nur.id_perfil = nrv.id_perfil AND nrv.id_vista = nv.id_vista AND nur.id_usuario = ? AND nv.nombre = ? ");
             validate.setParameter(1,usuario);
             validate.setParameter(2,vista);
-            return (boolean) validate.getSingleResult();
+            return (boolean) validate.getResultList().get(0);
         } catch (NoResultException e) {
             return false;
         }
@@ -222,62 +222,53 @@ public class    UserService {
         {
             case "Estado":
                 Boolean valor = true;
-                if ("inactivo".equalsIgnoreCase(value)) {
+                if (value.length()>1 && value.substring(0,1).equalsIgnoreCase("i"))
                     valor = false;
-                }
-                System.out.println("valor: " + valor);
-                Query quer = entityManager.createNativeQuery(
-                        "SELECT em.* FROM preciso_administracion_usuarios as em WHERE em.activo = ?", User.class);
-                quer.setParameter(1, valor);
-                list = quer.getResultList();
+                Query sql = entityManager.createNativeQuery("SELECT em.* FROM preciso_administracion_usuarios as em WHERE em.activo = ? ", User.class);
+                sql.setParameter(1, valor);
+                list = sql.getResultList();
                 break;
             case "Código":
                 Query query = entityManager.createNativeQuery("SELECT em.* FROM preciso_administracion_usuarios as em " +
-                        "WHERE em.codigo_usuario LIKE ?", User.class);
-                query.setParameter(1, value );
-
+                        "WHERE em.codigo_usuario LIKE ? ", User.class);
+                query.setParameter(1, "%" + value + "%" );
                 list= query.getResultList();
-
                 break;
             case "Nombre":
-                String sql = "SELECT em.* FROM preciso_administracion_usuarios as em " +
-                        "WHERE em.primer_nombre LIKE ? OR em.segundo_nombre LIKE ? " +
-                        "OR em.primer_apellido LIKE ? OR em.segundo_apellido LIKE ?";
-
-                Query query0 = entityManager.createNativeQuery(sql, User.class);
-                String likeValue = "%" + value + "%";
-                query0.setParameter(1, likeValue);
-                query0.setParameter(2, likeValue);
-                query0.setParameter(3, likeValue);
-                query0.setParameter(4, likeValue);
-
+                Query query0 = entityManager.createNativeQuery("SELECT em.* FROM preciso_administracion_usuarios as em\n" +
+                        "WHERE concat(em.primer_nombre,em.segundo_nombre,em.primer_apellido,em.segundo_apellido) LIKE ? " , User.class);
+                query0.setParameter(1, "%" + value.replace(" ","") + "%");
                 list = query0.getResultList();
                 break;
             case "Cargo":
-                String sql2 = "SELECT em.* FROM preciso_administracion_usuarios em " +
+                Query query1 = entityManager.createNativeQuery("SELECT em.* FROM preciso_administracion_usuarios em " +
                         "JOIN preciso_administracion_cargos ec ON em.id_cargo = ec.id_cargo " +
-                        "WHERE ec.nombre_cargo LIKE ?";
-
-                Query query1 = entityManager.createNativeQuery(sql2, User.class);
-                String likeValue1 = "%" + value + "%";
-                query1.setParameter(1, likeValue1);
-
+                        "WHERE ec.nombre_cargo LIKE ? ", User.class);
+                query1.setParameter(1, "%" + value + "%");
                 list = query1.getResultList();
                 break;
             case "Perfil":
-                String sql3 = "SELECT em.* " +
+                Query query2 = entityManager.createNativeQuery("SELECT em.* " +
                         "FROM preciso_administracion_usuarios em " +
                         "JOIN preciso_administracion_user_rol ur ON em.id_usuario = ur.id_usuario " +
                         "JOIN preciso_administracion_perfiles p ON ur.id_perfil = p.id_perfil " +
-                        "WHERE p.nombre_perfil LIKE ?";
-
-                Query query2 = entityManager.createNativeQuery(sql3, User.class);
-                String likeValue2 = "%" + value + "%";
-                query2.setParameter(1, likeValue2);
-
+                        "WHERE p.nombre_perfil LIKE ? ", User.class);
+                query2.setParameter(1, "%" + value + "%");
                 list = query2.getResultList();
                 break;
-
+            case "Documento":
+                Query query3 = entityManager.createNativeQuery("SELECT em.* FROM preciso_administracion_usuarios em " +
+                        "WHERE em.numero_documento LIKE ? ", User.class);
+                query3.setParameter(1, "%" + value + "%");
+                list = query3.getResultList();
+                break;
+            case "Tipo Documento":
+                Query query4 = entityManager.createNativeQuery("SELECT em.* FROM preciso_administracion_usuarios em \n" +
+                        "inner join preciso_administracion_tipo_documento ep on em.id_tipo_documento=ep.id_tipo_documento\n" +
+                        "WHERE ep.nombre_tipo_documento LIKE ? ", User.class);
+                query4.setParameter(1, "%" + value + "%");
+                list = query4.getResultList();
+                break;
             default:
                 break;
         }

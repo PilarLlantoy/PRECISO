@@ -37,7 +37,7 @@ public class SourceSystemService {
         return sourceSystemRepository.findAllById(id);
     }
 
-    public List <SourceSystem> findAll(){return sourceSystemRepository.findAllByOrderByNombreAsc();}
+    public List <SourceSystem> findAll(){return sourceSystemRepository.findAll();}
     public List<SourceSystem> findAllActive() {
         return sourceSystemRepository.findByActivo(true);
     }
@@ -82,7 +82,7 @@ public class SourceSystemService {
                 break;
             case "Aplica Festivo":
                 boolean valor = true;
-                if("no aplica".equalsIgnoreCase(value))
+                if(value.substring(0,1).equalsIgnoreCase("n"))
                     valor = false;
                 Query query2 = entityManager.createNativeQuery(
                         "SELECT em.* FROM preciso_sistema_fuente as em WHERE em.festivo = ?", SourceSystem.class);
@@ -104,7 +104,7 @@ public class SourceSystemService {
                 break;
             case "Estado":
                 boolean valor1 = true;
-                if("inactivo".equalsIgnoreCase(value))
+                if(value.substring(0,1).equalsIgnoreCase("i"))
                     valor1 = false;
                 Query quer = entityManager.createNativeQuery(
                         "SELECT em.* FROM preciso_sistema_fuente as em WHERE em.activo = ?", SourceSystem.class);

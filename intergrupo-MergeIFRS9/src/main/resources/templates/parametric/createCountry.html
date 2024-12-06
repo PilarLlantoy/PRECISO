@@ -32,34 +32,40 @@
     </style>
     <div class="row m-0 bg-primary fixed-top myNav">
         <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
-            <h3 class="fw-bold text-white mx-4 my-3">Creación de Paises</h3>
+            <h2 class="fw-bold text-white mx-4 my-3">Creación de Países</h2>
         </div>
     </div>
     <div id="content">
-        <div class="row mt-5">
-            <form th:object="${pais}" th:action="@{/parametric/createCountry}" method="POST">
-                <div class="col-md-12 px-5 mb-3">
-
-                    <div class="form-group mb-1">
-                        <label>Nombre pais</label>
-                        <input type="text" class="form-control"  th:field="*{nombre}"  required>
+            <form class="mt-5 mx-3" th:object="${pais}" th:action="@{/parametric/createCountry}" method="POST">
+                <div class="row">
+                    <div class="text-right col-md-12">
+                        <a class="btn btn-danger btn-sm mx-1" th:href="@{/parametric/country}"><i class="fa-solid fa-left-long"></i> Regresar</a>
+                        <button type="submit" class="btn btn-primary btn-sm px-2">Agregar País</button>
                     </div>
-
-                    <div class="form-group mb-1">
-                        <label>Sigla pais</label>
-                        <input type="text" class="form-control"  th:field="*{sigla}"  required>
-                    </div>
-
-                    <div class="form-group mb-1">
-                        <label>Estado</label>
-                        <input id="activoInput" name="estado" th:field="*{estado}" th:id="${estado}"
-                               th:value="${estado}" type="checkbox">
-                        <label>[[${estado}]]</label>
-                    </div>
-
                 </div>
-
-                <div class="row pt-5 py-3">
+                <div class="row mx-3 px-5">
+                    <div class="col-md-1 border-bottom">
+                        <div class="form-group form-group-sm">
+                            <h6 class="font-weight-bold">Estado</h6>
+                            <input id="activoInput" name="estado" th:field="*{estado}" th:id="${estado}"
+                                   th:value="${estado}" type="checkbox">
+                            <label>[[${estado}]]</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6 border-bottom">
+                        <div class="form-group form-group-sm">
+                            <h6 class="font-weight-bold">Nombre país</h6>
+                            <input type="text" class="form-control form-control-sm"  th:field="*{nombre}" required>
+                        </div>
+                    </div>
+                    <div class="col-md-5 border-bottom">
+                        <div class="form-group form-group-sm">
+                            <h6 class="font-weight-bold">Sigla país</h6>
+                            <input type="text" class="form-control form-control-sm" maxlength="2" minlength="2"  th:field="*{sigla}"  style="text-transform: uppercase;"  required>
+                        </div>
+                    </div>
+                </div>
+                <!--<div class="row pt-5 py-3">
                     <div class="col-md-12 d-flex align-content-center justify-content-center">
                         <div class="d-grid gap-2 col-3">
                             <button type="submit" class="btn btn-primary">Agregar</button>
@@ -68,9 +74,8 @@
                             <a class="btn btn-danger" th:href="@{/parametric/country}">Cancelar</a>
                         </div>
                     </div>
-                </div>
+                </div>-->
             </form>
-        </div>
     </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>

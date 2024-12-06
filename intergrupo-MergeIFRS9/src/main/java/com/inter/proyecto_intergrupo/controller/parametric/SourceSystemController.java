@@ -41,7 +41,7 @@ public class SourceSystemController {
     @Autowired
     private SourceSystemService sourceSystemService;
 
-    private List<String> listColumns = List.of("Código","Nombre","Sigla","Aplica Festivo","Código País","País","Estado");
+    private List<String> listColumns = List.of("Nombre","Sigla","Aplica Festivo","Código País","País","Estado");
 
     @GetMapping(value = "/parametric/sourceSystem")
     public ModelAndView showSourceSystem(@RequestParam Map<String, Object> params) {
@@ -73,7 +73,7 @@ public class SourceSystemController {
             modelAndView.addObject("last", totalPage);
             modelAndView.addObject("columns", listColumns);
             modelAndView.addObject("filterExport", "Original");
-            modelAndView.addObject("directory", "country");
+            modelAndView.addObject("directory", "sourceSystem");
             modelAndView.addObject("registers", sfs.size());
             modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
@@ -108,9 +108,10 @@ public class SourceSystemController {
     public ModelAndView updateSourceSystem(@ModelAttribute SourceSystem sf,
                                            @RequestParam(name = "selectedPais") String pais) {
         ModelAndView modelAndView = new ModelAndView("redirect:/parametric/sourceSystem");
-        Country paisSelected = countryService.findCountryByName(pais);
+        Country paisSelected = countryService.findCountryByName(pais).get(0);
         sf.setPais(paisSelected);
         sourceSystemService.modificarSourceSystem(sf);
+        modelAndView.addObject("resp", "Modify1");
         return modelAndView;
     }
 
@@ -158,7 +159,8 @@ public class SourceSystemController {
         if(bindingResult.hasErrors()){
             modelAndView.setViewName("parametric/createSourceSystem");
         }else{
-            Country newPais = countryService.findCountryByName(pais);
+            modelAndView.addObject("resp", "Add1");
+            Country newPais = countryService.findCountryByName(pais).get(0);
             sf.setPais(newPais);
             sourceSystemService.modificarSourceSystem(sf);
         }
@@ -175,7 +177,7 @@ public class SourceSystemController {
         PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
         List<SourceSystem> list;
         if(params==null)
-            list=sourceSystemService.findByFilter("inactivo", "Estado");
+            list=sourceSystemService.findAll();
         else
             list=sourceSystemService.findByFilter(params.get("vId").toString(),params.get("vFilter").toString());
 

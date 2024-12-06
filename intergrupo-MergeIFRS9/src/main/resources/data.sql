@@ -43,7 +43,7 @@ IF NOT EXISTS(SELECT * FROM preciso_administracion_tipo_documento WHERE id_tipo_
 IF NOT EXISTS(SELECT * FROM preciso_administracion_tipo_documento WHERE id_tipo_documento = 13) BEGIN INSERT INTO preciso_administracion_tipo_documento (nombre_tipo_documento,codigo_tipo_documento) VALUES ('NIT PARA PERSONAS NATURALES','9') END
 
 -- IF NOT EXISTS(SELECT * FROM preciso_administracion_usuarios WHERE codigo_usuario='PRECISOUSER') BEGIN INSERT INTO preciso_administracion_usuarios(centro,contra,correo,creacion,empresa,estado,primer_nombre,password_token,codigo_usuario) VALUES ('0000','$2a$10$Nlz1ECsmJ4r/CBiMPmFYr.guiQ0wO2iR0f6tK94aSFg5HmWiC6nYa','admin@admin.com',GETDATE(),'0013',1,'Administrador Nexco',NULL,'PRECISOUSER') END
-IF NOT EXISTS(SELECT * FROM preciso_administracion_usuarios WHERE codigo_usuario='PRECISOUSER') BEGIN INSERT INTO preciso_administracion_usuarios(contra,correo,creacion,primer_nombre,segundo_nombre,primer_apellido,segundo_apellido,password_token,codigo_usuario,id_tipo_documento,numero_documento,id_cargo) VALUES('$2a$10$Nlz1ECsmJ4r/CBiMPmFYr.guiQ0wO2iR0f6tK94aSFg5HmWiC6nYa','admin@admin.com',GETDATE(),'Pilar','Maritza','Llantoy','Sanchez',NULL,'PRECISOUSER',1,78945612,1) END
+--IF NOT EXISTS(SELECT * FROM preciso_administracion_usuarios WHERE codigo_usuario='PRECISOUSER') BEGIN INSERT INTO preciso_administracion_usuarios(contra,correo,creacion,primer_nombre,segundo_nombre,primer_apellido,segundo_apellido,password_token,codigo_usuario,id_tipo_documento,numero_documento,id_cargo) VALUES('$2a$10$Nlz1ECsmJ4r/CBiMPmFYr.guiQ0wO2iR0f6tK94aSFg5HmWiC6nYa','admin@admin.com',GETDATE(),'Pilar','Maritza','Llantoy','Sanchez',NULL,'PRECISOUSER',1,78945612,1) END
 
 
 IF NOT EXISTS(SELECT * FROM preciso_administracion_perfiles WHERE nombre_perfil = 'ADMIN') BEGIN INSERT INTO preciso_administracion_perfiles ( nombre_perfil) VALUES ('ADMIN')END
@@ -60,10 +60,8 @@ IF NOT EXISTS(SELECT * FROM preciso_administracion_vistas WHERE nombre = 'Ver Ti
 IF NOT EXISTS(SELECT * FROM preciso_administracion_vistas WHERE nombre = 'Ver Divisas') BEGIN INSERT INTO preciso_administracion_vistas (nombre, ruta, unica,menu_principal,sub_menu_p1,sub_menu_p2) VALUES ('Ver Divisas','/parametry/currency',1,'Parametría','Parametros Generales','Divisas') END
 IF NOT EXISTS(SELECT * FROM preciso_administracion_vistas WHERE nombre = 'Ver Sistemas Fuentes') BEGIN INSERT INTO preciso_administracion_vistas (nombre, ruta, unica,menu_principal,sub_menu_p1,sub_menu_p2) VALUES ('Ver Sistemas Fuentes','/parametry/sourceSystem',1,'Parametría','Parametros Generales','Sistemas Fuentes') END
 IF NOT EXISTS(SELECT * FROM preciso_administracion_vistas WHERE nombre = 'Ver Parametro General') BEGIN INSERT INTO preciso_administracion_vistas (nombre, ruta, unica,menu_principal,sub_menu_p1,sub_menu_p2) VALUES ('Ver Parametro General','/parametry/generalParam',1,'Parametría','Parametros Generales','Parametro General') END
-
 IF NOT EXISTS(SELECT * FROM preciso_administracion_vistas WHERE nombre = 'Ver Rutas Contables') BEGIN INSERT INTO preciso_administracion_vistas (nombre, ruta, unica,menu_principal,sub_menu_p1,sub_menu_p2) VALUES ('Ver Rutas Contables','/parametric/accountingRoutes',1,'Parametría','Procesos Contables','Rutas Contables') END
 IF NOT EXISTS(SELECT * FROM preciso_administracion_vistas WHERE nombre = 'Ver Cargue Contable') BEGIN INSERT INTO preciso_administracion_vistas (nombre, ruta, unica,menu_principal,sub_menu_p1,sub_menu_p2) VALUES ('Ver Cargue Contable','/parametric/accountingLoad',1,'Parametría','Procesos Contables','Cargue Contable') END
-
 IF NOT EXISTS(SELECT * FROM preciso_administracion_vistas WHERE nombre = 'Ver Conciliaciones') BEGIN INSERT INTO preciso_administracion_vistas (nombre, ruta, unica,menu_principal,sub_menu_p1,sub_menu_p2) VALUES ('Ver Conciliaciones','/parametry/conciliation',1,'Parametría','Parametros Funcionales','Conciliaciones') END
 IF NOT EXISTS(SELECT * FROM preciso_administracion_vistas WHERE nombre = 'Ver Rutas Conciliaciones') BEGIN INSERT INTO preciso_administracion_vistas (nombre, ruta, unica,menu_principal,sub_menu_p1,sub_menu_p2) VALUES ('Ver Rutas Conciliaciones','/parametry/conciliationRoutes',1,'Parametría','Parametros Funcionales','Rutas Conciliaciones') END
 IF NOT EXISTS(SELECT * FROM preciso_administracion_vistas WHERE nombre = 'Ver Cargue Inventarios') BEGIN INSERT INTO preciso_administracion_vistas (nombre, ruta, unica,menu_principal,sub_menu_p1,sub_menu_p2) VALUES ('Ver Cargue Inventarios','/parametric/inventoryLoad',1,'Parametría','Procesos Funcionales','Cargue Inventarios') END
@@ -71,31 +69,8 @@ IF NOT EXISTS(SELECT * FROM preciso_administracion_vistas WHERE nombre = 'Ver Ma
 
 --IF NOT EXISTS(SELECT * FROM preciso_administracion_vistas WHERE nombre = 'Ver Tipos Eventos') BEGIN INSERT INTO preciso_administracion_vistas (nombre, ruta, unica,menu_principal,sub_menu_p1,sub_menu_p2) VALUES ('Ver Tipos Eventos','/parametry/typeEvent',1,'Parametría','Parametros Generales','Tipos Eventos') END
 
+--IF NOT EXISTS(SELECT * FROM preciso_administracion_user_rol WHERE id_usuario = 1 AND id_perfil=1) BEGIN INSERT INTO preciso_administracion_user_rol (id_usuario,id_perfil) VALUES (1,1) END
 
--- Add JOBS
-IF NOT EXISTS(SELECT * FROM preciso_administracion_cuadro_mando_jobs WHERE id_job = 1) BEGIN INSERT INTO preciso_administracion_cuadro_mando_jobs (id_job, nombre, estado) VALUES (1,'GOF Base Fiscal',0) END
-IF NOT EXISTS(SELECT * FROM preciso_administracion_cuadro_mando_jobs WHERE id_job = 2) BEGIN INSERT INTO preciso_administracion_cuadro_mando_jobs (id_job, nombre, estado) VALUES (2,'HADT140',0) END
-IF NOT EXISTS(SELECT * FROM preciso_administracion_cuadro_mando_jobs WHERE id_job = 3) BEGIN INSERT INTO preciso_administracion_cuadro_mando_jobs (id_job, nombre, estado) VALUES (3,'Query',0) END
-IF NOT EXISTS(SELECT * FROM preciso_administracion_cuadro_mando_jobs WHERE id_job = 4) BEGIN INSERT INTO preciso_administracion_cuadro_mando_jobs (id_job, nombre, estado) VALUES (4,'SICC',0) END
-IF NOT EXISTS(SELECT * FROM preciso_administracion_cuadro_mando_jobs WHERE id_job = 5) BEGIN INSERT INTO preciso_administracion_cuadro_mando_jobs (id_job, nombre, estado) VALUES (5,'Depositos',0) END
-IF NOT EXISTS(SELECT * FROM preciso_administracion_cuadro_mando_jobs WHERE id_job = 6) BEGIN INSERT INTO preciso_administracion_cuadro_mando_jobs (id_job, nombre, estado) VALUES (6,'CONDETARI',0) END
-IF NOT EXISTS(SELECT * FROM preciso_administracion_cuadro_mando_jobs WHERE id_job = 7) BEGIN INSERT INTO preciso_administracion_cuadro_mando_jobs (id_job, nombre, estado) VALUES (7,'Desconnv15',0) END
-IF NOT EXISTS(SELECT * FROM preciso_administracion_cuadro_mando_jobs WHERE id_job = 8) BEGIN INSERT INTO preciso_administracion_cuadro_mando_jobs (id_job, nombre, estado) VALUES (8,'Calculo 1%',0) END
-
-IF NOT EXISTS(SELECT * FROM preciso_administracion_user_rol WHERE id_usuario = 1 AND id_perfil=1) BEGIN INSERT INTO preciso_administracion_user_rol (id_usuario,id_perfil) VALUES (1,1) END
-IF NOT EXISTS(SELECT * FROM preciso_administracion_user_rol WHERE id_usuario = 2 AND id_perfil=1) BEGIN INSERT INTO preciso_administracion_user_rol (id_usuario,id_perfil) VALUES (2,1) END
-IF NOT EXISTS(SELECT * FROM preciso_administracion_user_rol WHERE id_usuario = 3 AND id_perfil=1) BEGIN INSERT INTO preciso_administracion_user_rol (id_usuario,id_perfil) VALUES (3,1) END
-IF NOT EXISTS(SELECT * FROM preciso_administracion_user_rol WHERE id_usuario = 4 AND id_perfil=1) BEGIN INSERT INTO preciso_administracion_user_rol (id_usuario,id_perfil) VALUES (4,1) END
-IF NOT EXISTS(SELECT * FROM preciso_administracion_user_rol WHERE id_usuario = 5 AND id_perfil=1) BEGIN INSERT INTO preciso_administracion_user_rol (id_usuario,id_perfil) VALUES (5,1) END
-IF NOT EXISTS(SELECT * FROM preciso_administracion_user_rol WHERE id_usuario = 6 AND id_perfil=2) BEGIN INSERT INTO preciso_administracion_user_rol (id_usuario,id_perfil) VALUES (6,2) END
-IF NOT EXISTS(SELECT * FROM preciso_administracion_user_rol WHERE id_usuario = 7 AND id_perfil=2) BEGIN INSERT INTO preciso_administracion_user_rol (id_usuario,id_perfil) VALUES (7,2) END
-IF NOT EXISTS(SELECT * FROM preciso_administracion_user_rol WHERE id_usuario = 8 AND id_perfil=1) BEGIN INSERT INTO preciso_administracion_user_rol (id_usuario,id_perfil) VALUES (8,1) END
-IF NOT EXISTS(SELECT * FROM preciso_administracion_user_rol WHERE id_usuario = 9 AND id_perfil=1) BEGIN INSERT INTO preciso_administracion_user_rol (id_usuario,id_perfil) VALUES (9,1) END
-IF NOT EXISTS(SELECT * FROM preciso_administracion_user_rol WHERE id_usuario = 10 AND id_perfil=3) BEGIN INSERT INTO preciso_administracion_user_rol (id_usuario,id_perfil) VALUES (10,3) END
-IF NOT EXISTS(SELECT * FROM preciso_administracion_user_rol WHERE id_usuario = 11 AND id_perfil=3) BEGIN INSERT INTO preciso_administracion_user_rol (id_usuario,id_perfil) VALUES (11,3) END
-IF NOT EXISTS(SELECT * FROM preciso_administracion_user_rol WHERE id_usuario = 12 AND id_perfil=3) BEGIN INSERT INTO preciso_administracion_user_rol (id_usuario,id_perfil) VALUES (12,3) END
-IF NOT EXISTS(SELECT * FROM preciso_administracion_user_rol WHERE id_usuario = 13 AND id_perfil=1) BEGIN INSERT INTO preciso_administracion_user_rol (id_usuario,id_perfil) VALUES (13,1) END
-IF NOT EXISTS(SELECT * FROM preciso_administracion_user_rol WHERE id_usuario = 14 AND id_perfil=2) BEGIN INSERT INTO preciso_administracion_user_rol (id_usuario,id_perfil) VALUES (14,2) END
 
 -- IF NOT EXISTS(SELECT * FROM preciso_administracion_rol_vista AS nrv, preciso_administracion_vistas AS nv WHERE nrv.id_perfil = 1 AND nv.nombre = 'Ver Cuadro Mando Intergrupo' AND nv.id_vista = nrv.id_vista) BEGIN INSERT INTO preciso_administracion_rol_vista (id_perfil,id_vista) VALUES (1,4) END
 --IF NOT EXISTS(SELECT * FROM preciso_administracion_rol_vista AS nrv, preciso_administracion_vistas AS nv WHERE nrv.id_perfil = 1 AND nv.nombre = 'Ver Roles' AND nv.id_vista = nrv.id_vista) BEGIN INSERT INTO preciso_administracion_rol_vista (id_perfil,id_vista) VALUES (1,4) END

@@ -2,9 +2,12 @@ package com.inter.proyecto_intergrupo.controller.parametric;
 
 import com.inter.proyecto_intergrupo.model.parametric.Country;
 import com.inter.proyecto_intergrupo.model.admin.User;
+import com.inter.proyecto_intergrupo.model.parametric.EventType;
 import com.inter.proyecto_intergrupo.service.adminServices.UserService;
 import com.inter.proyecto_intergrupo.service.parametricServices.CountryListReport;
 import com.inter.proyecto_intergrupo.service.parametricServices.CountryService;
+import com.inter.proyecto_intergrupo.service.parametricServices.EventTypeListReport;
+import com.inter.proyecto_intergrupo.service.parametricServices.GeneralListReport;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +22,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -33,7 +39,7 @@ import java.util.stream.IntStream;
 @Controller
 public class CountryController {
     private static final int PAGINATIONCOUNT=12;
-    private List<String> listColumns=List.of("Código", "Nombre", "Sigla", "Estado");
+    private List<String> listColumns=List.of("Nombre", "Sigla", "Estado");
     Logger logger = LogManager.getLogger(LogManager.ROOT_LOGGER_NAME);
     @Autowired
     private UserService userService;
@@ -84,6 +90,42 @@ public class CountryController {
         return modelAndView;
     }
 
+    @PostMapping(value="/parametric/country")
+    public ModelAndView uploadFile(HttpServletRequest request, HttpServletResponse response, @RequestParam Map<String, Object> params){
+        ModelAndView modelAndView = new ModelAndView("redirect:/parametric/country");
+        response.setContentType("application/octet-stream");
+        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+        String currentDateTime = dateFormatter.format(new Date());
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findUserByUserName(auth.getName());
+
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=Log_Cargue_" + currentDateTime + ".xlsx";
+        response.setHeader(headerKey, headerValue);
+        try {
+            Part filePart = request.getPart("file");
+            InputStream fileContent = filePart.getInputStream();
+            ArrayList<String[]> list = countryService.saveFileBD(fileContent,user);
+            String[] part = list.get(0);
+
+            if(part[2].equals("SUCCESS")){
+                modelAndView.addObject("resp", "AddRep1");
+                modelAndView.addObject("row", part[0]);
+                modelAndView.addObject("colum", part[1]);
+            }
+            else{
+                GeneralListReport generalListReport = new GeneralListReport(list);
+                generalListReport.exportLog(response);
+            }
+
+        }catch(Exception e){
+            e.printStackTrace();
+            modelAndView.addObject("resp", "PC-1");
+        }
+        return  modelAndView;
+    }
+
     @GetMapping(value = "/parametric/modifyCountry/{id}")
     @ResponseBody
     public ModelAndView modifyCountry(@PathVariable int id){
@@ -103,6 +145,7 @@ public class CountryController {
     public ModelAndView updateCountry(@ModelAttribute Country pais){
         ModelAndView modelAndView = new ModelAndView("redirect:/parametric/country");
         countryService.modificarCountry(pais);
+        modelAndView.addObject("resp", "Modify1");
         return modelAndView;
     }
 
@@ -142,6 +185,7 @@ public class CountryController {
         if(bindingResult.hasErrors()){
             modelAndView.setViewName("parametric/createCountry");
         }else{
+            modelAndView.addObject("resp", "Add1");
             countryService.modificarCountry(pais);
         }
         return modelAndView;
@@ -157,8 +201,10 @@ public class CountryController {
         int page=params.get("page")==null?0:(Integer.valueOf(params.get("page").toString())-1);
         PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
         List<Country> list;
-        if(params==null) list=countryService.findByFilter("inactivo", "Estado");
-        else list=countryService.findByFilter(params.get("vId").toString(),params.get("vFilter").toString());
+        if(params==null)
+            list=countryService.findAll();
+        else
+            list=countryService.findByFilter(params.get("vId").toString(),params.get("vFilter").toString());
 
         int start = (int)pageRequest.getOffset();
         int end = Math.min((start + pageRequest.getPageSize()), list.size());
@@ -174,10 +220,12 @@ public class CountryController {
         modelAndView.addObject("next",page+2);
         modelAndView.addObject("prev",page);
         modelAndView.addObject("last",totalPage);
+        modelAndView.addObject("vId",params.get("vId").toString());
         modelAndView.addObject("vFilter",params.get("vFilter").toString());
         modelAndView.addObject("columns",listColumns);
-        modelAndView.addObject("directory","country");
+        modelAndView.addObject("directory","searchCountry");
         modelAndView.addObject("registers",list.size());
+        modelAndView.addObject("filterExport","Filtrado");
         User user = userService.findUserByUserName(auth.getName());
         Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Países");
 
@@ -187,5 +235,26 @@ public class CountryController {
 
         modelAndView.setViewName("parametric/country");
         return modelAndView;
+    }
+
+    @GetMapping(value = "/parametric/country/download")
+    @ResponseBody
+    public void exportToExcel(HttpServletResponse response, RedirectAttributes redirectAttrs, @RequestParam Map<String, Object> params) throws IOException {
+        response.setContentType("application/octet-stream");
+        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+        String currentDateTime = dateFormatter.format(new Date());
+
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=Paises_" + currentDateTime + ".xlsx";
+        response.setHeader(headerKey, headerValue);
+        List<Country> list= new ArrayList<Country>();
+        if((params.get("vFilter").toString()).equals("Original") ||params.get("vFilter")==null||(params.get("vFilter").toString()).equals("")) {
+            list = countryService.findAll();
+        }
+        else{
+            list = countryService.findByFilter(params.get("vId").toString(),params.get("vFilter").toString());
+        }
+        CountryListReport listReport = new CountryListReport(list);
+        listReport.export(response);
     }
 }

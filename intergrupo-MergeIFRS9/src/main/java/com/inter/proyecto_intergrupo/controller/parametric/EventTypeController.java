@@ -2,8 +2,12 @@ package com.inter.proyecto_intergrupo.controller.parametric;
 
 import com.inter.proyecto_intergrupo.model.admin.User;
 import com.inter.proyecto_intergrupo.model.parametric.EventType;
+import com.inter.proyecto_intergrupo.service.adminServices.UserListReport;
 import com.inter.proyecto_intergrupo.service.adminServices.UserService;
+import com.inter.proyecto_intergrupo.service.parametricServices.EventTypeListReport;
 import com.inter.proyecto_intergrupo.service.parametricServices.EventTypeService;
+import com.inter.proyecto_intergrupo.service.parametricServices.GeneralListReport;
+import com.inter.proyecto_intergrupo.service.parametricServices.ThirdsCcListReport;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +20,17 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -25,7 +39,7 @@ import java.util.stream.IntStream;
 @Controller
 public class EventTypeController {
     private static final int PAGINATIONCOUNT=12;
-    private List<String> listColumns=List.of("Código", "Nombre","Estado");
+    private List<String> listColumns=List.of("Nombre","Estado");
     Logger logger = LogManager.getLogger(LogManager.ROOT_LOGGER_NAME);
     @Autowired
     private UserService userService;
@@ -62,9 +76,11 @@ public class EventTypeController {
             modelAndView.addObject("registers",eventTypes.size());
             modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
+            modelAndView.addObject("filterExport", "Original");
+            modelAndView.addObject("directory", "eventType");
             modelAndView.addObject("columns", listColumns);
             modelAndView.addObject("p_modificar", p_modificar);
-            modelAndView.setViewName("parametric/EventType");
+            modelAndView.setViewName("parametric/eventType");
         }
         else
         {
@@ -72,6 +88,42 @@ public class EventTypeController {
             modelAndView.setViewName("admin/errorMenu");
         }
         return modelAndView;
+    }
+
+    @PostMapping(value="/parametric/eventType")
+    public ModelAndView uploadFile(HttpServletRequest request, HttpServletResponse response, @RequestParam Map<String, Object> params){
+        ModelAndView modelAndView = new ModelAndView("redirect:/parametric/eventType");
+        response.setContentType("application/octet-stream");
+        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+        String currentDateTime = dateFormatter.format(new Date());
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findUserByUserName(auth.getName());
+
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=Log_Cargue_" + currentDateTime + ".xlsx";
+        response.setHeader(headerKey, headerValue);
+        try {
+            Part filePart = request.getPart("file");
+            InputStream fileContent = filePart.getInputStream();
+            ArrayList<String[]> list = eventTypeService.saveFileBD(fileContent,user);
+            String[] part = list.get(0);
+
+            if(part[2].equals("SUCCESS")){
+                modelAndView.addObject("resp", "AddRep1");
+                modelAndView.addObject("row", part[0]);
+                modelAndView.addObject("colum", part[1]);
+            }
+            else{
+                GeneralListReport generalListReport = new GeneralListReport(list);
+                generalListReport.exportLog(response);
+            }
+
+        }catch(Exception e){
+            e.printStackTrace();
+            modelAndView.addObject("resp", "PC-1");
+        }
+        return  modelAndView;
     }
 
     @GetMapping(value = "/parametric/modifyEventType/{id}")
@@ -93,6 +145,7 @@ public class EventTypeController {
     public ModelAndView updateEventType(@ModelAttribute EventType objeto){
         ModelAndView modelAndView = new ModelAndView("redirect:/parametric/eventType");
         eventTypeService.modificar(objeto);
+        modelAndView.addObject("resp", "Modify1");
         return modelAndView;
     }
 
@@ -132,6 +185,7 @@ public class EventTypeController {
         if(bindingResult.hasErrors()){
             modelAndView.setViewName("parametric/createEventType");
         }else{
+            modelAndView.addObject("resp", "Add1");
             eventTypeService.modificar(objeto);
         }
         return modelAndView;
@@ -170,6 +224,7 @@ public class EventTypeController {
         modelAndView.addObject("vFilter",params.get("vFilter").toString());
         modelAndView.addObject("columns",listColumns);
         modelAndView.addObject("directory","searchEventType");
+        modelAndView.addObject("filterExport", "Filtrado");
         modelAndView.addObject("registers",list.size());
         User user = userService.findUserByUserName(auth.getName());
         Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Tipos Eventos");
@@ -180,5 +235,26 @@ public class EventTypeController {
 
         modelAndView.setViewName("parametric/eventType");
         return modelAndView;
+    }
+
+    @GetMapping(value = "/parametric/eventType/download")
+    @ResponseBody
+    public void exportToExcel(HttpServletResponse response, RedirectAttributes redirectAttrs, @RequestParam Map<String, Object> params) throws IOException {
+        response.setContentType("application/octet-stream");
+        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+        String currentDateTime = dateFormatter.format(new Date());
+
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=TiposEventos_" + currentDateTime + ".xlsx";
+        response.setHeader(headerKey, headerValue);
+        List<EventType> list= new ArrayList<EventType>();
+        if((params.get("vFilter").toString()).equals("Original") ||params.get("vFilter")==null||(params.get("vFilter").toString()).equals("")) {
+            list = eventTypeService.findAll();
+        }
+        else{
+            list = eventTypeService.findByFilter(params.get("vId").toString(),params.get("vFilter").toString());
+        }
+        EventTypeListReport listReport = new EventTypeListReport(list);
+        listReport.export(response);
     }
 }

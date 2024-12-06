@@ -16,85 +16,113 @@
     </style>
     <div class="row m-0 bg-primary fixed-top myNav">
         <div class="col-md-12 border-bottom border-primary p-0 bg-primary d-flex align-items-center">
-            <h3 class="fw-bold text-white mx-4 my-3">Modificar Usuario</h3>
+            <h2 class="fw-bold text-white mx-4 my-3">Modificar Usuario</h2>
         </div>
     </div>
 
     <!-- Cover -->
     <div id="content m-5">
         <form class="mt-5 mx-3" method="POST" th:action="@{/admin/modifyUsers}" th:object="${userModify}">
-            <div class="row pt-5 py-3">
+            <div class="row">
+                <div class="text-right col-md-12">
+                    <a class="btn btn-danger btn-sm mx-1"th:href="@{/admin/searchUsers?vId=activo&vFilter=Estado}"><i class="fa-solid fa-left-long"></i> Regresar</a>
+                    <button id="submitButton" type="submit" hidden="true" class="btn btn-primary" onclick="miFuncion()">Modificar Usuario</button>
+                    <a style="color:white" class="btn btn-primary btn-sm px-2" onclick="miFuncion()">Modificar Usuario</a>
+                </div>
+            </div>
+            <div class="row mx-3 px-5">
                 <div class="col-md-12">
                     <input class="form-control" required id="newU" name="newU" th:value="${userModify.usuario}" type="hidden">
                     <input class="form-control" th:field="*{contra}" type="hidden">
                 </div>
-                <div class="col-md-6">
-                    <div class="form-group mb-1">
-                        <label>Código Usuario</label>
-                        <input class="form-control" maxlength="7" minlength="7" required th:field="*{usuario}"
+                <div class="col-md-1">
+                    <div class="row">
+                        <div class="col-12">
+                            <h6 class="font-weight-bold">Activo:</h6>
+                        </div>
+                        <div class="form-group form-group-sm col-12">
+                            <div class="form-check form-check-inline">
+                                <input id="activoInput" class="form-check-input " name="activo" th:field="*{activo}" th:id="${activo}"
+                                       th:value="${activo}" type="checkbox">
+                                <label>[[${activo}]]</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group form-group-sm">
+                        <h6 class="font-weight-bold">Código Usuario</h6>
+                        <input class="form-control form-control-sm" maxlength="7" minlength="7" required th:field="*{usuario}"
                                type="text">
                         <div class="alert alert-warning" th:errors="*{usuario}"
                              th:if="${#fields.hasErrors('usuario')}"></div>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="form-group mb-1">
-                        <label>Correo</label>
-                        <input class="form-control" maxlength="255" required th:field="*{correo}" type="text">
+                <div class="col-md-4">
+                    <div class="form-group form-group-sm">
+                        <h6 class="font-weight-bold">Correo</h6>
+                        <input class="form-control form-control-sm" maxlength="255" required th:field="*{correo}" type="text">
                         <div class="alert alert-warning" th:errors="*{correo}"
                              th:if="${#fields.hasErrors('correo')}"></div>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="form-group mb-1">
-                        <label>Primer nombre</label>
-                        <input class="form-control" maxlength="255" required th:field="*{primerNombre}" type="text">
+                <div class="col-md-4">
+                    <div class="form-group form-group-sm">
+                        <h6 class="font-weight-bold">Primer nombre</h6>
+                        <input class="form-control form-control-sm" maxlength="255" required th:field="*{primerNombre}" type="text">
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="form-group mb-1">
-                        <label>Segundo nombre</label>
-                        <input class="form-control" maxlength="255" required th:field="*{segundoNombre}" type="text">
+                <div class="col-md-4">
+                    <div class="form-group form-group-sm">
+                        <h6 class="font-weight-bold">Segundo nombre</h6>
+                        <input class="form-control form-control-sm" maxlength="255" required th:field="*{segundoNombre}" type="text">
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="form-group mb-1">
-                        <label>Primer apellido</label>
-                        <input class="form-control" maxlength="255" required th:field="*{primerApellido}" type="text">
+                <div class="col-md-4">
+                    <div class="form-group form-group-sm">
+                        <h6 class="font-weight-bold">Primer apellido</h6>
+                        <input class="form-control form-control-sm" maxlength="255" required th:field="*{primerApellido}" type="text">
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="form-group mb-1">
-                        <label>Segundo apellido</label>
-                        <input class="form-control" maxlength="255" required th:field="*{segundoApellido}" type="text">
+                <div class="col-md-4">
+                    <div class="form-group form-group-sm">
+                        <h6 class="font-weight-bold">Segundo apellido</h6>
+                        <input class="form-control form-control-sm" maxlength="255" required th:field="*{segundoApellido}" type="text">
                     </div>
                 </div>
-
-                <div class="col-md-6">
-                    <div class="form-group mb-1">
-                        <label>Tipo Documento</label>
-                        <select class="form-control" name="selectedTipoDoc" id="selectedTipoDoc" required>
+                <div class="col-md-4 border-bottom">
+                    <div class="form-group form-group-sm">
+                        <h6 class="font-weight-bold">Tipo Documento</h6>
+                        <select class="form-control form-control-sm" name="selectedTipoDoc" id="selectedTipoDoc" required>
                             <option disabled value="" selected hidden>Seleccione tipo de documento</option>
                             <option th:each="tipo : ${tipos}" th:value="${tipo.nombre}" th:text="${tipo.nombre}"
                                     th:selected="${userModify.tipoDocumento != null and tipo.id == userModify.tipoDocumento.id}"></option>
                         </select>
                     </div>
                 </div>
-
-                <div class="col-md-6">
-                    <div class="form-group mb-1">
-                        <label>Número de documento</label>
-                        <input class="form-control" maxlength="255" required th:field="*{numeroDocumento}" type="text">
+                <div class="col-md-4 border-bottom">
+                    <div class="form-group form-group-sm">
+                        <h6 class="font-weight-bold">Número de documento</h6>
+                        <input class="form-control form-control-sm" maxlength="255" required th:field="*{numeroDocumento}" type="text">
                     </div>
                 </div>
-
-                <div class="col-md-6">
+                <div class="col-md-4 border-bottom">
+                    <div class="form-group form-group-sm">
+                        <h6 class="font-weight-bold">Cargo</h6>
+                        <select class="form-control form-control-sm" name="selectedCargo" id="selectedCargo" required>
+                            <option disabled value="" selected hidden>Seleccione el cargo</option>
+                            <option th:each="cargo : ${cargos}" th:value="${cargo.nombre}" th:text="${cargo.nombre}"
+                                    th:selected="${userModify.cargo != null and cargo.id == userModify.cargo.id}"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-12 border-bottom">
                     <div class="row">
                         <div class="col-12">
                             <p th:text="${validaRoles}">AA</p>
-                            <p>Perfiles:</p>
+                            <h6 class="font-weight-bold">Perfiles:</h6>
                         </div>
-                        <div class="form-group col-12">
+                        <div class="form-group form-group-sm col-12">
                             <div class="form-check form-check-inline" th:each="role : ${roles}">
                                 <input class="form-check-input " name="selectedRoles" th:id="${role.nombre}"
                                        th:value="${role.nombre}" type="checkbox">
@@ -104,40 +132,9 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="col-md-6">
-                    <div class="form-group mb-1">
-                        <label>Cargo</label>
-                        <select class="form-control" name="selectedCargo" id="selectedCargo" required>
-                            <option disabled value="" selected hidden>Seleccione el cargo</option>
-                            <option th:each="cargo : ${cargos}" th:value="${cargo.nombre}" th:text="${cargo.nombre}"
-                                    th:selected="${userModify.cargo != null and cargo.id == userModify.cargo.id}"></option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="row">
-                        <div class="col-12">
-                            <p>Activo:</p>
-                        </div>
-                        <div class="form-group col-12">
-                            <div class="form-check form-check-inline">
-                                <input id="activoInput" class="form-check-input " name="activo" th:field="*{activo}" th:id="${activo}"
-                                       th:value="${activo}" type="checkbox">
-                                <label>[[${activo}]]</label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
             </div>
-
-
         </form>
-
-
-        <div class="row pt-3 py-3">
+        <!--<div class="row pt-3 py-3">
             <div class="col-md-12 d-flex align-content-center justify-content-center">
                 <div class="d-grid gap-2 col-3">
                     <button id="submitButton" type="submit" hidden="true" class="btn btn-primary" onclick="miFuncion()">Modificar</button>
@@ -147,7 +144,7 @@
                     <a class="btn btn-danger"th:href="@{/admin/searchUsers?vId=activo&vFilter=Estado}">Cancelar</a>
                 </div>
             </div>
-        </div>
+        </div>-->
     </div>
 
     <!-- Modal HTML -->

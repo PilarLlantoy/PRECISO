@@ -11,5 +11,5 @@ public interface CountryRepository extends JpaRepository<Country,Integer> {
     List<Country> findAllByOrderByNombreAsc();
     Country findAllById(int id);
     List<Country> findByEstado(boolean estado);
-    Country findAllByNombre(String nombre);
+    List<Country>  findAllByNombreIgnoreCase(String nombre);
 }

@@ -26,7 +26,7 @@ function validateAlerts(operacion,data)
             position: 'center',
             icon: 'success',
             title: '¡Modificación exitosa!',
-            text: 'El registro "'+data+'" fue actualizado de forma correcta en el sistema.',
+            text: 'El registro fue actualizado de forma correcta en el sistema.',
             showConfirmButton: true
         })
     }
@@ -36,7 +36,17 @@ function validateAlerts(operacion,data)
             position: 'center',
             icon: 'success',
             title: '¡Adición exitosa!',
-            text: 'El registro "'+data+'" fue agregado de forma correcta en el sistema.',
+            text: 'El registro fue agregado de forma correcta en el sistema.',
+            showConfirmButton: true
+        })
+    }
+    else if(operacion=='AddRep1')
+    {
+        Swal.fire({
+            position: 'center',
+            icon: 'success',
+            title: '¡Cargue Masivo Exitoso!',
+            text: 'Los registros fueron agregados de forma correcta en el sistema.',
             showConfirmButton: true
         })
     }

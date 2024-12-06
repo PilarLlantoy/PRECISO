@@ -12,5 +12,5 @@ public interface EventTypeRepository extends JpaRepository<EventType,Integer> {
     List<EventType> findAllByOrderByNombreAsc();
     EventType findAllById(int id);
     List<EventType> findByEstado(boolean estado);
-    EventType findAllByNombre(String id);
+    List<EventType> findAllByNombreIgnoreCase(String id);
 }

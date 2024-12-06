@@ -27,41 +27,43 @@
             overflow-y: auto;
         }
 
-        .styled-checkbox {
-            -ms-transform: scale(1.5); /* IE */
-            -moz-transform: scale(1.5); /* FF */
-            -webkit-transform: scale(1.5); /* Safari y Chrome */
-            margin: 10px;
-        }
-
     </style>
     <div class="row m-0 bg-primary fixed-top myNav">
         <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
-            <h3 class="fw-bold text-white mx-4 my-3">Edición de Roles</h3>
+            <h2 class="fw-bold text-white mx-4 my-3">Edición de Roles</h2>
         </div>
     </div>
     <div id="content">
-        <div class="row mt-5">
+        <div class="row mt-4">
             <form th:object="${role}" th:action="@{/profile/modifyRole}" method="POST">
-                <div class="col-md-12 px-5 mb-3">
-
-                    <div class="form-group mb-1">
-                        <label>Id role</label>
-                        <input type="number" readonly class="form-control"  th:field="*{id}"  required>
+                <div class="row mt-4">
+                    <div class="text-right col-md-12">
+                        <a class="btn btn-danger btn-sm mx-1" th:href="@{/profile/roles}"><i class="fa-solid fa-left-long"></i> Regresar</a>
+                        <button id="btnModificar"  type="submit" class="btn btn-primary btn-sm px-2">Modificar Rol</button>
                     </div>
-
-                    <div class="form-group mb-1">
-                        <label>Nombre role</label>
-                        <input type="text" class="form-control"  th:field="*{nombre}"  required>
+                </div>
+                <div class="row mx-3 px-5">
+                    <div class="col-md-1">
+                        <div class="form-group form-group-sm">
+                            <h6 class="font-weight-bold">Estado Rol</h6>
+                            <input id="activoInput" name="activo" th:field="*{activo}" th:id="${activo}"
+                                   th:value="${activo}" type="checkbox" class="form-check-input styled-checkbox">
+                            <label>[[${activo}]]</label>
+                        </div>
                     </div>
-
-                    <div class="form-group mb-1">
-                        <label>Estado</label>
-                        <input id="activoInput" name="activo" th:field="*{activo}" th:id="${activo}"
-                               th:value="${activo}" type="checkbox" class="styled-checkbox">
-                        <label>[[${activo}]]</label>
+                    <!--<div class="col-md-2">
+                        <div class="form-group form-group-sm">
+                            <h6 class="font-weight-bold">Id Rol</h6>
+                            <input type="number" readonly class="form-control form-control-sm"  th:field="*{id}"  required>
+                        </div>
+                    </div>-->
+                    <div class="col-md-11">
+                        <div class="form-group form-group-sm">
+                            <h6 class="font-weight-bold">Nombre Rol</h6>
+                            <input type="text" class="form-control form-control-sm"  th:field="*{nombre}"  required>
+                            <input type="hidden" th:field="*{id}" required>
+                        </div>
                     </div>
-
                 </div>
 
                 <!---PROBANDO TABLAS PARA EL LISTADO DE LAS VISTAS POR MODULO-->
@@ -79,28 +81,26 @@
                                 <tr th:each="view : ${views}" th:if="${view.menuPrincipal == viewPrincipal}" class="table-row">
                                     <td th:text="${view.viewName}"></td>
                                     <td>
-                                        <input class="big-checkbox ver-checkbox" th:value="${view.viewName}" type="checkbox" th:checked="${allViewsVer.contains(view)}" name="selectedViewsVer"/>
+                                        <input class="styled-checkbox" th:value="${view.viewName}" type="checkbox" th:checked="${allViewsVer.contains(view)}" name="selectedViewsVer"/>
                                     </td>
                                     <td>
-                                        <input class="big-checkbox modificar-checkbox" th:value="${view.viewName}" type="checkbox" th:checked="${allViewsModificar.contains(view)}" name="selectedViewsModificar"/>
+                                        <input class="styled-checkbox" th:value="${view.viewName}" type="checkbox" th:checked="${allViewsModificar.contains(view)}" name="selectedViewsModificar"/>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
                     </span>
                 </div>
-
-                <div class="row pt-5 py-3">
+                <!--<div class="row pt-5 py-3">
                     <div class="col-md-12 d-flex align-content-center justify-content-center">
                         <div class="d-grid gap-2 col-3">
-                            <button id="btnModificar"  type="submit" class="btn btn-primary">Modificar</button>
+                            <button id="btnModificar"  type="submit" class="btn btn-primary btn-sm">Modificar</button>
                         </div>
                         <div class="d-grid gap-2 col-3">
-                            <a class="btn btn-danger" th:href="@{/profile/roles}">Cancelar</a>
+                            <a class="btn btn-danger btn-sm" th:href="@{/profile/roles}">Cancelar</a>
                         </div>
                     </div>
-                </div>
-
+                </div>-->
             </form>
         </div>
 

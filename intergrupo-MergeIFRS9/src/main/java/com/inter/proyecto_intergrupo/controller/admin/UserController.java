@@ -43,8 +43,7 @@ import java.util.stream.IntStream;
 public class UserController {
 
     private static final int PAGINATIONCOUNT=12;
-    private List<String> listColumns=List.of(
-            "Estado","Código", "Nombre", "Perfil", "Cargo");
+    private List<String> listColumns=List.of("Código","Documento","Tipo Documento","Nombre", "Perfil", "Cargo","Estado");
 
     @Autowired
     private UserService userService;
@@ -113,6 +112,10 @@ public class UserController {
                 modelAndView.addObject("pages", pages);
             }
 
+
+            List<Conciliation> titulares = new ArrayList<>();
+            List<Conciliation> backups = new ArrayList<>();
+
             List<Conciliation> conciliaciones = conciliationService.findAllActive();
             modelAndView.addObject("p_modificar", p_modificar);
             modelAndView.addObject("allUsers", pageType.getContent());
@@ -125,7 +128,8 @@ public class UserController {
             modelAndView.addObject("directory", "users");
             modelAndView.addObject("registers",list.size());
             modelAndView.addObject("conciliaciones",conciliaciones);
-            System.out.println(conciliaciones.size());
+            modelAndView.addObject("titulares",titulares);
+            modelAndView.addObject("backups",backups);
 
             modelAndView.addObject("userName", user.getUsuario());
             modelAndView.addObject("userEmail", user.getCorreo());

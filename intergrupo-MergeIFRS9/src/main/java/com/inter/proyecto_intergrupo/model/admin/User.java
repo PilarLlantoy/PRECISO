@@ -113,7 +113,7 @@ public class User {
     }
 
     public String getFechaCreacion(){
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         return formatter.format(creacion);
     }
 }

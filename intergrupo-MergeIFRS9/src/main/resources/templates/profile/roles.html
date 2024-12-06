@@ -8,21 +8,15 @@
 <div th:replace="fragments/menuTemplate :: menuBody"></div>
 
 <div class="main-container">
-    <style>
-        body, .btn, .form-control {
-            font-size: 12px;
-        }
-    </style>
     <div class="row m-0 bg-primary fixed-top myNav">
         <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
-            <h3 class="fw-bold text-white mx-4 my-3">Administración de Roles</h3>
+            <h2 class="fw-bold text-white mx-4 my-3">Administración de Roles</h2>
         </div>
     </div>
     <div class="row m-0 px-4 mt-5">
-
-        <div class="text-right pr-3 col-md-12 my-3">
-            <a class="btn btn-primary mx-1" th:href="@{/profile/roles}"><i class="fas fa-redo-alt"></i></a>
-            <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1" th:onclick="|window.location.href='@{/profile/createRole}'|">Crear Rol</button>
+        <div class="text-right col-md-12 my-1 mt-1">
+            <a class="btn btn-primary mx-1 btn-sm" th:href="@{/profile/roles}"><i class="fas fa-redo-alt"></i></a>
+            <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm" th:onclick="|window.location.href='@{/profile/createRole}'|">Crear Rol</button>
         </div>
 
         <div class="col-md-12 p-0">
@@ -38,20 +32,20 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="role : ${roles}">
-                        <td th:text="${role.id}"></td>
+                    <tr th:each="role,iter : ${roles}">
+                        <td th:text="${iter.count}"></td>
                         <td th:text="${role.nombre}"></td>
                         <td th:if="${role.activo == true}">Activo</td>
                         <td th:if="${role.activo == false}">Inactivo</td>
 
                         <td>
-                            <button th:disabled="${!p_modificar}" class="btn btn-primary" th:onclick="|window.location.href='/profile/modifyRole/' + ${role.id}|">
+                            <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm" th:onclick="|window.location.href='/profile/modifyRole/' + ${role.id}|">
                                 Editar
                             </button>
-                            <button th:if="${role.activo == true}" th:disabled="${!p_modificar}" type="button" class="btn btn-danger" data-toggle="modal" data-target="#inactivarModal" th:onclick="'seleccionarRole(\'' + ${role.id} + '\')'">
+                            <button th:if="${role.activo == true}" th:disabled="${!p_modificar}" type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#inactivarModal" th:onclick="'seleccionarRole(\'' + ${role.id} + '\')'">
                                 Inactivar
                             </button>
-                            <button th:if="${role.activo == false}" th:disabled="${!p_modificar}" type="button" class="btn btn-primary" data-toggle="modal" data-target="#activarModal" th:onclick="'seleccionarRole(\'' + ${role.id} + '\')'">
+                            <button th:if="${role.activo == false}" th:disabled="${!p_modificar}" type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#activarModal" th:onclick="'seleccionarRole(\'' + ${role.id} + '\')'">
                                 Activar
                             </button>
                         </td>
@@ -67,7 +61,7 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Inactivar</h5>
+                        <h2 class="modal-title" id="exampleModalLabel">Inactivar</h2>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -76,10 +70,10 @@
                         ¿Estás seguro de inactivar el perfil seleccionado?
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-danger" th:onclick="inactivar()" data-dismiss="modal">
+                        <button type="button" class="btn btn-danger btn-sm" th:onclick="inactivar()" data-dismiss="modal">
                             Inactivar
                         </button>
+                        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Volver</button>
                     </div>
                 </div>
             </div>
@@ -90,7 +84,7 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel1">Activar</h5>
+                        <h2 class="modal-title" id="exampleModalLabel1">Activar</h2>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -99,10 +93,10 @@
                         ¿Estás seguro de activar el perfil seleccionado?
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" th:onclick="activar()" data-dismiss="modal">
+                        <button type="button" class="btn btn-success mx-1 btn-sm" th:onclick="activar()" data-dismiss="modal">
                             Activar
                         </button>
+                        <button type="button" class="btn btn-secondary mx-1 btn-sm" data-dismiss="modal">Volver</button>
                     </div>
                 </div>
             </div>

@@ -17,14 +17,13 @@
     </style>
     <div class="row m-0 bg-primary fixed-top myNav">
         <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
-            <h3 class="fw-bold text-white mx-4 my-3">Administración de Cargos</h3>
+            <h2 class="fw-bold text-white mx-4 my-3">Administración de Cargos</h2>
         </div>
     </div>
     <div class="row m-0 px-4 mt-5">
-
-        <div class="text-right pr-3 col-md-12 my-3">
-            <a class="btn btn-primary mx-1" th:href="@{/admin/cargos}"><i class="fas fa-redo-alt"></i></a>
-            <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1" th:onclick="|window.location.href='@{/admin/createCargo}'|">Crear Cargo</button>
+        <div class="text-right col-md-12 my-1">
+            <a class="btn btn-primary mx-1 btn-sm" th:href="@{/admin/cargos}"><i class="fas fa-redo-alt"></i></a>
+            <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm" th:onclick="|window.location.href='@{/admin/createCargo}'|">Crear Cargo</button>
         </div>
 
         <div class="col-md-12 p-0">
@@ -39,8 +38,9 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="cargo : ${cargos}">
-                        <td th:text="${cargo.id}"></td>
+                    <tr th:each="cargo,iter : ${cargos}">
+                        <!--<td th:text="${cargo.id}"></td>-->
+                        <td th:text="${iter.count}"></td>
                         <td th:text="${cargo.nombre}"></td>
                         <!--
                         <td>
@@ -51,11 +51,11 @@
                         <td th:if="${cargo.activo == false}">Inactivo</td>
 
                         <td>
-                            <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
+                            <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm mx-1"
                                     th:onclick="|window.location.href='@{/admin/modifyCargo/{id}(id=${cargo.id})}'|">Editar</button>
-                            <button th:if="${cargo.activo == true}" th:disabled="${!p_modificar}" type="button" class="btn btn-danger" data-toggle="modal" data-target="#eliminarModal"
+                            <button th:if="${cargo.activo == true}" th:disabled="${!p_modificar}" type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#eliminarModal"
                                     th:onclick="'seleccionarCargo(\'' + ${cargo.id} + '\')'">Inctivar</button>
-                            <button th:if="${cargo.activo == false}" th:disabled="${!p_modificar}" type="button" class="btn btn-primary" data-toggle="modal" data-target="#activarModal"
+                            <button th:if="${cargo.activo == false}" th:disabled="${!p_modificar}" type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#activarModal"
                                     th:onclick="'seleccionarCargo(\'' + ${cargo.id} + '\')'">Activar</button>
                         </td>
                     </tr>
@@ -70,7 +70,7 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Inactivar</h5>
+                        <h2 class="modal-title" id="exampleModalLabel">Inactivar</h2>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -79,10 +79,10 @@
                         ¿Estás seguro de inactivar el cargo seleccionado?
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-danger" th:onclick="inactivar()" data-dismiss="modal">
+                        <button type="button" class="btn btn-danger btn-sm" th:onclick="inactivar()" data-dismiss="modal">
                             Inactivar
                         </button>
+                        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
@@ -93,7 +93,7 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel2">Activar</h5>
+                        <h2 class="modal-title" id="exampleModalLabel2">Activar</h2>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -102,10 +102,10 @@
                         ¿Estás seguro de activar el cargo seleccionado?
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" th:onclick="activar()" data-dismiss="modal">
+                        <button type="button" class="btn btn-success btn-sm" th:onclick="activar()" data-dismiss="modal">
                             Activar
                         </button>
+                        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>

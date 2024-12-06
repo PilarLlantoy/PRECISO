@@ -193,7 +193,7 @@ public class ConciliationController {
             concil=conciliacion;
             concil.setNombre(concil.getDetalle());
 
-            Country paisSeleccionado = countryService.findCountryByName(pais);
+            Country paisSeleccionado = countryService.findCountryByName(pais).get(0);
             concil.setPais(paisSeleccionado);
             SourceSystem sistema = sourceSystemService.findById(Integer.valueOf(idsf));
             concil.setSf(sistema);
@@ -308,7 +308,7 @@ public class ConciliationController {
 
             concil.setNombre(concil.getDetalle());
 
-            Country paisSeleccionado = countryService.findCountryByName(pais);
+            Country paisSeleccionado = countryService.findCountryByName(pais).get(0);
             concil.setPais(paisSeleccionado);
             SourceSystem sistema = sourceSystemService.findById(Integer.valueOf(idsf));
             concil.setSf(sistema);
