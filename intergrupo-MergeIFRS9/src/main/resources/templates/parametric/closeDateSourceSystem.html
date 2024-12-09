@@ -97,7 +97,7 @@
                     <div class="row" th:if="${last != 0}">
                         <div class="col-md-4 text-left">
                             <nav arial-label="Pagination">
-                                <ul class="pagination">
+                                <ul class="pagination pagination-sm">
                                     <li class="page-item" th:classappend="${prev == 0 ? 'disabled' : ''}">
                                         <a class="page-link"
                                            th:href="@{/parametric/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${prev},dir=${directory},vId=${vId})}">Anterior</a>

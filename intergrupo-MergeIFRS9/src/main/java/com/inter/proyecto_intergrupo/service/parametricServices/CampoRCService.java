@@ -63,7 +63,8 @@ public class CampoRCService {
                     .append(column.getTipo());
 
             if (column.getTipo().equalsIgnoreCase("VARCHAR")) {
-                createTableQuery.append("(").append(column.getLongitud()).append(")");
+                //createTableQuery.append("(").append(column.getLongitud()).append(")"); //Con Longitud de RC
+                createTableQuery.append("(MAX)"); //Con Longitud de MAX
             }
 
             if (i < data.getCampos().size() - 1) {

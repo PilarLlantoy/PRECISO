@@ -10,30 +10,30 @@
 <div class="main-container">
     <div class="row m-0 bg-primary fixed-top myNav">
         <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
-            <h3 class="fw-bold text-white mx-4 my-3">Módulo de Rutas Contables</h3>
+            <h2 class="fw-bold text-white mx-4 my-3">Módulo de Rutas Contables</h2>
         </div>
         <div class="col-md-6 d-flex align-items-center justify-content-end pe-5">
             <form class="form-inline" method="get" th:action="@{/parametric/searchAccountingRoutes}">
                 <div class="input-group">
-                    <input class="form-control text-dark" placeholder="Buscar..." required th:name="vId" type="text">
+                    <input class="form-control form-control-sm text-dark" placeholder="Buscar..." required th:name="vId" type="text">
                     <div class="input-group-append">
-                        <select class="form-control" required th:name="vFilter">
+                        <select class="form-control form-control-sm" required th:name="vFilter">
                             <option disabled hidden selected value="">Seleccione un filtro</option>
                             <option th:each="item : ${columns}" th:text="${item}" th:value="${item}"></option>
                         </select>
                     </div>
                     <div class="input-group-append d-flex align-items-center">
-                        <button class="btn btn-secondary" type="submit"><i class="fa fa-search"></i></button>
-                        <a class="btn btn-secondary" th:href="@{/parametric/accountingRoutes}"><i class="fas fa-window-close"></i></a>
+                        <button class="btn btn-secondary btn-sm" type="submit"><i class="fa fa-search"></i></button>
+                        <a class="btn btn-secondary btn-sm" th:href="@{/parametric/accountingRoutes}"><i class="fas fa-window-close"></i></a>
                     </div>
                 </div>
             </form>
         </div>
     </div>
     <div class="row m-0 px-4 mt-5">
-        <div class="text-right pr-3 col-md-12 my-3">
-            <a class="btn btn-primary mx-1" th:href="@{/parametric/accountingRoutes}"><i class="fas fa-redo-alt"></i></a>
-            <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1" th:onclick="|window.location.href='@{/parametric/createAccountingRoute}'|">Crear Ruta Contable</button>
+        <div class="text-right col-md-12 mt-1">
+            <a class="btn btn-primary btn-sm mx-1" th:href="@{/parametric/accountingRoutes}"><i class="fas fa-redo-alt"></i></a>
+            <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm mx-1" th:onclick="|window.location.href='@{/parametric/createAccountingRoute}'|">Crear Ruta Contable</button>
         </div>
         <div class="col-md-12 p-0">
             <div class="table-responsive rounded border-primary">
@@ -60,19 +60,19 @@
                         <td th:if="${rc.activo == true}">Activo</td>
                         <td th:if="${rc.activo == false}">Inactivo</td>
                         <td>
-                            <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
+                            <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm mx-1"
                                     th:onclick="|window.location.href='@{/parametric/modifyAccountingRoute/{id}(id=${rc.id})}'|">Editar</button>
                         </td>
                         <td>
-                            <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
+                            <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm mx-1"
                                     th:onclick="|window.location.href='@{/parametric/fieldLoadingAccountingRoute/{id}(id=${rc.id})}'|">Cargar Campos</button>
                         </td>
                         <td>
-                            <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
+                            <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm mx-1"
                                     th:onclick="|window.location.href='@{/parametric/conditionLoadingAccountingRoute/{id}(id=${rc.id})}'|">Condiciones</button>
                         </td>
                         <td>
-                            <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
+                            <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm mx-1"
                                     th:onclick="|window.location.href='@{/parametric/validationLoadingAccountingRoute/{id}(id=${rc.id})}'|">Validaciones</button>
                         </td>
                     </tr>
@@ -82,7 +82,7 @@
             <div class="row" th:if="${last != 0}">
                 <div class="col-md-4 text-left">
                     <nav arial-label="Pagination">
-                        <ul class="pagination">
+                        <ul class="pagination pagination-sm">
                             <li class="page-item" th:classappend="${prev == 0 ? 'disabled' : ''}">
                                 <a class="page-link"
                                    th:href="@{/admin/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${prev},dir=${directory},vId=${vId})}">Anterior</a>
