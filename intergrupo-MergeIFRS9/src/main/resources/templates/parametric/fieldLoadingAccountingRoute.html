@@ -13,23 +13,22 @@
             <h2 class="fw-bold text-white mx-4 my-3">Cargue Campos Ruta Contable</h2>
         </div>
     </div>
-    <div class="row mt-5 pl-1 px-2 pt-1">
+    <div class="row mt-5 ml-1 px-2">
         <div class="text-left col-md-6">
             <h2>Cargue de campos</h2>
         </div>
         <div class="text-right col-md-6">
-            <a class="btn btn-primary btn-sm mx-1" th:href="@{/parametric/accountingRoutes}"><i class="fa-solid fa-left-long"></i> Regresar</a>
-            <button type="button" class="btn btn-primary btn-sm mx-2" onclick="Limpiar()">Deseleccionar Item</button>
+            <a class="btn btn-danger btn-sm mx-1" th:href="@{/parametric/accountingRoutes}"><i class="fa-solid fa-left-long"></i> Regresar</a>
         </div>
     </div>
     <div class="row px-4">
         <div class="text-left col-md-12 mb-1">
             <form id="miFormulario" th:object="${campoRC}" th:action="@{/parametric/createCampoRC}" method="POST">
-                <div class="mb-1 px-1 row border rounded">
+                <div class="mb-1 px-1 pt-1 row border rounded">
                     <div hidden class="col-md-2">
                         <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">ID</h6>
-                            <input type="text" class="form-control form-control-sm" th:field="*{id}">
+                            <input type="text" id="idInput" class="form-control form-control-sm" th:field="*{id}">
                         </div>
                     </div>
                     <div class="col-md-2">
@@ -138,19 +137,22 @@
                         </div>
                     </div>
                 </div>
-
                 <!-- Formulario oculto para pasar el objeto aroute -->
                 <input type="hidden" id="arouteId" name="arouteId" th:value="${aroute.id}" />
-
                 <div class="row">
-                    <div class="d-grid gap-2 col-2">
+                    <div class="d-grid gap-2 col-1">
                         <button th:disabled="${!p_modificar}" type="button" class="btn btn-primary btn-sm" onclick="descartar()">Eliminar</button>
                     </div>
-                    <div class="d-grid gap-2 col-2">
-                        <button th:disabled="${!p_modificar}" type="submit" class="btn btn-primary btn-sm">Agregar</button>
+                    <div class="d-grid gap-2 col-1">
+                        <button th:disabled="${!p_modificar}" id="actionButton" type="submit" class="btn btn-primary btn-sm">Agregar</button>
+                    </div>
+                    <div class="col-auto">
+                        <div class="border-start ms-3" style="height: 100%;"></div>
+                    </div>
+                    <div class="d-grid gap-2 col-1">
+                        <button type="button" class="btn btn-primary btn-sm" onclick="Limpiar()">Deseleccionar Item</button>
                     </div>
                 </div>
-
             </form>
 
         </div>
@@ -292,6 +294,7 @@
 
         toggleFields();
         toggleFechaIdiomaFields();
+        updateButtonText();
     }
 
     function descartar() {
@@ -321,6 +324,7 @@
                 console.error('Error:', error);
             });
         }
+        updateButtonText();
     }
 
     function toggleFields() {
@@ -358,11 +362,28 @@
         document.getElementById('miFormulario').reset();
         toggleFields();
         toggleFechaIdiomaFields();
+        updateButtonText();
+    }
+
+     function updateButtonText() {
+         const idInput = document.getElementById("idInput");
+        const actionButton = document.getElementById("actionButton");
+
+        // Elimina espacios antes de validar
+        const value = idInput.value.trim();
+
+        // Cambia el texto según el estado del campo
+        if (value === "0") {
+            actionButton.textContent = "Agregar";
+        } else {
+            actionButton.textContent = "Modificar";
+        }
     }
 
     window.onload = function() {
         toggleFields();
         toggleFechaIdiomaFields();
+        updateButtonText();
     };
 
 </script>
