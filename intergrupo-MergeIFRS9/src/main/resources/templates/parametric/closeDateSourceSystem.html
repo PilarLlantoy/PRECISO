@@ -184,20 +184,36 @@
     var sfId = document.getElementById('sfId').value;
     var csrfToken = $("#csrfToken").val(); // Obtener el token CSRF
     function seleccionar(id) {
-        fechaId=id
+        fechaId=id;
+        updateButtonText();
     }
 
     function borrar(){
         var url = '/parametric/deleteCloseDate/'+sfId+'/'+ fechaId;
         // Realizar la solicitud POST con el token CSRF
         $.post(url, {_csrf: csrfToken})
-            .done(function(response) {
-                //console.log("Solicitud POST completada con éxito");
-                location.reload();
-            })
-            .fail(function(xhr, status, error) {
-                console.error("Ocurrió un error al enviar la solicitud POST: " + error);
-            });
+        .done(function(response) {
+            //console.log("Solicitud POST completada con éxito");
+            location.reload();
+        })
+        .fail(function(xhr, status, error) {
+            console.error("Ocurrió un error al enviar la solicitud POST: " + error);
+        });
+        updateButtonText();
+    }
+    function updateButtonText() {
+         const idInput = document.getElementById("idInput");
+        const actionButton = document.getElementById("actionButton");
+
+        // Elimina espacios antes de validar
+        const value = idInput.value.trim();
+
+        // Cambia el texto según el estado del campo
+        if (value === "0") {
+            actionButton.textContent = "Agregar";
+        } else {
+            actionButton.textContent = "Modificar";
+        }
     }
 </script>
 </body>

@@ -98,11 +98,7 @@
                         <td th:text="${event.valorCondicion}"></td>
                         <td>
                             <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
-                                    th:onclick="|window.location.href='@{/parametric/cargueCampos/{id}(id=${event.id})}'|">Seleccionar</button>
-                        </td>
-                        <td>
-                            <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
-                                    th:onclick="|window.location.href='@{/parametric/modifyAccountingRoute/{id}(id=${event.id})}'|">Borrar</button>
+                                    onclick="cargarCampos(this)">Seleccionar</button>
                         </td>
                     </tr>
                     </tbody>

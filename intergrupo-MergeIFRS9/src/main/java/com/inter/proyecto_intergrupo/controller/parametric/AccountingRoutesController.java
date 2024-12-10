@@ -53,7 +53,7 @@ import org.springframework.http.HttpStatus;
 public class AccountingRoutesController {
     private static final int PAGINATIONCOUNT=12;
     private static final String rutaArchivoFormato1 = "\\\\co.igrupobbva\\svrfilesystem\\BBVA_VIC06\\DP10\\Preciso\\";
-    //private static final String rutaArchivoFormato1 = "D://";
+    //private static final String rutaArchivoFormato1 = "D:\\";
     Logger logger = LogManager.getLogger(LogManager.ROOT_LOGGER_NAME);
     private List<String> listColumns=List.of("Nombre", "Archivo", "Ruta de Acceso", "Tipo de Archivo", "Estado");
 
