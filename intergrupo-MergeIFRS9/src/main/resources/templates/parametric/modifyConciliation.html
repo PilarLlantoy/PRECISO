@@ -257,7 +257,7 @@
         const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
 
         if (rutaId) {
-            const response = await fetch(`/parametric/obtenerCamposFichero/${rutaId}`, {
+            const response = await fetch(`/parametric/obtenerCamposRC/${rutaId}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',

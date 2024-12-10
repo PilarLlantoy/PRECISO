@@ -27,7 +27,7 @@ public class CampoRConcilController {
     private ConciliationService conciliationService;
 
     @Autowired
-    private CampoRConcilService campoRCService;
+    private CampoRConcilService campoRConcilService;
 
     @Autowired
     private ConciliationRouteService conciliationRouteService;
@@ -47,8 +47,8 @@ public class CampoRConcilController {
         }
         ConciliationRoute route = conciliationRouteService.findById(Integer.parseInt(crouteId));
         campoRC.setRutaConciliacion(route);
-        campoRCService.modificar(campoRC);
-        campoRCService.recreateTable(route);
+        campoRConcilService.modificar(campoRC);
+        campoRConcilService.recreateTable(route);
         return modelAndView;
     }
 
@@ -78,9 +78,9 @@ public class CampoRConcilController {
     @DeleteMapping("/parametric/deleteCampoRConcil/{id}")
     public ResponseEntity<?> deleteCampoRConcil(@PathVariable int id) {
         try {
-            ConciliationRoute cr = campoRCService.findById(id).getRutaConciliacion();
-            campoRCService.deleteById(id);
-            campoRCService.recreateTable(cr);
+            ConciliationRoute cr = campoRConcilService.findById(id).getRutaConciliacion();
+            campoRConcilService.deleteById(id);
+            campoRConcilService.recreateTable(cr);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             e.printStackTrace();
@@ -91,7 +91,7 @@ public class CampoRConcilController {
     @GetMapping("/parametric/obtenerCamposFichero/{ficheroId}")
     @ResponseBody
     public List<Object[]> getCamposByFicheroId(@PathVariable("ficheroId") Integer ficheroId) {
-        List<Object[]> campos = campoRCService.findCamposByRutaConcil(ficheroId);
+        List<Object[]> campos = campoRConcilService.findCamposByRutaConcil(ficheroId);
         System.out.println(campos.size());
         return campos;
     }

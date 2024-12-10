@@ -354,6 +354,9 @@ public class ConciliationRouteService {
                                 String fechaLeida = cell != null ? formatter.formatCellValue(cell) : null;
                                 if (!fechaLeida.matches("\\d{2}/\\d{2}/\\d{4}")) {
                                     // Por ejemplo, convierte de `1/18/99` a `18/01/1999` si es necesario
+                                    System.out.println("INSPECCIONES");
+                                    System.out.println(fechaLeida);
+                                    System.out.println(campos.get(i).getFormatoFecha());
                                     fechaLeida = convertirFormatoExcel(fechaLeida,campos.get(i).getFormatoFecha());
                                 }
                                 value = fechaLeida != null ?  formatoFecha(fechaLeida, campos.get(i).getFormatoFecha(), campos.get(i).getSeparador()) : null;
@@ -375,6 +378,7 @@ public class ConciliationRouteService {
 
     private static String convertirFormatoExcel(String fechaExcel,String formato) {
         try {
+            System.out.println(fechaExcel+" "+ formato);
             // Detección de formato "M/d/YY" (de Excel)
             SimpleDateFormat sdfEntrada = new SimpleDateFormat("M/d/yy");
             Date fechaDate = sdfEntrada.parse(fechaExcel);

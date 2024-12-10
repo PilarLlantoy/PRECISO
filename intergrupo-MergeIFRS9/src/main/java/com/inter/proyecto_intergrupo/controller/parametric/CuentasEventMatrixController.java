@@ -117,6 +117,10 @@ public class CuentasEventMatrixController {
             else{
                 campos=cuenta1.getRutaContable().getCampos();
             }
+
+            List<Object[]> camposInventario = campoRConcilService.findCamposByRutaConcil(matriz.getInventarioConciliacion().getId());
+            modelAndView.addObject("camposInventario", camposInventario);
+
             modelAndView.addObject("cuenta1", cuenta1);
             System.out.println(cuenta1.getOperacion());
             modelAndView.addObject("campos", campos);
@@ -235,7 +239,7 @@ public class CuentasEventMatrixController {
             BindingResult bindingResult){
 
         ModelAndView modelAndView = new ModelAndView("redirect:/parametric/cuentasEventMatrix/"+matrizId);
-
+        System.out.println("DIVISA "+campoDivisa);
 
         if(bindingResult.hasErrors()){
             modelAndView.setViewName("parametric/cuentasEventMatrix/"+matrizId);
@@ -251,27 +255,28 @@ public class CuentasEventMatrixController {
             }
 
             if(!campoDivisa.equals("0")) {
-                CampoRC cDivisa = campoRCService.findById(Integer.valueOf(campoDivisa));
+                CampoRConcil cDivisa = campoRConcilService.findById(Integer.valueOf(campoDivisa));
                 cuenta.setCampoDivisa(cDivisa);
             }
 
             if(!campoValorCuenta.equals("0")) {
-                CampoRC cValorCuenta = campoRCService.findById(Integer.valueOf(campoValorCuenta));
+                CampoRConcil cValorCuenta = campoRConcilService.findById(Integer.valueOf(campoValorCuenta));
                 cuenta.setCampoValorCuenta(cValorCuenta);
             }
 
             if(!campoValOpUno.equals("0")) {
-                CampoRC cValOpUno = campoRCService.findById(Integer.valueOf(campoValOpUno));
+                CampoRConcil cValOpUno = campoRConcilService.findById(Integer.valueOf(campoValOpUno));
                 cuenta.setCampoValorOp1(cValOpUno);
             }
 
             if(!campoValOpDos.equals("0")) {
-                CampoRC cValOpDos = campoRCService.findById(Integer.valueOf(campoValOpDos));
+                CampoRConcil cValOpDos = campoRConcilService.findById(Integer.valueOf(campoValOpDos));
                 cuenta.setCampoValorOp2(cValOpDos);
             }
 
-            System.out.println(operacion);
-            cuenta.setOperacion(operacion);
+            if(!operacion.equals("0")) {
+                cuenta.setOperacion(operacion);
+            }
 
             cuenta.setTipo("1");
 
@@ -306,10 +311,10 @@ public class CuentasEventMatrixController {
             cuenta.setRutaContable(ruta);
 
             CampoRC cRutaContable = campoRCService.findById(Integer.valueOf(campoRutaContable));
-            CampoRC cDivisa = campoRCService.findById(Integer.valueOf(campoDivisa));
-            CampoRC cValorCuenta = campoRCService.findById(Integer.valueOf(campoValorCuenta));
-            CampoRC cValOpUno = campoRCService.findById(Integer.valueOf(campoValOpUno));
-            CampoRC cValOpDos = campoRCService.findById(Integer.valueOf(campoValOpDos));
+            CampoRConcil cDivisa = campoRConcilService.findById(Integer.valueOf(campoDivisa));
+            CampoRConcil cValorCuenta = campoRConcilService.findById(Integer.valueOf(campoValorCuenta));
+            CampoRConcil cValOpUno = campoRConcilService.findById(Integer.valueOf(campoValOpUno));
+            CampoRConcil cValOpDos = campoRConcilService.findById(Integer.valueOf(campoValOpDos));
 
             cuenta.setCampoRutaContable(cRutaContable);
             cuenta.setCampoDivisa(cDivisa);

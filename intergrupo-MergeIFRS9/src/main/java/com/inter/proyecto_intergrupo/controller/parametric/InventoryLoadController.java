@@ -47,6 +47,9 @@ public class InventoryLoadController {
     private static final String rutaArchivoFormato1 = "\\\\co.igrupobbva\\svrfilesystem\\BBVA_VIC06\\DP10\\Preciso\\";
 
     //private static final String rutaArchivoFormato = "D:\\archivo.fmt";
+    //private static final String rutaArchivoFormato1 = "D:\\";
+
+    //private static final String rutaArchivoFormato = "D:\\archivo.fmt";
 
     @Autowired
     private UserService userService;

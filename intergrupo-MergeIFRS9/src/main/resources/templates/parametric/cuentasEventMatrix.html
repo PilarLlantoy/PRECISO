@@ -140,8 +140,8 @@
                             <h6 class="font-weight-bold">Campo Divisa:<i class="bi bi-caret-down"></i></h6>
                             <select class="form-control" name="selectedCD1" id="selectedCD1">
                                 <option value="0" th:selected="${cuenta1.campoDivisa == null}">Seleccione un campo</option>
-                                <option th:each="campo : ${campos}" th:value="${campo.id}" th:text="${campo.nombre}"
-                                        th:selected="${cuenta1.campoDivisa != null and campo.id == cuenta1.campoDivisa.id}">
+                                <option th:each="campo : ${camposInventario}" th:value="${campo[0]}" th:text="${campo[1]}"
+                                        th:selected="${cuenta1.campoDivisa != null and campo[0] == cuenta1.campoDivisa.id}">
                                 </option>
                             </select>
                         </div>
@@ -181,8 +181,8 @@
                             <h6 class="font-weight-bold">Campo Valor Cuenta:<i class="bi bi-caret-down"></i></h6>
                             <select class="form-control" name="selectedCVC1" id="selectedCVC1">
                                 <option value="0" th:selected="${cuenta1.campoValorCuenta == null}">Seleccione un campo</option>
-                                <option th:each="campo : ${campos}" th:value="${campo.id}" th:text="${campo.nombre}"
-                                        th:selected="${cuenta1.campoValorCuenta != null and campo.id == cuenta1.campoValorCuenta.id}"></option>
+                                <option th:each="campo : ${camposInventario}" th:value="${campo[0]}" th:text="${campo[1]}"
+                                        th:selected="${cuenta1.campoValorCuenta != null and campo[0] == cuenta1.campoValorCuenta.id}"></option>
                             </select>
                         </div>
                     </div>
@@ -191,8 +191,8 @@
                             <h6 class="font-weight-bold">Campo Valor Operación 1:<i class="bi bi-caret-down"></i></h6>
                             <select class="form-control" name="selectedCVOU1" id="selectedCVOU1">
                                 <option value="0" th:selected="${cuenta1.campoValorOp1 == null}">Seleccione un campo</option>
-                                <option th:each="campo : ${campos}" th:value="${campo.id}" th:text="${campo.nombre}"
-                                        th:selected="${cuenta1.campoValorOp1 != null and campo.id == cuenta1.campoValorOp1.id}"></option>
+                                <option th:each="campo : ${camposInventario}" th:value="${campo[0]}" th:text="${campo[1]}"
+                                        th:selected="${cuenta1.campoValorOp1 != null and campo[0] == cuenta1.campoValorOp1.id}"></option>
                             </select>
                         </div>
                     </div>
@@ -200,11 +200,11 @@
                         <div class="form-group mb-1">
                             <h6 class="font-weight-bold">Operación:<i class="bi bi-caret-down"></i></h6>
                             <select class="form-control" name="selectedOperacion1" id="selectedOperacion1">
-                                <option hidden selected th:value="${cuenta1.operacion}" th:label="${cuenta1.operacion}" >Seleccione Operación</option>
-                                <option th:value="Suma">Suma</option>
-                                <option th:value="Resta">Resta</option>
-                                <option th:value="Multiplica">Multiplica</option>
-                                <option th:value="Divida">Divida</option>
+                                <option value="0" th:selected="${cuenta1.operacion == null}" >Seleccione Operación</option>
+                                <option th:selected="${cuenta1.operacion == 'Suma'}" th:value="Suma">Suma</option>
+                                <option th:selected="${cuenta1.operacion == 'Resta'}" th:value="Resta">Resta</option>
+                                <option th:selected="${cuenta1.operacion == 'Multiplica'}" th:value="Multiplica">Multiplica</option>
+                                <option th:selected="${cuenta1.operacion == 'Divida'}" th:value="Divida">Divida</option>
                             </select>
                             </select>
                         </div>
@@ -215,8 +215,8 @@
                             <input th:field="*{valorOp2}" th:value="${valorOp2}" type="text" class="form-control">
                             <select class="form-control" name="selectedCVOD1" id="selectedCVOD1">
                                 <option value="0" th:selected="${cuenta1.campoValorOp2 == null}">Seleccione un campo</option>
-                                <option th:each="campo : ${campos}" th:value="${campo.id}" th:text="${campo.nombre}"
-                                        th:selected="${cuenta1.campoValorOp2 != null and campo.id == cuenta1.campoValorOp2.id}"></option>
+                                <option th:each="campo : ${camposInventario}" th:value="${campo[0]}" th:text="${campo[1]}"
+                                        th:selected="${cuenta1.campoValorOp2 != null and campo[0] == cuenta1.campoValorOp2.id}"></option>
                             </select>
                         </div>
                     </div>
@@ -249,7 +249,7 @@
                     <div class="col-md-2">
                         <div class="form-group mb-1">
                             <h6 class="font-weight-bold">Ruta Contable:<i class="bi bi-caret-down"></i></h6>
-                            <select class="form-control" required name="selectedRC2" id="selectedRC2" onchange="toggleRC1()">
+                            <select class="form-control" required name="selectedRC2" id="selectedRC2" onchange="toggleRC2()">
                                 <option disabled value="0" selected hidden>Seleccione una R.C.</option>
                                 <option th:each="ruta : ${rutasContables}" th:value="${ruta.id}" th:text="${ruta.nombre}"
                                         th:selected="${cuenta2.rutaContable != null and ruta.id == cuenta2.rutaContable.id}"
@@ -333,8 +333,8 @@
                             <h6 class="font-weight-bold">Campo Divisa:<i class="bi bi-caret-down"></i></h6>
                             <select class="form-control" name="selectedCD2" id="selectedCD2">
                                 <option value="0" th:selected="${cuenta2.campoDivisa == null}">Seleccione un campo</option>
-                                <option th:each="campo : ${campos}" th:value="${campo.id}" th:text="${campo.nombre}"
-                                        th:selected="${cuenta2.campoDivisa != null and campo.id == cuenta2.campoDivisa.id}">
+                                <option th:each="campo : ${camposInventario}" th:value="${campo[0]}" th:text="${campo[1]}"
+                                        th:selected="${cuenta2.campoDivisa != null and campo[0] == cuenta2.campoDivisa.id}">
                                 </option>
                             </select>
                         </div>
@@ -374,8 +374,8 @@
                             <h6 class="font-weight-bold">Campo Valor Cuenta:<i class="bi bi-caret-down"></i></h6>
                             <select class="form-control" name="selectedCVC2" id="selectedCVC2">
                                 <option value="0" th:selected="${cuenta2.campoValorCuenta == null}">Seleccione un campo</option>
-                                <option th:each="campo : ${campos}" th:value="${campo.id}" th:text="${campo.nombre}"
-                                        th:selected="${cuenta2.campoValorCuenta != null and campo.id == cuenta2.campoValorCuenta.id}"></option>
+                                <option th:each="campo : ${camposInventario}" th:value="${campo[0]}" th:text="${campo[1]}"
+                                        th:selected="${cuenta2.campoValorCuenta != null and campo[0] == cuenta2.campoValorCuenta.id}"></option>
                             </select>
                         </div>
                     </div>
@@ -384,8 +384,8 @@
                             <h6 class="font-weight-bold">Campo Valor Operación 1:<i class="bi bi-caret-down"></i></h6>
                             <select class="form-control" name="selectedCVOU2" id="selectedCVOU2">
                                 <option value="0" th:selected="${cuenta2.campoValorOp1 == null}">Seleccione un campo</option>
-                                <option th:each="campo : ${campos}" th:value="${campo.id}" th:text="${campo.nombre}"
-                                        th:selected="${cuenta2.campoValorOp1 != null and campo.id == cuenta2.campoValorOp1.id}"></option>
+                                <option th:each="campo : ${camposInventario}" th:value="${campo[0]}" th:text="${campo[1]}"
+                                        th:selected="${cuenta2.campoValorOp1 != null and campo[0] == cuenta2.campoValorOp1.id}"></option>
                             </select>
                         </div>
                     </div>
@@ -393,11 +393,11 @@
                         <div class="form-group mb-1">
                             <h6 class="font-weight-bold">Operación:<i class="bi bi-caret-down"></i></h6>
                             <select class="form-control" name="selectedOperacion2" id="selectedOperacion2">
-                                <option hidden selected th:value="${cuenta2.operacion}" th:label="${cuenta2.operacion}" >Seleccione Operación</option>
-                                <option th:value="Suma">Suma</option>
-                                <option th:value="Resta">Resta</option>
-                                <option th:value="Multiplica">Multiplica</option>
-                                <option th:value="Divida">Divida</option>
+                                <option value="0" th:selected="${cuenta2.operacion == null}" >Seleccione Operación</option>
+                                <option th:selected="${cuenta2.operacion == 'Suma'}" th:value="Suma">Suma</option>
+                                <option th:selected="${cuenta2.operacion == 'Resta'}" th:value="Resta">Resta</option>
+                                <option th:selected="${cuenta2.operacion == 'Multiplica'}" th:value="Multiplica">Multiplica</option>
+                                <option th:selected="${cuenta2.operacion == 'Divida'}" th:value="Divida">Divida</option>
                             </select>
                         </div>
                     </div>
@@ -407,8 +407,8 @@
                             <input th:field="*{valorOp2}" th:value="${valorOp2}" type="text" class="form-control">
                             <select class="form-control" name="selectedCVOD2" id="selectedCVOD2">
                                 <option value="0" th:selected="${cuenta2.campoValorOp2 == null}">Seleccione un campo</option>
-                                <option th:each="campo : ${campos}" th:value="${campo.id}" th:text="${campo.nombre}"
-                                        th:selected="${cuenta2.campoValorOp2 != null and campo.id == cuenta2.campoValorOp2.id}"></option>
+                                <option th:each="campo : ${camposInventario}" th:value="${campo[0]}" th:text="${campo[1]}"
+                                        th:selected="${cuenta2.campoValorOp2 != null and campo[0] == cuenta2.campoValorOp2.id}"></option>
                             </select>
                         </div>
                     </div>
@@ -743,20 +743,23 @@
             const data = await response.json();
 
             const campoRutaContable = document.getElementById('selectedCRC1');
+            /*
             const campoDivisa = document.getElementById('selectedCD1');
             const campoValorCuenta = document.getElementById('selectedCVC1');
             const campoValorOpUno = document.getElementById('selectedCVOU1');
             const campoValorOpDos = document.getElementById('selectedCVOD1');
             const campoValorOpTres = document.getElementById('selectedOperacion1');
+            */
 
 
             campoRutaContable.innerHTML = '<option disabled value="0" selected hidden>Seleccione un campo</option>';
+            /*
             campoDivisa.innerHTML = '<option disabled value="0" selected hidden>Seleccione un campo</option>';
             campoValorCuenta.innerHTML = '<option disabled value="0" selected hidden>Seleccione un campo</option>';
             campoValorOpUno.innerHTML = '<option disabled value="0" selected hidden>Seleccione un campo</option>';
             campoValorOpDos.innerHTML = '<option disabled value="0" selected hidden>Seleccione un campo</option>';
             campoValorOpTres.innerHTML = '<option disabled value="0" selected hidden>Seleccione un campo</option>';
-
+            */
 
             data.forEach(campo => {
                 const optionRutaContable = document.createElement('option');
@@ -764,6 +767,7 @@
                 optionRutaContable.text = campo[1];
                 campoRutaContable.appendChild(optionRutaContable);
 
+                /*
                 const optionDivisa = document.createElement('option');
                 optionDivisa.value = campo[0];
                 optionDivisa.text = campo[1];
@@ -788,6 +792,37 @@
                 optionValorOpTres.value = campo[0];
                 optionValorOpTres.text = campo[1];
                 campoValorOpTres.appendChild(optionValorOpTres);
+                */
+            });
+
+        }
+    }
+
+    async function toggleRC2() {
+        const idRCont = document.getElementById('selectedRC2').value;
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+        if (idRCont) {
+            const response = await fetch(`/parametric/obtenerCamposRC/${idRCont}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                }
+            });
+
+            const data = await response.json();
+
+            const campoRutaContable = document.getElementById('selectedCRC2');
+            campoRutaContable.innerHTML = '<option disabled value="0" selected hidden>Seleccione un campo</option>';
+
+            data.forEach(campo => {
+                const optionRutaContable = document.createElement('option');
+                optionRutaContable.value = campo[0];
+                optionRutaContable.text = campo[1];
+                campoRutaContable.appendChild(optionRutaContable);
+
             });
 
         }

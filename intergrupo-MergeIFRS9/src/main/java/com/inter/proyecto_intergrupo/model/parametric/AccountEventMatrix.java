@@ -50,7 +50,7 @@ public class AccountEventMatrix {
 
     @ManyToOne
     @JoinColumn(name = "id_campo_divisa")
-    private CampoRC campoDivisa;
+    private CampoRConcil campoDivisa;
 
     @Column(name = "convierte_divisa", columnDefinition = "BIT DEFAULT 0")
     private boolean convierteDivisa = false;
@@ -68,18 +68,18 @@ public class AccountEventMatrix {
 
     @ManyToOne
     @JoinColumn(name = "id_campo_valor_cuenta")
-    private CampoRC campoValorCuenta;
+    private CampoRConcil campoValorCuenta;
 
     @ManyToOne
     @JoinColumn(name = "id_campo_valor_operacion1")
-    private CampoRC campoValorOp1;
+    private CampoRConcil campoValorOp1;
 
     @Column(name = "operacion")
     private String operacion;
 
     @ManyToOne
     @JoinColumn(name = "id_campo_valor_operacion2")
-    private CampoRC campoValorOp2;
+    private CampoRConcil campoValorOp2;
 
     @Column(name = "valor_operacion2")
     private String valorOp2;

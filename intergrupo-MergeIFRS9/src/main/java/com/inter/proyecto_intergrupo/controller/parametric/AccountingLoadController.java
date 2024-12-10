@@ -52,7 +52,10 @@ public class AccountingLoadController {
     private static final int PAGINATIONCOUNTDATA=500;
     private static final String rutaArchivoFormato = "\\\\co.igrupobbva\\svrfilesystem\\BBVA_VIC06\\DP10\\Preciso\\archivo.fmt";
     private static final String rutaArchivoFormato1 = "\\\\co.igrupobbva\\svrfilesystem\\BBVA_VIC06\\DP10\\Preciso\\";
+
     //private static final String rutaArchivoFormato = "D:\\archivo.fmt";
+    //private static final String rutaArchivoFormato1 = "D:\\";
+
     Logger logger = LogManager.getLogger(LogManager.ROOT_LOGGER_NAME);
 
     @Autowired

@@ -151,6 +151,7 @@ public class ConciliationRoutesController {
                                                 BindingResult bindingResult){
         ModelAndView modelAndView = new ModelAndView("redirect:/parametric/conciliationRoutes");
         ConciliationRoute arouteExists = conciliationRouteService.findById(croute.getId());
+
         if(arouteExists != null){
             bindingResult
                     .rejectValue("Ruta Conciliacion", "error.rutaConciliacion",
@@ -175,6 +176,7 @@ public class ConciliationRoutesController {
         }
         modelAndView.addObject("resp", "Add1");
         modelAndView.addObject("data", croute.getDetalle());
+
         return modelAndView;
 
     }

@@ -31,7 +31,7 @@ public class EventMatrix {
 
 
     @ManyToOne
-    @JoinColumn(name = "id_campo_centro_contable", nullable = false)
+    @JoinColumn(name = "id_campo_centro_contable")
     private CampoRConcil campoCC;
 
     @ManyToOne

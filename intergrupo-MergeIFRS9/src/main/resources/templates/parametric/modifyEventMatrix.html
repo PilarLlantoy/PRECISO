@@ -110,7 +110,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-4 hidden" id="CentroContable">
+                    <div class="col-md-4" id="CentroContable">
                         <div class="form-group">
                             <h6 class="font-weight-bold">Centro Contable:</h6>
                             <input type="text" class="form-control" name="ccontable" id="ccontable" th:field="*{centroContable}" >
@@ -234,14 +234,14 @@
     function toggleFields() {
         var manejaCCCheckbox = document.getElementById('manejaCC');
         var CampoCentroContableContainer = document.getElementById('CampoCentroContable');
-        var CentroContableContainer = document.getElementById('CentroContable');
+        //var CentroContableContainer = document.getElementById('CentroContable');
 
         if (manejaCCCheckbox.checked) {
             CampoCentroContableContainer.classList.remove('hidden');
-            CentroContableContainer.classList.remove('hidden');
+            //CentroContableContainer.classList.remove('hidden');
         } else {
             CampoCentroContableContainer.classList.add('hidden');
-            CentroContableContainer.classList.add('hidden');
+            //CentroContableContainer.classList.add('hidden');
         }
     }
 

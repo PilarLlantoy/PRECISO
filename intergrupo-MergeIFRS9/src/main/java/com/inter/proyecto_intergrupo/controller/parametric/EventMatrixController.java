@@ -164,17 +164,26 @@ public class EventMatrixController {
             Conciliation conciliation = conciliationService.findById(Integer.valueOf(idconcil));
             eventMatrix.setConciliacion(conciliation);
 
-            ConciliationRoute croute = conciliationRouteService.findById(Integer.valueOf(idrutaconcil));
-            eventMatrix.setInventarioConciliacion(croute);
+            if(!idrutaconcil.equals("N")) {
+                ConciliationRoute croute = conciliationRouteService.findById(Integer.valueOf(idrutaconcil));
+                eventMatrix.setInventarioConciliacion(croute);
+            }
 
-            EventType tipoEvento = eventTypeService.findAllById(Integer.valueOf(idTipoEvento));
-            eventMatrix.setTipoEvento(tipoEvento);
+            if(!idTipoEvento.equals("N")) {
+                EventType tipoEvento = eventTypeService.findAllById(Integer.valueOf(idTipoEvento));
+                eventMatrix.setTipoEvento(tipoEvento);
+            }
 
-            CampoRConcil campoOperacion = campoRConcilService.findById(Integer.valueOf(idCampoOperacion));
-            eventMatrix.setCampoOperacion(campoOperacion);
+            if(!idCampoOperacion.equals("N")) {
+                CampoRConcil campoOperacion = campoRConcilService.findById(Integer.valueOf(idCampoOperacion));
+                eventMatrix.setCampoOperacion(campoOperacion);
+            }
 
-            CampoRConcil campoContable= campoRConcilService.findById(Integer.valueOf(idCampoContable));
-            eventMatrix.setCampoCC(campoContable);
+            if(!idCampoContable.equals("N")){
+                CampoRConcil campoContable= campoRConcilService.findById(Integer.valueOf(idCampoContable));
+                eventMatrix.setCampoCC(campoContable);
+            }
+
 
             eventMatrixService.modificar(eventMatrix);
         }

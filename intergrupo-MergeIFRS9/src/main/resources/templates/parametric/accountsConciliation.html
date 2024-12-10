@@ -72,8 +72,8 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="val : ${allCuentas}">
-                        <td th:text="${val.id}"></td>
+                    <tr th:each="val, iter : ${allCuentas}">
+                        <td th:text="${iter.count}"></td>
                         <td th:text="${val.valor}"></td>
                         <td>
                             <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
