@@ -135,5 +135,73 @@
 
 </div>
 </div>
+<script>
+    function cargarCampos(button) {
+        var id = button.getAttribute("data-id");
+        var campo = button.getAttribute("data-campo");
+        var valorCondicion = button.getAttribute("data-valorCondicion");
+
+        // Asignar los valores a los campos del formulario
+        document.querySelector("input[name='id']").value = id;
+        document.querySelector("input[name='valorCondicion']").value = valorCondicion;
+
+        var selectCampo = document.querySelector("select[name='selectedCampo']");
+        var options = selectCampo.options;
+
+        // Buscar la opción con el texto que coincide con 'campo'
+        for (var i = 0; i < options.length; i++) {
+            if (options[i].text.trim() === campo.trim()) {
+                selectCampo.value = options[i].value; // Establece el valor de la opción encontrada
+                break;
+            }
+        }
+        updateButtonText();
+    }
+    function Limpiar() {
+        document.getElementById('miFormulario').reset();
+        updateButtonText();
+    }
+    function descartar() {
+        const id = document.querySelector("input[name='id']").value;
+        const selectCampo = document.querySelector("select[name='selectedCampo']").value;
+        const valorCondicion = document.querySelector("input[name='valorCondicion']").value;
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+        const arouteId = document.getElementById('arouteId').value;
+
+        if (id && selectCampo && valorCondicion) {
+            fetch(`/parametric/deleteCondicionRC/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                }
+            }).then(response => {
+                if (response.ok) {
+                    window.location.href = `/parametric/conditionLoadingAccountingRoute/${arouteId}`;
+                }
+            }).catch(error => {
+                // Manejo de errores
+                console.error('Error:', error);
+            });
+        }
+        updateButtonText();
+    }
+
+    function updateButtonText() {
+         const idInput = document.getElementById("idInput");
+        const actionButton = document.getElementById("actionButton");
+
+        // Elimina espacios antes de validar
+        const value = idInput.value.trim();
+
+        // Cambia el texto según el estado del campo
+        if (value === "0") {
+            actionButton.textContent = "Agregar";
+        } else {
+            actionButton.textContent = "Modificar";
+        }
+    }
+</script>
 </body>
 </html>

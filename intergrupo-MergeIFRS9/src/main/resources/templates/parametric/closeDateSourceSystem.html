@@ -31,7 +31,7 @@
                 <div class="d-flex align-items-center justify-content-between">
                     <!-- Formulario -->
                     <form id="miFormulario" th:object="${fecha}" th:action="@{/parametric/createFechaCierre}" method="POST" class="d-flex align-items-center">
-                        <input type="hidden" th:field="*{id}">
+                        <input type="hidden" id="idInput" th:field="*{id}">
                         <input type="hidden" id="csrfToken" th:value="${_csrf.token}" />
                         <input type="hidden" id="sfId" name="sfId" th:value="${sistemaFuente.id}" />
 
@@ -41,8 +41,8 @@
                         </div>
 
                         <div class="form-group form-group-sm mx-2">
-                            <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm mx-1" onclick="descartar()">Descartar</button>
-                            <button th:disabled="${!p_modificar}" type="submit" class="btn btn-primary btn-sm mx-1">Agregar</button>
+                            <button th:disabled="${!p_modificar}" type="button" class="btn btn-primary btn-sm mx-1" onclick="descartar()">Descartar</button>
+                            <button th:disabled="${!p_modificar}" type="submit" id="actionButton" class="btn btn-primary btn-sm mx-1">Agregar</button>
                         </div>
                     </form>
 
@@ -144,6 +144,12 @@
         </div>
     </div>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"
+        integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"
+        integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
+        crossorigin="anonymous"></script>
 <script>
     function cargarCampos(button) {
         var id = button.getAttribute("data-id");
@@ -151,19 +157,15 @@
         // Asignar los valores a los campos del formulario
         document.querySelector("input[name='id']").value = id;
         document.querySelector("input[name='valor']").value = valor;
+         updateButtonText();
     }
 
     function descartar() {
         document.getElementById('miFormulario').reset();
+        document.querySelector("input[name='id']").value = '0';
+        updateButtonText();
     }
 </script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"
-        integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
-        crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"
-        integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
-        crossorigin="anonymous"></script>
 <script type="text/javascript">
 
     var queryString = window.location.search;
@@ -207,7 +209,7 @@
 
         // Elimina espacios antes de validar
         const value = idInput.value.trim();
-
+        console.log(value);
         // Cambia el texto según el estado del campo
         if (value === "0") {
             actionButton.textContent = "Agregar";
