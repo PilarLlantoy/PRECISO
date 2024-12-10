@@ -10,38 +10,37 @@
 <div class="main-container">
     <div class="row m-0 bg-primary fixed-top myNav">
         <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
-            <h3 class="fw-bold text-white mx-4 my-3">Cargue Campos Ruta Contable</h3>
+            <h2 class="fw-bold text-white mx-4 my-3">Cargue Campos Ruta Contable</h2>
         </div>
     </div>
-    <div class="row mt-5 py-3 px-4">
+    <div class="row mt-5 ml-1 px-2">
         <div class="text-left col-md-6">
             <h2>Cargue de campos</h2>
         </div>
         <div class="text-right col-md-6">
-            <a class="btn btn-primary mx-1" th:href="@{/parametric/accountingRoutes}"><i class="fa-solid fa-left-long"></i> Regresar</a>
-            <button type="button" class="btn btn-primary mx-2" onclick="Limpiar()">Deseleccionar Item</button>
+            <a class="btn btn-danger btn-sm mx-1" th:href="@{/parametric/accountingRoutes}"><i class="fa-solid fa-left-long"></i> Regresar</a>
         </div>
     </div>
     <div class="row px-4">
-        <div class="text-left col-md-12 mb-3">
+        <div class="text-left col-md-12 mb-1">
             <form id="miFormulario" th:object="${campoRC}" th:action="@{/parametric/createCampoRC}" method="POST">
-                <div class="mb-3 p-3 row border rounded">
+                <div class="mb-1 px-1 pt-1 row border rounded">
                     <div hidden class="col-md-2">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">ID</h6>
-                            <input type="text" class="form-control" th:field="*{id}">
+                            <input type="text" id="idInput" class="form-control form-control-sm" th:field="*{id}">
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Detalle Campo</h6>
-                            <input type="text" class="form-control" th:field="*{nombre}" required>
+                            <input type="text" class="form-control form-control-sm" th:field="*{nombre}" required>
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Tipo de Campo</h6>
-                            <select class="form-control" name="selectedTipoCampo" id="selectedTipoCampo" th:field="*{tipo}" required onchange="toggleFechaIdiomaFields()">
+                            <select class="form-control form-control-sm" name="selectedTipoCampo" id="selectedTipoCampo" th:field="*{tipo}" required onchange="toggleFechaIdiomaFields()">
                                 <option th:if="${campoRC.tipo == null}" hidden selected disabled value="">Seleccione tipo</option>
                                 <option th:if="${campoRC.tipo != null}" hidden selected th:text="${campoRC.tipo}" th:value="${campoRC.tipo}"></option>
                                 <option th:value="Integer" th:text="Integer"></option>
@@ -56,15 +55,15 @@
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Longitud de Campo</h6>
-                            <input type="text" class="form-control" name="longitud" id="longitud" required>
+                            <input type="text" class="form-control form-control-sm" name="longitud" id="longitud" required>
                         </div>
                     </div>
                     <div class="col-md-2 hidden" id="formatoFechaContainer">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Formato Fecha:</h6>
-                            <select class="form-control" name="selectedFormatoFecha" id="selectedFormatoFecha" th:field="*{formatoFecha}">
+                            <select class="form-control form-control-sm" name="selectedFormatoFecha" id="selectedFormatoFecha" th:field="*{formatoFecha}">
                                 <option disabled value="" selected hidden>Seleccione formato</option>
                                 <option value="YYYYMMDD">AÑO MES DIA CORTA (YYYYMMDD)</option>
                                 <option value="YYMMDD">AÑO MES DIA RED (YYMMDD)</option>
@@ -76,9 +75,9 @@
                         </div>
                     </div>
                     <div class="col-md-2 hidden" id="idiomaCampoContainer">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Idioma Campo:</h6>
-                            <select class="form-control" name="selectedIdiomaCampo" id="selectedIdiomaCampo" th:field="*{idioma}">
+                            <select class="form-control form-control-sm" name="selectedIdiomaCampo" id="selectedIdiomaCampo" th:field="*{idioma}">
                                 <option disabled value="" selected hidden>Seleccione formato</option>
                                 <option value="EspañolColombia">Español - Colombia</option>
                                 <option value="EspañolEspaña">Español - España</option>
@@ -87,14 +86,14 @@
                         </div>
                     </div>
                     <div class="col-md-2 hidden" id="separadorContainer">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Separador</h6>
-                            <input type="text" class="form-control" th:field="*{separador}">
+                            <input type="text" class="form-control form-control-sm" th:field="*{separador}">
                         </div>
                     </div>
                     <div class="col-md-2">
                         <div class="col-12"><h6 class="font-weight-bold">Campo Primario</h6></div>
-                        <div class="form-group col-md-2">
+                        <div class="form-group form-group-sm col-md-2">
                             <div class="form-check form-check-inline">
                                 <input id="primario" name="primario" th:field="*{primario}" th:id="${primario}"
                                        th:value="${primario}" type="checkbox" class="styled-checkbox ms-2">
@@ -103,7 +102,7 @@
                     </div>
                     <div class="col-md-2">
                         <div class="col-12"><h6 class="font-weight-bold">Seleccionado Visualización?</h6></div>
-                        <div class="form-group col-md-2">
+                        <div class="form-group form-group-sm">
                             <div class="form-check form-check-inline">
                                 <input id="visualizacion" name="visualizacion" th:field="*{visualizacion}" th:id="${visualizacion}"
                                        th:value="${visualizacion}" type="checkbox" class="styled-checkbox ms-2">
@@ -112,7 +111,7 @@
                     </div>
                     <div class="col-md-2">
                         <div class="col-12"><h6 class="font-weight-bold">Aplica Fórmula?</h6></div>
-                        <div class="form-group col-md-2">
+                        <div class="form-group form-group-sm">
                             <div class="form-check form-check-inline">
                                 <input id="formula1" name="formula" th:field="*{formula}" th:id="${formula}"
                                        th:value="${formula}" type="checkbox" class="styled-checkbox" onchange="toggleFields()">
@@ -120,9 +119,9 @@
                         </div>
                     </div>
                     <div class="col-md-2 hidden" id="operacionContainer">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Operación:</h6>
-                            <select class="form-control" name="selectedOperacion" id="selectedOperacion" th:field="*{operacion}">
+                            <select class="form-control form-control-sm" name="selectedOperacion" id="selectedOperacion" th:field="*{operacion}">
                                 <option disabled value="" selected hidden>Seleccione operación</option>
                                 <option th:value="Suma">Suma</option>
                                 <option th:value="Resta">Resta</option>
@@ -132,25 +131,28 @@
                         </div>
                     </div>
                     <div class="col-md-2 hidden" id="valorContainer">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Valor Operación</h6>
-                            <input type="text" class="form-control" th:field="*{valorOperacion}">
+                            <input type="text" class="form-control form-control-sm" th:field="*{valorOperacion}">
                         </div>
                     </div>
                 </div>
-
                 <!-- Formulario oculto para pasar el objeto aroute -->
                 <input type="hidden" id="arouteId" name="arouteId" th:value="${aroute.id}" />
-
                 <div class="row">
-                    <div class="d-grid gap-2 col-2">
-                        <button th:disabled="${!p_modificar}" type="button" class="btn btn-primary" onclick="descartar()">Eliminar</button>
+                    <div class="d-grid gap-2 col-1">
+                        <button th:disabled="${!p_modificar}" type="button" class="btn btn-primary btn-sm" onclick="descartar()">Eliminar</button>
                     </div>
-                    <div class="d-grid gap-2 col-2">
-                        <button th:disabled="${!p_modificar}" type="submit" class="btn btn-primary">Agregar</button>
+                    <div class="d-grid gap-2 col-1">
+                        <button th:disabled="${!p_modificar}" id="actionButton" type="submit" class="btn btn-primary btn-sm">Agregar</button>
+                    </div>
+                    <div class="col-auto">
+                        <div class="border-start ms-3" style="height: 100%;"></div>
+                    </div>
+                    <div class="d-grid gap-2 col-1">
+                        <button type="button" class="btn btn-primary btn-sm" onclick="Limpiar()">Deseleccionar Item</button>
                     </div>
                 </div>
-
             </form>
 
         </div>
@@ -181,7 +183,7 @@
                         <td th:if="${camp.visualizacion == true}">Sí</td>
                         <td th:if="${camp.visualizacion == false}">No</td>
                         <td>
-                            <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
+                            <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm mx-1"
                                     th:data-id="${camp.id}"
                                     th:data-nombre="${camp.nombre}"
                                     th:data-primario="${camp.primario}"
@@ -204,7 +206,7 @@
             <div class="row" th:if="${last != 0}">
                 <div class="col-md-4 text-left">
                     <nav arial-label="Pagination">
-                        <ul class="pagination">
+                        <ul class="pagination pagination-sm">
                             <li class="page-item" th:classappend="${prev == 0 ? 'disabled' : ''}">
                                 <a class="page-link"
                                    th:href="@{/parametric/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${prev},dir=${directory},vId=${vId})}">Anterior</a>
@@ -292,6 +294,7 @@
 
         toggleFields();
         toggleFechaIdiomaFields();
+        updateButtonText();
     }
 
     function descartar() {
@@ -321,6 +324,7 @@
                 console.error('Error:', error);
             });
         }
+        updateButtonText();
     }
 
     function toggleFields() {
@@ -358,11 +362,28 @@
         document.getElementById('miFormulario').reset();
         toggleFields();
         toggleFechaIdiomaFields();
+        updateButtonText();
+    }
+
+     function updateButtonText() {
+         const idInput = document.getElementById("idInput");
+        const actionButton = document.getElementById("actionButton");
+
+        // Elimina espacios antes de validar
+        const value = idInput.value.trim();
+
+        // Cambia el texto según el estado del campo
+        if (value === "0") {
+            actionButton.textContent = "Agregar";
+        } else {
+            actionButton.textContent = "Modificar";
+        }
     }
 
     window.onload = function() {
         toggleFields();
         toggleFechaIdiomaFields();
+        updateButtonText();
     };
 
 </script>
