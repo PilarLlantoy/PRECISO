@@ -35,7 +35,8 @@
                     <div class="col-md-2">
                         <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Detalle Campo</h6>
-                            <input type="text" class="form-control form-control-sm" th:field="*{nombre}" required>
+                            <input type="text" class="form-control form-control-sm" th:field="*{nombre}" pattern="\S+"
+                                   title="No se permiten espacios en este campo." oninput="this.value = this.value.replace(/\s/g, '')" required>
                         </div>
                     </div>
                     <div class="col-md-2">

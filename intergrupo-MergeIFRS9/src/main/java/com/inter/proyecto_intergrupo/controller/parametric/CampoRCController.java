@@ -1,10 +1,7 @@
 package com.inter.proyecto_intergrupo.controller.parametric;
 
 import com.inter.proyecto_intergrupo.model.admin.User;
-import com.inter.proyecto_intergrupo.model.parametric.AccountingRoute;
-import com.inter.proyecto_intergrupo.model.parametric.Campo;
-import com.inter.proyecto_intergrupo.model.parametric.CampoRC;
-import com.inter.proyecto_intergrupo.model.parametric.Conciliation;
+import com.inter.proyecto_intergrupo.model.parametric.*;
 import com.inter.proyecto_intergrupo.service.adminServices.UserService;
 import com.inter.proyecto_intergrupo.service.parametricServices.*;
 import org.apache.logging.log4j.LogManager;
@@ -99,22 +96,38 @@ public class CampoRCController {
 
 
     @PostMapping(value = "/parametric/createCampoRC")
-    public ModelAndView createCampoRC(@ModelAttribute CampoRC campoRC,
+    public ModelAndView createCampoRC(@ModelAttribute CampoRC campoNuevo,
                                       @RequestParam(name = "arouteId") String arouteId,
                                       @RequestParam(name = "longitud") String longitud,
                                       BindingResult bindingResult){
         ModelAndView modelAndView = new ModelAndView("redirect:/parametric/fieldLoadingAccountingRoute/" + arouteId);
-
-        /*if((longitud.toUpperCase()).equals("MAX")) {
-            var ll=getMaxCharacterLength(campoRC.getTipo());
-            campoRC.setLongitud(ll);
+        if(longitud!=null && longitud.length()>0 ){
+            campoNuevo.setLongitud(longitud);
         }
-        else*/
-            campoRC.setLongitud(longitud);
+        else {
+            campoNuevo.setLongitud("MAX");
+        }
         AccountingRoute aroute = accountingRouteService.findById(Integer.parseInt(arouteId));
-        campoRC.setRutaContable(aroute);
-        campoRCService.modificar(campoRC);
-        campoRCService.recreateTable(aroute);
+        campoNuevo.setRutaContable(aroute);
+
+        List<CampoRC> campoBusqueda= campoRCService.findCamposByRutaVsNombre(Integer.parseInt(arouteId),campoNuevo.getNombre());
+        CampoRC campoAntiguo= campoRCService.findById(campoNuevo.getId());
+        System.out.println("Nuevo-> ID:"+campoNuevo.getId()+" - NOM:"+campoNuevo.getNombre());
+        if(campoAntiguo!=null)
+            System.out.println("Antiguo-> ID:"+campoAntiguo.getId()+" - NOM:"+campoAntiguo.getNombre());
+        else
+            System.out.println("Antiguo-> ID:Vacio - NOM:Vacio");
+        if(!campoBusqueda.isEmpty())
+            System.out.println("Busqueda-> ID:"+campoBusqueda.get(0).getId()+" - NOM:"+campoBusqueda.get(0).getNombre());
+        else
+            System.out.println("Busqueda-> ID:Vacio - NOM:Vacio");
+        if((campoBusqueda.isEmpty() && campoNuevo.getId()==0) ||
+        (campoAntiguo!=null && campoAntiguo.getId() == campoNuevo.getId() && campoAntiguo.getNombre().equalsIgnoreCase(campoNuevo.getNombre()) && campoNuevo.getId()!=0) ||
+        (campoAntiguo!=null && campoAntiguo.getId() == campoNuevo.getId() && !campoAntiguo.getNombre().equalsIgnoreCase(campoNuevo.getNombre()) && campoBusqueda.isEmpty() && campoNuevo.getId()!=0))
+        {
+            campoRCService.modificar(campoNuevo);
+            campoRCService.recreateTable(aroute);
+        }
         return modelAndView;
 
     }
