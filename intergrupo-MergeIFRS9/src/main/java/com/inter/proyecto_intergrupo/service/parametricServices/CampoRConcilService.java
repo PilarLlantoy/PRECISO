@@ -102,4 +102,21 @@ public class CampoRConcilService {
         return query.getResultList();
     }
 
+    public List<CampoRConcil> findCamposByRutaConcilVsNombre(int idRConcil,String nombre) {
+        Query query = entityManager.createNativeQuery(
+                "SELECT * FROM preciso_campos_rconcil WHERE id_rconcil = :idRConcil AND nombre = :nombre ",CampoRConcil.class);
+        query.setParameter("idRConcil", idRConcil);
+        query.setParameter("nombre", nombre);
+        return query.getResultList();
+    }
+
+    public List<CampoRConcil> findCamposByRutaConcilVsNombre(int idRConcil,String nombre, int idCampo) {
+        Query query = entityManager.createNativeQuery(
+                "SELECT * FROM preciso_campos_rconcil WHERE id_rconcil = :idRConcil AND nombre = :nombre AND id_campo = :idCampo ",CampoRConcil.class);
+        query.setParameter("idRConcil", idRConcil);
+        query.setParameter("nombre", nombre);
+        query.setParameter("idCampo", idCampo);
+        return query.getResultList();
+    }
+
 }

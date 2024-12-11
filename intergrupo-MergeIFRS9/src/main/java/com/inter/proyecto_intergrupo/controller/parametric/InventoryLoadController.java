@@ -25,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.transaction.Transactional;
 import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
@@ -217,8 +218,10 @@ public class InventoryLoadController {
     }
 
     @Scheduled(cron = "0 0/30 * * * ?")
+    @Transactional
     public void jobLeerArchivos() {
-        LocalDateTime fechaHoy = LocalDateTime.now();
+        LocalDateTime fechaOrigen = LocalDateTime.now();
+        LocalDateTime fechaHoy = fechaOrigen.minusDays(1);
         DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String fecha = fechaHoy.format(formato);
 

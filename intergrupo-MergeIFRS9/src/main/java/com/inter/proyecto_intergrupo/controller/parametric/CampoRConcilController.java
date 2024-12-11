@@ -47,8 +47,14 @@ public class CampoRConcilController {
         }
         ConciliationRoute route = conciliationRouteService.findById(Integer.parseInt(crouteId));
         campoRC.setRutaConciliacion(route);
-        campoRConcilService.modificar(campoRC);
-        campoRConcilService.recreateTable(route);
+        System.out.println("Campo->"+campoRC.getId());
+        List<CampoRConcil> campoEncontrado = campoRConcilService.findCamposByRutaConcilVsNombre(Integer.parseInt(crouteId),campoRC.getNombre());
+        if((campoEncontrado.isEmpty() && campoRC.getId()==0) ||
+        !(!campoEncontrado.isEmpty() && campoEncontrado.get(0).getId() != campoRC.getId() && campoEncontrado.get(0).getNombre().equalsIgnoreCase(campoRC.getNombre()) && campoRC.getId()!=0))
+        {
+            campoRConcilService.modificar(campoRC);
+            campoRConcilService.recreateTable(route);
+        }
         return modelAndView;
     }
 
@@ -79,6 +85,7 @@ public class CampoRConcilController {
     public ResponseEntity<?> deleteCampoRConcil(@PathVariable int id) {
         try {
             ConciliationRoute cr = campoRConcilService.findById(id).getRutaConciliacion();
+            System.out.println("ID->"+id);
             campoRConcilService.deleteById(id);
             campoRConcilService.recreateTable(cr);
             return ResponseEntity.ok().build();
