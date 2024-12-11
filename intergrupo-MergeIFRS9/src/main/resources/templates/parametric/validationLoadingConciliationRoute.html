@@ -112,8 +112,10 @@
                     </thead>
                     <tbody>
                     <tr th:each="val : ${allValidaciones}">
-                        <td th:text="${val.campoRef.nombre}"></td>
-                        <td th:text="${val.campoVal.nombre}"></td>
+                        <td th:if="${val.campoRef != null}" th:text="${val.campoRef.nombre}"></td>
+                        <td th:if="${val.campoVal != null}" th:text="${val.campoVal.nombre}"></td>
+                        <td th:if="${val.campoRef == null}"></td>
+                        <td th:if="${val.campoVal == null}"></td>
                         <td th:text="${val.valorValidacion}"></td>
                         <td th:text="${val.operacion}"></td>
                         <td th:text="${val.valorOperacion}"></td>
