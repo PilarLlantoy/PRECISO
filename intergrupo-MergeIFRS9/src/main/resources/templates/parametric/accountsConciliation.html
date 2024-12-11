@@ -73,7 +73,7 @@
                     </thead>
                     <tbody>
                     <tr th:each="val, iter : ${allCuentas}">
-                        <td th:text="${iter.count}"></td>
+                        <td th:text="${iter.count + ((current-1)*12)}"></td>
                         <td th:text="${val.valor}"></td>
                         <td>
                             <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
