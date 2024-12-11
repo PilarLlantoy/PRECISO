@@ -10,10 +10,10 @@
 <div class="main-container">
     <div class="row m-0 bg-primary fixed-top myNav">
         <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
-            <h3 class="fw-bold text-white mx-4 my-3">Cargue Campos Ruta Conciliacion</h3>
+            <h2 class="fw-bold text-white mx-4 my-3">Cargue Campos Ruta Conciliacion</h2>
         </div>
     </div>
-    <div class="row mt-5 py-3 px-4">
+    <div class="row mt-5 pt-3 px-4">
         <div class="text-left col-md-6">
             <h2>Cargue de campos</h2>
         </div>
@@ -22,26 +22,26 @@
         </div>
     </div>
     <div class="row px-4">
-        <div class="text-left col-md-12 mb-3">
+        <div class="text-left col-md-12">
             <form id="miFormulario" th:object="${campoRC}" th:action="@{/parametric/createCampoRConcil}" method="POST">
 
-                <div class="mb-3 p-3 row border rounded">
+                <div class="px-3 pt-1 mb-1 row border rounded">
                     <div hidden class="col-md-2">
-                        <div class="form-group form-group-sm mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">ID</h6>
-                            <input type="text" id="idInput" class="form-control" th:field="*{id}">
+                            <input type="text" id="idInput" class="form-control form-control-sm" th:field="*{id}">
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <div class="form-group form-group-sm mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Detalle Campo</h6>
-                            <input type="text" class="form-control" th:field="*{nombre}" required>
+                            <input type="text" class="form-control form-control-sm" th:field="*{nombre}" required>
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <div class="form-group form-group-sm mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Tipo de Campo</h6>
-                            <select class="form-control" name="selectedTipoCampo" id="selectedTipoCampo" th:field="*{tipo}" required onchange="toggleFechaIdiomaFields()">
+                            <select class="form-control form-control-sm" name="selectedTipoCampo" id="selectedTipoCampo" th:field="*{tipo}" required onchange="toggleFechaIdiomaFields()">
                                 <option th:if="${campoRC.tipo == null}" hidden selected disabled value="">Seleccione tipo</option>
                                 <option th:if="${campoRC.tipo != null}" hidden selected th:text="${campoRC.tipo}" th:value="${campoRC.tipo}"></option>
                                 <option th:value="Integer" th:text="Integer"></option>
@@ -56,7 +56,7 @@
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <div class="form-group form-group-sm mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Longitud de Campo
                             <i  class="fas fa-question-circle text-muted"
                             data-bs-toggle="tooltip"
@@ -65,13 +65,13 @@
                             Si se deja en blanco, se considera como un MAX."
                             ></i>
                             </h6>
-                            <input type="number" class="form-control" name="longitud" id="longitud" min="1">
+                            <input type="number" class="form-control form-control-sm" name="longitud" id="longitud" min="1">
                         </div>
                     </div>
                     <div class="col-md-2 hidden" id="separadorContainer">
-                        <div class="form-group form-group-sm mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Separador</h6>
-                            <input type="text" class="form-control" th:field="*{separador}">
+                            <input type="text" class="form-control form-control-sm" th:field="*{separador}">
                         </div>
                     </div>
                     <div class="col-md-2">
@@ -103,9 +103,9 @@
                         </div>
                     </div>
                     <div class="col-md-3" id="formatoFechaContainer">
-                        <div class="form-group form-group-sm mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Formato Fecha:</h6>
-                            <select class="form-control" name="selectedFormatoFecha" id="selectedFormatoFecha" th:field="*{formatoFecha}">
+                            <select class="form-control form-control-sm" name="selectedFormatoFecha" id="selectedFormatoFecha" th:field="*{formatoFecha}">
                                 <option disabled value="" selected hidden>Seleccione formato</option>
                                 <option value="YYYYMMDD">AÑO MES DIA CORTA (YYYYMMDD)</option>
                                 <option value="YYMMDD">AÑO MES DIA RED (YYMMDD)</option>
@@ -117,9 +117,9 @@
                         </div>
                     </div>
                     <div class="col-md-2" id="idiomaCampoContainer">
-                        <div class="form-group form-group-sm mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Idioma Campo:</h6>
-                            <select class="form-control" name="selectedIdiomaCampo" id="selectedIdiomaCampo" th:field="*{idioma}">
+                            <select class="form-control form-control-sm" name="selectedIdiomaCampo" id="selectedIdiomaCampo" th:field="*{idioma}">
                                 <option disabled value="" selected hidden>Seleccione formato</option>
                                 <option value="EspañolColombia">Español - Colombia</option>
                                 <option value="EspañolEspaña">Español - España</option>
@@ -190,7 +190,6 @@
                                     th:data-nuloMoneda="${camp.nuloMoneda}"
                                     onclick="cargarCampos(this)">Seleccionar</button>
                         </td>
-
                     </tr>
                     </tbody>
                 </table>
@@ -198,7 +197,7 @@
             <div class="row" th:if="${last != 0}">
                 <div class="col-md-4 text-left">
                     <nav arial-label="Pagination">
-                        <ul class="pagination">
+                        <ul class="pagination pagination-sm">
                             <li class="page-item" th:classappend="${prev == 0 ? 'disabled' : ''}">
                                 <a class="page-link"
                                    th:href="@{/parametric/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${prev},dir=${directory},vId=${vId})}">Anterior</a>
