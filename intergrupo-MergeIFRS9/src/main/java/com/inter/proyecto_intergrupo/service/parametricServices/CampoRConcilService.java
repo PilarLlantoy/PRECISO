@@ -59,7 +59,7 @@ public class CampoRConcilService {
 
         for (int i = 0; i < data.getCampos().size(); i++) {
             CampoRConcil column = data.getCampos().get(i);
-            createTableQuery.append(column.getNombre())
+            createTableQuery.append("["+column.getNombre()+"]")
                     .append(" ")
                     .append(column.getTipo());
 

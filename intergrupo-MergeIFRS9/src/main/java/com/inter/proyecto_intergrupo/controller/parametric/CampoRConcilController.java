@@ -34,25 +34,35 @@ public class CampoRConcilController {
 
 
     @PostMapping(value = "/parametric/createCampoRConcil")
-    public ModelAndView createCampoRConcil(@ModelAttribute CampoRConcil campoRC,
+    public ModelAndView createCampoRConcil(@ModelAttribute CampoRConcil campoNuevo,
                                             @RequestParam(name = "crouteId") String crouteId,
                                             @RequestParam(name = "longitud") String longitud,
                                             BindingResult bindingResult){
         ModelAndView modelAndView = new ModelAndView("redirect:/parametric/fieldLoadingConciliationRoute/" + crouteId);
         if(longitud!=null && longitud.length()>0 ){
-            campoRC.setLongitud(longitud);
+            campoNuevo.setLongitud(longitud);
         }
         else {
-            campoRC.setLongitud("MAX");
+            campoNuevo.setLongitud("MAX");
         }
         ConciliationRoute route = conciliationRouteService.findById(Integer.parseInt(crouteId));
-        campoRC.setRutaConciliacion(route);
-        System.out.println("Campo->"+campoRC.getId());
-        List<CampoRConcil> campoEncontrado = campoRConcilService.findCamposByRutaConcilVsNombre(Integer.parseInt(crouteId),campoRC.getNombre());
-        if((campoEncontrado.isEmpty() && campoRC.getId()==0) ||
-        !(!campoEncontrado.isEmpty() && campoEncontrado.get(0).getId() != campoRC.getId() && campoEncontrado.get(0).getNombre().equalsIgnoreCase(campoRC.getNombre()) && campoRC.getId()!=0))
+        campoNuevo.setRutaConciliacion(route);
+        List<CampoRConcil> campoBusqueda= campoRConcilService.findCamposByRutaConcilVsNombre(Integer.parseInt(crouteId),campoNuevo.getNombre());
+        CampoRConcil campoAntiguo= campoRConcilService.findById(campoNuevo.getId());
+        System.out.println("Nuevo-> ID:"+campoNuevo.getId()+" - NOM:"+campoNuevo.getNombre());
+        if(campoAntiguo!=null)
+            System.out.println("Antiguo-> ID:"+campoAntiguo.getId()+" - NOM:"+campoAntiguo.getNombre());
+        else
+            System.out.println("Antiguo-> ID:Vacio - NOM:Vacio");
+        if(!campoBusqueda.isEmpty())
+            System.out.println("Busqueda-> ID:"+campoBusqueda.get(0).getId()+" - NOM:"+campoBusqueda.get(0).getNombre());
+        else
+            System.out.println("Busqueda-> ID:Vacio - NOM:Vacio");
+        if((campoBusqueda.isEmpty() && campoNuevo.getId()==0) ||
+        (campoAntiguo!=null && campoAntiguo.getId() == campoNuevo.getId() && campoAntiguo.getNombre().equalsIgnoreCase(campoNuevo.getNombre()) && campoNuevo.getId()!=0) ||
+        (campoAntiguo!=null && campoAntiguo.getId() == campoNuevo.getId() && !campoAntiguo.getNombre().equalsIgnoreCase(campoNuevo.getNombre()) && campoBusqueda.isEmpty() && campoNuevo.getId()!=0))
         {
-            campoRConcilService.modificar(campoRC);
+            campoRConcilService.modificar(campoNuevo);
             campoRConcilService.recreateTable(route);
         }
         return modelAndView;
