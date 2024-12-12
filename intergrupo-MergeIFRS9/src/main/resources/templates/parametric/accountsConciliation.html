@@ -10,111 +10,116 @@
 <div class="main-container">
     <div class="row m-0 bg-primary fixed-top myNav">
         <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
-            <h3 class="fw-bold text-white mx-4 my-3">Cargue de Cuentas de Conciliacion</h3>
+            <h2 class="fw-bold text-white mx-4 my-3">Cargue de Cuentas de Conciliacion</h2>
         </div>
     </div>
-    <div class="row mt-5 pt-3 pb-1 px-4">
-        <div class="text-left col-md-6">
-            <h2>Cargue de Cuentas </h2>
+    <div id="content">
+        <div class="row mt-5 ml-1 px-2">
+            <div class="text-left col-md-6">
+                <h2>Cargue de Cuentas </h2>
+            </div>
+            <div class="text-right col-md-6">
+                <a class="btn btn-sm btn-danger mx-1" th:href="@{/parametric/conciliation}"><i class="fa-solid fa-left-long"></i> Regresar</a>
+            </div>
         </div>
-        <div class="text-right col-md-6">
-            <a class="btn btn-primary mx-1" th:href="@{/parametric/conciliation}"><i class="fa-solid fa-left-long"></i> Regresar</a>
-            <button type="button" class="btn btn-primary mx-2" onclick="Limpiar()">Deseleccionar Item</button>
-        </div>
-    </div>
 
-    <div class="row px-4">
-        <div class="text-left pr-3 col-md-12 my-3">
-            <form id="miFormulario" th:object="${cuenta}" th:action="@{/parametric/createAccountConcil}" method="POST">
-
-                <div class="mb-3 p-3 row border rounded">
-                    <div hidden class="col-md-2">
-                        <div class="form-group mb-1">
-                            <h6 class="font-weight-bold">ID</h6>
-                            <input type="text" class="form-control" th:field="*{id}" id="cuentaId" name="cuentaId" value="0">
+        <div class="row px-4">
+            <div class="text-left col-md-12">
+                <form id="miFormulario" th:object="${cuenta}" th:action="@{/parametric/createAccountConcil}" method="POST">
+                    <div class="row mb-1 border rounded">
+                        <div hidden class="col-md-2">
+                            <div class="form-group form-group-sm">
+                                <h6 class="font-weight-bold">ID</h6>
+                                <input type="text" class="form-control form-control-sm" th:field="*{id}" id="cuentaId" name="cuentaId" value="0">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group form-group-sm">
+                                <h6 class="font-weight-bold">Cuenta Contable</h6>
+                                <input type="text" class="form-control form-control-sm" th:field="*{valor}">
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-2">
-                        <div class="form-group mb-1">
-                            <h6 class="font-weight-bold">Cuenta Contable</h6>
-                            <input type="text" class="form-control" th:field="*{valor}">
+
+                    <!-- Campo oculto para el token CSRF -->
+                    <input type="hidden" id="csrfToken" th:value="${_csrf.token}" />
+
+                    <!-- Formulario oculto para pasar el objeto conciliacion -->
+                    <input type="hidden" id="concilId" name="concilId" th:value="${conciliacion.id}" />
+
+                    <div class="row">
+                        <div class="d-grid gap-2 col-1">
+                            <button th:disabled="${!p_modificar}" type="button" class="btn btn-sm btn-primary" onclick="borrar()">Eliminar</button>
+                        </div>
+                        <div class="d-grid gap-2 col-1">
+                            <button th:disabled="${!p_modificar}" id="actionButton" type="submit" class="btn btn-sm btn-primary">Agregar</button>
+                        </div>
+                        <div class="col-auto">
+                            <div class="border-start ms-3" style="height: 100%;"></div>
+                        </div>
+                        <div class="d-grid gap-2 col-1">
+                            <button type="button" class="btn btn-sm btn-primary " } onclick="Limpiar()">Deseleccionar Item</button>
                         </div>
                     </div>
-                </div>
 
-                <!-- Campo oculto para el token CSRF -->
-                <input type="hidden" id="csrfToken" th:value="${_csrf.token}" />
+                </form>
 
-                <!-- Formulario oculto para pasar el objeto conciliacion -->
-                <input type="hidden" id="concilId" name="concilId" th:value="${conciliacion.id}" />
-
-                <div class="row">
-                    <div class="d-grid gap-2 col-2">
-                        <button th:disabled="${!p_modificar}" type="button" class="btn btn-primary" onclick="borrar()">Eliminar</button>
-                    </div>
-                    <div class="d-grid gap-2 col-2">
-                        <button th:disabled="${!p_modificar}" type="submit" class="btn btn-primary">Agregar</button>
-                    </div>
-                </div>
-
-            </form>
-
-        </div>
-        <div class="col-md-12 p-0">
-            <div class="table-responsive rounded border-primary">
-                <h2>Cuentas registradas</h2>
-                <table id="example" class="table table-striped table-hover text-center table-bordered table-sm" width="100%">
-                    <thead class="bg-primary">
-                    <tr>
-                        <th>Item</th>
-                        <th style="width:50%">Cuenta</th>
-                        <th></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="val, iter : ${allCuentas}">
-                        <td th:text="${iter.count}"></td>
-                        <td th:text="${val.valor}"></td>
-                        <td>
-                            <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
-                                    th:data-id="${val.id}"
-                                    th:data-valor="${val.valor}"
-                                    onclick="cargarCampos(this)">Seleccionar</button>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
             </div>
-            <div class="row" th:if="${last != 0}">
-                <div class="col-md-4 text-left">
-                    <nav arial-label="Pagination">
-                        <ul class="pagination">
-                            <li class="page-item" th:classappend="${prev == 0 ? 'disabled' : ''}">
-                                <a class="page-link"
-                                   th:href="@{/parametric/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${prev},dir=${directory},vId=${vId})}">Anterior</a>
-                            </li>
-                            <li class="page-item" th:classappend="${current == last ? 'disabled' : ''}">
-                                <a class="page-link"
-                                   th:href="@{/parametric/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${next},dir=${directory},vId=${vId})}">Siguiente</a>
-                            </li>
-                        </ul>
-                    </nav>
+            <div class="col-md-12 p-0">
+                <div class="table-responsive rounded border-primary">
+                    <h2>Cuentas registradas</h2>
+                    <table id="example" class="table table-striped table-hover text-center table-bordered table-sm" width="100%">
+                        <thead class="bg-primary">
+                        <tr>
+                            <th>Item</th>
+                            <th style="width:50%">Cuenta</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="val, iter : ${allCuentas}">
+                            <td th:text="${iter.count + ((current-1)*12)}"></td>
+                            <td th:text="${val.valor}"></td>
+                            <td>
+                                <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
+                                        th:data-id="${val.id}"
+                                        th:data-valor="${val.valor}"
+                                        onclick="cargarCampos(this)">Seleccionar</button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
-                <div class="col-md-4 text-center">
-                    <h6 th:utext="${registers} + ' Registros Encontrados'"></h6>
+                <div class="row" th:if="${last != 0}">
+                    <div class="col-md-4 text-left">
+                        <nav arial-label="Pagination">
+                            <ul class="pagination pagination-sm">
+                                <li class="page-item" th:classappend="${prev == 0 ? 'disabled' : ''}">
+                                    <a class="page-link"
+                                       th:href="@{/parametric/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${prev},dir=${directory},vId=${vId})}">Anterior</a>
+                                </li>
+                                <li class="page-item" th:classappend="${current == last ? 'disabled' : ''}">
+                                    <a class="page-link"
+                                       th:href="@{/parametric/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${next},dir=${directory},vId=${vId})}">Siguiente</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <h6 th:utext="${registers} + ' Registros Encontrados'"></h6>
+                    </div>
+                    <div class="col-md-4 text-right">
+                        <h6 class="mx-1" th:utext="'Página ' + ${current} + ' de ' + ${last}"></h6>
+                    </div>
                 </div>
-                <div class="col-md-4 text-right">
-                    <h6 class="mx-1" th:utext="'Página ' + ${current} + ' de ' + ${last}"></h6>
+                <div class="d-flex align-items-center justify-content-center" th:if="${filterExport != 'Original'}">
+                    <h5><span class="badge badge-pill text-light badge-info py-2 px-5">¡La Tabla se encuentra Filtrada!</span>
+                    </h5>
                 </div>
             </div>
-            <div class="d-flex align-items-center justify-content-center" th:if="${filterExport != 'Original'}">
-                <h5><span class="badge badge-pill text-light badge-info py-2 px-5">¡La Tabla se encuentra Filtrada!</span>
-                </h5>
             </div>
         </div>
-
     </div>
-</div>
 </div>
 <script>
     function cargarCampos(button) {
@@ -123,10 +128,12 @@
         // Asignar los valores a los campos del formulario
         document.querySelector("input[name='id']").value = id;
         document.querySelector("input[name='valor']").value = valor;
+        updateButtonText();
     }
 
     function Limpiar() {
         document.getElementById('miFormulario').reset();
+        updateButtonText();
     }
 </script>
 
@@ -159,6 +166,22 @@
               .fail(function(xhr, status, error) {
                   console.error("Ocurrió un error al enviar la solicitud POST: " + error);
               });
+              updateButtonText();
+    }
+
+    function updateButtonText() {
+         const idInput = document.getElementById("cuentaId");
+        const actionButton = document.getElementById("actionButton");
+
+        // Elimina espacios antes de validar
+        const value = idInput.value.trim();
+
+        // Cambia el texto según el estado del campo
+        if (value === "0") {
+            actionButton.textContent = "Agregar";
+        } else {
+            actionButton.textContent = "Modificar";
+        }
     }
 </script>
 </body>

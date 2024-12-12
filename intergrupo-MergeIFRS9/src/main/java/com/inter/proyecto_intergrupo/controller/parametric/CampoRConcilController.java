@@ -34,21 +34,37 @@ public class CampoRConcilController {
 
 
     @PostMapping(value = "/parametric/createCampoRConcil")
-    public ModelAndView createCampoRConcil(@ModelAttribute CampoRConcil campoRC,
+    public ModelAndView createCampoRConcil(@ModelAttribute CampoRConcil campoNuevo,
                                             @RequestParam(name = "crouteId") String crouteId,
                                             @RequestParam(name = "longitud") String longitud,
                                             BindingResult bindingResult){
         ModelAndView modelAndView = new ModelAndView("redirect:/parametric/fieldLoadingConciliationRoute/" + crouteId);
         if(longitud!=null && longitud.length()>0 ){
-            campoRC.setLongitud(longitud);
+            campoNuevo.setLongitud(longitud);
         }
         else {
-            campoRC.setLongitud("MAX");
+            campoNuevo.setLongitud("MAX");
         }
         ConciliationRoute route = conciliationRouteService.findById(Integer.parseInt(crouteId));
-        campoRC.setRutaConciliacion(route);
-        campoRConcilService.modificar(campoRC);
-        campoRConcilService.recreateTable(route);
+        campoNuevo.setRutaConciliacion(route);
+        List<CampoRConcil> campoBusqueda= campoRConcilService.findCamposByRutaConcilVsNombre(Integer.parseInt(crouteId),campoNuevo.getNombre());
+        CampoRConcil campoAntiguo= campoRConcilService.findById(campoNuevo.getId());
+        System.out.println("Nuevo-> ID:"+campoNuevo.getId()+" - NOM:"+campoNuevo.getNombre());
+        if(campoAntiguo!=null)
+            System.out.println("Antiguo-> ID:"+campoAntiguo.getId()+" - NOM:"+campoAntiguo.getNombre());
+        else
+            System.out.println("Antiguo-> ID:Vacio - NOM:Vacio");
+        if(!campoBusqueda.isEmpty())
+            System.out.println("Busqueda-> ID:"+campoBusqueda.get(0).getId()+" - NOM:"+campoBusqueda.get(0).getNombre());
+        else
+            System.out.println("Busqueda-> ID:Vacio - NOM:Vacio");
+        if((campoBusqueda.isEmpty() && campoNuevo.getId()==0) ||
+        (campoAntiguo!=null && campoAntiguo.getId() == campoNuevo.getId() && campoAntiguo.getNombre().equalsIgnoreCase(campoNuevo.getNombre()) && campoNuevo.getId()!=0) ||
+        (campoAntiguo!=null && campoAntiguo.getId() == campoNuevo.getId() && !campoAntiguo.getNombre().equalsIgnoreCase(campoNuevo.getNombre()) && campoBusqueda.isEmpty() && campoNuevo.getId()!=0))
+        {
+            campoRConcilService.modificar(campoNuevo);
+            campoRConcilService.recreateTable(route);
+        }
         return modelAndView;
     }
 
@@ -79,6 +95,7 @@ public class CampoRConcilController {
     public ResponseEntity<?> deleteCampoRConcil(@PathVariable int id) {
         try {
             ConciliationRoute cr = campoRConcilService.findById(id).getRutaConciliacion();
+            System.out.println("ID->"+id);
             campoRConcilService.deleteById(id);
             campoRConcilService.recreateTable(cr);
             return ResponseEntity.ok().build();

@@ -83,6 +83,10 @@ public class AccountingLoadController {
                 modelAndView.addObject("period",params.get("period").toString());
                 AccountingRoute ac = accountingRouteService.findById(Integer.parseInt(params.get("arhcont").toString()));
                 modelAndView.addObject("arhcont",ac);
+                if(ac!=null && ac.getNombre()!=null)
+                    modelAndView.addObject("nomb",ac.getNombre());
+                else
+                    modelAndView.addObject("nomb","Vacio");
                 logAroutes = accountingRouteService.findAllLog(ac,params.get("period").toString());
                 aroutes = accountingRouteService.findAllData(ac,params.get("period").toString(), null, null);
                 CampoRC crc= new CampoRC();
@@ -171,12 +175,14 @@ public class AccountingLoadController {
             while (rootCause.getCause() != null) {
                 rootCause = rootCause.getCause(); // Navega a la causa raíz
             }
-            accountingRouteService.loadLogCargue(user,ac,fecha,"Trasladar Servidor","Fallido",rootCause.getMessage());
+            accountingRouteService.loadLogCargueF(user,ac,fecha,"Trasladar Servidor","Fallido",rootCause.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk-1");
         }
     }
 
-    @Scheduled(cron = "0 0/30 * * * ?")
+    //@Scheduled(cron = "0 0/30 * * * ?")
+    @Scheduled(cron = "0 * * * * ?")
+    @Transactional
     public void jobLeerArchivos() {
         LocalDateTime fechaHoy = LocalDateTime.now();
         DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");

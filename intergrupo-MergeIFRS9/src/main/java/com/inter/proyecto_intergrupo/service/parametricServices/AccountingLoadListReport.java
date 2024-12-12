@@ -41,7 +41,7 @@ public class AccountingLoadListReport {
         style.setFont(font);
 
         for (CampoRC campo :colAroutes) {
-            createCell(row, count++, campo.getNombre(), style);
+            createCell(row, count++, campo.getNombre().toUpperCase().replace("PERIODO_PRECISO","FECHA CONTABLE"), style);
         }
     }
 
@@ -74,13 +74,33 @@ public class AccountingLoadListReport {
         font.setFontHeight(10);
         style.setFont(font);
 
+        CellStyle style1 = workbook.createCellStyle();
+        style1.setFont(font);
+        style1.setDataFormat(workbook.createDataFormat().getFormat("#,##0.00"));
+
+        CellStyle style2 = workbook.createCellStyle();
+        style2.setFont(font);
+        style2.setDataFormat(workbook.createDataFormat().getFormat("#,##0"));
+
         for(Object[] data: aroutes){
             Row row = sheet.createRow(rowCount++);
             int columnCount = 0;
             for (Object part:data)
             {
-                if(part!=null)
-                    createCell(row,columnCount++,part.toString(),style);
+                if(part!=null) {
+                    try{
+                        if(colAroutes.get(columnCount).getTipo().equalsIgnoreCase("Float"))
+                            createCell(row, columnCount++, Double.parseDouble(part.toString()), style1);
+                        else if(colAroutes.get(columnCount).getTipo().equalsIgnoreCase("Integer") || colAroutes.get(columnCount).getTipo().equalsIgnoreCase("Bigint"))
+                            createCell(row, columnCount++, Long.parseLong(part.toString()), style2);
+                        else
+                            createCell(row, columnCount++, part.toString(), style);
+                    }
+                    catch (Exception e)
+                    {
+                        createCell(row, columnCount++, part.toString(), style);
+                    }
+                }
                 else
                     createCell(row,columnCount++,"",style);
                 if(columnCount == 1000000)

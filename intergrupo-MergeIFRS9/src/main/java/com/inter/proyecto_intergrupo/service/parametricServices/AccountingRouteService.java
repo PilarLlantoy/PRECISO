@@ -13,6 +13,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.*;
@@ -37,6 +38,9 @@ public class AccountingRouteService {
 
     @Autowired
     private final AccountingRouteRepository accountingRouteRepository;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     @PersistenceContext
     EntityManager entityManager;
@@ -195,14 +199,16 @@ public class AccountingRouteService {
 
 
     public String todayDateConvert(String formato,String fecha) {
-        LocalDate today = LocalDate.now();
+        LocalDate fechaHoy = LocalDate.now();
+        LocalDate today = fechaHoy.minusDays(1);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(formato);
         if(fecha.isEmpty()) {
             return today.format(formatter).replace(".","");
         }
         else
         {
-            LocalDate fechaCast = LocalDate.parse(fecha);
+            LocalDate fecha2 = LocalDate.parse(fecha);
+            LocalDate fechaCast = fecha2.minusDays(1);
             return fechaCast.format(formatter).replace(".","");
         }
     }
@@ -508,6 +514,24 @@ public class AccountingRouteService {
             e.printStackTrace();
         }
         return listTemp;
+    }
+
+    public void loadLogCargueF(User user,AccountingRoute ac, String fecha, String tipo, String estado, String mensaje)
+    {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate localDate = LocalDate.parse(fecha);
+        String usuario = "Automático";
+        Date fechaDate = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        List<Object> listTemp =findTemporal();
+        LocalDate today = LocalDate.now();
+        if(user!=null)
+            usuario=user.getUsuario();
+        if(mensaje==null || (mensaje!=null && mensaje.trim().length()==0))
+            mensaje="Sin Novedades";
+        String query="INSERT INTO preciso_log_cargues_contables(cantidad_registros,estado_proceso,fecha_cargue,fecha_preciso,novedad,tipo_proceso,usuario,id_rc)\n" +
+                "VALUES("+listTemp.size()+",'"+estado+"','"+localDate.format(formatter)+"','"+today.format(formatter)+"','"+mensaje.replace("'","")+"','"+tipo+"','"+usuario+"',"+ac.getId()+")";
+        System.out.println(query);
+        jdbcTemplate.execute(query);
     }
 
     public void loadLogCargue(User user,AccountingRoute ac, String fecha, String tipo, String estado, String mensaje)

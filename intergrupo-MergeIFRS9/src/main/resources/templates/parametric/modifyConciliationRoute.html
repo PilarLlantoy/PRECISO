@@ -10,164 +10,143 @@
 <div class="main-container">
     <div class="row m-0 bg-primary fixed-top myNav">
         <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
-            <h3 class="fw-bold text-white mx-4 my-3">Edición de Ruta de Conciliación</h3>
+            <h2 class="fw-bold text-white mx-4 my-3">Edición de Ruta de Conciliación</h2>
         </div>
     </div>
     <div id="content">
-        <div class="row mt-4 p-4">
-            <form th:object="${croute}" th:action="@{/parametric/modifyConciliationRoute}" method="POST">
-
-                <h5 class="font-weight-bold">Opciones Registro</h5>
-                <div class="row p-2 mt-1 mb-2 border rounded">
-                    <div class="col-md-2">
-                        <div class="form-group mb-1">
-                            <h6 class="font-weight-bold">Activo</h6>
-                            <input id="activoInput" name="activo" th:field="*{activo}" th:id="${activo}"
-                                   th:value="${activo}" type="checkbox" class="styled-checkbox">
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group mb-1">
-                            <h6 class="font-weight-bold">Es Fichero?</h6>
-                            <input id="ficehroInput" name="fichero" th:field="*{fichero}" th:id="${fichero}"
-                                   th:value="${fichero}" type="checkbox" class="styled-checkbox">
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group mb-1">
-                            <h6 class="font-weight-bold">Maneja Siglas de Fechas</h6>
-                            <input id="siglasFechasInput" name="siglasFechas" th:field="*{siglasFechas}"
-                                   th:value="${siglasFechas}" type="checkbox" class="styled-checkbox" onchange="toggleFields()">
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group mb-1">
-                            <!--<h6 class="font-weight-bold">Aplica Cargue Diario:</h6>
-                            <input id="cargueDiarioInput" name="cargueDiario" th:field="*{cargueDiario}" th:id="${cargueDiario}"
-                                   th:value="${cargueDiario}" type="checkbox" class="styled-checkbox">-->
-                        </div>
-                    </div>
+        <form th:object="${croute}" th:action="@{/parametric/modifyConciliationRoute}" method="POST">
+            <div class="row mt-3 pt-4 px-4">
+                <div class="text-left col-md-6">
+                    <h2 class="font-weight-bold">Información de Registro</h2>
                 </div>
-
-                <h5 class="font-weight-bold">Información Registro</h5>
-                <div class="row p-2 border rounded">
-                    <div hidden class="col-md-2">
-                        <div class="form-group mb-1">
-                            <h6 class="font-weight-bold">ID</h6>
-                            <input type="text" class="form-control" th:field="*{id}">
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group mb-1">
-                            <h6 class="font-weight-bold">Conciliación:<i class="bi bi-caret-down"></i></h6>
-                            <select class="form-control" required th:name="selectedConcil">
-                                <option disabled hidden selected value="">Seleccione una conciliación</option>
-                                <option th:each="concil : ${conciliations}" th:text="${concil.nombre}" th:value="${concil.id}"
-                                        th:selected="${croute.conciliacion != null and concil.id == croute.conciliacion.id}"></option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group mb-1">
-                            <h6 class="font-weight-bold">Detalle:</h6>
-                            <input type="text" class="form-control"  th:field="*{detalle}"  required>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group mb-1">
-                            <h6 class="font-weight-bold">Tipo Archivo:<i class="bi bi-caret-down"></i></h6>
-                            <select class="form-control" name="selectedTipoArchivo" id="tipoArchivo" required th:field="*{tipoArchivo}">
-                                <option disabled value="" selected hidden>Seleccione formato</option>
-                                <option th:value="CRCC" th:selected="${croute.tipoArchivo == 'CRCC'}">ARCHIVO CRCC</option>
-                                <option th:value="CRCC_CUIF" th:selected="${croute.tipoArchivo == 'CRCC_CUIF'}">ARCHIVO CRCC_CUIF</option>
-                                <option th:value="CRCC_NIIF" th:selected="${croute.tipoArchivo == 'CRCC_NIIF'}">ARCHIVO CRCC_NIIF</option>
-                                <option th:value="DIALOGO" th:selected="${croute.tipoArchivo == 'DIALOGO'}">ARCHIVO DIALOGO</option>
-                                <option th:value="DIALOGO_CUIF" th:selected="${croute.tipoArchivo == 'DIALOGO_CUIF'}">ARCHIVO DIALOGO_CUIF</option>
-                                <option th:value="DIALOGO_NIIF" th:selected="${croute.tipoArchivo == 'DIALOGO_NIIF'}">ARCHIVO DIALOGO_NIIF</option>
-                                <option th:value="XLS" th:selected="${croute.tipoArchivo == 'XLS'}">ARCHIVO EXCEL XLS</option>
-                                <option th:value="XLSX" th:selected="${croute.tipoArchivo == 'XLSX'}">ARCHIVO EXCEL XLSX</option>
-                                <option th:value="CSV" th:selected="${croute.tipoArchivo == 'CSV'}">ARCHIVO PLANO CSV</option>
-                                <option th:value="TXT" th:selected="${croute.tipoArchivo == 'TXT'}">ARCHIVO PLANO TXT</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group mb-1">
-                            <h6 class="font-weight-bold">Nombre Archivo:</h6>
-                            <input type="text" class="form-control"  th:field="*{nombreArchivo}"  required>
-                        </div>
-                    </div>
-                    <div class="col-md-8">
-                        <div class="form-group">
-                            <h6 class="font-weight-bold">Ruta: </h6>
-                            <input type="text" class="form-control"  th:field="*{ruta}"  required>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group mb-1">
-                            <h6 class="font-weight-bold">Delimitador:</h6>
-                            <input type="text" class="form-control"  th:field="*{delimitador}">
-
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group mb-1">
-                            <h6 class="font-weight-bold">Hora Ejecución:</h6>
-                            <input type="time" class="form-control" th:id="selecthoraCargue" th:name="selecthoraCargue" th:value="${selecthoraCargue}" required>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group mb-1">
-                            <h6 class="font-weight-bold">Filas Omitidas:</h6>
-                            <input type="number" class="form-control"  th:field="*{filasOmitidas}" required>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group mb-1">
-                        </div>
-                    </div>
-
-                    <div class="col-md-4 hidden" id="formatoFechaContainer">
-                        <div class="form-group mb-1">
-                            <h6 class="font-weight-bold">Formato Fecha:<i class="bi bi-caret-down"></i></h6>
-                            <select class="form-control" name="selectedFormatoFecha" id="formatoFecha" th:field="*{formatoFecha}" required>
-                                <option disabled value="" selected hidden>Seleccione formato</option>
-                                <option value="yyyyMMdd">AÑO MES DIA CORTA (YYYYMMDD)</option>
-                                <option value="yyMMdd">AÑO MES DIA RED (YYMMDD)</option>
-                                <option value="ddMMyyyy">DIA MES AÑO CORTA (DDMMYYYY)</option>
-                                <option value="ddMMyy">DIA MES AÑO RED. (DDMMYY)</option>
-                                <option value="ddMMMMyyyy">DIA MES AÑO SIMPLE (DDMMMMYYYY)</option>
-                                <option value="ddMMMyyyy">DIA MES AÑO SIMPLE (DDMMMYYYY)</option>
-                                <option value="MMddyy">MES DIA AÑO (MMDDYY)</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-4 hidden" id="idiomaFechaContainer">
-                        <div class="form-group mb-1">
-                            <h6 class="font-weight-bold">Idioma Fecha:<i class="bi bi-caret-down"></i></h6>
-                            <select class="form-control" name="selectedIdiomaFecha" id="idiomaFecha" th:field="*{idiomaFecha}" required>
-                                <option disabled value="" selected hidden>Seleccione formato</option>
-                                <option th:value="EspañolColombia">Español - Colombia</option>
-                                <option th:value="EspañolEspaña">Español - España</option>
-                                <option th:value="InglésUSA">Inglés - USA</option>
-                            </select>
-                        </div>
-                    </div>
+                <div class="text-right col-md-6">
+                    <a class="btn btn-sm btn-danger" th:href="@{/parametric/conciliationRoutes}"><i class="fa-solid fa-left-long"></i> Regresar</a>
+                    <button type="submit" class="btn btn-sm btn-primary ml-1">Modificar Ruta</button>
                 </div>
-
-
-                <div class="row pt-3 py-3">
-                    <div class="col-md-12 d-flex align-content-center justify-content-center">
-                        <div class="d-grid gap-2 col-3">
-                            <button type="submit" class="btn btn-primary">Agregar</button>
+            </div>
+            <div class="row px-4">
+                    <div class="row p-2 border rounded">
+                        <div class="col-md-1">
+                            <div class="form-group form-group-sm">
+                                <h6 class="font-weight-bold">Activo</h6>
+                                <input id="activoInput" name="activo" th:field="*{activo}" th:id="${activo}"
+                                       th:value="${activo}" type="checkbox" class="styled-checkbox">
+                            </div>
                         </div>
-                        <div class="d-grid gap-2 col-3">
-                            <a class="btn btn-danger" th:href="@{/parametric/conciliationRoutes}">Cancelar</a>
+                        <div class="col-md-1">
+                            <div class="form-group form-group-sm">
+                                <h6 class="font-weight-bold">Es Fichero?</h6>
+                                <input id="ficehroInput" name="fichero" th:field="*{fichero}" th:id="${fichero}"
+                                       th:value="${fichero}" type="checkbox" class="styled-checkbox">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group form-group-sm">
+                                <h6 class="font-weight-bold">Maneja Siglas de Fechas</h6>
+                                <input id="siglasFechasInput" name="siglasFechas" th:field="*{siglasFechas}"
+                                       th:value="${siglasFechas}" type="checkbox" class="styled-checkbox" onchange="toggleFields()">
+                            </div>
+                        </div>
+                        <div hidden class="col-md-2">
+                            <div class="form-group form-group-sm">
+                                <h6 class="font-weight-bold">ID</h6>
+                                <input type="text" class="form-control form-control-sm" th:field="*{id}">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group form-group-sm">
+                                <h6 class="font-weight-bold">Conciliación:<i class="bi bi-caret-down"></i></h6>
+                                <select class="form-control form-control-sm" required th:name="selectedConcil">
+                                    <option disabled hidden selected value="">Seleccione una conciliación</option>
+                                    <option th:each="concil : ${conciliations}" th:text="${concil.nombre}" th:value="${concil.id}"
+                                            th:selected="${croute.conciliacion != null and concil.id == croute.conciliacion.id}"></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group form-group-sm">
+                                <h6 class="font-weight-bold">Detalle:</h6>
+                                <input type="text" class="form-control form-control-sm"  th:field="*{detalle}"  required>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group form-group-sm">
+                                <h6 class="font-weight-bold">Tipo Archivo:<i class="bi bi-caret-down"></i></h6>
+                                <select class="form-control form-control-sm" name="selectedTipoArchivo" id="tipoArchivo" required th:field="*{tipoArchivo}">
+                                    <option disabled value="" selected hidden>Seleccione formato</option>
+                                    <option th:value="CRCC" th:selected="${croute.tipoArchivo == 'CRCC'}">ARCHIVO CRCC</option>
+                                    <option th:value="CRCC_CUIF" th:selected="${croute.tipoArchivo == 'CRCC_CUIF'}">ARCHIVO CRCC_CUIF</option>
+                                    <option th:value="CRCC_NIIF" th:selected="${croute.tipoArchivo == 'CRCC_NIIF'}">ARCHIVO CRCC_NIIF</option>
+                                    <option th:value="DIALOGO" th:selected="${croute.tipoArchivo == 'DIALOGO'}">ARCHIVO DIALOGO</option>
+                                    <option th:value="DIALOGO_CUIF" th:selected="${croute.tipoArchivo == 'DIALOGO_CUIF'}">ARCHIVO DIALOGO_CUIF</option>
+                                    <option th:value="DIALOGO_NIIF" th:selected="${croute.tipoArchivo == 'DIALOGO_NIIF'}">ARCHIVO DIALOGO_NIIF</option>
+                                    <option th:value="XLS" th:selected="${croute.tipoArchivo == 'XLS'}">ARCHIVO EXCEL XLS</option>
+                                    <option th:value="XLSX" th:selected="${croute.tipoArchivo == 'XLSX'}">ARCHIVO EXCEL XLSX</option>
+                                    <option th:value="CSV" th:selected="${croute.tipoArchivo == 'CSV'}">ARCHIVO PLANO CSV</option>
+                                    <option th:value="TXT" th:selected="${croute.tipoArchivo == 'TXT'}">ARCHIVO PLANO TXT</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group form-group-sm">
+                                <h6 class="font-weight-bold">Nombre Archivo:</h6>
+                                <input type="text" class="form-control form-control-sm"  th:field="*{nombreArchivo}"  required>
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <h6 class="font-weight-bold">Ruta: </h6>
+                                <input type="text" class="form-control form-control-sm"  th:field="*{ruta}"  required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group form-group-sm">
+                                <h6 class="font-weight-bold">Delimitador:</h6>
+                                <input type="text" class="form-control form-control-sm"  th:field="*{delimitador}">
+
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group form-group-sm">
+                                <h6 class="font-weight-bold">Hora Ejecución:</h6>
+                                <input type="time" class="form-control form-control-sm" th:id="selecthoraCargue" th:name="selecthoraCargue" th:value="${selecthoraCargue}" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group form-group-sm">
+                                <h6 class="font-weight-bold">Filas Omitidas:</h6>
+                                <input type="number" class="form-control form-control-sm"  th:field="*{filasOmitidas}" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4 hidden" id="formatoFechaContainer">
+                            <div class="form-group form-group-sm">
+                                <h6 class="font-weight-bold">Formato Fecha:<i class="bi bi-caret-down"></i></h6>
+                                <select class="form-control form-control-sm" name="selectedFormatoFecha" id="formatoFecha" th:field="*{formatoFecha}" required>
+                                    <option disabled value="" selected hidden>Seleccione formato</option>
+                                    <option value="yyyyMMdd">AÑO MES DIA CORTA (YYYYMMDD)</option>
+                                    <option value="yyMMdd">AÑO MES DIA RED (YYMMDD)</option>
+                                    <option value="ddMMyyyy">DIA MES AÑO CORTA (DDMMYYYY)</option>
+                                    <option value="ddMMyy">DIA MES AÑO RED. (DDMMYY)</option>
+                                    <option value="ddMMMMyyyy">DIA MES AÑO SIMPLE (DDMMMMYYYY)</option>
+                                    <option value="ddMMMyyyy">DIA MES AÑO SIMPLE (DDMMMYYYY)</option>
+                                    <option value="MMddyy">MES DIA AÑO (MMDDYY)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4 hidden" id="idiomaFechaContainer">
+                            <div class="form-group form-group-sm">
+                                <h6 class="font-weight-bold">Idioma Fecha:<i class="bi bi-caret-down"></i></h6>
+                                <select class="form-control form-control-sm" name="selectedIdiomaFecha" id="idiomaFecha" th:field="*{idiomaFecha}" required>
+                                    <option disabled value="" selected hidden>Seleccione formato</option>
+                                    <option th:value="EspañolColombia">Español - Colombia</option>
+                                    <option th:value="EspañolEspaña">Español - España</option>
+                                    <option th:value="InglésUSA">Inglés - USA</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </form>
-        </div>
+            </div>
+        </form>
     </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"

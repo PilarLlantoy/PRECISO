@@ -588,9 +588,29 @@ public class ConciliationRouteService {
                 query.setParameter(1, value );
                 list= query.getResultList();
                 break;
+            case "Nombre":
+                Query query1 = entityManager.createNativeQuery("SELECT em.* FROM preciso_rutas_conciliaciones as em WHERE em.detalle = ?", ConciliationRoute.class);
+                query1.setParameter(1, value );
+                list= query1.getResultList();
+                break;
+            case "Archivo":
+                Query query2 = entityManager.createNativeQuery("SELECT em.* FROM preciso_rutas_conciliaciones as em WHERE em.nombre_archivo = ?", ConciliationRoute.class);
+                query2.setParameter(1, value );
+                list= query2.getResultList();
+                break;
+            case "Ruta de Acceso":
+                Query query4 = entityManager.createNativeQuery("SELECT em.* FROM preciso_rutas_conciliaciones as em WHERE em.ruta = ?", ConciliationRoute.class);
+                query4.setParameter(1, value );
+                list= query4.getResultList();
+                break;
+            case "Tipo Archivo":
+                Query query5 = entityManager.createNativeQuery("SELECT em.* FROM preciso_rutas_conciliaciones as em WHERE em.tipo_archivo = ?", ConciliationRoute.class);
+                query5.setParameter(1, value );
+                list= query5.getResultList();
+                break;
             case "Estado":
                 Boolean valor = true;
-                if ("inactivo".equalsIgnoreCase(value)) valor = false;
+                if (value.substring(0,1).equalsIgnoreCase("i")) valor = false;
                 Query query3 = entityManager.createNativeQuery(
                         "SELECT em.* FROM preciso_rutas_conciliaciones as em WHERE em.activo = ?", ConciliationRoute.class);
                 query3.setParameter(1, valor);

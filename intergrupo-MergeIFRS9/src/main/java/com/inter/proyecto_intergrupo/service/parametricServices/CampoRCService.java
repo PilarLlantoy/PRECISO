@@ -2,6 +2,7 @@ package com.inter.proyecto_intergrupo.service.parametricServices;
 
 import com.inter.proyecto_intergrupo.model.parametric.AccountingRoute;
 import com.inter.proyecto_intergrupo.model.parametric.CampoRC;
+import com.inter.proyecto_intergrupo.model.parametric.CampoRConcil;
 import com.inter.proyecto_intergrupo.repository.admin.AuditRepository;
 import com.inter.proyecto_intergrupo.repository.parametric.CampoRCRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,6 +105,14 @@ public class CampoRCService {
         Query query = entityManager.createNativeQuery(
                 "SELECT id_campo, nombre FROM preciso_campos_rc WHERE id_rc = :idRCont");
         query.setParameter("idRCont", idRCont);
+        return query.getResultList();
+    }
+
+    public List<CampoRC> findCamposByRutaVsNombre(int idRC, String nombre) {
+        Query query = entityManager.createNativeQuery(
+                "SELECT * FROM preciso_campos_rc WHERE id_rc = :idRC AND nombre = :nombre ",CampoRC.class);
+        query.setParameter("idRC", idRC);
+        query.setParameter("nombre", nombre);
         return query.getResultList();
     }
 

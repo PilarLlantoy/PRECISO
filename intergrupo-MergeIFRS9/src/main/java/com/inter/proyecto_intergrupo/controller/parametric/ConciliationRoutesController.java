@@ -33,7 +33,7 @@ import java.util.stream.IntStream;
 public class ConciliationRoutesController {
     private static final int PAGINATIONCOUNT=12;
     Logger logger = LogManager.getLogger(LogManager.ROOT_LOGGER_NAME);
-    private List<String> listColumns=List.of("Conciliación", "Estado");
+    private List<String> listColumns=List.of("Conciliación","Nombre","Archivo","Ruta de Acceso","Tipo Archivo","Estado");
 
     @Autowired
     private UserService userService;

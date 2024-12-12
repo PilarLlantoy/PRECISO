@@ -59,7 +59,7 @@ public class CampoRConcilService {
 
         for (int i = 0; i < data.getCampos().size(); i++) {
             CampoRConcil column = data.getCampos().get(i);
-            createTableQuery.append(column.getNombre())
+            createTableQuery.append("["+column.getNombre()+"]")
                     .append(" ")
                     .append(column.getTipo());
 
@@ -99,6 +99,14 @@ public class CampoRConcilService {
         Query query = entityManager.createNativeQuery(
                 "SELECT id_campo, nombre FROM preciso_campos_rconcil WHERE id_rconcil = :idRConcil");
         query.setParameter("idRConcil", idRConcil);
+        return query.getResultList();
+    }
+
+    public List<CampoRConcil> findCamposByRutaConcilVsNombre(int idRConcil,String nombre) {
+        Query query = entityManager.createNativeQuery(
+                "SELECT * FROM preciso_campos_rconcil WHERE id_rconcil = :idRConcil AND nombre = :nombre ",CampoRConcil.class);
+        query.setParameter("idRConcil", idRConcil);
+        query.setParameter("nombre", nombre);
         return query.getResultList();
     }
 
