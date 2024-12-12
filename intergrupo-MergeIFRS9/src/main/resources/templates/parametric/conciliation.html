@@ -15,25 +15,25 @@
         <div class="col-md-6 d-flex align-items-center justify-content-end pe-5">
             <form class="form-inline" method="get" th:action="@{/parametric/searchConciliations}">
                 <div class="input-group">
-                    <input class="form-control text-dark" placeholder="Buscar..." required th:name="vId" type="text">
-                    <div class="input-group-append">
-                        <select class="form-control" required th:name="vFilter">
+                    <input class="form-control form-control-sm text-dark" placeholder="Buscar..." required th:name="vId" type="text">
+                    <div class="input-group-append input-group-append-sm">
+                        <select class="form-control form-control-sm" required th:name="vFilter">
                             <option disabled hidden selected value="">Seleccione un filtro</option>
                             <option th:each="item : ${columns}" th:text="${item}" th:value="${item}"></option>
                         </select>
                     </div>
-                    <div class="input-group-append d-flex align-items-center">
-                        <button class="btn btn-secondary" type="submit"><i class="fa fa-search"></i></button>
-                        <a class="btn btn-secondary" th:href="@{/parametric/conciliation}"><i class="fas fa-window-close"></i></a>
+                    <div class="input-group-append input-group-append-sm d-flex align-items-center">
+                        <button class="btn btn-sm btn-secondary" type="submit"><i class="fa fa-search"></i></button>
+                        <a class="btn btn-sm btn-secondary" th:href="@{/parametric/conciliation}"><i class="fas fa-window-close"></i></a>
                     </div>
                 </div>
             </form>
         </div>
     </div>
     <div class="row m-0 px-4 mt-5">
-        <div class="text-right pr-3 col-md-12 my-3">
-            <a class="btn btn-primary mx-1" th:href="@{/parametric/conciliation}"><i class="fas fa-redo-alt"></i></a>
-            <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1" th:onclick="|window.location.href='@{/parametric/createConciliation}'|">Crear Conciliacion</button>
+        <div class="text-right col-md-12 mt-1">
+            <a class="btn btn-sm btn-primary mx-1" th:href="@{/parametric/conciliation}"><i class="fas fa-redo-alt"></i></a>
+            <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1" th:onclick="|window.location.href='@{/parametric/createConciliation}'|">Crear Conciliacion</button>
         </div>
         <div class="col-md-12 p-0">
             <div class="table-responsive rounded border-primary">
@@ -62,11 +62,11 @@
                         <td th:if="${concil.festivo == false}">Inactivo</td>
                         <td th:text="${concil.sfc.nombre}"></td>
                         <td>
-                            <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
+                            <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
                                     th:onclick="|window.location.href='@{/parametric/modifyConciliation/{id}(id=${concil.id})}'|">Editar</button>
                         </td>
                         <td>
-                            <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
+                            <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
                                     th:onclick="|window.location.href='@{/parametric/accountsConciliation/{id}(id=${concil.id})}'|">Cuentas</button>
                         </td>
                     </tr>
@@ -76,7 +76,7 @@
             <div class="row" th:if="${last != 0}">
                 <div class="col-md-4 text-left">
                     <nav arial-label="Pagination">
-                        <ul class="pagination">
+                        <ul class="pagination pagination-sm">
                             <li class="page-item" th:classappend="${prev == 0 ? 'disabled' : ''}">
                                 <a class="page-link"
                                    th:href="@{/admin/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${prev},dir=${directory},vId=${vId})}">Anterior</a>
@@ -96,12 +96,12 @@
                 </div>
             </div>
             <div class="d-flex align-items-center justify-content-center" th:if="${filterExport != 'Original'}">
-                <h5><span class="badge badge-pill text-light badge-info py-2 px-5">¡La Tabla se encuentra Filtrada!</span>
+                <h5><span class="badge badge-pill text-light badge-info badge-sm ">¡La Tabla se encuentra Filtrada!</span>
                 </h5>
             </div>
             <!--
             <div class="d-flex align-items-center justify-content-center">
-                <a th:href="@{/admin/users/download/?vFilter={vFilter}&vId={vId}(vFilter=${vFilter},vId=${vId})}" class="btn btn-primary">Exportar a Excel</a>
+                <a th:href="@{/admin/users/download/?vFilter={vFilter}&vId={vId}(vFilter=${vFilter},vId=${vId})}" class="btn btn-sm btn-primary">Exportar a Excel</a>
             </div>
             -->
         </div>
