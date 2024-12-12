@@ -44,11 +44,11 @@ public class InventoryLoadController {
     private static final int PAGINATIONCOUNT=5;
     private static final int PAGINATIONCOUNTDATA=500;
     Logger logger = LogManager.getLogger(LogManager.ROOT_LOGGER_NAME);
-    private static final String rutaArchivoFormato = "\\\\co.igrupobbva\\svrfilesystem\\BBVA_VIC06\\DP10\\Preciso\\archivo.fmt";
-    private static final String rutaArchivoFormato1 = "\\\\co.igrupobbva\\svrfilesystem\\BBVA_VIC06\\DP10\\Preciso\\";
+    //private static final String rutaArchivoFormato = "\\\\co.igrupobbva\\svrfilesystem\\BBVA_VIC06\\DP10\\Preciso\\archivo.fmt";
+    //private static final String rutaArchivoFormato1 = "\\\\co.igrupobbva\\svrfilesystem\\BBVA_VIC06\\DP10\\Preciso\\";
 
-    //private static final String rutaArchivoFormato = "D:\\archivo.fmt";
-    //private static final String rutaArchivoFormato1 = "D:\\";
+    private static final String rutaArchivoFormato = "D:\\archivo.fmt";
+    private static final String rutaArchivoFormato1 = "D:\\";
 
     @Autowired
     private UserService userService;
@@ -88,6 +88,10 @@ public class InventoryLoadController {
 
                 ConciliationRoute cr = conciliationRouteService.findById(Integer.parseInt(params.get("arhcont").toString()));
                 modelAndView.addObject("arhcont",cr);
+                if(cr!=null && cr.getDetalle()!=null)
+                    modelAndView.addObject("nomb",cr.getDetalle());
+                else
+                    modelAndView.addObject("nomb","Vacio");
 
                 Conciliation con = conciliationService.findById(Integer.parseInt(params.get("selectedConciliacion").toString()));
                 modelAndView.addObject("selectedConciliacion",con);

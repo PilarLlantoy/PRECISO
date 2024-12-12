@@ -196,12 +196,23 @@ public class AccountingRouteService {
         }
     }
 
+    public Locale convertRegion(String idioma)
+    {
+        Locale locale;
+        switch (idioma) {
+            case "InglésUSA":
+                locale = Locale.ENGLISH;
+                break;
+            default:
+                locale = new Locale("es", "ES");
+        }
+        return locale;
+    }
 
-
-    public String todayDateConvert(String formato,String fecha) {
+    public String todayDateConvert(String formato,String fecha,String idioma) {
         LocalDate fechaHoy = LocalDate.now();
         LocalDate today = fechaHoy.minusDays(1);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(formato);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(formato,convertRegion(idioma));
         if(fecha.isEmpty()) {
             return today.format(formatter).replace(".","");
         }
@@ -214,7 +225,7 @@ public class AccountingRouteService {
     }
 
     public void importXlsx(AccountingRoute data, String ruta,String fecha, String fuente) throws PersistenceException, IOException {
-        String fichero=ensureTrailingSlash(data.getRuta()) + data.getNombreArchivo() + todayDateConvert(data.getFormatoFecha(),fecha) + data.getComplementoArchivo() +"."+ data.getTipoArchivo();
+        String fichero=ensureTrailingSlash(data.getRuta()) + data.getNombreArchivo() + todayDateConvert(data.getFormatoFecha(),fecha,data.getIdiomaFecha()) + data.getComplementoArchivo() +"."+ data.getTipoArchivo();
         if(fuente !=null)
             fichero=fuente;
         if (fichero != null && !fichero.isEmpty()) {
@@ -281,7 +292,7 @@ public class AccountingRouteService {
         if(delimitador.equalsIgnoreCase(""))
             complement="FORMATFILE = '" + ruta + "', ROWTERMINATOR = '\\r\\n', FIRSTROW = " + data.getFilasOmitidas();
 
-        String fichero=ensureTrailingSlash(data.getRuta()) + data.getNombreArchivo() + todayDateConvert(data.getFormatoFecha(),fecha) + data.getComplementoArchivo() + extension;
+        String fichero=ensureTrailingSlash(data.getRuta()) + data.getNombreArchivo() + todayDateConvert(data.getFormatoFecha(),fecha,data.getIdiomaFecha()) + data.getComplementoArchivo() + extension;
         if(fuente !=null)
             fichero=fuente;
 

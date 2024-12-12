@@ -250,17 +250,30 @@ public class ConciliationRouteService {
         }
         return path;
     }
+    public Locale convertRegion(String idioma)
+    {
+        Locale locale;
+        switch (idioma) {
+            case "InglésUSA":
+                locale = Locale.ENGLISH;
+                break;
+            default:
+                locale = new Locale("es", "ES");
+        }
+        return locale;
+    }
 
-    public String todayDateConvert(String formato,String fecha) {
-        System.out.println(formato+" - "+fecha);
-        LocalDate today = LocalDate.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(formato);
+    public String todayDateConvert(String formato,String fecha,String idioma) {
+        LocalDate fechaHoy = LocalDate.now();
+        LocalDate today = fechaHoy.minusDays(1);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(formato,convertRegion(idioma));
         if(fecha.isEmpty()) {
             return today.format(formatter).replace(".","");
         }
         else
         {
-            LocalDate fechaCast = LocalDate.parse(fecha);
+            LocalDate fecha2 = LocalDate.parse(fecha);
+            LocalDate fechaCast = fecha2.minusDays(1);
             return fechaCast.format(formatter).replace(".","");
         }
     }
@@ -308,7 +321,7 @@ public class ConciliationRouteService {
     }
 
     public void importXlsx(ConciliationRoute data, String ruta,String fecha, String fuente) throws PersistenceException, IOException {
-        String fichero=ensureTrailingSlash(data.getRuta()) + data.getNombreArchivo() + todayDateConvert(data.getFormatoFecha(),fecha) +"."+ data.getTipoArchivo();
+        String fichero=ensureTrailingSlash(data.getRuta()) + data.getNombreArchivo() + todayDateConvert(data.getFormatoFecha(),fecha,data.getIdiomaFecha()) +"."+ data.getTipoArchivo();
         if(fuente !=null)
             fichero=fuente;
         if (fichero != null && !fichero.isEmpty()) {
@@ -438,7 +451,7 @@ public class ConciliationRouteService {
 
         String fechaConvert="";
         if(data.isSiglasFechas()==true)
-            fechaConvert=todayDateConvert(data.getFormatoFecha(),fecha);
+            fechaConvert=todayDateConvert(data.getFormatoFecha(),fecha,data.getIdiomaFecha());
         String fichero=ensureTrailingSlash(data.getRuta()) + data.getNombreArchivo() + fechaConvert + extension;
         if(fuente !=null)
             fichero=fuente;
