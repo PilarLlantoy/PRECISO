@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -79,10 +81,11 @@ public class ConditionsEventMatrixController {
             modelAndView.addObject("filterExport","Original");
             modelAndView.addObject("directory","country");
             modelAndView.addObject("registers",condiciones.size());
+            modelAndView.addObject("allCondiciones",pageEventMatrix.getContent());
+
             modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.addObject("p_modificar", p_modificar);
-
 
             CondicionEventMatrix condicion = new CondicionEventMatrix();
             modelAndView.addObject("condicion",condicion);
@@ -105,6 +108,17 @@ public class ConditionsEventMatrixController {
             modelAndView.setViewName("admin/errorMenu");
         }
         return modelAndView;
+    }
+
+    @DeleteMapping("/parametric/deleteCondicionME/{id}")
+    public ResponseEntity<?> deleteCondicionME(@PathVariable int id) {
+        try {
+            condicionMEService.deleteById(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al eliminar el registro");
+        }
     }
 
 

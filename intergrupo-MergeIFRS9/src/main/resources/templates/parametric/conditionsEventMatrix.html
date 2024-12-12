@@ -35,7 +35,7 @@
                     <div hidden class="col-md-2">
                         <div class="form-group mb-1">
                             <h6 class="font-weight-bold">ID</h6>
-                            <input type="text" class="form-control" th:field="*{id}">
+                            <input id="idInput" type="text" class="form-control" th:field="*{id}">
                         </div>
                     </div>
                     <div class="col-md-2">
@@ -92,12 +92,16 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="event : ${allEvents}">
-                        <td th:text="${event.campo.nombre}"></td>
-                        <td th:text="${event.condicion}"></td>
-                        <td th:text="${event.valorCondicion}"></td>
+                    <tr th:each="cond : ${allCondiciones}">
+                        <td th:text="${cond.campo.nombre}"></td>
+                        <td th:text="${cond.condicion}"></td>
+                        <td th:text="${cond.valorCondicion}"></td>
                         <td>
                             <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
+                                    th:data-id="${cond.id}"
+                                    th:data-campo="${cond.campo.nombre}"
+                                    th:data-condicion="${cond.condicion}"
+                                    th:data-valorCondicion="${cond.valorCondicion}"
                                     onclick="cargarCampos(this)">Seleccionar</button>
                         </td>
                     </tr>
@@ -139,6 +143,7 @@
     function cargarCampos(button) {
         var id = button.getAttribute("data-id");
         var campo = button.getAttribute("data-campo");
+        var operacion = button.getAttribute("data-condicion");
         var valorCondicion = button.getAttribute("data-valorCondicion");
 
         // Asignar los valores a los campos del formulario
@@ -148,7 +153,14 @@
         var selectCampo = document.querySelector("select[name='selectedCampo']");
         var options = selectCampo.options;
 
+        var selectOperacion = document.querySelector("select[name='selectedOperacion']");
+        selectOperacion.value = operacion; // Asigna el valor directamente
+        if (!selectOperacion.querySelector('option[value="' + operacion + '"]')) {
+            console.error("El valor '" + operacion + "' no está en las opciones del select.");
+        }
+
         // Buscar la opción con el texto que coincide con 'campo'
+
         for (var i = 0; i < options.length; i++) {
             if (options[i].text.trim() === campo.trim()) {
                 selectCampo.value = options[i].value; // Establece el valor de la opción encontrada
@@ -157,20 +169,21 @@
         }
         updateButtonText();
     }
+
     function Limpiar() {
         document.getElementById('miFormulario').reset();
         updateButtonText();
     }
+
     function descartar() {
+        console.log("AYUDA");
         const id = document.querySelector("input[name='id']").value;
-        const selectCampo = document.querySelector("select[name='selectedCampo']").value;
-        const valorCondicion = document.querySelector("input[name='valorCondicion']").value;
         const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
         const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
-        const arouteId = document.getElementById('arouteId').value;
+        const matrizId = document.getElementById('matrizId').value;
 
-        if (id && selectCampo && valorCondicion) {
-            fetch(`/parametric/deleteCondicionRC/${id}`, {
+        if (id) {
+            fetch(`/parametric/deleteCondicionME/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -178,7 +191,7 @@
                 }
             }).then(response => {
                 if (response.ok) {
-                    window.location.href = `/parametric/conditionLoadingAccountingRoute/${arouteId}`;
+                    window.location.href = `/parametric/conditionsEventMatrix/${matrizId}`;
                 }
             }).catch(error => {
                 // Manejo de errores
@@ -189,7 +202,8 @@
     }
 
     function updateButtonText() {
-         const idInput = document.getElementById("idInput");
+    /*
+        const idInput = document.getElementById("idInput");
         const actionButton = document.getElementById("actionButton");
 
         // Elimina espacios antes de validar
@@ -201,6 +215,7 @@
         } else {
             actionButton.textContent = "Modificar";
         }
+        */
     }
 </script>
 </body>

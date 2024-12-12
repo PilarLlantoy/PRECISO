@@ -72,6 +72,9 @@ public class InformationCrossingController {
     @Autowired
     private InformationCrossingService informationCrossingService;
 
+    @Autowired
+    private CondicionMEService condicionMEService;
+
     @GetMapping(value="/parametric/informationCrossing")
     public ModelAndView showinformationCrossing(@RequestParam Map<String, Object> params) {
         ModelAndView modelAndView = new ModelAndView();
@@ -202,11 +205,33 @@ public class InformationCrossingController {
             //GENERAR CRUCE DE INVENTARIO
             //-----------------------------------------------------------------------------------
             for(ConciliationRoute ruta:listRoutes){
+
+                //Creamos las tablas finales vacias de cada inventario con los campos agregados
                 informationCrossingService.recreateTable(ruta,id);
-                informationCrossingService.rellenarTablaCruce(ruta,id);
-                EventMatrix matriz = eventMatrixService.findByConciliationxInventarioxTipoEvento(id, ruta.getId(),evento);
-                System.out.println(matriz.getId());
-                informationCrossingService.completarTablaCruce(ruta, id, fecha, tipoEvento, matriz);
+
+                List<EventMatrix> matrices = eventMatrixService.findByConciliationxInventarioxTipoEvento(id, ruta.getId(),evento);
+                for(EventMatrix matriz:matrices){
+
+                    //Creamos tablas temporales con la data total
+                    informationCrossingService.rellenarTablaCruce(ruta);
+
+                    //Primero veremos las condiciones
+                    List<CondicionEventMatrix> condiciones = condicionMEService.findByMatrizEvento(matriz);
+                    List<Object[]> resultados=null;
+                    if(condiciones.size()!=0)
+                        informationCrossingService.conditionData(ruta);
+
+                    //Completamos informacion general
+                    informationCrossingService.completarTablaCruce(ruta, fecha, tipoEvento, matriz);
+
+                    //Asignamos las cuentas
+
+                    //Realizamos las validaciones
+                    //recuerda corregir para las validaciones que solo sean un reemplazo de palabras
+
+                    //Agregamos estos registros a la tabla final
+
+                }
 
             }
 

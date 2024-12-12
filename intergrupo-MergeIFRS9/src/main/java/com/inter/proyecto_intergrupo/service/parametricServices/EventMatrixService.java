@@ -44,7 +44,7 @@ public class EventMatrixService {
         return eventMatrixRepository.findAllByEstadoAndConciliacionAndInventarioConciliacion(true, concil, inv);
     }
 
-    public EventMatrix findByConciliationxInventarioxTipoEvento(int idConciliation, int idInventario, int idTipoEvento) {
+    public List<EventMatrix> findByConciliationxInventarioxTipoEvento(int idConciliation, int idInventario, int idTipoEvento) {
         Query query = entityManager.createNativeQuery(
                 "SELECT * FROM preciso_matriz_eventos " +
                         "WHERE id_conciliacion = :idConciliation " +
@@ -54,12 +54,7 @@ public class EventMatrixService {
         query.setParameter("idConciliation", idConciliation);
         query.setParameter("idInventario", idInventario);
         query.setParameter("idTipoEvento", idTipoEvento);
-        try {
-            return (EventMatrix) query.getSingleResult();
-        } catch (Error e) {
-            //Mostrarle que no hay matriz asociada
-            return null;
-        }
+        return query.getResultList();
     }
 
 

@@ -139,9 +139,61 @@ public class InformationCrossingService {
     }
 
 
-    public void rellenarTablaCruce(ConciliationRoute data, int idConcil){
+    public void rellenarTablaCruce(ConciliationRoute data){
+        StringBuilder createTableQuery = new StringBuilder("CREATE TABLE ");
+        String tableName = "TEMPORAL_ci";
+        createTableQuery.append(tableName).append(" (");
+
+        // Paso 1: Agregar los campos existentes de la tabla original
+        for (int i = 0; i < data.getCampos().size(); i++) {
+            CampoRConcil column = data.getCampos().get(i);
+            createTableQuery.append(column.getNombre())
+                    .append(" ")
+                    .append(column.getTipo());
+
+            if (column.getTipo().equalsIgnoreCase("VARCHAR")) {
+                createTableQuery.append("(MAX)"); // Longitud de MAX para VARCHAR
+            }
+
+            if (i < data.getCampos().size() - 1) {
+                createTableQuery.append(", ");
+            }
+        }
+
+        // Paso 2: Agregar los nuevos campos específicos
+        if (!data.getCampos().isEmpty()) {
+            createTableQuery.append(", ");
+        }
+
+        createTableQuery.append("INVENTARIO VARCHAR(MAX), ")
+                .append("ID_INVENTARIO INT, ")
+                .append("FECHA_CONCILIACION DATE, ")
+                .append("TIPO_EVENTO VARCHAR(MAX), ")
+                .append("CDGO_MATRIZ_EVENTO INT, ")
+                .append("CENTRO_CONTABLE VARCHAR(MAX), ")
+                .append("CUENTA_CONTABLE_1 VARCHAR(MAX), ")
+                .append("DIVISA_CUENTA_1 VARCHAR(MAX), ")
+                .append("VALOR_CUENTA_1 FLOAT, ")
+                .append("CUENTA_CONTABLE_2 VARCHAR(MAX), ")
+                .append("DIVISA_CUENTA_2 VARCHAR(MAX), ")
+                .append("VALOR_CUENTA_2 FLOAT");
+
+        // *** Cerrar la definición de la tabla ***
+        createTableQuery.append(");"); // Cerramos correctamente con paréntesis y punto y coma
+
+        // Validar si la tabla ya existe y eliminarla
+        String dropTableQuery = "IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '"
+                + tableName + "' AND TABLE_SCHEMA = 'dbo') " +
+                "BEGIN DROP TABLE " + tableName + "; END;";
+
+        // Ejecutar las consultas
+        Query dropTable = entityManager.createNativeQuery(dropTableQuery);
+        dropTable.executeUpdate();
+
+        Query createTable = entityManager.createNativeQuery(createTableQuery.toString());
+        createTable.executeUpdate();
+
         // Paso 3: Insertar registros desde "preciso_rc_<data.getId()>" a la nueva tabla
-        String tableName = "preciso_ci_"+idConcil+"_"+data.getId();
         String sourceTableName = "preciso_rconcil_" + data.getId();
         StringBuilder insertDataQuery = new StringBuilder("INSERT INTO ").append(tableName).append(" (");
 
@@ -174,9 +226,9 @@ public class InformationCrossingService {
         insertData.executeUpdate();
     }
 
-    public void completarTablaCruce(ConciliationRoute data, int idConcil, String fecha, EventType tipoEvento, EventMatrix matriz) {
+    public void completarTablaCruce(ConciliationRoute data, String fecha, EventType tipoEvento, EventMatrix matriz) {
         // Crear la consulta SQL para insertar los valores
-        String tableName = "preciso_ci_"+idConcil+"_"+data.getId();
+        String tableName = "TEMPORAL_ci";
         Query updateQuery = entityManager.createNativeQuery("UPDATE " +tableName+
                 " SET INVENTARIO = ?, " +
                 "    ID_INVENTARIO = ?, " +
@@ -193,6 +245,101 @@ public class InformationCrossingService {
         updateQuery.setParameter(5,matriz.getId());
         updateQuery.setParameter(6,matriz.getCentroContable());
         updateQuery.executeUpdate();
+    }
+
+
+    public void conditionData(ConciliationRoute data){
+        String nombreTabla = "TEMPORAL_ci";
+
+        Query querySelect = entityManager.createNativeQuery("SELECT\n" +
+                "\t\ta.id_campo,\n" +
+                "\t\tc.nombre,\n" +
+                "\t\ta.condicion,\n" +
+                "\t\ta.valor_condicion\t  \n" +
+                "  FROM [PRECISO].[dbo].[preciso_condiciones_matriz_evento] a\n" +
+                "  left join [PRECISO].[dbo].[preciso_matriz_eventos] b\n" +
+                "\ton a.id_matriz = b.id\n" +
+                "  left join [PRECISO].[dbo].[preciso_campos_rconcil] c\n" +
+                "\ton a.id_matriz = b.id \n" +
+                "\tand a.id_campo = c.id_campo\n" +
+                "  where b.id_inventario_conciliacion = ? \n" +
+                "    and a.estado=1 \n" +
+                "  order by a.id_campo\n");
+        querySelect.setParameter(1,data.getId());
+
+        List<Object[]> condicionesLista = querySelect.getResultList();
+        if(!condicionesLista.isEmpty()){
+            String condicion = "(";
+            String campo = condicionesLista.get(0)[2].toString();
+            for(Object[] obj : condicionesLista){
+                if(campo.equals(obj[2]) && !condicion.equals("(")){
+                    condicion = condicion + " OR ";
+                }
+                else if(!condicion.equals("(")){
+                    campo = obj[2].toString();
+                    condicion = condicion + ") AND (";
+                }
+                String operacion = null;
+                if(obj[2].equals("igual")) operacion = " = '";
+                if(obj[2].equals("noContiene")) operacion = " != '";
+                if(obj[2].equals("diferente")) operacion = " != '";
+
+                condicion=condicion+obj[1]+operacion+obj[3].toString()+"'";//nombre condicion valor ->  PE: Divisa_entrada	= COP
+            }
+
+            Query deleteSelect = entityManager.createNativeQuery("DELETE FROM "+nombreTabla+" WHERE NOT("+ condicion +"));");
+            deleteSelect.executeUpdate();
+
+        }
+
+    }
+
+    public List<Object[]> conditionDataSelect(ConciliationRoute data, int idConcil){
+        String nombreTabla = "preciso_ci_"+idConcil+"_"+data.getId();
+
+        Query querySelect = entityManager.createNativeQuery("SELECT\n" +
+                "\t\ta.id_campo,\n" +
+                "\t\tc.nombre,\n" +
+                "\t\ta.condicion,\n" +
+                "\t\ta.valor_condicion\t  \n" +
+                "  FROM [PRECISO].[dbo].[preciso_condiciones_matriz_evento] a\n" +
+                "  left join [PRECISO].[dbo].[preciso_matriz_eventos] b\n" +
+                "\ton a.id_matriz = b.id\n" +
+                "  left join [PRECISO].[dbo].[preciso_campos_rconcil] c\n" +
+                "\ton a.id_matriz = b.id \n" +
+                "\tand a.id_campo = c.id_campo\n" +
+                "  where b.id_inventario_conciliacion = ? \n" +
+                "    and a.estado=1 \n" +
+                "  order by a.id_campo\n");
+        querySelect.setParameter(1,data.getId());
+
+        List<Object[]> condicionesLista = querySelect.getResultList();
+        if(!condicionesLista.isEmpty()){
+            String condicion = "(";
+            String campo = condicionesLista.get(0)[2].toString();
+            for(Object[] obj : condicionesLista){
+                if(campo.equals(obj[2]) && !condicion.equals("(")){
+                    condicion = condicion + " OR ";
+                }
+                else if(!condicion.equals("(")){
+                    campo = obj[2].toString();
+                    condicion = condicion + ") AND (";
+                }
+                String operacion = null;
+                if(obj[2].equals("igual")) operacion = " = '";
+                if(obj[2].equals("noContiene")) operacion = " != '";
+                if(obj[2].equals("diferente")) operacion = " != '";
+
+                condicion=condicion+obj[1]+operacion+obj[3].toString()+"'";//nombre condicion valor ->  PE: Divisa_entrada	= COP
+            }
+
+            Query query = entityManager.createNativeQuery("SELECT * FROM "+nombreTabla+" WHERE ("+ condicion +"));");
+
+            return query.getResultList();
+
+        }
+        return null;
+
     }
 
 }
