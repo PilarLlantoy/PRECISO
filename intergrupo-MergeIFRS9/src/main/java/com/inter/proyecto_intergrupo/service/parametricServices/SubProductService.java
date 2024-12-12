@@ -32,7 +32,6 @@ public class SubProductService {
 
     Logger log = LoggerFactory.getLogger(SubProductService.class);
 
-    //@Scheduled(fixedRate = 300000)
     public void loadFile() throws FileNotFoundException {
         Path path = Paths.get("C:/Users/fryda/Documents/Subproductos.txt");
         if (Files.exists(path)) {

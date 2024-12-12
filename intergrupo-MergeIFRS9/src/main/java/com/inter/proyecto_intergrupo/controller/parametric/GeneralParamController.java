@@ -1,11 +1,9 @@
 package com.inter.proyecto_intergrupo.controller.parametric;
 
 import com.inter.proyecto_intergrupo.model.admin.User;
-import com.inter.proyecto_intergrupo.model.parametric.CampoRConcil;
-import com.inter.proyecto_intergrupo.model.parametric.ConciliationRoute;
-import com.inter.proyecto_intergrupo.model.parametric.EventType;
-import com.inter.proyecto_intergrupo.model.parametric.GeneralParam;
+import com.inter.proyecto_intergrupo.model.parametric.*;
 import com.inter.proyecto_intergrupo.service.adminServices.UserService;
+import com.inter.proyecto_intergrupo.service.parametricServices.AccountingRouteService;
 import com.inter.proyecto_intergrupo.service.parametricServices.ConciliationRouteService;
 import com.inter.proyecto_intergrupo.service.parametricServices.EventTypeService;
 import com.inter.proyecto_intergrupo.service.parametricServices.GeneralParamService;
@@ -41,7 +39,7 @@ public class GeneralParamController {
     private GeneralParamService generalParamService;
 
     @Autowired
-    private ConciliationRouteService conciliationRouteService;
+    private AccountingRouteService accountingRouteService;
 
     @GetMapping(value="/parametric/generalParam")
     public ModelAndView showGeneralParam(@RequestParam Map<String, Object> params) {
@@ -53,40 +51,40 @@ public class GeneralParamController {
             List<GeneralParam> parametrics = generalParamService.findAll();
             modelAndView.addObject("allParametrics",parametrics);
 
-            List<ConciliationRoute> listCr0 = new ArrayList<>();
-            List<ConciliationRoute> crAll = conciliationRouteService.findAllActive();
+            List<AccountingRoute> listCr0 = new ArrayList<>();
+            List<AccountingRoute> crAll = accountingRouteService.findAllActive();
             if(crAll!=null)
                 listCr0=crAll;
             modelAndView.addObject("parametricsData0",listCr0);
             modelAndView.addObject("parametricsData2",listCr0);
             modelAndView.addObject("parametricsData5",listCr0);
 
-            List<CampoRConcil> listCr1 = new ArrayList<>();
-            ConciliationRoute cr1 = conciliationRouteService.findByName(parametrics.get(0).getValorUnidad());
+            List<CampoRC> listCr1 = new ArrayList<>();
+            AccountingRoute cr1 = accountingRouteService.findByName(parametrics.get(0).getValorUnidad());
             if(cr1!=null)
                 listCr1=cr1.getCampos();
             modelAndView.addObject("parametricsData1",listCr1);
 
-            List<CampoRConcil> listCr3 = new ArrayList<>();
-            ConciliationRoute cr3 = conciliationRouteService.findByName(parametrics.get(2).getValorUnidad());
+            List<CampoRC> listCr3 = new ArrayList<>();
+            AccountingRoute cr3 = accountingRouteService.findByName(parametrics.get(2).getValorUnidad());
             if(cr3!=null)
                 listCr3=cr3.getCampos();
             modelAndView.addObject("parametricsData3",listCr3);
 
-            List<CampoRConcil> listCr4 = new ArrayList<>();
-            ConciliationRoute cr4 = conciliationRouteService.findByName(parametrics.get(2).getValorUnidad());
+            List<CampoRC> listCr4 = new ArrayList<>();
+            AccountingRoute cr4 = accountingRouteService.findByName(parametrics.get(2).getValorUnidad());
             if(cr4!=null)
                 listCr4=cr4.getCampos();
             modelAndView.addObject("parametricsData4",listCr4);
 
-            List<CampoRConcil> listCr6 = new ArrayList<>();
-            ConciliationRoute cr6 = conciliationRouteService.findByName(parametrics.get(5).getValorUnidad());
+            List<CampoRC> listCr6 = new ArrayList<>();
+            AccountingRoute cr6 = accountingRouteService.findByName(parametrics.get(5).getValorUnidad());
             if(cr6!=null)
                 listCr6=cr6.getCampos();
             modelAndView.addObject("parametricsData6",listCr6);
 
-            List<CampoRConcil> listCr7 = new ArrayList<>();
-            ConciliationRoute cr7 = conciliationRouteService.findByName(parametrics.get(5).getValorUnidad());
+            List<CampoRC> listCr7 = new ArrayList<>();
+            AccountingRoute cr7 = accountingRouteService.findByName(parametrics.get(5).getValorUnidad());
             if(cr7!=null)
                 listCr7=cr7.getCampos();
             modelAndView.addObject("parametricsData7",listCr7);
@@ -113,7 +111,7 @@ public class GeneralParamController {
     @ResponseBody
     @PostMapping(value = "/parametric/generalParam/firstLevel", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Map<String, String>> searchGeneralParam(@RequestParam String dataLevel) {
-        ConciliationRoute crAll = conciliationRouteService.findByName(dataLevel);
+        AccountingRoute crAll = accountingRouteService.findByName(dataLevel);
         return crAll.getCampos().stream()
                 .map(campo -> Map.of("nombre", campo.getNombre())) // Ajusta según los campos relevantes de tu objeto.
                 .collect(Collectors.toList());

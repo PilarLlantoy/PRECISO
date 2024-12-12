@@ -49,11 +49,12 @@ import java.io.ByteArrayOutputStream;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
+import static com.inter.proyecto_intergrupo.controller.parametric.AccountingLoadController.rutaArchivoFormato1;
+
 @Controller
 public class AccountingRoutesController {
     private static final int PAGINATIONCOUNT=12;
-    private static final String rutaArchivoFormato1 = "\\\\co.igrupobbva\\svrfilesystem\\BBVA_VIC06\\DP10\\Preciso\\";
-    //private static final String rutaArchivoFormato1 = "D:\\";
+
     Logger logger = LogManager.getLogger(LogManager.ROOT_LOGGER_NAME);
     private List<String> listColumns=List.of("Nombre", "Archivo", "Ruta de Acceso", "Tipo de Archivo", "Estado");
 

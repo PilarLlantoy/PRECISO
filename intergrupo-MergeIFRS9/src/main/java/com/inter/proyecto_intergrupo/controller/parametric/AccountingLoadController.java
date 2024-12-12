@@ -7,6 +7,7 @@ import com.inter.proyecto_intergrupo.model.parametric.*;
 import com.inter.proyecto_intergrupo.service.adminServices.UserService;
 import com.inter.proyecto_intergrupo.service.parametricServices.AccountingLoadListReport;
 import com.inter.proyecto_intergrupo.service.parametricServices.AccountingRouteService;
+import com.inter.proyecto_intergrupo.service.parametricServices.JobAutoService;
 import com.inter.proyecto_intergrupo.service.parametricServices.SourceSystemService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -50,10 +51,10 @@ import java.util.stream.IntStream;
 public class AccountingLoadController {
     private static final int PAGINATIONCOUNT=5;
     private static final int PAGINATIONCOUNTDATA=500;
-    //private static final String rutaArchivoFormato = "\\\\co.igrupobbva\\svrfilesystem\\BBVA_VIC06\\DP10\\Preciso\\archivo.fmt";
-    //private static final String rutaArchivoFormato1 = "\\\\co.igrupobbva\\svrfilesystem\\BBVA_VIC06\\DP10\\Preciso\\";
-    private static final String rutaArchivoFormato = "D:\\archivo.fmt";
-    private static final String rutaArchivoFormato1 = "D:\\";
+    private static final String rutaArchivoFormato = "\\\\co.igrupobbva\\svrfilesystem\\BBVA_VIC06\\DP10\\Preciso\\archivo.fmt";
+    private static final String rutaArchivoFormato1 = "\\\\co.igrupobbva\\svrfilesystem\\BBVA_VIC06\\DP10\\Preciso\\";
+    //private static final String rutaArchivoFormato = "D:\\archivo.fmt";
+    //private static final String rutaArchivoFormato1 = "D:\\";
 
     Logger logger = LogManager.getLogger(LogManager.ROOT_LOGGER_NAME);
 
@@ -62,6 +63,9 @@ public class AccountingLoadController {
 
     @Autowired
     private AccountingRouteService accountingRouteService;
+
+    @Autowired
+    private JobAutoService jobAutoService;
 
     @Autowired
     private SourceSystemService sourceSystemService;
@@ -154,7 +158,6 @@ public class AccountingLoadController {
         User user = userService.findUserByUserName(auth.getName());
         AccountingRoute ac = accountingRouteService.findById(id);
         try {
-            Hibernate.initialize(ac.getCampos());
             accountingRouteService.createTableTemporal(ac);
             accountingRouteService.generarArchivoFormato(ac.getCampos(), rutaArchivoFormato);
             if(ac.getTipoArchivo().equalsIgnoreCase("XLS") || ac.getTipoArchivo().equalsIgnoreCase("XLSX"))
@@ -166,7 +169,7 @@ public class AccountingLoadController {
             if(ac.getValidaciones().size()!=0)
                 accountingRouteService.validationData(ac);
             accountingRouteService.copyData(ac,fecha);
-            accountingRouteService.loadLogCargue(user,ac,fecha,"Trasladar Servidor","Exitoso","");
+            jobAutoService.loadLogCargue(user,ac,fecha,"Trasladar Servidor","Exitoso","");
             return ResponseEntity.ok("Bulk1");
         }
         catch (Exception e) {
@@ -175,44 +178,8 @@ public class AccountingLoadController {
             while (rootCause.getCause() != null) {
                 rootCause = rootCause.getCause(); // Navega a la causa raíz
             }
-            accountingRouteService.loadLogCargueF(user,ac,fecha,"Trasladar Servidor","Fallido",rootCause.getMessage());
+            jobAutoService.loadLogCargue(user,ac,fecha,"Trasladar Servidor","Fallido",rootCause.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk-1");
-        }
-    }
-
-    //@Scheduled(cron = "0 0/30 * * * ?")
-    @Scheduled(cron = "0 * * * * ?")
-    @Transactional
-    public void jobLeerArchivos() {
-        LocalDateTime fechaHoy = LocalDateTime.now();
-        DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String fecha = fechaHoy.format(formato);
-
-        List<AccountingRoute> list = accountingRouteService.findByJob();
-        for (AccountingRoute ac :list)
-        {
-            try {
-                accountingRouteService.createTableTemporal(ac);
-                accountingRouteService.generarArchivoFormato(ac.getCampos(), rutaArchivoFormato);
-                if(ac.getTipoArchivo().equalsIgnoreCase("XLS") || ac.getTipoArchivo().equalsIgnoreCase("XLSX"))
-                    accountingRouteService.importXlsx(ac,rutaArchivoFormato,fecha,null);
-                else
-                    accountingRouteService.bulkImport(ac,rutaArchivoFormato,fecha,null);
-                if(ac.getCondiciones().size()!=0)
-                    accountingRouteService.conditionData(ac);
-                if(ac.getValidaciones().size()!=0)
-                    accountingRouteService.validationData(ac);
-                accountingRouteService.copyData(ac,fecha);
-                accountingRouteService.loadLogCargue(null,ac,fecha,"Automático","Exitoso","");
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-                Throwable rootCause = e;
-                while (rootCause.getCause() != null) {
-                    rootCause = rootCause.getCause(); // Navega a la causa raíz
-                }
-                accountingRouteService.loadLogCargue(null,ac,fecha,"Automático","Fallido",rootCause.getMessage());
-            }
         }
     }
 
@@ -233,9 +200,12 @@ public class AccountingLoadController {
             else
                 accountingRouteService.bulkImport(ac,rutaArchivoFormato,fecha,rutaArchivo);
             accountingRouteService.conditionData(ac);
-            accountingRouteService.validationData(ac);
+            if(ac.getCondiciones().size()!=0)
+                accountingRouteService.conditionData(ac);
+            if(ac.getValidaciones().size()!=0)
+                accountingRouteService.validationData(ac);
             accountingRouteService.copyData(ac,fecha);
-            accountingRouteService.loadLogCargue(user,ac,fecha,"Trasladar Local","Exitoso","");
+            jobAutoService.loadLogCargue(user,ac,fecha,"Trasladar Local","Exitoso","");
             return ResponseEntity.ok("Bulk1");
         }
         catch (Exception e) {
@@ -244,7 +214,7 @@ public class AccountingLoadController {
             while (rootCause.getCause() != null) {
                 rootCause = rootCause.getCause(); // Navega a la causa raíz
             }
-            accountingRouteService.loadLogCargue(user,ac,fecha,"Trasladar Local","Fallido",rootCause.getMessage());
+            jobAutoService.loadLogCargue(user,ac,fecha,"Trasladar Local","Fallido",rootCause.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk-1");
         }
     }

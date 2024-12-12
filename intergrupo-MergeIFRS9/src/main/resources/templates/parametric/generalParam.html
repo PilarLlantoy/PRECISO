@@ -22,7 +22,7 @@
                         <label class="fw-bold" th:utext="${allParametrics.get(0).unidadSecundaria}"></label>
                         <select class="form-control" name="centroContableSelect" id="centroContableSelect" required>
                             <option hidden selected th:text="${allParametrics.get(0).valorUnidad}" th:value="${allParametrics.get(0).valorUnidad}"></option>
-                            <option th:each="data : ${parametricsData0}" th:text="${data.detalle}" th:value="${data.detalle}"></option>
+                            <option th:each="data : ${parametricsData0}" th:text="${data.nombre}" th:value="${data.nombre}"></option>
                         </select>
                     </div>
                 </div>
@@ -42,7 +42,7 @@
                         <label class="fw-bold" th:utext="${allParametrics.get(2).unidadSecundaria}"></label>
                         <select class="form-control" name="cuentaContableSelect" id="cuentaContableSelect" required>
                             <option hidden selected th:text="${allParametrics.get(2).valorUnidad}" th:value="${allParametrics.get(2).valorUnidad}"></option>
-                            <option th:each="data : ${parametricsData2}" th:text="${data.detalle}" th:value="${data.detalle}"></option>
+                            <option th:each="data : ${parametricsData2}" th:text="${data.nombre}" th:value="${data.nombre}"></option>
                         </select>
                     </div>
                 </div>
@@ -71,7 +71,7 @@
                         <label class="fw-bold" th:utext="${allParametrics.get(5).unidadSecundaria}"></label>
                         <select class="form-control" name="cuentaDivisaSelect" id="cuentaDivisaSelect" required>
                             <option hidden selected th:text="${allParametrics.get(5).valorUnidad}" th:value="${allParametrics.get(5).valorUnidad}"></option>
-                            <option th:each="data : ${parametricsData5}" th:text="${data.detalle}" th:value="${data.detalle}"></option>
+                            <option th:each="data : ${parametricsData5}" th:text="${data.nombre}" th:value="${data.nombre}"></option>
                         </select>
                     </div>
                 </div>

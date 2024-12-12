@@ -10,9 +10,12 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,9 +34,11 @@ import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import java.math.BigDecimal;
 
+import static com.inter.proyecto_intergrupo.controller.parametric.AccountingLoadController.rutaArchivoFormato;
+
 
 @Service
-@Transactional
+@EnableTransactionManagement
 public class AccountingRouteService {
 
     @Autowired
@@ -41,6 +46,9 @@ public class AccountingRouteService {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    private JobAutoService jobAutoService;
 
     @PersistenceContext
     EntityManager entityManager;
@@ -147,10 +155,15 @@ public class AccountingRouteService {
 
     public void createTableTemporal(AccountingRoute data) {
         String nombreTabla = "PRECISO_TEMP_CONTABLES";
-        Query queryDrop = entityManager.createNativeQuery(
+        /*Query queryDrop = entityManager.createNativeQuery(
                 "IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '" + nombreTabla + "' AND TABLE_SCHEMA = 'dbo') " +
                         "BEGIN DROP TABLE " + nombreTabla + " END;");
-        queryDrop.executeUpdate();
+        queryDrop.executeUpdate();*/
+
+        String queryDrop = "IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '" + nombreTabla + "' AND TABLE_SCHEMA = 'dbo') " +
+                        "BEGIN DROP TABLE " + nombreTabla + " END;";
+        System.out.println("QUERY -> "+queryDrop);
+        jdbcTemplate.execute(queryDrop);
 
         StringBuilder createTableQuery = new StringBuilder("CREATE TABLE ");
         createTableQuery.append(nombreTabla).append(" (");
@@ -190,18 +203,32 @@ public class AccountingRouteService {
         createTableQuery.append(");");
 
         try {
-            entityManager.createNativeQuery(createTableQuery.toString()).executeUpdate();
+            //entityManager.createNativeQuery(createTableQuery.toString()).executeUpdate();
+            System.out.println("QUERY -> "+createTableQuery.toString());
+            jdbcTemplate.execute(createTableQuery.toString());
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    public Locale convertRegion(String idioma)
+    {
+        Locale locale;
+        switch (idioma) {
+            case "InglésUSA":
+                locale = Locale.ENGLISH;
+                break;
+            default:
+                locale = new Locale("es", "ES");
+        }
+        return locale;
+    }
 
-
-    public String todayDateConvert(String formato,String fecha) {
+    public String todayDateConvert(String formato,String fecha,String idioma) {
         LocalDate fechaHoy = LocalDate.now();
         LocalDate today = fechaHoy.minusDays(1);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(formato);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(formato,convertRegion(idioma));
         if(fecha.isEmpty()) {
             return today.format(formatter).replace(".","");
         }
@@ -214,7 +241,7 @@ public class AccountingRouteService {
     }
 
     public void importXlsx(AccountingRoute data, String ruta,String fecha, String fuente) throws PersistenceException, IOException {
-        String fichero=ensureTrailingSlash(data.getRuta()) + data.getNombreArchivo() + todayDateConvert(data.getFormatoFecha(),fecha) + data.getComplementoArchivo() +"."+ data.getTipoArchivo();
+        String fichero=ensureTrailingSlash(data.getRuta()) + data.getNombreArchivo() + todayDateConvert(data.getFormatoFecha(),fecha,data.getIdiomaFecha()) + data.getComplementoArchivo() +"."+ data.getTipoArchivo();
         if(fuente !=null)
             fichero=fuente;
         if (fichero != null && !fichero.isEmpty()) {
@@ -249,15 +276,17 @@ public class AccountingRouteService {
                 while (rows.hasNext()) {
                     Row row = rows.next();
                     if (firstRow > 1) {
-                        Query query = entityManager.createNativeQuery(sqlQuery);
-                        for (int i = 0; i < campos.size(); i++) {
-                            Cell cell = row.getCell(i);
-                            Object value = null;
-                            DataFormatter formatter = new DataFormatter();
-                            value = cell != null ? formatter.formatCellValue(cell) : null;
-                            query.setParameter(i + 1, value);
-                        }
-                        query.executeUpdate();
+                        // Usar JdbcTemplate para ejecutar la consulta con lambda
+                        jdbcTemplate.update(sqlQuery, ps -> {
+                            for (int i = 0; i < campos.size(); i++) {
+                                Cell cell = row.getCell(i);
+                                Object value = null;
+                                DataFormatter formatter = new DataFormatter();
+                                value = cell != null ? formatter.formatCellValue(cell) : null;
+                                // Establecer el parámetro correspondiente en el PreparedStatement
+                                ps.setObject(i + 1, value);
+                            }
+                        });
                     } else {
                         firstRow++;
                     }
@@ -281,14 +310,21 @@ public class AccountingRouteService {
         if(delimitador.equalsIgnoreCase(""))
             complement="FORMATFILE = '" + ruta + "', ROWTERMINATOR = '\\r\\n', FIRSTROW = " + data.getFilasOmitidas();
 
-        String fichero=ensureTrailingSlash(data.getRuta()) + data.getNombreArchivo() + todayDateConvert(data.getFormatoFecha(),fecha) + data.getComplementoArchivo() + extension;
+        String fichero=ensureTrailingSlash(data.getRuta()) + data.getNombreArchivo() + todayDateConvert(data.getFormatoFecha(),fecha,data.getIdiomaFecha()) + data.getComplementoArchivo() + extension;
         if(fuente !=null)
             fichero=fuente;
 
-        Query queryBulk = entityManager.createNativeQuery("BULK INSERT " + (nombreTabla) +
+        /*Query queryBulk = entityManager.createNativeQuery("BULK INSERT " + (nombreTabla) +
                 " FROM '" + fichero +
                 "' WITH ("+complement+ ")");
-        queryBulk.executeUpdate();
+        queryBulk.executeUpdate();*/
+
+        String queryBulk = "BULK INSERT " + (nombreTabla) +
+                " FROM '" + fichero +
+                "' WITH ("+complement+ ")";
+
+        System.out.println("QUERY -> "+queryBulk);
+        jdbcTemplate.execute(queryBulk);
     }
 
     public void conditionData(AccountingRoute data){
@@ -312,8 +348,12 @@ public class AccountingRouteService {
                 condicion=condicion+obj[2]+" = '"+obj[0].toString()+"'";
             }
 
-            Query deleteSelect = entityManager.createNativeQuery("DELETE FROM "+nombreTabla+" WHERE NOT("+ condicion +"));");
-            deleteSelect.executeUpdate();
+            /*Query deleteSelect = entityManager.createNativeQuery("DELETE FROM "+nombreTabla+" WHERE NOT("+ condicion +"));");
+            deleteSelect.executeUpdate();*/
+
+            String deleteSelect = "DELETE FROM "+nombreTabla+" WHERE NOT("+ condicion +"));";
+            System.out.println("QUERY -> "+deleteSelect);
+            jdbcTemplate.execute(deleteSelect);
 
         }
 
@@ -370,8 +410,11 @@ public class AccountingRouteService {
                 }
 
                 // Ejecutar la consulta
-                Query deleteSelect = entityManager.createNativeQuery(queryUpdate);
-                deleteSelect.executeUpdate();
+                /*Query deleteSelect = entityManager.createNativeQuery(queryUpdate);
+                deleteSelect.executeUpdate();*/
+
+                System.out.println("QUERY -> "+queryUpdate);
+                jdbcTemplate.execute(queryUpdate);
             }
         }
     }
@@ -382,13 +425,15 @@ public class AccountingRouteService {
         String campos = data.getCampos().stream()
                 .map(CampoRC::getNombre)
                 .collect(Collectors.joining(","));
-        System.out.println("DELETE FROM preciso_rc_" + data.getId() + " WHERE periodo_preciso = '" + fecha + "' ; \n" +
-                "INSERT INTO preciso_rc_" + data.getId() + " (" + campos + ",periodo_preciso" +
-                ") SELECT " + campos + ",CAST('" + fecha + "' AS DATE) FROM " + nombreTabla);
 
-        Query querySelect = entityManager.createNativeQuery("DELETE FROM preciso_rc_"+data.getId()+" WHERE periodo_preciso = '"+fecha+"' ; \n" +
+        /*Query querySelect = entityManager.createNativeQuery("DELETE FROM preciso_rc_"+data.getId()+" WHERE periodo_preciso = '"+fecha+"' ; \n" +
                 "INSERT INTO preciso_rc_"+data.getId()+" ("+campos+",periodo_preciso"+") SELECT "+campos+",CAST('"+fecha+"' AS DATE) FROM "+nombreTabla);
-        querySelect.executeUpdate();
+        querySelect.executeUpdate();*/
+
+        String deleteSelect = "DELETE FROM preciso_rc_"+data.getId()+" WHERE periodo_preciso = '"+fecha+"' ; \n" +
+                "INSERT INTO preciso_rc_"+data.getId()+" ("+campos+",periodo_preciso"+") SELECT "+campos+",CAST('"+fecha+"' AS DATE) FROM "+nombreTabla;
+        System.out.println("QUERY -> "+deleteSelect);
+        jdbcTemplate.execute(deleteSelect);
     }
 
     public void generarArchivoFormato(List<CampoRC> campos, String rutaArchivoFormato) throws IOException, PersistenceException {
@@ -503,60 +548,57 @@ public class AccountingRouteService {
         query.setParameter("SFCid", SFCid);
         return query.getResultList();
     }
-
-    public List<Object> findTemporal(){
-        List<Object> listTemp = new ArrayList<>();
-        try {
-            Query querySelect = entityManager.createNativeQuery("SELECT * FROM PRECISO_TEMP_CONTABLES ");
-            listTemp = querySelect.getResultList();
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
-        return listTemp;
+    public List<CondicionRC> findCondicionesRc(int SFCid) {
+        Query query = entityManager.createNativeQuery(
+                "select b.* from preciso_rutas_contables a, preciso_condiciones_rc b where a.id_rc = b.id_rc and a.id_rc = :SFCid ",CondicionRC.class);
+        query.setParameter("SFCid", SFCid);
+        return query.getResultList();
     }
 
-    public void loadLogCargueF(User user,AccountingRoute ac, String fecha, String tipo, String estado, String mensaje)
-    {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate localDate = LocalDate.parse(fecha);
-        String usuario = "Automático";
-        Date fechaDate = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-        List<Object> listTemp =findTemporal();
-        LocalDate today = LocalDate.now();
-        if(user!=null)
-            usuario=user.getUsuario();
-        if(mensaje==null || (mensaje!=null && mensaje.trim().length()==0))
-            mensaje="Sin Novedades";
-        String query="INSERT INTO preciso_log_cargues_contables(cantidad_registros,estado_proceso,fecha_cargue,fecha_preciso,novedad,tipo_proceso,usuario,id_rc)\n" +
-                "VALUES("+listTemp.size()+",'"+estado+"','"+localDate.format(formatter)+"','"+today.format(formatter)+"','"+mensaje.replace("'","")+"','"+tipo+"','"+usuario+"',"+ac.getId()+")";
-        System.out.println(query);
-        jdbcTemplate.execute(query);
+    public List<ValidationRC> findValidacionesRc(int SFCid) {
+        Query query = entityManager.createNativeQuery(
+                "select b.* from preciso_rutas_contables a, preciso_validaciones_rc b where a.id_rc = b.id_rc and a.id_rc = :SFCid ",ValidationRC.class);
+        query.setParameter("SFCid", SFCid);
+        return query.getResultList();
     }
 
-    public void loadLogCargue(User user,AccountingRoute ac, String fecha, String tipo, String estado, String mensaje)
-    {
-        LocalDate localDate = LocalDate.parse(fecha);
-        Date fechaDate = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-        List<Object> listTemp =findTemporal();
-        Date today=new Date();
-        LogAccountingLoad insert = new LogAccountingLoad();
-        insert.setFechaCargue(fechaDate);
-        insert.setFechaPreciso(today);
-        insert.setCantidadRegistros((long) listTemp.size());
-        if(user!=null)
-            insert.setUsuario(user.getUsuario());
-        else
-            insert.setUsuario("Automático");
-        insert.setTipoProceso(tipo);
-        insert.setNovedad(mensaje);
-        insert.setEstadoProceso(estado);
-        if(user!=null)
-            insert.setUsuario(user.getUsuario());
-        else
-            insert.setUsuario("Automático");
-        insert.setIdRc(ac);
-        logAccountingLoadRepository.save(insert);
+
+    @Scheduled(cron = "0 0/30 * * * ?")
+    public void processJob()  {
+        LocalDateTime fechaHoy = LocalDateTime.now();
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String fecha = fechaHoy.format(formato);
+        List<AccountingRoute> list = findByJob();
+        for (AccountingRoute ac :list) {
+            try {
+                List<CondicionRC> crc = findCondicionesRc(ac.getId());
+                List<ValidationRC> vrc = findValidacionesRc(ac.getId());
+                createTableTemporal(ac);
+                generarArchivoFormato(ac.getCampos(), rutaArchivoFormato);
+                if (ac.getTipoArchivo().equalsIgnoreCase("XLS") || ac.getTipoArchivo().equalsIgnoreCase("XLSX"))
+                    importXlsx(ac, rutaArchivoFormato, fecha, null);
+                else
+                    bulkImport(ac, rutaArchivoFormato, fecha, null);
+                if (!crc.isEmpty())
+                    conditionData(ac);
+                if (vrc.size() != 0)
+                    validationData(ac);
+                copyData(ac, fecha);
+                jobAutoService.loadLogCargue(null,ac,fecha,"Automático","Exitoso","");
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+                Throwable rootCause = e;
+                while (rootCause.getCause() != null) {
+                    rootCause = rootCause.getCause();
+                }
+                try {
+                    jobAutoService.loadLogCargue(null, ac, fecha, "Automático", "Fallido", rootCause.getMessage());
+                } catch (Exception logException) {
+                    logException.printStackTrace(); // Log adicional si guardar el log también falla
+                }
+            }
+        }
     }
 
     public void loadAudit(User user, String mensaje)
