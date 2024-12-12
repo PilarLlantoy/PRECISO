@@ -31,8 +31,8 @@
         </div>
 
     </div>
-    <div class="row m-0 px-4 mt-5">
-        <div class="text-right pr-3 col-md-12 my-3">
+    <div class="row px-4 mt-5">
+        <div class="text-right col-md-12">
             <a class="btn btn-sm btn-primary mx-1" th:href="@{/parametric/conciliationRoutes}"><i class="fas fa-redo-alt"></i></a>
             <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1" th:onclick="|window.location.href='@{/parametric/createConciliationRoute}'|">Crear Ruta de Conciliacion</button>
         </div>
@@ -48,7 +48,7 @@
                         <th>Archivo</th>
                         <th>Ruta de Acceso</th>
                         <th>Tipo Archivo</th>
-                        <th>Activo</th>
+                        <th>Estado</th>
                         <th COLSPAN="4">Acciones</th>
                     </tr>
                     </thead>
