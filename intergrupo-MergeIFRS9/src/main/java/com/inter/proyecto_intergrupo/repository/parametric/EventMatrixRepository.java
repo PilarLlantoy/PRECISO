@@ -15,4 +15,5 @@ public interface EventMatrixRepository extends JpaRepository<EventMatrix,Integer
     List<EventMatrix> findAllByEstadoAndConciliacionAndInventarioConciliacion(
             boolean estado, Conciliation conciliacion, ConciliationRoute inventario
     );
+
 }

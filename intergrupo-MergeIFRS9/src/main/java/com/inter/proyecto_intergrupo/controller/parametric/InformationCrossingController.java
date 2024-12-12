@@ -1,4 +1,5 @@
 package com.inter.proyecto_intergrupo.controller.parametric;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.inter.proyecto_intergrupo.model.admin.User;
 import com.inter.proyecto_intergrupo.model.parametric.*;
@@ -24,6 +25,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
@@ -31,10 +35,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -47,6 +48,9 @@ public class InformationCrossingController {
 
     @Autowired
     private UserService userService;
+
+    @PersistenceContext
+    EntityManager entityManager;
 
     @Autowired
     private AccountingRouteService accountingRouteService;
@@ -61,6 +65,9 @@ public class InformationCrossingController {
 
     @Autowired
     private EventTypeService eventTypeService;
+
+    @Autowired
+    private EventMatrixService eventMatrixService;
 
     @Autowired
     private InformationCrossingService informationCrossingService;
@@ -152,11 +159,14 @@ public class InformationCrossingController {
         return modelAndView;
     }
 
+
     @GetMapping("/parametric/informationCrossing/generateAccount")
     @ResponseBody
     public ResponseEntity<String> generarCuentas(@RequestParam int id, @RequestParam String fecha, @RequestParam int evento) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
+        EventType tipoEvento = eventTypeService.findAllById(evento);
+
         System.out.println("GENERACION CUENTAS");
         Conciliation concil = conciliationService.findById(id);
 
@@ -164,7 +174,6 @@ public class InformationCrossingController {
 
         //VALIDAR QUE LOS INVENTARIOS ESTEN SUBIDO
         //-----------------------------------------------------------------------------------
-        ConciliationRoute concilRoute = conciliationRouteService.findById(id);
         List<ConciliationRoute> listRoutes = conciliationRouteService.getRoutesByConciliation(id); //RUTAS CONCILIACIONES
         System.out.println(listRoutes.size());
         List<Object[]> croutes = new ArrayList<>();
@@ -192,6 +201,14 @@ public class InformationCrossingController {
 
             //GENERAR CRUCE DE INVENTARIO
             //-----------------------------------------------------------------------------------
+            for(ConciliationRoute ruta:listRoutes){
+                informationCrossingService.recreateTable(ruta,id);
+                informationCrossingService.rellenarTablaCruce(ruta,id);
+                EventMatrix matriz = eventMatrixService.findByConciliationxInventarioxTipoEvento(id, ruta.getId(),evento);
+                System.out.println(matriz.getId());
+                informationCrossingService.completarTablaCruce(ruta, id, fecha, tipoEvento, matriz);
+
+            }
 
 
             //RESMIR POR CUENTA

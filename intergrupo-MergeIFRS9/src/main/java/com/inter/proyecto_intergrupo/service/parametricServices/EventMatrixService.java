@@ -39,9 +39,29 @@ public class EventMatrixService {
     public List<EventMatrix> findAllActive() {
         return eventMatrixRepository.findByEstado(true);
     }
+
     public List<EventMatrix> findAllByEstadoAndConciliacionAndInventarioConciliacion(Conciliation concil, ConciliationRoute inv) {
         return eventMatrixRepository.findAllByEstadoAndConciliacionAndInventarioConciliacion(true, concil, inv);
     }
+
+    public EventMatrix findByConciliationxInventarioxTipoEvento(int idConciliation, int idInventario, int idTipoEvento) {
+        Query query = entityManager.createNativeQuery(
+                "SELECT * FROM preciso_matriz_eventos " +
+                        "WHERE id_conciliacion = :idConciliation " +
+                        "AND id_inventario_conciliacion = :idInventario " +
+                        "AND id_tipo_evento = :idTipoEvento",
+                EventMatrix.class); // Mapear directamente a la clase EventMatrix
+        query.setParameter("idConciliation", idConciliation);
+        query.setParameter("idInventario", idInventario);
+        query.setParameter("idTipoEvento", idTipoEvento);
+        try {
+            return (EventMatrix) query.getSingleResult();
+        } catch (Error e) {
+            //Mostrarle que no hay matriz asociada
+            return null;
+        }
+    }
+
 
     public List<Integer> findMatrices(int concil, int inv) {
         Query query = entityManager.createNativeQuery(
