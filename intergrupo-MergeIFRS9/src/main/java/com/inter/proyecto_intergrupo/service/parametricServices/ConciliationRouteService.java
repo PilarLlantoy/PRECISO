@@ -640,7 +640,6 @@ public class ConciliationRouteService {
     }
 
     @Scheduled(cron = "0 0/30 * * * ?")
-    //@Scheduled(cron = "0 * * * * ?")
     public void jobLeerArchivos() {
         LocalDateTime fechaHoy = LocalDateTime.now();
         DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
