@@ -6,8 +6,12 @@ import com.inter.proyecto_intergrupo.repository.admin.AuditRepository;
 import com.inter.proyecto_intergrupo.repository.parametric.ConciliationRouteRepository;
 import com.inter.proyecto_intergrupo.repository.parametric.LogInventoryLoadRepository;
 import org.apache.poi.ss.usermodel.*;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -20,14 +24,17 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.inter.proyecto_intergrupo.controller.parametric.AccountingLoadController.rutaArchivoFormato;
+
 @Service
-@Transactional
+@EnableTransactionManagement
 public class ConciliationRouteService {
 
     @Autowired
@@ -38,6 +45,12 @@ public class ConciliationRouteService {
 
     @Autowired
     private AuditRepository auditRepository;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    private JobAutoService jobAutoService;
 
     @Autowired
     public ConciliationRouteService(ConciliationRouteRepository conciliationRouteRepository) {
@@ -77,6 +90,12 @@ public class ConciliationRouteService {
         return result != null ? result.toString() : null;
     }
 
+    public List<CampoRConcil> getCamposRcon(ConciliationRoute data) {
+        Query querySelect = entityManager.createNativeQuery(
+                "select b.* from preciso_rutas_conciliaciones a, preciso_campos_rconcil b where a.id = b.id_rconcil and a.id = " + data.getId(),CampoRConcil.class);
+        return querySelect.getResultList();
+    }
+
     public List<Object[]> findAllData(ConciliationRoute data, String fecha, String cadena, String campo) {
         String campos = data.getCampos().stream()
                 .map(CampoRConcil::getNombre)
@@ -103,54 +122,27 @@ public class ConciliationRouteService {
         return querySelect.getResultList();
     }
 
-/*
     public void createTableTemporal(ConciliationRoute data) {
         String nombreTabla = "PRECISO_TEMP_INVENTARIOS";
-        Query queryDrop = entityManager.createNativeQuery("IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '"+(nombreTabla)+"' AND TABLE_SCHEMA = 'dbo') BEGIN DROP TABLE "+(nombreTabla) +" END;");
-        queryDrop.executeUpdate();
-
-        StringBuilder createTableQuery = new StringBuilder("CREATE TABLE ");
-        createTableQuery.append(nombreTabla).append(" (");
-
-        for (int i = 0; i < data.getCampos().size(); i++) {
-            CampoRConcil column = data.getCampos().get(i);
-            createTableQuery.append(column.getNombre())
-                    .append(" ")
-                    .append(column.getTipo());
-
-            if (column.getTipo().equalsIgnoreCase("VARCHAR")) {
-                createTableQuery.append("(").append(column.getLongitud()).append(")");
-            }
-
-            if (i < data.getCampos().size() - 1) {
-                createTableQuery.append(", ");
-            }
-        }
-
-        createTableQuery.append(");");
-
-        try {
-            entityManager.createNativeQuery(createTableQuery.toString()).executeUpdate();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-     */
-
-    public void createTableTemporal(ConciliationRoute data) {
-        String nombreTabla = "PRECISO_TEMP_INVENTARIOS";
-        Query queryDrop = entityManager.createNativeQuery(
+        /*Query queryDrop = entityManager.createNativeQuery(
                 "IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '" + nombreTabla + "' AND TABLE_SCHEMA = 'dbo') " +
                         "BEGIN DROP TABLE " + nombreTabla + " END;");
-        queryDrop.executeUpdate();
+        queryDrop.executeUpdate();*/
+
+        String queryDrop = "IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '" + nombreTabla + "' AND TABLE_SCHEMA = 'dbo') " +
+                        "BEGIN DROP TABLE " + nombreTabla + " END;";
+        System.out.println("QUERY -> "+queryDrop);
+        jdbcTemplate.execute(queryDrop);
 
         StringBuilder createTableQuery = new StringBuilder("CREATE TABLE ");
         createTableQuery.append(nombreTabla).append(" (");
 
         List<String> primaryKeys = new ArrayList<>(); // Almacenar nombres de columnas que son claves primarias
 
-        for (int i = 0; i < data.getCampos().size(); i++) {
-            CampoRConcil column = data.getCampos().get(i);
+        List<CampoRConcil> listCampos = getCamposRcon(data);
+
+        for (int i = 0; i < listCampos.size(); i++) {
+            CampoRConcil column = listCampos.get(i);
 
             // Verificar si la columna es clave primaria y asignar tamaño limitado
             if (column.getTipo().equalsIgnoreCase("VARCHAR")){
@@ -170,7 +162,7 @@ public class ConciliationRouteService {
                         .append(column.getTipo());
             }
 
-            if (i < data.getCampos().size() - 1) {
+            if (i < listCampos.size() - 1) {
                 createTableQuery.append(", ");
             }
         }
@@ -185,7 +177,9 @@ public class ConciliationRouteService {
         createTableQuery.append(");");
 
         try {
-            entityManager.createNativeQuery(createTableQuery.toString()).executeUpdate();
+            //entityManager.createNativeQuery(createTableQuery.toString()).executeUpdate();
+            System.out.println("QUERY -> "+createTableQuery.toString());
+            jdbcTemplate.execute(createTableQuery.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -278,33 +272,6 @@ public class ConciliationRouteService {
         }
     }
 
-    /*
-    public void bulkImport(ConciliationRoute data, String ruta,String fecha, String fuente) throws PersistenceException {
-        String nombreTabla = "PRECISO_TEMP_INVENTARIOS";
-        String extension="";
-        String delimitador=data.getDelimitador();
-
-        if(data.getTipoArchivo().equals("XLS") || data.getTipoArchivo().equals("XLSX"))
-            delimitador=";";
-
-        String complement = "FIELDTERMINATOR = '"+delimitador+"', ROWTERMINATOR = '\\n', FIRSTROW = "+data.getFilasOmitidas();
-
-        if(data.getTipoArchivo().equals("XLS") || data.getTipoArchivo().equals("XLSX") || data.getTipoArchivo().equals("CSV") || data.getTipoArchivo().equals("TXT"))
-            extension="."+data.getTipoArchivo();
-        if(delimitador.equalsIgnoreCase(""))
-            complement="FORMATFILE = '" + ruta + "', ROWTERMINATOR = '\\r\\n', FIRSTROW = " + data.getFilasOmitidas();
-
-        String fichero=ensureTrailingSlash(data.getRuta()) + data.getNombreArchivo() + todayDateConvert(data.getFormatoFecha(),fecha)+ extension;
-        if(fuente !=null)
-            fichero=fuente;
-
-        Query queryBulk = entityManager.createNativeQuery("BULK INSERT " + (nombreTabla) +
-                " FROM '" + fichero +
-                "' WITH ("+complement+ ")");
-        queryBulk.executeUpdate();
-    }
-     */
-
     public List<ConciliationRoute> findByJob() {
         LocalTime now = LocalTime.now(); // Hora actual
         LocalTime thirtyMinutesBefore = now.minusMinutes(29); // Hora hace 30 minutos
@@ -326,7 +293,7 @@ public class ConciliationRouteService {
             fichero=fuente;
         if (fichero != null && !fichero.isEmpty()) {
             StringBuilder sqlQueryBuilder = new StringBuilder("INSERT INTO PRECISO_TEMP_INVENTARIOS (");
-            List<CampoRConcil> campos = data.getCampos();
+            List<CampoRConcil> campos = getCamposRcon(data);
             // Construir la parte de columnas dinámicamente
             for (int i = 0; i < campos.size(); i++) {
                 sqlQueryBuilder.append(campos.get(i).getNombre());
@@ -356,31 +323,35 @@ public class ConciliationRouteService {
                 while (rows.hasNext()) {
                     Row row = rows.next();
                     if (firstRow > data.getFilasOmitidas()) {
-                        Query query = entityManager.createNativeQuery(sqlQuery);
-                        DataFormatter formatter = new DataFormatter();
-                        for (int i = 0; i < campos.size(); i++) {
-                            Cell cell = row.getCell(i);
-                            Object value = null;
-                            if (campos.get(i).getTipo().equalsIgnoreCase("Float")) {
-                                value = cell != null ? formatter.formatCellValue(cell).replace(".", "").replace(",", ".") : null;
-                            } else if (campos.get(i).getTipo().equalsIgnoreCase("Date") || campos.get(i).getTipo().equalsIgnoreCase("Datetime")) {
-                                String fechaLeida = cell != null ? formatter.formatCellValue(cell) : null;
-                                if (!fechaLeida.matches("\\d{2}/\\d{2}/\\d{4}")) {
-                                    // Por ejemplo, convierte de `1/18/99` a `18/01/1999` si es necesario
-                                    System.out.println("INSPECCIONES");
-                                    System.out.println(fechaLeida);
-                                    System.out.println(campos.get(i).getFormatoFecha());
-                                    fechaLeida = convertirFormatoExcel(fechaLeida,campos.get(i).getFormatoFecha());
-                                }
-                                value = fechaLeida != null ?  formatoFecha(fechaLeida, campos.get(i).getFormatoFecha(), campos.get(i).getSeparador()) : null;
-                            } else {
-                                value = cell != null ? formatter.formatCellValue(cell) : null;
-                            }
+                        // Usar JdbcTemplate para ejecutar la consulta con lambda
+                        jdbcTemplate.update(sqlQuery, ps -> {
+                            DataFormatter formatter = new DataFormatter();
+                            for (int i = 0; i < campos.size(); i++) {
+                                Cell cell = row.getCell(i);
+                                Object value = null;
 
-                            query.setParameter(i + 1, value);
-                            System.out.println(i + " -> " + value);
-                        }
-                        query.executeUpdate();
+                                // Manejar tipo Float
+                                if (campos.get(i).getTipo().equalsIgnoreCase("Float")) {
+                                    value = cell != null ? formatter.formatCellValue(cell).replace(".", "").replace(",", ".") : null;
+                                }
+                                // Manejar tipo Date o Datetime
+                                else if (campos.get(i).getTipo().equalsIgnoreCase("Date") || campos.get(i).getTipo().equalsIgnoreCase("Datetime")) {
+                                    String fechaLeida = cell != null ? formatter.formatCellValue(cell) : null;
+                                    if (fechaLeida != null && !fechaLeida.matches("\\d{2}/\\d{2}/\\d{4}")) {
+                                        // Por ejemplo, convierte de `1/18/99` a `18/01/1999` si es necesario
+                                        fechaLeida = convertirFormatoExcel(fechaLeida, campos.get(i).getFormatoFecha());
+                                    }
+                                    value = fechaLeida != null ? formatoFecha(fechaLeida, campos.get(i).getFormatoFecha(), campos.get(i).getSeparador()) : null;
+                                }
+                                // Manejo de otros tipos
+                                else {
+                                    value = cell != null ? formatter.formatCellValue(cell) : null;
+                                }
+
+                                // Establecer el parámetro correspondiente en el PreparedStatement
+                                ps.setObject(i + 1, value);
+                            }
+                        });
                     } else {
                         firstRow++;
                     }
@@ -456,55 +427,17 @@ public class ConciliationRouteService {
         if(fuente !=null)
             fichero=fuente;
 
-        Query queryBulk = entityManager.createNativeQuery("BULK INSERT " + (nombreTabla) +
+        /*Query queryBulk = entityManager.createNativeQuery("BULK INSERT " + (nombreTabla) +
                 " FROM '" + fichero +
                 "' WITH ("+complement+ ")");
-        queryBulk.executeUpdate();
+        queryBulk.executeUpdate();*/
+
+        String queryBulk = "BULK INSERT " + (nombreTabla) +
+                " FROM '" + fichero +
+                "' WITH ("+complement+ ")";
+        System.out.println("QUERY -> "+queryBulk);
+        jdbcTemplate.execute(queryBulk);
     }
-
-    /*
-    public void validationData(ConciliationRoute data){
-        Query querySelect = entityManager.createNativeQuery("SELECT b.nombre as referencia, c.nombre as validacion, a.valor_validacion, a.valor_operacion, \n" +
-                "CASE a.operacion when 'Suma' then '+' when 'Resta' then '-' when 'Multiplica' then '*' when 'Divida' then '/' END as Operacion\n" +
-                "FROM PRECISO.dbo.preciso_validaciones_rconcil a \n" +
-                "inner join PRECISO.dbo.preciso_campos_rconcil b on a.id_rc = b.id_rconcil and a.id_campo_referencia=b.id_campo \n" +
-                "inner join PRECISO.dbo.preciso_campos_rconcil c on a.id_rc = c.id_rconcil and a.id_campo_validacion=c.id_campo \n" +
-                "where a.id_rc = ? and a.estado=1");
-        querySelect.setParameter(1,data.getId());
-        List<Object[]> validacionLista = querySelect.getResultList();
-        if(!validacionLista.isEmpty()){
-            for(Object[] obj : validacionLista){
-                Query deleteSelect = entityManager.createNativeQuery("UPDATE "+data.getNombreArchivo() + "_TEMPORAL SET "
-                        +obj[0].toString()+" = "+obj[0].toString()+obj[4].toString()+obj[3].toString()+" WHERE "+obj[1].toString()+"='"+obj[2].toString()+"';");
-                deleteSelect.executeUpdate();
-            }
-        }
-    }
-     */
-
-    /*
-    public void validationData(ConciliationRoute data){
-        String nombreTabla = "PRECISO_TEMP_INVENTARIOS";
-        Query querySelect = entityManager.createNativeQuery("SELECT b.nombre as referencia, c.nombre as validacion, a.valor_validacion, a.valor_operacion, \n" +
-                "CASE a.operacion when 'Suma' then '+' when 'Resta' then '-' when 'Multiplica' then '*' when 'Divida' then '/' END as Operacion\n" +
-                "FROM PRECISO.dbo.preciso_validaciones_rconcil a \n" +
-                "inner join PRECISO.dbo.preciso_campos_rconcil b on a.id_rc = b.id_rconcil and a.id_campo_referencia=b.id_campo \n" +
-                "inner join PRECISO.dbo.preciso_campos_rconcil c on a.id_rc = c.id_rconcil and a.id_campo_validacion=c.id_campo \n" +
-                "where a.id_rc = ? and a.estado=1");
-        querySelect.setParameter(1,data.getId());
-        List<Object[]> validacionLista = querySelect.getResultList();
-        if(!validacionLista.isEmpty()){
-            for(Object[] obj : validacionLista){
-                Query deleteSelect = entityManager.createNativeQuery("UPDATE "+nombreTabla+" SET " +
-                        obj[0].toString()+" = CAST(TRY_CAST("+ obj[0].toString() + " AS DECIMAL(38, 0))*0.01 " +
-                        obj[4].toString() + obj[3].toString()+" AS VARCHAR) WHERE "+obj[1].toString()+"='"+obj[2].toString()+"';");
-                deleteSelect.executeUpdate();
-            }
-        }
-
-    }
-
-     */
 
     public void validationData(ConciliationRoute data) {
         String nombreTabla = "PRECISO_TEMP_INVENTARIOS";
@@ -536,8 +469,11 @@ public class ConciliationRouteService {
                 }
 
                 // Ejecutar la consulta
-                Query deleteSelect = entityManager.createNativeQuery(queryUpdate);
-                deleteSelect.executeUpdate();
+                /*Query deleteSelect = entityManager.createNativeQuery(queryUpdate);
+                deleteSelect.executeUpdate();*/
+
+                System.out.println("QUERY -> "+queryUpdate);
+                jdbcTemplate.execute(queryUpdate);
             }
         }
     }
@@ -546,12 +482,17 @@ public class ConciliationRouteService {
 
     public void copyData(ConciliationRoute data,String fecha){
         String nombreTabla = "PRECISO_TEMP_INVENTARIOS";
-        String campos = data.getCampos().stream()
+        String campos = getCamposRcon(data).stream()
                 .map(CampoRConcil::getNombre)
                 .collect(Collectors.joining(","));
-        Query querySelect = entityManager.createNativeQuery("DELETE FROM preciso_rconcil_"+data.getId()+" WHERE periodo_preciso = '"+fecha+"' ; \n" +
+        /*Query querySelect = entityManager.createNativeQuery("DELETE FROM preciso_rconcil_"+data.getId()+" WHERE periodo_preciso = '"+fecha+"' ; \n" +
                 "INSERT INTO preciso_rconcil_"+data.getId()+" ("+campos+",periodo_preciso"+") SELECT "+campos+",CAST('"+fecha+"' AS DATE) FROM "+nombreTabla);
-        querySelect.executeUpdate();
+        querySelect.executeUpdate();*/
+
+        String querySelect = "DELETE FROM preciso_rconcil_"+data.getId()+" WHERE periodo_preciso = '"+fecha+"' ; \n" +
+                "INSERT INTO preciso_rconcil_"+data.getId()+" ("+campos+",periodo_preciso"+") SELECT "+campos+",CAST('"+fecha+"' AS DATE) FROM "+nombreTabla;
+        System.out.println("QUERY -> "+querySelect);
+        jdbcTemplate.execute(querySelect);
     }
 
     public List<Object> findTemporal(){
@@ -696,6 +637,38 @@ public class ConciliationRouteService {
                 .collect(Collectors.joining(","));
         Query querySelect = entityManager.createNativeQuery("SELECT "+campos+",periodo_preciso FROM preciso_rconcil_"+data.getId()+" WHERE periodo_preciso = '"+fecha+"' ");
         return querySelect.getResultList();
+    }
+
+    @Scheduled(cron = "0 0/30 * * * ?")
+    //@Scheduled(cron = "0 * * * * ?")
+    public void jobLeerArchivos() {
+        LocalDateTime fechaHoy = LocalDateTime.now();
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String fecha = fechaHoy.format(formato);
+
+        List<ConciliationRoute> list = findByJob();
+        for (ConciliationRoute cr :list)
+        {
+            try {;
+                createTableTemporal(cr);
+                generarArchivoFormato(getCamposRcon(cr), rutaArchivoFormato);
+                if(cr.getTipoArchivo().equalsIgnoreCase("XLS") || cr.getTipoArchivo().equalsIgnoreCase("XLSX"))
+                    importXlsx(cr,rutaArchivoFormato,fecha,null);
+                else
+                    bulkImport(cr,rutaArchivoFormato,fecha,null);
+                validationData(cr);
+                copyData(cr,fecha);
+                loadLogCargue(null,cr,fecha,"Automático","Exitoso","");
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+                Throwable rootCause = e;
+                while (rootCause.getCause() != null) {
+                    rootCause = rootCause.getCause(); // Navega a la causa raíz
+                }
+                loadLogCargue(null,cr,fecha,"Automático","Fallido",rootCause.getMessage());
+            }
+        }
     }
 
 }

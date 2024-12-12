@@ -155,7 +155,6 @@ public class ThirdListReport {
 
     public void exportNit(HttpServletResponse response) throws IOException {
         File file = new File("C:\\Users\\CE66390\\Documents\\BBVA Intergrupo\\Pruebas\\Base\\Terceros.txt");
-        //File file = new File("D:\\BBVA\\Pruebas\\BaseFiscal\\Terceros\\Terceros.txt");
         try (PrintWriter out = new PrintWriter(file.getAbsolutePath())){
             for (Third third: thirdList){
                 out.println(third.getTipo() + completeWithZero(String.valueOf(third.getNit())) + third.getDv());

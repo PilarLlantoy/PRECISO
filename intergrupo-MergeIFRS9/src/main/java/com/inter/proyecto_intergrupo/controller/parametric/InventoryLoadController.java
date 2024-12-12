@@ -39,16 +39,14 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static com.inter.proyecto_intergrupo.controller.parametric.AccountingLoadController.rutaArchivoFormato;
+import static com.inter.proyecto_intergrupo.controller.parametric.AccountingLoadController.rutaArchivoFormato1;
+
 @Controller
 public class InventoryLoadController {
     private static final int PAGINATIONCOUNT=5;
     private static final int PAGINATIONCOUNTDATA=500;
     Logger logger = LogManager.getLogger(LogManager.ROOT_LOGGER_NAME);
-    private static final String rutaArchivoFormato = "\\\\co.igrupobbva\\svrfilesystem\\BBVA_VIC06\\DP10\\Preciso\\archivo.fmt";
-    private static final String rutaArchivoFormato1 = "\\\\co.igrupobbva\\svrfilesystem\\BBVA_VIC06\\DP10\\Preciso\\";
-
-    //private static final String rutaArchivoFormato = "D:\\archivo.fmt";
-    //private static final String rutaArchivoFormato1 = "D:\\";
 
     @Autowired
     private UserService userService;
@@ -166,7 +164,6 @@ public class InventoryLoadController {
         User user = userService.findUserByUserName(auth.getName());
         ConciliationRoute cr = conciliationRouteService.findById(id);
         try {
-            Hibernate.initialize(cr.getCampos());
             conciliationRouteService.createTableTemporal(cr);
             conciliationRouteService.generarArchivoFormato(cr.getCampos(), rutaArchivoFormato);
             if(cr.getTipoArchivo().equalsIgnoreCase("XLS") || cr.getTipoArchivo().equalsIgnoreCase("XLSX"))
@@ -218,40 +215,6 @@ public class InventoryLoadController {
             }
             conciliationRouteService.loadLogCargue(user,cr,fecha,"Trasladar Local","Fallido",rootCause.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk-2");
-        }
-    }
-
-    @Scheduled(cron = "0 0/30 * * * ?")
-    @Transactional
-    public void jobLeerArchivos() {
-        LocalDateTime fechaOrigen = LocalDateTime.now();
-        LocalDateTime fechaHoy = fechaOrigen.minusDays(1);
-        DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String fecha = fechaHoy.format(formato);
-
-        List<ConciliationRoute> list = conciliationRouteService.findByJob();
-        for (ConciliationRoute cr :list)
-        {
-            try {
-                Hibernate.initialize(cr.getCampos());
-                conciliationRouteService.createTableTemporal(cr);
-                conciliationRouteService.generarArchivoFormato(cr.getCampos(), rutaArchivoFormato);
-                if(cr.getTipoArchivo().equalsIgnoreCase("XLS") || cr.getTipoArchivo().equalsIgnoreCase("XLSX"))
-                    conciliationRouteService.importXlsx(cr,rutaArchivoFormato,fecha,null);
-                else
-                    conciliationRouteService.bulkImport(cr,rutaArchivoFormato,fecha,null);
-                conciliationRouteService.validationData(cr);
-                conciliationRouteService.copyData(cr,fecha);
-                conciliationRouteService.loadLogCargue(null,cr,fecha,"Automático","Exitoso","");
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-                Throwable rootCause = e;
-                while (rootCause.getCause() != null) {
-                    rootCause = rootCause.getCause(); // Navega a la causa raíz
-                }
-                conciliationRouteService.loadLogCargue(null,cr,fecha,"Automático","Fallido",rootCause.getMessage());
-            }
         }
     }
 
