@@ -84,6 +84,9 @@ public class InformationCrossingService {
     }
 
     public void recreateTable(ConciliationRoute data, int idConcil) {
+
+        System.out.println("CREANDO LA TERMPORAL");
+        System.out.println("#############################");
         StringBuilder createTableQuery = new StringBuilder("CREATE TABLE ");
         String tableName = "preciso_ci_" + idConcil + "_" + data.getId();
         createTableQuery.append(tableName).append(" (");
@@ -138,8 +141,64 @@ public class InformationCrossingService {
         createTable.executeUpdate();
     }
 
+    public void rellenarTablaCruceTotal(ConciliationRoute data, int idConcil){
+        String tableName = "preciso_ci_" + idConcil + "_" + data.getId();
+        String tableNameTemporal = "TEMPORAL_ci";
 
-    public void rellenarTablaCruce(ConciliationRoute data){
+        // Paso 3: Insertar registros desde "TEMPORAL_ci" a la nueva tabla
+        StringBuilder insertDataQuery = new StringBuilder("INSERT INTO ").append(tableName).append(" (");
+
+        // Agregar solo los nombres de los campos existentes en la tabla original
+        for (int i = 0; i < data.getCampos().size(); i++) {
+            CampoRConcil column = data.getCampos().get(i);
+            insertDataQuery.append(column.getNombre());
+            if (i < data.getCampos().size() - 1)
+                insertDataQuery.append(", ");
+        }
+        insertDataQuery.append(", INVENTARIO, ")
+                .append("ID_INVENTARIO, ")
+                .append("FECHA_CONCILIACION, ")
+                .append("TIPO_EVENTO, ")
+                .append("CDGO_MATRIZ_EVENTO, ")
+                .append("CENTRO_CONTABLE, ")
+                .append("CUENTA_CONTABLE_1, ")
+                .append("DIVISA_CUENTA_1, ")
+                .append("VALOR_CUENTA_1, ")
+                .append("CUENTA_CONTABLE_2, ")
+                .append("DIVISA_CUENTA_2, ")
+                .append("VALOR_CUENTA_2");
+
+        insertDataQuery.append(") SELECT ");
+        // Agregar los campos correspondientes en el SELECT
+        for (int i = 0; i < data.getCampos().size(); i++) {
+            CampoRConcil column = data.getCampos().get(i);
+            insertDataQuery.append(column.getNombre());
+            if (i < data.getCampos().size() - 1) {
+                insertDataQuery.append(", ");
+            }
+        }
+        insertDataQuery.append(", INVENTARIO, ")
+                .append("ID_INVENTARIO, ")
+                .append("FECHA_CONCILIACION, ")
+                .append("TIPO_EVENTO, ")
+                .append("CDGO_MATRIZ_EVENTO, ")
+                .append("CENTRO_CONTABLE, ")
+                .append("CUENTA_CONTABLE_1, ")
+                .append("DIVISA_CUENTA_1, ")
+                .append("VALOR_CUENTA_1, ")
+                .append("CUENTA_CONTABLE_2, ")
+                .append("DIVISA_CUENTA_2, ")
+                .append("VALOR_CUENTA_2");
+
+        insertDataQuery.append(" FROM ").append(tableNameTemporal).append(";");
+
+        // Ejecutar la consulta para insertar los datos
+        Query insertData = entityManager.createNativeQuery(insertDataQuery.toString());
+        insertData.executeUpdate();
+    }
+
+
+    public void creatTablaTemporalCruce(ConciliationRoute data){
         StringBuilder createTableQuery = new StringBuilder("CREATE TABLE ");
         String tableName = "TEMPORAL_ci";
         createTableQuery.append(tableName).append(" (");
@@ -270,24 +329,19 @@ public class InformationCrossingService {
     }
 
 
-    public void conditionData(ConciliationRoute data){
+    public void conditionData(ConciliationRoute data, EventMatrix matriz){
         String nombreTabla = "TEMPORAL_ci";
 
-        Query querySelect = entityManager.createNativeQuery("SELECT\n" +
-                "\t\ta.id_campo,\n" +
-                "\t\tc.nombre,\n" +
-                "\t\ta.condicion,\n" +
-                "\t\ta.valor_condicion\t  \n" +
-                "  FROM [PRECISO].[dbo].[preciso_condiciones_matriz_evento] a\n" +
-                "  left join [PRECISO].[dbo].[preciso_matriz_eventos] b\n" +
-                "\ton a.id_matriz = b.id\n" +
-                "  left join [PRECISO].[dbo].[preciso_campos_rconcil] c\n" +
-                "\ton a.id_matriz = b.id \n" +
-                "\tand a.id_campo = c.id_campo\n" +
-                "  where b.id_inventario_conciliacion = ? \n" +
-                "    and a.estado=1 \n" +
-                "  order by a.id_campo\n");
+        Query querySelect = entityManager.createNativeQuery("SELECT " +
+                "a.id_campo, c.nombre, a.condicion, a.valor_condicion" +
+                "  FROM [PRECISO].[dbo].[preciso_condiciones_matriz_evento] a" +
+                "  left join [PRECISO].[dbo].[preciso_matriz_eventos] b " +
+                "on a.id_matriz = b.id left join [PRECISO].[dbo].[preciso_campos_rconcil] c " +
+                "on a.id_matriz = b.id and a.id_campo = c.id_campo " +
+                "where b.id_inventario_conciliacion = ?  and a.id_matriz = ? " +
+                "and a.estado=1 order by a.id_campo");
         querySelect.setParameter(1,data.getId());
+        querySelect.setParameter(2,matriz.getId());
 
         List<Object[]> condicionesLista = querySelect.getResultList();
         if(!condicionesLista.isEmpty()){
@@ -362,6 +416,25 @@ public class InformationCrossingService {
         }
         return null;
 
+    }
+
+    public List<Object[]> findAllData(Conciliation concil, String fecha,EventType evento) {
+        // Construir la consulta básica
+        String nombreTabla = "preciso_ci_1009_1010";
+        StringBuilder queryBuilder = new StringBuilder("SELECT [FECHA_CONCILIACION],\n" +
+                "    [CENTRO_CONTABLE],\n" +
+                "    [CUENTA_CONTABLE_1],\n" +
+                "    [DIVISA_CUENTA_1],\n" +
+                "    CAST(SUM([VALOR_CUENTA_1]) AS VARCHAR) AS TOTAL_VALOR_CUENTA_1" +
+                " FROM " + nombreTabla+" GROUP BY \n" +
+                "    [FECHA_CONCILIACION],\n" +
+                "    [CENTRO_CONTABLE],\n" +
+                "    [CUENTA_CONTABLE_1],\n" +
+                "    [DIVISA_CUENTA_1]");
+        // Crear la consulta
+        Query querySelect = entityManager.createNativeQuery(queryBuilder.toString());
+
+        return querySelect.getResultList();
     }
 
 }

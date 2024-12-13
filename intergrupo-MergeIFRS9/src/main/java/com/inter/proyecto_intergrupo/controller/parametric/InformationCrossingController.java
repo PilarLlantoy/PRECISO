@@ -87,28 +87,32 @@ public class InformationCrossingController {
         if(userService.validateEndpoint(user.getId(),"Ver Cargue Contable")) {
 
             List<AccountingRoute> listAroutes = accountingRouteService.findAllActive();
-
             List<Conciliation> listConcil = conciliationService.findAllActive();
             List<EventType> listTypeEvent = eventTypeService.findAllActive();
 
-            List<Object[]> aroutes = new ArrayList<>();
-            List<CampoRC> colAroutes = new ArrayList<>();
+            List<Object[]> datos = new ArrayList<>();
+            List<String> colDatos = new ArrayList<>();
             List<LogInformationCrossing> logCruces = new ArrayList<>();
+            System.out.println("INICIO "+params.get("arhcont"));
+            System.out.println("INICIO "+params.get("period"));
+            System.out.println("INICIO "+params.get("evento"));
             if(params.get("arhcont") != null && params.get("arhcont").toString() != null
                     && params.get("period") != null && params.get("period").toString() != null
                     && params.get("evento") != null && params.get("evento").toString() != null)
             {
+                System.out.println("NO VENIA VACIO");
                 modelAndView.addObject("period",params.get("period").toString());
                 Conciliation concil = conciliationService.findById(Integer.parseInt(params.get("arhcont").toString()));
                 EventType evento = eventTypeService.findAllById(Integer.parseInt(params.get("evento").toString()));
+                String fecha = params.get("period").toString();
                 modelAndView.addObject("arhcont",concil);
                 modelAndView.addObject("evento",evento);
                 logCruces = informationCrossingService.findAllLog(concil,params.get("period").toString(), evento);
-                /*aroutes = accountingRouteService.findAllData(ac,params.get("period").toString(), null, null);
+
+                datos = informationCrossingService.findAllData(concil, fecha, evento);
                 CampoRC crc= new CampoRC();
                 crc.setNombre("periodo_preciso");
-                ac.getCampos().add(crc);
-                colAroutes = ac.getCampos();*/
+                colDatos =List.of("FECHA CONCILIACION", "CENTRO CONTABLE", "CUENTA CONTABLE","DIVISA","SALDO INVENTARIO");;
             }
             int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
             PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
@@ -125,8 +129,8 @@ public class InformationCrossingController {
             int pageData=params.get("pageData")!=null?(Integer.valueOf(params.get("pageData").toString())-1):0;
             PageRequest pageRequestData=PageRequest.of(pageData,PAGINATIONCOUNTDATA);
             int startData = (int) pageRequestData.getOffset();
-            int endData = Math.min((startData + pageRequestData.getPageSize()), aroutes.size());
-            Page<Object[]> pageLogData= new PageImpl<>(aroutes.subList(startData, endData), pageRequestData, aroutes.size());
+            int endData = Math.min((startData + pageRequestData.getPageSize()), datos.size());
+            Page<Object[]> pageLogData= new PageImpl<>(datos.subList(startData, endData), pageRequestData, datos.size());
 
             int totalPageData=pageLogData.getTotalPages();
             if(totalPageData>0){
@@ -136,7 +140,7 @@ public class InformationCrossingController {
 
             modelAndView.addObject("allLog",pageLog.getContent());
             modelAndView.addObject("allRCs",pageLogData.getContent());
-            modelAndView.addObject("allColRCs",colAroutes);
+            modelAndView.addObject("allColRCs",colDatos);
             modelAndView.addObject("current",page+1);
             modelAndView.addObject("next",page+2);
             modelAndView.addObject("prev",page);
@@ -151,7 +155,7 @@ public class InformationCrossingController {
             modelAndView.addObject("listTypeEvent",listTypeEvent);
             modelAndView.addObject("directory","accountingLoad");
             modelAndView.addObject("registers",logCruces.size());
-            modelAndView.addObject("registersData",aroutes.size());
+            modelAndView.addObject("registersData",datos.size());
             modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.addObject("p_modificar", p_modificar);
@@ -166,75 +170,70 @@ public class InformationCrossingController {
     }
 
 
-    @GetMapping("/parametric/informationCrossing/generateAccount")
+    @PostMapping("/parametric/informationCrossing/generateAccount")
     @ResponseBody
-    public ResponseEntity<String> generarCuentas(@RequestParam int id, @RequestParam String fecha, @RequestParam int evento) {
+    public ResponseEntity<String> generarCuentas(@RequestParam int id,
+                                                 @RequestParam String fecha,
+                                                 @RequestParam int evento) {
+
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
         EventType tipoEvento = eventTypeService.findAllById(evento);
 
-        System.out.println("GENERACION CUENTAS");
-        Conciliation concil = conciliationService.findById(id);
-
-
-
-        //VALIDAR QUE LOS INVENTARIOS ESTEN SUBIDO
-        //-----------------------------------------------------------------------------------
+        //VALIDAR QUE LOS INVENTARIOS ESTEN SUBIDOS
         List<ConciliationRoute> listRoutes = conciliationRouteService.getRoutesByConciliation(id); //RUTAS CONCILIACIONES
         System.out.println(listRoutes.size());
         List<Object[]> croutes = new ArrayList<>();
         List<String> faltaCarga = new ArrayList<>();
 
-
         List<LogInventoryLoad> logConcilroutes = new ArrayList<>();
-            for(ConciliationRoute ruta:listRoutes){
-                croutes = conciliationRouteService.findAllData(ruta,fecha);
-                System.out.println(ruta.getDetalle()+" "+ croutes);
-                if(croutes.isEmpty()) {
+        try {
+            for (ConciliationRoute ruta : listRoutes) {
+                croutes = conciliationRouteService.findAllData(ruta, fecha);
+                System.out.println(ruta.getDetalle() + " " + croutes);
+                if (croutes.isEmpty()) {
                     faltaCarga.add(ruta.getDetalle());
                 }
             }
-            if(!faltaCarga.isEmpty()){
+            if (!faltaCarga.isEmpty()) {
                 String message = "falta cargar archivos: ";
-                for(String error:faltaCarga)
-                    message+=(error)+" ";
-                informationCrossingService.loadLogInformationCrossing(user,id,evento,fecha,"Generar Cuentas","Fallido", message);
+                for (String error : faltaCarga)
+                    message += (error) + " ";
+                informationCrossingService.loadLogInformationCrossing(user, id, evento, fecha, "Generar Cuentas", "Fallido", message);
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk-1");
-            }
-            else
+            } else
                 System.out.println("NO falta cargar archivos");
 
 
             //GENERAR CRUCE DE INVENTARIO
             //-----------------------------------------------------------------------------------
-            for(ConciliationRoute ruta:listRoutes){
+            for (ConciliationRoute ruta : listRoutes) {
 
                 //Creamos las tablas finales vacias de cada inventario con los campos agregados
-                informationCrossingService.recreateTable(ruta,id);
+                informationCrossingService.recreateTable(ruta, id);
 
-                List<EventMatrix> matrices = eventMatrixService.findByConciliationxInventarioxTipoEvento(id, ruta.getId(),evento);
-                for(EventMatrix matriz:matrices){
+                List<EventMatrix> matrices = eventMatrixService.findByConciliationxInventarioxTipoEvento(id, ruta.getId(), evento);
+                for (EventMatrix matriz : matrices) {
 
                     //Creamos tablas temporales con la data total
-                    informationCrossingService.rellenarTablaCruce(ruta);
+                    informationCrossingService.creatTablaTemporalCruce(ruta);
 
                     //Primero veremos las condiciones
                     List<CondicionEventMatrix> condiciones = condicionMEService.findByMatrizEvento(matriz);
-                    List<Object[]> resultados=null;
-                    if(condiciones.size()!=0)
-                        informationCrossingService.conditionData(ruta);
+                    List<Object[]> resultados = null;
+                    if (condiciones.size() != 0)
+                        informationCrossingService.conditionData(ruta, matriz);
 
-                    //Completamos informacion general
+                    //Completamos informacion de cruce
                     AccountEventMatrix cuenta1 = accountEventMatrixService.findByMatrizEventoTipo1(matriz);
                     AccountEventMatrix cuenta2 = accountEventMatrixService.findByMatrizEventoTipo2(matriz);
                     informationCrossingService.completarTablaCruce(ruta, fecha, tipoEvento, matriz, cuenta1, cuenta2);
-
-                    //Asignamos las cuentas
 
                     //Realizamos las validaciones
                     //recuerda corregir para las validaciones que solo sean un reemplazo de palabras
 
                     //Agregamos estos registros a la tabla final
+                    informationCrossingService.rellenarTablaCruceTotal(ruta, id);
 
                 }
 
@@ -256,18 +255,17 @@ public class InformationCrossingController {
             accountingRouteService.validationData(ac);
             accountingRouteService.copyData(ac,fecha);
             accountingRouteService.loadLogCargue(user,ac,fecha,"Trasladar Local","Exitoso","");*/
-            return ResponseEntity.ok("Bulk1");
-
-        /*
+            return ResponseEntity.ok("Bulk->1");
+        }
         catch (Exception e) {
             e.printStackTrace();
             Throwable rootCause = e;
             while (rootCause.getCause() != null) {
                 rootCause = rootCause.getCause(); // Navega a la causa raíz
             }
-            accountingRouteService.loadLogCargue(user,ac,fecha,"Trasladar Local","Fallido",rootCause.getMessage());
+            //accountingRouteService.loadLogCargue(user,ac,fecha,"Trasladar Local","Fallido",rootCause.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk-1");
-        }*/
+        }
     }
 
 
