@@ -91,7 +91,7 @@ function validateAlerts(operacion,data)
             position: 'center',
             icon: 'error',
             title: '¡Ejecución Fallida!',
-            text: 'No se encontro el fichero para la fecha deleccionada en la ruta.',
+            text: 'No se pudo procesar el cargue, valide el log de detalle.',
             showConfirmButton: true,
             allowOutsideClick: false
         }).then((result) => {
@@ -108,7 +108,7 @@ function validateAlerts(operacion,data)
                 position: 'center',
                 icon: 'error',
                 title: '¡Ejecución Fallida!',
-                text: 'No se encontro el fichero para la fecha deleccionada en la ruta.',
+                text: 'No se pudo procesar el cargue, valide el log de detalle.',
                 showConfirmButton: true,
                 allowOutsideClick: false
             }).then((result) => {

@@ -96,7 +96,7 @@ public class InventoryLoadController {
                 //modelAndView.addObject("ConArch",con.getId());
 
                 logConcilroutes = conciliationRouteService.findAllLog(cr,params.get("period").toString());
-                croutes = conciliationRouteService.findAllData(cr,params.get("period").toString());
+                croutes = conciliationRouteService.processList(conciliationRouteService.findAllData(cr,params.get("period").toString()),cr.getCampos());
                 CampoRConcil crc= new CampoRConcil();
                 crc.setNombre("periodo_preciso");
                 cr.getCampos().add(crc);

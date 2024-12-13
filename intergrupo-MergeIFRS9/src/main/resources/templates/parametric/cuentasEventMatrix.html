@@ -36,16 +36,16 @@
                         <h5 class="font-weight-bold">Cargue Cuenta N°1</h5>
                     </div>
                     <div class="text-right col-md-6">
-                        <a class="btn btn-primary mx-1" th:href="@{/parametric/eventMatrix}">
+                        <a class="btn btn-sm btn-primary mx-1" th:href="@{/parametric/eventMatrix}">
                             <i class="fa-solid fa-left-long"></i> Regresar
                         </a>
                     </div>
                 </div>
                 <div class="row p-2 mt-1 mb-2 border rounded">
                     <div hidden class="col-md-2">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">ID</h6>
-                            <input type="text" name="cuentaId" id="cuentaId1" class="form-control" th:field="*{id}">
+                            <input type="text" name="cuentaId" id="cuentaId1" class="form-control form-control-sm" th:field="*{id}">
                         </div>
                     </div>
 
@@ -53,9 +53,9 @@
                     <input type="hidden" id="matrizId" name="matrizId" th:value="${matrizId}" />
 
                     <div class="col-md-2">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Ruta Contable:<i class="bi bi-caret-down"></i></h6>
-                            <select class="form-control" required name="selectedRC1" id="selectedRC1" onchange="toggleRC1()">
+                            <select class="form-control form-control-sm" required name="selectedRC1" id="selectedRC1" onchange="toggleRC1()">
                                 <option disabled value="0" selected hidden>Seleccione una R.C.</option>
                                 <option th:each="ruta : ${rutasContables}" th:value="${ruta.id}" th:text="${ruta.nombre}"
                                         th:selected="${cuenta1.rutaContable != null and ruta.id == cuenta1.rutaContable.id}"
@@ -64,9 +64,9 @@
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Campo Ruta Contable:<i class="bi bi-caret-down"></i></h6>
-                            <select class="form-control" name="selectedCRC1" id="selectedCRC1">
+                            <select class="form-control form-control-sm" name="selectedCRC1" id="selectedCRC1">
                                 <option disabled value="0" selected hidden>Seleccione un campo</option>
                                 <option th:each="campo : ${campos}" th:value="${campo.id}" th:text="${campo.nombre}"
                                         th:selected="${cuenta1.campoRutaContable != null and campo.id == cuenta1.campoRutaContable.id}"></option>
@@ -74,17 +74,17 @@
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Construye Cuenta?</h6>
                             <input id="constCuentaInput" name="constCuentaInput" th:id="${constCuentaInput}" type="checkbox" class="styled-checkbox"
                                    th:field="*{construyeCuenta}" th:value="${construyeCuenta}">
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Cuenta Ganancia:</h6>
                             <div class="d-flex align-items-center">
-                                <input type="text" class="form-control" th:field="*{cuentaGanancia}" id="selectedCG1">
+                                <input type="text" class="form-control form-control-sm" th:field="*{cuentaGanancia}" id="selectedCG1">
                                 <i class="bi bi-question-circle-fill ml-1"
                                    type="button"
                                    data-toggle="modal"
@@ -95,10 +95,10 @@
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Cuenta Pérdida:</h6>
                             <div class="d-flex align-items-center">
-                                <input type="text" class="form-control" th:field="*{cuentaPerdida}" id="selectedCP1">
+                                <input type="text" class="form-control form-control-sm" th:field="*{cuentaPerdida}" id="selectedCP1">
                                 <i class="bi bi-question-circle-fill ml-1"
                                    type="button"
                                    data-toggle="modal"
@@ -111,7 +111,7 @@
 
                     <div class="col-md-2">
                         <a id="paramConsButon"
-                           class="btn btn-primary mx-1"
+                           class="btn btn-sm btn-primary mx-1"
                            data-toggle="modal"
                            data-target="#parametrosModal"
                            style="color:#fff"
@@ -119,7 +119,7 @@
                                 Param Construcción
                         </a>
                         <div class="mt-1 ml-2">
-                            <div class="form-group mb-1 d-flex align-items-center">
+                            <div class="form-group form-group-sm d-flex align-items-center">
                                 <h6 class="font-weight-bold mb-0">Parametrizado:</h6>
                                 <input id="paramInput1" name="paramInput1" th:id="${paramInput1}" type="checkbox" class="styled-checkbox ml-2"
                                        th:field="*{parametrizado}" th:value="${parametrizado}">
@@ -129,16 +129,16 @@
 
 
                     <div class="col-md-2">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Maneja Divisa:</h6>
                             <input id="mDivisaInput" name="mDivisaInput" th:id="${mDivisaInput}" type="checkbox" class="styled-checkbox"
                                 th:field="*{manejaDivisa}" th:value="${manejaDivisa}">
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Campo Divisa:<i class="bi bi-caret-down"></i></h6>
-                            <select class="form-control" name="selectedCD1" id="selectedCD1">
+                            <select class="form-control form-control-sm" name="selectedCD1" id="selectedCD1">
                                 <option value="0" th:selected="${cuenta1.campoDivisa == null}">Seleccione un campo</option>
                                 <option th:each="campo : ${camposInventario}" th:value="${campo[0]}" th:text="${campo[1]}"
                                         th:selected="${cuenta1.campoDivisa != null and campo[0] == cuenta1.campoDivisa.id}">
@@ -147,28 +147,28 @@
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Convierte Divisa?</h6>
                             <input id="convDivisaInput" name="convDivisaInput" th:id="${convDivisaInput}" type="checkbox" class="styled-checkbox"
                                 th:field="*{convierteDivisa}" th:value="${convierteDivisa}">
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Convierte UVR a COP?</h6>
                             <input id="UVRaCOPInput" name="UVRaCOPInput" th:id="${UVRaCOPInput}" type="checkbox" class="styled-checkbox"
                                 th:field="*{convierteUVRaCOP}" th:value="${convierteUVRaCOP}">
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Maneja Fórmula?</h6>
                             <input id="mFormulaInput" name="mFormulaInput" th:id="${mFormulaInput}" type="checkbox" class="styled-checkbox"
                                 th:field="*{manejaFormula}" th:value="${manejaFormula}">
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Valor Absoluto?</h6>
                             <input id="valAbsInput" name="valAbsInput" th:id="${valAbsInput}" type="checkbox" class="styled-checkbox"
                                 th:field="*{valorAbsoluto}" th:value="${valorAbsoluto}">
@@ -177,9 +177,9 @@
 
 
                     <div class="col-md-2">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Campo Valor Cuenta:<i class="bi bi-caret-down"></i></h6>
-                            <select class="form-control" name="selectedCVC1" id="selectedCVC1">
+                            <select class="form-control form-control-sm" name="selectedCVC1" id="selectedCVC1">
                                 <option value="0" th:selected="${cuenta1.campoValorCuenta == null}">Seleccione un campo</option>
                                 <option th:each="campo : ${camposInventario}" th:value="${campo[0]}" th:text="${campo[1]}"
                                         th:selected="${cuenta1.campoValorCuenta != null and campo[0] == cuenta1.campoValorCuenta.id}"></option>
@@ -187,9 +187,9 @@
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Campo Valor Operación 1:<i class="bi bi-caret-down"></i></h6>
-                            <select class="form-control" name="selectedCVOU1" id="selectedCVOU1">
+                            <select class="form-control form-control-sm" name="selectedCVOU1" id="selectedCVOU1">
                                 <option value="0" th:selected="${cuenta1.campoValorOp1 == null}">Seleccione un campo</option>
                                 <option th:each="campo : ${camposInventario}" th:value="${campo[0]}" th:text="${campo[1]}"
                                         th:selected="${cuenta1.campoValorOp1 != null and campo[0] == cuenta1.campoValorOp1.id}"></option>
@@ -197,9 +197,9 @@
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Operación:<i class="bi bi-caret-down"></i></h6>
-                            <select class="form-control" name="selectedOperacion1" id="selectedOperacion1">
+                            <select class="form-control form-control-sm" name="selectedOperacion1" id="selectedOperacion1">
                                 <option value="0" th:selected="${cuenta1.operacion == null}" >Seleccione Operación</option>
                                 <option th:selected="${cuenta1.operacion == 'Suma'}" th:value="Suma">Suma</option>
                                 <option th:selected="${cuenta1.operacion == 'Resta'}" th:value="Resta">Resta</option>
@@ -210,10 +210,10 @@
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Campo Valor Operación 2:<i class="bi bi-caret-down"></i></h6>
-                            <input th:field="*{valorOp2}" th:value="${valorOp2}" type="text" class="form-control">
-                            <select class="form-control" name="selectedCVOD1" id="selectedCVOD1">
+                            <input th:field="*{valorOp2}" th:value="${valorOp2}" type="text" class="form-control form-control-sm">
+                            <select class="form-control form-control-sm" name="selectedCVOD1" id="selectedCVOD1">
                                 <option value="0" th:selected="${cuenta1.campoValorOp2 == null}">Seleccione un campo</option>
                                 <option th:each="campo : ${camposInventario}" th:value="${campo[0]}" th:text="${campo[1]}"
                                         th:selected="${cuenta1.campoValorOp2 != null and campo[0] == cuenta1.campoValorOp2.id}"></option>
@@ -222,8 +222,8 @@
                     </div>
 
                     <div>
-                        <button class="btn btn-primary mx-1" th:onclick="|window.location.href='@{/parametric/createEventMatrix}'|">Descartar</button>
-                        <button class="btn btn-primary mx-1" type="submit">Agregar</button>
+                        <button class="btn btn-sm btn-primary mx-1" th:onclick="|window.location.href='@{/parametric/createEventMatrix}'|">Descartar</button>
+                        <button class="btn btn-sm btn-primary mx-1" type="submit">Agregar</button>
                     </div>
 
 
@@ -237,9 +237,9 @@
                 <div class="row p-2 mt-1 mb-2 border rounded">
 
                     <div hidden class="col-md-2">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">ID</h6>
-                            <input type="text" name="cuentaId2" id="cuentaId2" class="form-control" th:field="*{id}">
+                            <input type="text" name="cuentaId2" id="cuentaId2" class="form-control form-control-sm" th:field="*{id}">
                         </div>
                     </div>
 
@@ -247,9 +247,9 @@
                     <input type="hidden" id="matrizId" name="matrizId" th:value="${matrizId}" />
 
                     <div class="col-md-2">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Ruta Contable:<i class="bi bi-caret-down"></i></h6>
-                            <select class="form-control" required name="selectedRC2" id="selectedRC2" onchange="toggleRC2()">
+                            <select class="form-control form-control-sm" required name="selectedRC2" id="selectedRC2" onchange="toggleRC2()">
                                 <option disabled value="0" selected hidden>Seleccione una R.C.</option>
                                 <option th:each="ruta : ${rutasContables}" th:value="${ruta.id}" th:text="${ruta.nombre}"
                                         th:selected="${cuenta2.rutaContable != null and ruta.id == cuenta2.rutaContable.id}"
@@ -258,9 +258,9 @@
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Campo Ruta Contable:<i class="bi bi-caret-down"></i></h6>
-                            <select class="form-control" name="selectedCRC2" id="selectedCRC2">
+                            <select class="form-control form-control-sm" name="selectedCRC2" id="selectedCRC2">
                                 <option disabled value="0" selected hidden>Seleccione un campo</option>
                                 <option th:each="campo : ${campos}" th:value="${campo.id}" th:text="${campo.nombre}"
                                         th:selected="${cuenta2.campoRutaContable != null and campo.id == cuenta2.campoRutaContable.id}"></option>
@@ -268,17 +268,17 @@
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Construye Cuenta?</h6>
                             <input id="constCuentaInput2" name="constCuentaInput" th:id="${constCuentaInput2}" type="checkbox" class="styled-checkbox"
                                    th:field="*{construyeCuenta}" th:value="${construyeCuenta}">
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Cuenta Ganancia:</h6>
                             <div class="d-flex align-items-center">
-                                <input type="text" class="form-control" th:field="*{cuentaGanancia}" id="selectedCG2">
+                                <input type="text" class="form-control form-control-sm" th:field="*{cuentaGanancia}" id="selectedCG2">
                                 <i class="bi bi-question-circle-fill ml-1"
                                    type="button"
                                    data-toggle="modal"
@@ -289,10 +289,10 @@
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Cuenta Pérdida:</h6>
                             <div class="d-flex align-items-center">
-                                <input type="text" class="form-control" th:field="*{cuentaPerdida}" id="selectedCP2">
+                                <input type="text" class="form-control form-control-sm" th:field="*{cuentaPerdida}" id="selectedCP2">
                                 <i class="bi bi-question-circle-fill ml-1"
                                    type="button"
                                    data-toggle="modal"
@@ -304,7 +304,7 @@
                     </div>
                     <div class="col-md-2">
                         <a id="paramConsButon2"
-                           class="btn btn-primary mx-1"
+                           class="btn btn-sm btn-primary mx-1"
                            data-toggle="modal"
                            data-target="#parametrosModal"
                            style="color:#fff"
@@ -312,7 +312,7 @@
                             Param Construcción
                         </a>
                         <div class="mt-1 ml-2">
-                            <div class="form-group mb-1 d-flex align-items-center">
+                            <div class="form-group form-group-sm d-flex align-items-center">
                                 <h6 class="font-weight-bold mb-0">Parametrizado:</h6>
                                 <input id="paramInput2" name="paramInput1" th:id="${paramInput2}" type="checkbox" class="styled-checkbox ml-2"
                                        th:field="*{parametrizado}" th:value="${parametrizado}">
@@ -322,16 +322,16 @@
 
 
                     <div class="col-md-2">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Maneja Divisa:</h6>
                             <input id="mDivisaInput2" name="mDivisaInput2" th:id="${mDivisaInput2}" type="checkbox" class="styled-checkbox"
                                    th:field="*{manejaDivisa}" th:value="${manejaDivisa}">
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Campo Divisa:<i class="bi bi-caret-down"></i></h6>
-                            <select class="form-control" name="selectedCD2" id="selectedCD2">
+                            <select class="form-control form-control-sm" name="selectedCD2" id="selectedCD2">
                                 <option value="0" th:selected="${cuenta2.campoDivisa == null}">Seleccione un campo</option>
                                 <option th:each="campo : ${camposInventario}" th:value="${campo[0]}" th:text="${campo[1]}"
                                         th:selected="${cuenta2.campoDivisa != null and campo[0] == cuenta2.campoDivisa.id}">
@@ -340,28 +340,28 @@
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Convierte Divisa?</h6>
                             <input id="convDivisaInput2" name="convDivisaInput2" th:id="${convDivisaInput2}" type="checkbox" class="styled-checkbox"
                                    th:field="*{convierteDivisa}" th:value="${convierteDivisa}">
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Convierte UVR a COP?</h6>
                             <input id="UVRaCOPInput2" name="UVRaCOPInput2" th:id="${UVRaCOPInput2}" type="checkbox" class="styled-checkbox"
                                    th:field="*{convierteUVRaCOP}" th:value="${convierteUVRaCOP}">
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Maneja Fórmula?</h6>
                             <input id="mFormulaInput2" name="mFormulaInput2" th:id="${mFormulaInput2}" type="checkbox" class="styled-checkbox"
                                    th:field="*{manejaFormula}" th:value="${manejaFormula}">
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Valor Absoluto?</h6>
                             <input id="valAbsInput2" name="valAbsInput2" th:id="${valAbsInput2}" type="checkbox" class="styled-checkbox"
                                    th:field="*{valorAbsoluto}" th:value="${valorAbsoluto}">
@@ -370,9 +370,9 @@
 
 
                     <div class="col-md-2">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Campo Valor Cuenta:<i class="bi bi-caret-down"></i></h6>
-                            <select class="form-control" name="selectedCVC2" id="selectedCVC2">
+                            <select class="form-control form-control-sm" name="selectedCVC2" id="selectedCVC2">
                                 <option value="0" th:selected="${cuenta2.campoValorCuenta == null}">Seleccione un campo</option>
                                 <option th:each="campo : ${camposInventario}" th:value="${campo[0]}" th:text="${campo[1]}"
                                         th:selected="${cuenta2.campoValorCuenta != null and campo[0] == cuenta2.campoValorCuenta.id}"></option>
@@ -380,9 +380,9 @@
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Campo Valor Operación 1:<i class="bi bi-caret-down"></i></h6>
-                            <select class="form-control" name="selectedCVOU2" id="selectedCVOU2">
+                            <select class="form-control form-control-sm" name="selectedCVOU2" id="selectedCVOU2">
                                 <option value="0" th:selected="${cuenta2.campoValorOp1 == null}">Seleccione un campo</option>
                                 <option th:each="campo : ${camposInventario}" th:value="${campo[0]}" th:text="${campo[1]}"
                                         th:selected="${cuenta2.campoValorOp1 != null and campo[0] == cuenta2.campoValorOp1.id}"></option>
@@ -390,9 +390,9 @@
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Operación:<i class="bi bi-caret-down"></i></h6>
-                            <select class="form-control" name="selectedOperacion2" id="selectedOperacion2">
+                            <select class="form-control form-control-sm" name="selectedOperacion2" id="selectedOperacion2">
                                 <option value="0" th:selected="${cuenta2.operacion == null}" >Seleccione Operación</option>
                                 <option th:selected="${cuenta2.operacion == 'Suma'}" th:value="Suma">Suma</option>
                                 <option th:selected="${cuenta2.operacion == 'Resta'}" th:value="Resta">Resta</option>
@@ -402,10 +402,10 @@
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Campo Valor Operación 2:<i class="bi bi-caret-down"></i></h6>
-                            <input th:field="*{valorOp2}" th:value="${valorOp2}" type="text" class="form-control">
-                            <select class="form-control" name="selectedCVOD2" id="selectedCVOD2">
+                            <input th:field="*{valorOp2}" th:value="${valorOp2}" type="text" class="form-control form-control-sm">
+                            <select class="form-control form-control-sm" name="selectedCVOD2" id="selectedCVOD2">
                                 <option value="0" th:selected="${cuenta2.campoValorOp2 == null}">Seleccione un campo</option>
                                 <option th:each="campo : ${camposInventario}" th:value="${campo[0]}" th:text="${campo[1]}"
                                         th:selected="${cuenta2.campoValorOp2 != null and campo[0] == cuenta2.campoValorOp2.id}"></option>
@@ -414,8 +414,8 @@
                     </div>
 
                     <div>
-                        <button class="btn btn-primary mx-1" th:onclick="|window.location.href='@{/parametric/createEventMatrix}'|">Descartar</button>
-                        <button class="btn btn-primary mx-1" type="submit">Agregar</button>
+                        <button class="btn btn-sm btn-primary mx-1" th:onclick="|window.location.href='@{/parametric/createEventMatrix}'|">Descartar</button>
+                        <button class="btn btn-sm btn-primary mx-1" type="submit">Agregar</button>
                     </div>
 
 
@@ -444,10 +444,10 @@
                 </div>
                 <div class="modal-body">
                     <div class="mt-1 mb-2">
-                        <div class="form-group mb-1 d-flex align-items-center">
+                        <div class="form-group form-group-sm d-flex align-items-center">
                             <h6 class="font-weight-bold mb-0">Cuenta Contable a buscar:</h6>
-                            <input type="text" class="form-control col-md-4 ml-2" id="selectedCuentaBusqueda">
-                            <button class="btn btn-primary mx-1" id="btnConsultar" onclick="consultarCuenta()">Consultar</button>
+                            <input type="text" class="form-control form-control-sm col-md-4 ml-2" id="selectedCuentaBusqueda">
+                            <button class="btn btn-sm btn-primary mx-1" id="btnConsultar" onclick="consultarCuenta()">Consultar</button>
                         </div>
                     </div>
                     <div class="col-md-12 p-0">
@@ -491,26 +491,26 @@
                             <h2>Cargue Parámetros Construcción Cuenta Contable</h2>
                         </div>
                         <div class="text-right col-md-6">
-                            <button type="button" class="btn btn-primary mx-2" onclick="limpiarCampParams()">Deseleccionar Item</button>
+                            <button type="button" class="btn btn-sm btn-primary mx-2" onclick="limpiarCampParams()">Deseleccionar Item</button>
                         </div>
                     </div>
                     <div class="mt-1 mb-2 row">
                         <div class="col-md-3">
                             <div hidden class="col-md-2">
-                                <div class="form-group mb-1">
+                                <div class="form-group form-group-sm">
                                     <h6 class="font-weight-bold">ID</h6>
-                                    <input type="text" class="form-control" id="parametroId" name="parametroId" th:value="${parametro.id}">
+                                    <input type="text" class="form-control form-control-sm" id="parametroId" name="parametroId" th:value="${parametro.id}">
                                 </div>
                             </div>
                             <div hidden class="col-md-2">
-                                <div class="form-group mb-1">
+                                <div class="form-group form-group-sm">
                                     <h6 class="font-weight-bold">ID cuenta</h6>
-                                    <input type="text" class="form-control" id="idCuenta" name="idCuenta" th:value="${cuenta1.id}">
+                                    <input type="text" class="form-control form-control-sm" id="idCuenta" name="idCuenta" th:value="${cuenta1.id}">
                                 </div>
                             </div>
-                            <div class="form-group mb-1">
+                            <div class="form-group form-group-sm">
                                 <h6 class="font-weight-bold">Campo Conciliacion:<i class="bi bi-caret-down"></i></h6>
-                                <select class="form-control" required name="selectedPCCC" id="selectedPCCC">
+                                <select class="form-control form-control-sm" required name="selectedPCCC" id="selectedPCCC">
                                     <option disabled value="0" selected hidden>Seleccione un campo</option>
                                     <option th:each="ruta : ${camposConcil}" th:value="${ruta[0]}" th:text="${ruta[1]}"
                                             th:selected="${parametro.campoConciliacion != null and ruta[0] == parametro.campoConciliacion.id}"
@@ -519,9 +519,9 @@
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <div class="form-group mb-1">
+                            <div class="form-group form-group-sm">
                                 <h6 class="font-weight-bold">Ruta Contable:<i class="bi bi-caret-down"></i></h6>
-                                <select class="form-control" required name="selectedPCRC" id="selectedPCRC" onchange="togglePCRC()">
+                                <select class="form-control form-control-sm" required name="selectedPCRC" id="selectedPCRC" onchange="togglePCRC()">
                                     <option disabled value="0" selected hidden>Seleccione una R.C.</option>
                                     <option th:each="ruta : ${rutasContables}" th:value="${ruta.id}" th:text="${ruta.nombre}"
                                             th:selected="${parametro.rutaContable != null and ruta.id == parametro.rutaContable.id}"
@@ -530,18 +530,18 @@
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <div class="form-group mb-1">
+                            <div class="form-group form-group-sm">
                                 <h6 class="font-weight-bold">Campo Contable Validar:<i class="bi bi-caret-down"></i></h6>
-                                <select class="form-control" required name="selectedPCCCV" id="selectedPCCCV">
+                                <select class="form-control form-control-sm" required name="selectedPCCCV" id="selectedPCCCV">
                                     <option disabled value="0" selected hidden>Seleccione un campo</option>
 
                                 </select>
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <div class="form-group mb-1">
+                            <div class="form-group form-group-sm">
                                 <h6 class="font-weight-bold">Campo Contable Resultante:<i class="bi bi-caret-down"></i></h6>
-                                <select class="form-control" required name="selectedPCCCR" id="selectedPCCCR">
+                                <select class="form-control form-control-sm" required name="selectedPCCCR" id="selectedPCCCR">
                                     <option disabled value="0" selected hidden>Seleccione un campo</option>
 
                                 </select>
@@ -551,10 +551,10 @@
 
                     <div class="row mb-3">
                         <div class="d-grid gap-2 col-2">
-                            <button th:disabled="${!p_modificar}" type="button" class="btn btn-primary" onclick="descartarParam()">Eliminar</button>
+                            <button th:disabled="${!p_modificar}" type="button" class="btn btn-sm btn-primary" onclick="descartarParam()">Eliminar</button>
                         </div>
                         <div class="d-grid gap-2 col-2">
-                            <button th:disabled="${!p_modificar}" type="button" class="btn btn-primary" onclick="agregarParam()">Agregar</button>
+                            <button th:disabled="${!p_modificar}" type="button" class="btn btn-sm btn-primary" onclick="agregarParam()">Agregar</button>
                         </div>
                     </div>
 
@@ -580,7 +580,7 @@
                                     <td th:text="${val.valorOperacion}"></td>
 
                                     <td>
-                                        <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
+                                        <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
                                                 th:data-id="${val.id}"
                                                 th:data-campoRef="${val.campoRef.nombre}"
                                                 th:data-campoVal="${val.campoVal?.nombre ?: ''}"
@@ -929,7 +929,7 @@
                     <td>${param[10]|| ''}</td>
 
                     <td>
-                        <button class="btn btn-primary mx-1"
+                        <button class="btn btn-sm btn-primary mx-1"
                                 data-id="${param[0]}"
                                 data-idcampoconciliacion="${param[3]|| ''}"
                                 data-idrutacontable="${param[6]|| ''}"

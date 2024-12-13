@@ -82,6 +82,10 @@ public class AccountingLoadListReport {
         style2.setFont(font);
         style2.setDataFormat(workbook.createDataFormat().getFormat("#,##0"));
 
+        CellStyle style3 = workbook.createCellStyle();
+        style3.setFont(font);
+        style3.setDataFormat(workbook.createDataFormat().getFormat("dd-MM-yyyy"));
+
         for(Object[] data: aroutes){
             Row row = sheet.createRow(rowCount++);
             int columnCount = 0;
@@ -89,7 +93,12 @@ public class AccountingLoadListReport {
             {
                 if(part!=null) {
                     try{
-                        if(colAroutes.get(columnCount).getTipo().equalsIgnoreCase("Float"))
+                        System.out.println(columnCount+" -> "+part.toString());
+                        if(data.length==(columnCount+1)) {
+                            System.out.println("entro en "+columnCount);
+                            createCell(row, columnCount++, part, style3);
+                        }
+                        else if(colAroutes.get(columnCount).getTipo().equalsIgnoreCase("Float"))
                             createCell(row, columnCount++, Double.parseDouble(part.toString()), style1);
                         else if(colAroutes.get(columnCount).getTipo().equalsIgnoreCase("Integer") || colAroutes.get(columnCount).getTipo().equalsIgnoreCase("Bigint"))
                             createCell(row, columnCount++, Long.parseLong(part.toString()), style2);

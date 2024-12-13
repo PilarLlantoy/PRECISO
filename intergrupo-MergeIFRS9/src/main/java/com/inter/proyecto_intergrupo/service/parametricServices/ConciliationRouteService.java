@@ -22,6 +22,9 @@ import java.io.BufferedWriter;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -632,11 +635,57 @@ public class ConciliationRouteService {
 
 
     public List<Object[]> findAllData(ConciliationRoute data, String fecha) {
-        String campos = data.getCampos().stream()
-                .map(CampoRConcil::getNombre)
-                .collect(Collectors.joining(","));
-        Query querySelect = entityManager.createNativeQuery("SELECT "+campos+",periodo_preciso FROM preciso_rconcil_"+data.getId()+" WHERE periodo_preciso = '"+fecha+"' ");
-        return querySelect.getResultList();
+        List<Object[]> lista= new ArrayList<>();
+        if(!data.getCampos().isEmpty()) {
+            String campos = data.getCampos().stream()
+                    .map(CampoRConcil::getNombre)
+                    .collect(Collectors.joining(","));
+            Query querySelect = entityManager.createNativeQuery("SELECT " + campos + ",periodo_preciso FROM preciso_rconcil_" + data.getId() + " WHERE periodo_preciso = '" + fecha + "' ");
+            lista = querySelect.getResultList();
+        }
+        return lista;
+    }
+
+    public List<Object[]> processList(List<Object[]> aroutes, List<CampoRConcil> colAroutes) {
+        List<Object[]> processedList = new ArrayList<>();
+
+        for (Object[] row : aroutes) {
+            Object[] processedRow = new Object[row.length];
+
+            for (int i = 0; i < row.length; i++) {
+                // Obtener el tipo de la columna desde colAroutes
+                String tipo = "";
+                if (colAroutes.size() == i)
+                    tipo = "Ultimo";
+                else
+                    tipo = colAroutes.get(i).getTipo();
+
+                if ("Float".equalsIgnoreCase(tipo) || "Integer".equalsIgnoreCase(tipo) || "Bigint".equalsIgnoreCase(tipo)) {
+                    try {
+                        // Convertir el valor a BigDecimal para evitar notación científica
+                        BigDecimal decimalValue = new BigDecimal(Float.parseFloat(row[i].toString()));
+
+                        // Redondear a 4 decimales
+                        decimalValue = decimalValue.setScale(4, RoundingMode.HALF_UP);
+
+                        // Usar DecimalFormat para agregar separadores de miles y punto decimal
+                        DecimalFormat decimalFormat = new DecimalFormat("#,###.####");
+                        String formattedValue = decimalFormat.format(decimalValue);
+
+                        processedRow[i] = formattedValue;
+                    } catch (Exception e) {
+                        // Si hay algún error en la conversión, dejamos el valor tal cual está
+                        processedRow[i] = row[i];
+                    }
+                } else {
+                    // Si no es de tipo "Float", dejamos el valor tal cual está
+                    processedRow[i] = row[i];
+                }
+            }
+            processedList.add(processedRow);
+        }
+
+        return processedList;
     }
 
     @Scheduled(cron = "0 0/30 * * * ?")

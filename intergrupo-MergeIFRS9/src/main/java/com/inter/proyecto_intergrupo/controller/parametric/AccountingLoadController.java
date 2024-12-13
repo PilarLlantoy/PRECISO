@@ -51,10 +51,10 @@ import java.util.stream.IntStream;
 public class AccountingLoadController {
     private static final int PAGINATIONCOUNT=5;
     private static final int PAGINATIONCOUNTDATA=500;
-    private static final String rutaArchivoFormato = "\\\\co.igrupobbva\\svrfilesystem\\BBVA_VIC06\\DP10\\Preciso\\archivo.fmt";
-    private static final String rutaArchivoFormato1 = "\\\\co.igrupobbva\\svrfilesystem\\BBVA_VIC06\\DP10\\Preciso\\";
-    //private static final String rutaArchivoFormato = "D:\\archivo.fmt";
-    //private static final String rutaArchivoFormato1 = "D:\\";
+    public static final String rutaArchivoFormato = "\\\\co.igrupobbva\\svrfilesystem\\BBVA_VIC06\\DP10\\Preciso\\archivo.fmt";
+    public static final String rutaArchivoFormato1 = "\\\\co.igrupobbva\\svrfilesystem\\BBVA_VIC06\\DP10\\Preciso\\";
+    //public static final String rutaArchivoFormato = "D:\\archivo.fmt";
+    //public static final String rutaArchivoFormato1 = "D:\\";
 
     Logger logger = LogManager.getLogger(LogManager.ROOT_LOGGER_NAME);
 
@@ -91,8 +91,10 @@ public class AccountingLoadController {
                     modelAndView.addObject("nomb",ac.getNombre());
                 else
                     modelAndView.addObject("nomb","Vacio");
+
                 logAroutes = accountingRouteService.findAllLog(ac,params.get("period").toString());
-                aroutes = accountingRouteService.findAllData(ac,params.get("period").toString(), null, null);
+                aroutes = accountingRouteService.processList(accountingRouteService.findAllData(ac,params.get("period").toString(), null, null),ac.getCampos());
+
                 CampoRC crc= new CampoRC();
                 crc.setNombre("periodo_preciso");
                 ac.getCampos().add(crc);
