@@ -166,7 +166,7 @@ public class InformationCrossingService {
         }
 
         createTableQuery.append("INVENTARIO VARCHAR(MAX), ")
-                .append("ID_INVENTARIO INT, ")
+                .append("ID_INVENTARIO INT IDENTITY(1,1), ")
                 .append("FECHA_CONCILIACION DATE, ")
                 .append("TIPO_EVENTO VARCHAR(MAX), ")
                 .append("CDGO_MATRIZ_EVENTO INT, ")
@@ -226,24 +226,46 @@ public class InformationCrossingService {
         insertData.executeUpdate();
     }
 
-    public void completarTablaCruce(ConciliationRoute data, String fecha, EventType tipoEvento, EventMatrix matriz) {
+    public void completarTablaCruce(ConciliationRoute data,
+                                    String fecha,
+                                    EventType tipoEvento,
+                                    EventMatrix matriz,
+                                    AccountEventMatrix cuenta1,
+                                    AccountEventMatrix cuenta2
+                                    ) {
+
+        String valorCuenta = null;
+        if(cuenta2.getCampoValorCuenta()!=null)
+            valorCuenta=cuenta2.getCampoValorCuenta().getNombre();
+        else
+            valorCuenta=cuenta2.getCampoValorOp1().getNombre()+"*"+cuenta2.getValorOp2();
+
+
         // Crear la consulta SQL para insertar los valores
         String tableName = "TEMPORAL_ci";
         Query updateQuery = entityManager.createNativeQuery("UPDATE " +tableName+
                 " SET INVENTARIO = ?, " +
-                "    ID_INVENTARIO = ?, " +
                 "    FECHA_CONCILIACION = ?, " +
                 "    TIPO_EVENTO = ?, " +
                 "    CDGO_MATRIZ_EVENTO = ?, " +
-                "    CENTRO_CONTABLE = ? " +
+                "    CENTRO_CONTABLE = ?, " +
+
+                "    CUENTA_CONTABLE_1 = ?, " +
+                "    DIVISA_CUENTA_1 = " +cuenta1.getCampoDivisa().getNombre()+", "+
+                "    VALOR_CUENTA_1 = "+cuenta1.getCampoValorCuenta().getNombre()+", "+
+
+                "    CUENTA_CONTABLE_2 = ?, " +
+                "    DIVISA_CUENTA_2 = " +cuenta2.getCampoDivisa().getNombre()+", "+
+                "    VALOR_CUENTA_2 = "+valorCuenta+" "+
                 ""); // Reemplaza <CONDICION> con la condición adecuada para identificar los registros a actualizar
 
         updateQuery.setParameter(1,data.getDetalle());
-        updateQuery.setParameter(2,data.getId());
-        updateQuery.setParameter(3,fecha);
-        updateQuery.setParameter(4,tipoEvento.getNombre());
-        updateQuery.setParameter(5,matriz.getId());
-        updateQuery.setParameter(6,matriz.getCentroContable());
+        updateQuery.setParameter(2,fecha);
+        updateQuery.setParameter(3,tipoEvento.getNombre());
+        updateQuery.setParameter(4,matriz.getId());
+        updateQuery.setParameter(5,matriz.getCentroContable());
+        updateQuery.setParameter(6,cuenta1.getCuentaGanancia());
+        updateQuery.setParameter(7,cuenta2.getCuentaGanancia());
         updateQuery.executeUpdate();
     }
 

@@ -75,6 +75,9 @@ public class InformationCrossingController {
     @Autowired
     private CondicionMEService condicionMEService;
 
+    @Autowired
+    private AccountEventMatrixService accountEventMatrixService;
+
     @GetMapping(value="/parametric/informationCrossing")
     public ModelAndView showinformationCrossing(@RequestParam Map<String, Object> params) {
         ModelAndView modelAndView = new ModelAndView();
@@ -222,7 +225,9 @@ public class InformationCrossingController {
                         informationCrossingService.conditionData(ruta);
 
                     //Completamos informacion general
-                    informationCrossingService.completarTablaCruce(ruta, fecha, tipoEvento, matriz);
+                    AccountEventMatrix cuenta1 = accountEventMatrixService.findByMatrizEventoTipo1(matriz);
+                    AccountEventMatrix cuenta2 = accountEventMatrixService.findByMatrizEventoTipo2(matriz);
+                    informationCrossingService.completarTablaCruce(ruta, fecha, tipoEvento, matriz, cuenta1, cuenta2);
 
                     //Asignamos las cuentas
 

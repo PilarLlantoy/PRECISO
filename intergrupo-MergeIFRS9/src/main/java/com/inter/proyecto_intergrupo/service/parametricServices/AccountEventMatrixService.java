@@ -42,7 +42,7 @@ public class AccountEventMatrixService {
         return accountEventMatrixRepository.findAllById(id);
     }
 
-    public AccountEventMatrix findByMatrizEvento(EventMatrix matriz){
+    public List<AccountEventMatrix> findByMatrizEvento(EventMatrix matriz){
         return accountEventMatrixRepository.findByMatrizEvento(matriz);
     }
 

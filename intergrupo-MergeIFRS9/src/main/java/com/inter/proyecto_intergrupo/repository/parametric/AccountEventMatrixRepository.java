@@ -13,6 +13,6 @@ import java.util.List;
 public interface AccountEventMatrixRepository extends JpaRepository<AccountEventMatrix,Integer> {
     AccountEventMatrix findAllById(int id);
     List<AccountEventMatrix> findByEstado(boolean estado);
-    AccountEventMatrix findByMatrizEvento(EventMatrix matriz);
+    List<AccountEventMatrix> findByMatrizEvento(EventMatrix matriz);
     AccountEventMatrix findByMatrizEventoAndTipo(EventMatrix matriz, String tipo);
 }
