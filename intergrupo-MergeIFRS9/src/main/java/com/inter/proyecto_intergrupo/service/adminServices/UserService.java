@@ -200,7 +200,7 @@ public class    UserService {
             validate.setParameter(1,usuario);
             validate.setParameter(2,vista);
             return (boolean) validate.getResultList().get(0);
-        } catch (NoResultException e) {
+        } catch (Exception e) {
             return false;
         }
     }

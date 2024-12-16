@@ -52,7 +52,7 @@
                     </thead>
                     <tbody>
                     <tr th:each="concil, iter : ${allConcils}">
-                        <td th:text="${iter.count}"></td>
+                        <td th:text="${iter.count + ((current-1)*12)}"></td>
                         <td th:text="${concil.nombre}"></td>
                         <td th:text="${concil.periodicidad}"></td>
                         <td th:text="${concil.sf.nombre}"></td>
@@ -79,11 +79,11 @@
                         <ul class="pagination pagination-sm">
                             <li class="page-item" th:classappend="${prev == 0 ? 'disabled' : ''}">
                                 <a class="page-link"
-                                   th:href="@{/admin/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${prev},dir=${directory},vId=${vId})}">Anterior</a>
+                                   th:href="@{/parametric/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${prev},dir=${directory},vId=${vId})}">Anterior</a>
                             </li>
                             <li class="page-item" th:classappend="${current == last ? 'disabled' : ''}">
                                 <a class="page-link"
-                                   th:href="@{/admin/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${next},dir=${directory},vId=${vId})}">Siguiente</a>
+                                   th:href="@{/parametric/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${next},dir=${directory},vId=${vId})}">Siguiente</a>
                             </li>
                         </ul>
                     </nav>

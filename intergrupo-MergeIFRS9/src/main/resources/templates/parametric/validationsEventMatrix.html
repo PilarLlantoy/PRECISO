@@ -10,7 +10,7 @@
 <div class="main-container">
     <div class="row m-0 bg-primary fixed-top myNav">
         <div class="col-md-12 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
-            <h3 class="fw-bold text-white ml-4 my-3">Validaciones (</h3>
+            <h2 class="fw-bold text-white ml-4 my-3">Validaciones (</h2>
             <div class="d-flex " style="align-items">
                 <h3 class=" fw-bold text-white  my-3">Conciliacion: <span th:text="${matriz.conciliacion.nombre}"></span></h3>
                 <h3 class=" fw-bold text-white  my-3">, Inventario: <span th:text="${matriz.inventarioConciliacion.detalle}"></span></h3>
@@ -20,40 +20,38 @@
         </div>
     </div>
 
-    <div class="row mt-5 pt-3 pb-1 px-4">
+    <div class="row mt-5 pt-1 pb-1 px-4">
         <div class="text-left col-md-6">
             <h2>Cargue de Validaciones a Campos</h2>
         </div>
         <div class="text-right col-md-6">
-            <a class="btn btn-primary mx-1" th:href="@{/parametric/eventMatrix}"><i class="fa-solid fa-left-long"></i> Regresar</a>
-            <button type="button" class="btn btn-primary mx-2" onclick="Limpiar()">Deseleccionar Item</button>
+            <a class="btn btn-sm btn-danger mx-1" th:href="@{/parametric/eventMatrix}"><i class="fa-solid fa-left-long"></i> Regresar</a>
         </div>
     </div>
-
     <div class="row px-4">
-        <div class="text-left col-md-12 mb-3">
+        <div class="text-left col-md-12 mb-1">
 
             <form id="miFormulario" th:object="${validationME}" th:action="@{/parametric/createValidacionME}" method="POST">
                 <!-- Formulario oculto para pasar el objeto matriz-->
                 <input type="hidden" id="matrizId" name="matrizId" th:value="${matriz.id}" />
 
-                <div class="mb-3 p-3 row border rounded">
+                <div class="mb-1 px-3 row border rounded">
                     <div hidden class="col-md-2">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">ID</h6>
-                            <input type="text" class="form-control" th:field="*{id}">
+                            <input type="text" id="idInput" class="form-control form-control-sm" th:field="*{id}">
                         </div>
                     </div>
                     <div class="col-md-4" id="validacionContainer">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Campo Validación</h6>
                             <div class="d-flex align-items-center">
-                                <select class="form-control" name="selectedCampoVal" id="selectedCampoVal">
+                                <select class="form-control form-control-sm" name="selectedCampoVal" id="selectedCampoVal">
                                     <option disabled value="" selected hidden>Seleccione Campo</option>
                                     <option th:each="campoVal : ${campos}" th:value="${campoVal[0]}" th:text="${campoVal[1]}"></option>
                                 </select>
                                 <p class="font-weight-bold mx-1 mb-0" style="line-height: 1.5;">=</p>
-                                <input type="text" class="form-control" th:field="*{valorValidacion}">
+                                <input type="text" class="form-control form-control-sm" th:field="*{valorValidacion}">
                             </div>
                         </div>
                     </div>
@@ -76,9 +74,9 @@
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Afecta a:</h6>
-                            <select class="form-control" required th:name="selectedCampoAf" id="selectedCampoAf">
+                            <select class="form-control form-control-sm" required th:name="selectedCampoAf" id="selectedCampoAf">
                                 <option disabled selected value="">Seleccione un campo</option>
                                 <option th:each="campo : ${campos}" th:value="${campo[0]}" th:text="${campo[1]}"></option>
                             </select>
@@ -87,18 +85,18 @@
                     <div class="col-md-2"></div>
 
                     <div class="col-md-2">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Campo:<i class="bi bi-caret-down"></i></h6>
-                            <select class="form-control" required th:name="selectedCampo" id="selectedCampo">
+                            <select class="form-control form-control-sm" required th:name="selectedCampo" id="selectedCampo">
                                 <option disabled  selected value="">Seleccione un campo</option>
                                 <option th:each="campo : ${campos}" th:value="${campo[0]}" th:text="${campo[1]}"></option>
                             </select>
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Operacion:<i class="bi bi-caret-down"></i></h6>
-                            <select class="form-control" name="selectedOperacion" id="selectedOperacion">
+                            <select class="form-control form-control-sm" name="selectedOperacion" id="selectedOperacion">
                                 <option disabled value="" selected >Seleccione operación</option>
                                 <option th:value="Suma">Suma</option>
                                 <option th:value="Resta">Resta</option>
@@ -109,23 +107,28 @@
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Valor Operación</h6>
-                            <input type="text" class="form-control"  th:field="*{valorOperacion}"  required>
+                            <input type="text" class="form-control form-control-sm"  th:field="*{valorOperacion}"  required>
                         </div>
                     </div>
 
                 </div>
 
                 <div class="row">
-                    <div class="d-grid gap-2 col-2">
-                        <button th:disabled="${!p_modificar}" type="button" class="btn btn-primary" onclick="descartar()">Eliminar</button>
+                    <div class="d-grid gap-2 col-1">
+                        <button th:disabled="${!p_modificar}" type="button" class="btn btn-sm btn-primary" onclick="descartar()">Eliminar</button>
                     </div>
-                    <div class="d-grid gap-2 col-2">
-                        <button th:disabled="${!p_modificar}" type="submit" class="btn btn-primary">Agregar</button>
+                    <div class="d-grid gap-2 col-1">
+                        <button th:disabled="${!p_modificar}" id="actionButton" type="submit" class="btn btn-sm btn-primary">Agregar</button>
+                    </div>
+                    <div class="col-auto">
+                        <div class="border-start ms-3" style="height: 100%;"></div>
+                    </div>
+                    <div class="d-grid gap-2 col-1">
+                        <button type="button" class="btn btn-sm btn-primary" } onclick="Limpiar()">Deseleccionar Item</button>
                     </div>
                 </div>
-
             </form>
         </div>
         <div class="col-md-12 p-0">
@@ -150,7 +153,7 @@
                         <td th:text="${val.operacion}"></td>
                         <td th:text="${val.valorOperacion}"></td>
                         <td>
-                            <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
+                            <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
                                     th:data-id="${val.id}"
                                     th:data-campoAfecta="${val.campoAfecta.nombre}"
                                     th:data-campoVal="${val.campoVal?.nombre ?: ''}"
@@ -169,7 +172,7 @@
             <div class="row" th:if="${last != 0}">
                 <div class="col-md-4 text-left">
                     <nav arial-label="Pagination">
-                        <ul class="pagination">
+                        <ul class="pagination pagination-sm">
                             <li class="page-item" th:classappend="${prev == 0 ? 'disabled' : ''}">
                                 <a class="page-link"
                                    th:href="@{/admin/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${prev},dir=${directory},vId=${vId})}">Anterior</a>
@@ -194,7 +197,7 @@
             </div>
             <!--
             <div class="d-flex align-items-center justify-content-center">
-                <a th:href="@{/admin/users/download/?vFilter={vFilter}&vId={vId}(vFilter=${vFilter},vId=${vId})}" class="btn btn-primary">Exportar a Excel</a>
+                <a th:href="@{/admin/users/download/?vFilter={vFilter}&vId={vId}(vFilter=${vFilter},vId=${vId})}" class="btn btn-sm btn-primary">Exportar a Excel</a>
             </div>
             -->
         </div>
@@ -272,6 +275,7 @@
 
 
         //toggleFields();
+        updateButtonText();
 
     }
 
@@ -297,6 +301,7 @@
                 console.error('Error:', error);
             });
         }
+        updateButtonText();
     }
 
     function toggleFields() {
@@ -317,6 +322,22 @@
     function Limpiar() {
         document.getElementById('miFormulario').reset();
         //toggleFields();
+        updateButtonText();
+    }
+
+    function updateButtonText() {
+         const idInput = document.getElementById("idInput");
+        const actionButton = document.getElementById("actionButton");
+
+        // Elimina espacios antes de validar
+        const value = idInput.value.trim();
+
+        // Cambia el texto según el estado del campo
+        if (value === "0") {
+            actionButton.textContent = "Agregar";
+        } else {
+            actionButton.textContent = "Modificar";
+        }
     }
 
     window.onload = function() {

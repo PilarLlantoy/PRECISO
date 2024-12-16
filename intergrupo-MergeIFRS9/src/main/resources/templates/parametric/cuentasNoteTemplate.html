@@ -21,33 +21,32 @@
     </style>
     <div class="row m-0 bg-primary fixed-top myNav">
         <div class="col-md-12 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
-            <h3 class="fw-bold text-white ml-4 my-3">Cuentas (</h3>
+            <h2 class="fw-bold text-white ml-4 my-3">Cuentas (</h2>
             <div class="d-flex " style="align-items">
-                <h3 class=" fw-bold text-white  my-3">Plantilla: <span th:text="${matriz.conciliacion.nombre}"></span></h3>
-                <h3 class=" fw-bold text-white  my-3">, Inventario: <span th:text="${matriz.inventarioConciliacion.detalle}"></span>)</h3>
+                <h3 th:if="${matriz.conciliacion!=null}" class=" fw-bold text-white  my-3">Plantilla: <span th:text="${matriz.conciliacion.nombre}"></span></h3>
+                <h3 th:if="${matriz.conciliacion==null}" class=" fw-bold text-white  my-3">Plantilla: Libre</span></h3>
+                <h3 th:if="${matriz.inventarioConciliacion!=null}" class=" fw-bold text-white  my-3">, Inventario: <span th:text="${matriz.inventarioConciliacion.detalle}"></span>)</h3>
+                <h3 th:if="${matriz.inventarioConciliacion==null}" class=" fw-bold text-white  my-3">, Inventario: Libre></span>)</h3>
             </div>
         </div>
     </div>
-    <div class="row mt-5 py-3 px-4">
+    <div class="row mt-5 pt-2 px-4">
         <div class="text-left col-md-6">
             <h2>Cargue de Cuentas a Parametrizar</h2>
         </div>
         <div class="text-right col-md-6">
-            <a class="btn btn-primary mx-1" th:href="@{/parametric/noteTemplates}"><i class="fa-solid fa-left-long"></i> Regresar</a>
-            <button type="button" class="btn btn-primary mx-2" onclick="Limpiar()">Deseleccionar Item</button>
+            <a class="btn btn-sm btn-danger" th:href="@{/parametric/noteTemplates}"><i class="fa-solid fa-left-long"></i> Regresar</a>
         </div>
     </div>
-
-
     <div class="row px-4">
-        <div class="text-left col-md-12 mb-3">
+        <div class="text-left col-md-12 mb-1">
             <form id="miFormularioCuenta1" th:object="${cuentaParam}" th:action="@{/parametric/createCuentaNT}" method="POST">
-                <div class="mb-3 p-3 row border rounded">
+                <div class="mb-1 px-3 row border rounded">
 
                     <div hidden class="col-md-2">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">ID</h6>
-                            <input type="text" name="cuentaId" id="cuentaId1" class="form-control" th:field="*{id}">
+                            <input type="text" name="cuentaId" id="cuentaId1" class="form-control form-control-sm" th:field="*{id}">
                         </div>
                     </div>
 
@@ -55,10 +54,10 @@
                     <input type="hidden" id="plantillaId" name="plantillaId" th:value="${plantillaId}" />
 
                     <div class="col-md-2">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Cuenta Ganancia:</h6>
                             <div class="d-flex align-items-center">
-                                <input type="text" class="form-control" th:field="*{cuentaGanancia}" id="selectedCG1">
+                                <input type="text" class="form-control form-control-sm" th:field="*{cuentaGanancia}" id="selectedCG1">
                                 <i class="bi bi-question-circle-fill ml-1"
                                    type="button"
                                    data-toggle="modal"
@@ -69,10 +68,10 @@
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Cuenta Pérdida:</h6>
                             <div class="d-flex align-items-center">
-                                <input type="text" class="form-control" th:field="*{cuentaPerdida}" id="selectedCP1">
+                                <input type="text" class="form-control form-control-sm" th:field="*{cuentaPerdida}" id="selectedCP1">
                                 <i class="bi bi-question-circle-fill ml-1"
                                    type="button"
                                    data-toggle="modal"
@@ -83,9 +82,9 @@
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Divisa Contable:<i class="bi bi-caret-down"></i></h6>
-                            <select class="form-control" name="selectedDivisa" id="selectedDivisa">
+                            <select class="form-control form-control-sm" name="selectedDivisa" id="selectedDivisa">
                                 <option value="0" th:selected="${cuentaParam.divisa == null}">Seleccione un campo</option>
                                 <option th:each="campo : ${campos}" th:value="${campo.nombre}" th:text="${campo.nombre}"
                                         th:selected="${cuentaParam.divisa != null and campo.nombre == cuentaParam.divisa}">
@@ -97,19 +96,19 @@
                     <div class="col-md-2">
                         <h6 class="font-weight-bold">Aplica a:</h6>
                         <div>
-                            <div class="form-group mb-1 checkHorizontal">
+                            <div class="form-group form-group-sm checkHorizontal">
                                 <h6 class="font-weight-bold mr-1">Campos Inventarios:</h6>
                                 <input id="aplicaA" name="aplicaA"  th:value="inventarios" type="radio" th:field="*{aplicaA}">
                             </div>
                         </div>
                         <div>
-                            <div class="form-group mb-1 checkHorizontal">
+                            <div class="form-group form-group-sm checkHorizontal">
                                 <h6 class="font-weight-bold mr-1">Cuentas Matriz:</h6>
                                 <input id="cuentasMatrizInput" name="aplicaA"  th:value="cuentasMatriz" type="radio" th:field="*{aplicaA}">
                             </div>
                         </div>
                         <div>
-                            <div class="form-group mb-1 checkHorizontal">
+                            <div class="form-group form-group-sm checkHorizontal">
                                 <h6 class="font-weight-bold mr-1">Libre:</h6>
                                 <input id="libreInput" name="aplicaA" th:value="libre" type="radio" th:field="*{aplicaA}">
                             </div>
@@ -119,32 +118,30 @@
 
                     <div class="col-md-2">
                         <div>
-                            <div class="form-group mb-1 checkHorizontal">
+                            <div class="form-group form-group-sm checkHorizontal">
                                 <h6 class="font-weight-bold">Maneja Fórmula?</h6>
                                 <input id="formulaInput" name="formulaInput" th:field="*{manejaFormula}"
                                        type="checkbox" onchange="toggleFormula()">
                             </div>
                         </div>
                         <div>
-                            <div class="form-group mb-1">
-                                <select class="form-control" name="selectedOperacion" id="selectedOperacion">
+                            <div class="form-group form-group-sm">
+                                <select class="form-control form-control-sm" name="selectedOperacion" id="selectedOperacion">
                                     <option disabled value="" selected>Seleccione operación</option>
                                     <option th:value="Suma">Suma</option>
                                     <option th:value="Resta">Resta</option>
                                     <option th:value="Multiplica">Multiplica</option>
                                     <option th:value="Divida">Divida</option>
                                 </select>
-                                <input th:field="*{valorOp}" type="text" class="form-control" id="valorFormula" name="valorFormula">
+                                <input th:field="*{valorOp}" type="text" class="form-control form-control-sm" id="valorFormula" name="valorFormula">
                             </div>
                         </div>
                     </div>
                     <div class="col-md-2"></div>
-
-
                     <div class="col-md-2">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Campo Inv. 1:<i class="bi bi-caret-down"></i></h6>
-                            <select class="form-control" name="selectedCI1" id="selectedCI1">
+                            <select class="form-control form-control-sm" name="selectedCI1" id="selectedCI1">
                                 <option value="0" th:selected="${cuentaParam.campoInv1 == null}">Seleccione un campo</option>
                                 <option th:each="campo : ${campos}" th:value="${campo.id}" th:text="${campo.nombre}"
                                         th:selected="${cuentaParam.campoInv1 != null and campo.id == cuentaParam.campoInv1.id}">
@@ -153,9 +150,9 @@
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Operación:<i class="bi bi-caret-down"></i></h6>
-                            <select class="form-control" name="selectedOpInv" id="selectedOpInv">
+                            <select class="form-control form-control-sm" name="selectedOpInv" id="selectedOpInv">
                                 <option disabled value="" selected>Seleccione operación</option>
                                 <option th:value="Suma">Suma</option>
                                 <option th:value="Resta">Resta</option>
@@ -165,9 +162,9 @@
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Campo Inv. 2:<i class="bi bi-caret-down"></i></h6>
-                            <select class="form-control" name="selectedCI2" id="selectedCI2">
+                            <select class="form-control form-control-sm" name="selectedCI2" id="selectedCI2">
                                 <option value="0" th:selected="${cuentaParam.campoInv2 == null}">Seleccione un campo</option>
                                 <option th:each="campo : ${campos}" th:value="${campo.id}" th:text="${campo.nombre}"
                                         th:selected="${cuentaParam.campoInv2 != null and campo.id == cuentaParam.campoInv2.id}">
@@ -176,9 +173,9 @@
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Centro Contable:<i class="bi bi-caret-down"></i></h6>
-                            <select class="form-control" name="selectedCentro" id="selectedCentro">
+                            <select class="form-control form-control-sm" name="selectedCentro" id="selectedCentro">
                                 <option value="0" th:selected="${cuentaParam.campoCentro == null}">Seleccione un campo</option>
                                 <option th:each="campo : ${campos}" th:value="${campo.id}" th:text="${campo.nombre}"
                                         th:selected="${cuentaParam.campoCentro != null and campo.id == cuentaParam.campoCentro.id}">
@@ -187,10 +184,10 @@
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Número Referencia:</h6>
                             <div class="d-flex align-items-center">
-                                <input type="text" class="form-control" th:field="*{referencia}" id="selectedRef">
+                                <input type="text" class="form-control form-control-sm" th:field="*{referencia}" id="selectedRef">
                                 <i class="bi bi-question-circle-fill ml-1"
                                    type="button"
                                    data-toggle="modal"
@@ -200,21 +197,24 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
-
                 <div class="row">
-                    <div class="d-grid gap-2 col-2">
-                        <button th:disabled="${!p_modificar}" type="button" class="btn btn-primary" onclick="descartar()">Eliminar</button>
+                    <div class="d-grid gap-2 col-1">
+                        <button th:disabled="${!p_modificar}" type="button" class="btn btn-sm btn-primary" onclick="descartar()">Eliminar</button>
                     </div>
-                    <div class="d-grid gap-2 col-2">
-                        <button th:disabled="${!p_modificar}" type="submit" class="btn btn-primary">Agregar</button>
+                    <div class="d-grid gap-2 col-1">
+                        <button th:disabled="${!p_modificar}" type="submit" class="btn btn-sm btn-primary">Agregar</button>
+                    </div>
+                    <div class="col-auto">
+                        <div class="border-start ms-3" style="height: 100%;"></div>
+                    </div>
+                    <div class="d-grid gap-2 col-1">
+                        <button type="button" class="btn btn-sm btn-primary " } onclick="Limpiar()">Deseleccionar Item</button>
                     </div>
                 </div>
-
             </form>
         </div>
-        <div class="col-md-12 p-0">
+        <div class="col-md-12">
             <div class="table-responsive rounded border-primary">
                 <h2>Campos registrados</h2>
                 <table id="example" class="table table-striped table-hover text-center table-bordered table-sm" width="100%">
@@ -240,7 +240,7 @@
                         <td th:if="${camp.visualizacion == true}">Sí</td>
                         <td th:if="${camp.visualizacion == false}">No</td>
                         <td>
-                            <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
+                            <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
                                     th:data-id="${camp.id}"
                                     th:data-nombre="${camp.nombre}"
                                     th:data-primario="${camp.primario}"
@@ -288,7 +288,7 @@
             </div>
             <!--
             <div class="d-flex align-items-center justify-content-center">
-                <a th:href="@{/admin/users/download/?vFilter={vFilter}&vId={vId}(vFilter=${vFilter},vId=${vId})}" class="btn btn-primary">Exportar a Excel</a>
+                <a th:href="@{/admin/users/download/?vFilter={vFilter}&vId={vId}(vFilter=${vFilter},vId=${vId})}" class="btn btn-sm btn-primary">Exportar a Excel</a>
             </div>
             -->
         </div>
@@ -311,10 +311,10 @@
                 </div>
                 <div class="modal-body">
                     <div class="mt-1 mb-2">
-                        <div class="form-group mb-1 d-flex align-items-center">
+                        <div class="form-group form-group-sm d-flex align-items-center">
                             <h6 class="font-weight-bold mb-0">Cuenta Contable a buscar:</h6>
-                            <input type="text" class="form-control col-md-4 ml-2" id="selectedCuentaBusqueda">
-                            <button class="btn btn-primary mx-1" id="btnConsultar" onclick="consultarCuenta()">Consultar</button>
+                            <input type="text" class="form-control form-control-sm col-md-4 ml-2" id="selectedCuentaBusqueda">
+                            <button class="btn btn-sm btn-primary mx-1" id="btnConsultar" onclick="consultarCuenta()">Consultar</button>
                         </div>
                     </div>
                     <div class="col-md-12 p-0">
@@ -355,16 +355,16 @@
                 <div class="modal-body">
                     <div class="mt-1 mb-2">
                         <div class="d-flex align-items-center">
-                            <div class="col-m-2 form-group mb-1 d-flex align-items-center mr-3">
+                            <div class="col-m-2 form-group form-group-sm d-flex align-items-center mr-3">
                                 <h6 class="font-weight-bold mb-0 mr-2">NIT:</h6>
-                                <input type="text" class="form-control" id="nitBusqueda">
+                                <input type="text" class="form-control form-control-sm" id="nitBusqueda">
                             </div>
-                            <div class="col-m-2 form-group mb-1 d-flex align-items-center mr-3">
+                            <div class="col-m-2 form-group form-group-sm d-flex align-items-center mr-3">
                                 <h6 class="font-weight-bold mb-0 mr-2">Nombre:</h6>
-                                <input type="text" class="form-control" id="nombreBusqueda">
+                                <input type="text" class="form-control form-control-sm" id="nombreBusqueda">
                             </div>
                             <div class="col-m-2">
-                                <button class="btn btn-primary" id="btnConsultar" onclick="consultarCuenta()">Consultar</button>
+                                <button class="btn btn-sm btn-primary" id="btnConsultar" onclick="consultarCuenta()">Consultar</button>
                             </div>
                         </div>
                     </div>
@@ -688,7 +688,7 @@
                     <td>${param[10]|| ''}</td>
 
                     <td>
-                        <button class="btn btn-primary mx-1"
+                        <button class="btn btn-sm btn-primary mx-1"
                                 data-id="${param[0]}"
                                 data-idcampoconciliacion="${param[3]|| ''}"
                                 data-idrutacontable="${param[6]|| ''}"
