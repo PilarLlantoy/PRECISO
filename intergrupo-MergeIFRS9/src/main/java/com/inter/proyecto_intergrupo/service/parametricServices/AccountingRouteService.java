@@ -12,6 +12,8 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -186,6 +188,22 @@ public class AccountingRouteService {
         return querySelect.getResultList();
     }
 
+    public boolean findAllDataValidation(AccountingRoute data, String fecha) {
+        String campos = data.getCampos().stream()
+                .map(CampoRC::getNombre)
+                .collect(Collectors.joining(","));
+
+        // Construir la consulta básica
+        StringBuilder queryBuilder = new StringBuilder("SELECT * " +
+                "FROM preciso_rc_" + data.getId() + " WHERE periodo_preciso = :fecha");
+
+        // Crear la consulta
+        Query querySelect = entityManager.createNativeQuery(queryBuilder.toString());
+        querySelect.setParameter("fecha", fecha);
+
+        return !querySelect.getResultList().isEmpty();
+    }
+
 
     public String encontrarUltimaFechaSubida(AccountingRoute data) {
         Query querySelect = entityManager.createNativeQuery(
@@ -243,11 +261,11 @@ public class AccountingRouteService {
         }
 
         // Si existen claves primarias, agregarlas a la consulta
-        if (!primaryKeys.isEmpty()) {
+        /*if (!primaryKeys.isEmpty()) {
             createTableQuery.append(", PRIMARY KEY (");
             createTableQuery.append(String.join(", ", primaryKeys)); // Agregar las columnas de clave primaria
             createTableQuery.append(")");
-        }
+        }*/
 
         createTableQuery.append(");");
 
@@ -424,13 +442,14 @@ public class AccountingRouteService {
 
         /*if(data.getTipoArchivo().equals("XLS") || data.getTipoArchivo().equals("XLSX"))
             delimitador=";";*/
+        int cantFilas=data.getFilasOmitidas()+1;
 
-        String complement = "FIELDTERMINATOR = '"+delimitador+"', ROWTERMINATOR = '\\n', FIRSTROW = "+data.getFilasOmitidas();
+        String complement = "FIELDTERMINATOR = '"+delimitador+"', ROWTERMINATOR = '\\n', FIRSTROW = "+cantFilas;
 
         if(data.getTipoArchivo().equals("XLS") || data.getTipoArchivo().equals("XLSX") || data.getTipoArchivo().equals("CSV") || data.getTipoArchivo().equals("TXT"))
             extension="."+data.getTipoArchivo();
         if(delimitador.equalsIgnoreCase(""))
-            complement="FORMATFILE = '" + ruta + "', ROWTERMINATOR = '\\r\\n', FIRSTROW = " + data.getFilasOmitidas();
+            complement="FORMATFILE = '" + ruta + "', ROWTERMINATOR = '\\r\\n', FIRSTROW = " + cantFilas;
 
         String fichero=ensureTrailingSlash(data.getRuta()) + data.getNombreArchivo() + todayDateConvert(data.getFormatoFecha(),fecha,data.getIdiomaFecha()) + data.getComplementoArchivo() + extension;
         if(fuente !=null)
@@ -447,6 +466,24 @@ public class AccountingRouteService {
 
         System.out.println("QUERY -> "+queryBulk);
         jdbcTemplate.execute(queryBulk);
+
+        String update="";
+        for (CampoRC campo:data.getCampos()) {
+            if(!update.isEmpty() && campo.getTipo().equalsIgnoreCase("Float"))
+                update=update+",";
+            if(campo.getTipo().equalsIgnoreCase("Float") || (campo.getSeparador() == null && campo.getSeparador().equalsIgnoreCase("."))) {
+                update = update + campo.getNombre() + " = REPLACE(TRIM(REPLACE(" + campo.getNombre() + ",' .00','0.00')),',','')";
+            }
+            else if(campo.getTipo().equalsIgnoreCase("Float") || campo.getSeparador().equalsIgnoreCase(",")) {
+                update = update + campo.getNombre() + " = REPLACE(REPLACE(TRIM(REPLACE(" + campo.getNombre() + ",' ,00','0,00')),'.',''),',','.')";
+            }
+        }
+        if(!update.isEmpty())
+        {
+            String queryUpdate = "UPDATE PRECISO_TEMP_CONTABLES SET " + update;
+            System.out.println("QUERY -> "+queryUpdate);
+            jdbcTemplate.execute(queryUpdate);
+        }
     }
 
     public void conditionData(AccountingRoute data){
@@ -527,14 +564,10 @@ public class AccountingRouteService {
                 .map(CampoRC::getNombre)
                 .collect(Collectors.joining(","));
 
-        /*Query querySelect = entityManager.createNativeQuery("DELETE FROM preciso_rc_"+data.getId()+" WHERE periodo_preciso = '"+fecha+"' ; \n" +
-                "INSERT INTO preciso_rc_"+data.getId()+" ("+campos+",periodo_preciso"+") SELECT "+campos+",CAST('"+fecha+"' AS DATE) FROM "+nombreTabla);
-        querySelect.executeUpdate();*/
-
-        String deleteSelect = "DELETE FROM preciso_rc_"+data.getId()+" WHERE periodo_preciso = '"+fecha+"' ; \n" +
-                "INSERT INTO preciso_rc_"+data.getId()+" ("+campos+",periodo_preciso"+") SELECT "+campos+",CAST('"+fecha+"' AS DATE) FROM "+nombreTabla;
-        System.out.println("QUERY -> "+deleteSelect);
-        jdbcTemplate.execute(deleteSelect);
+            String deleteSelect = "DELETE FROM preciso_rc_" + data.getId() + " WHERE periodo_preciso = '" + fecha + "' ; \n" +
+                    "INSERT INTO preciso_rc_" + data.getId() + " (" + campos + ",periodo_preciso" + ") SELECT " + campos + ",CAST('" + fecha + "' AS DATE) FROM " + nombreTabla;
+            System.out.println("QUERY -> " + deleteSelect);
+            jdbcTemplate.execute(deleteSelect);
     }
 
     public void generarArchivoFormato(List<CampoRC> campos, String rutaArchivoFormato) throws IOException, PersistenceException {
@@ -685,7 +718,12 @@ public class AccountingRouteService {
                 if (vrc.size() != 0)
                     validationData(ac);
                 copyData(ac, fecha);
-                jobAutoService.loadLogCargue(null,ac,fecha,"Automático","Exitoso","");
+                if(findAllDataValidation(ac,fecha)) {
+                    jobAutoService.loadLogCargue(null, ac, fecha, "Trasladar Servidor", "Exitoso", "");
+                }
+                else {
+                    jobAutoService.loadLogCargue(null, ac, fecha, "Trasladar Servidor", "Fallido", "Valide el formato de los campos de tipo Float");
+                }
             }
             catch (Exception e) {
                 e.printStackTrace();

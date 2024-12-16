@@ -80,8 +80,16 @@ public class CampoRCService {
         queryTable.executeUpdate();
     }
 
-    public void deleteById(int id){
+    /*public void deleteById(int id){
         campoRCRepository.deleteById(id);
+    }*/
+
+    public void deleteById(int principal)
+    {
+        Query validate = entityManager.createNativeQuery("DELETE from preciso_campos_rc WHERE " +
+                " id_campo = ? ");
+        validate.setParameter(1,principal);
+        validate.executeUpdate();
     }
 
     public List<String> validatePrincipal(String principal)

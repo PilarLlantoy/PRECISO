@@ -150,7 +150,7 @@ public class ConciliationRouteService {
             // Verificar si la columna es clave primaria y asignar tamaño limitado
             //if (column.getTipo().equalsIgnoreCase("VARCHAR") || column.getTipo().equalsIgnoreCase("DATE")){
                 if (column.isPrimario()) {
-                    createTableQuery.append(column.getNombre()).append(" VARCHAR(255)");
+                    createTableQuery.append(column.getNombre()).append(" VARCHAR(8000)");
                     primaryKeys.add(column.getNombre());
                 } else {
                     createTableQuery.append(column.getNombre()).append(" VARCHAR(MAX)");
@@ -171,11 +171,11 @@ public class ConciliationRouteService {
         }
 
         // Si existen claves primarias, agregarlas a la consulta
-        if (!primaryKeys.isEmpty()) {
+        /*if (!primaryKeys.isEmpty()) {
             createTableQuery.append(", PRIMARY KEY (");
             createTableQuery.append(String.join(", ", primaryKeys)); // Agregar las columnas de clave primaria
             createTableQuery.append(")");
-        }
+        }*/
 
         createTableQuery.append(");");
 
@@ -431,7 +431,7 @@ public class ConciliationRouteService {
         if(data.getTipoArchivo().equals("XLS") || data.getTipoArchivo().equals("XLSX"))
             delimitador=";";
 
-        String complement = "FIELDTERMINATOR = '"+delimitador+"', ROWTERMINATOR = '\\n', FIRSTROW = "+data.getFilasOmitidas();
+        String complement = "FIELDTERMINATOR = '"+delimitador+"', ROWTERMINATOR = '\\n', FIRSTROW = "+data.getFilasOmitidas()+1;
 
         if(data.getTipoArchivo().equals("XLS") || data.getTipoArchivo().equals("XLSX") || data.getTipoArchivo().equals("CSV") || data.getTipoArchivo().equals("TXT"))
             extension="."+data.getTipoArchivo();

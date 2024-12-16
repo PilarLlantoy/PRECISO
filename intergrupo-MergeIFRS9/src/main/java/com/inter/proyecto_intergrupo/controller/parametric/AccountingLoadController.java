@@ -171,8 +171,15 @@ public class AccountingLoadController {
             if(ac.getValidaciones().size()!=0)
                 accountingRouteService.validationData(ac);
             accountingRouteService.copyData(ac,fecha);
-            jobAutoService.loadLogCargue(user,ac,fecha,"Trasladar Servidor","Exitoso","");
-            return ResponseEntity.ok("Bulk1");
+            if(accountingRouteService.findAllDataValidation(ac,fecha)) {
+                jobAutoService.loadLogCargue(user, ac, fecha, "Trasladar Servidor", "Exitoso", "");
+                return ResponseEntity.ok("Bulk1");
+            }
+            else {
+                jobAutoService.loadLogCargue(user, ac, fecha, "Trasladar Servidor", "Fallido", "Valide el formato de los campos de tipo Float");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk-1");
+            }
+
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -206,8 +213,14 @@ public class AccountingLoadController {
             if(ac.getValidaciones().size()!=0)
                 accountingRouteService.validationData(ac);
             accountingRouteService.copyData(ac,fecha);
-            jobAutoService.loadLogCargue(user,ac,fecha,"Trasladar Local","Exitoso","");
-            return ResponseEntity.ok("Bulk1");
+            if(accountingRouteService.findAllDataValidation(ac,fecha)) {
+                jobAutoService.loadLogCargue(user, ac, fecha, "Trasladar Servidor", "Exitoso", "");
+                return ResponseEntity.ok("Bulk1");
+            }
+            else {
+                jobAutoService.loadLogCargue(user, ac, fecha, "Trasladar Servidor", "Fallido", "Valide el formato de los campos de tipo Float");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk-1");
+            }
         }
         catch (Exception e) {
             e.printStackTrace();
