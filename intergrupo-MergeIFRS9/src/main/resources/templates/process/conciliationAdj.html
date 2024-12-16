@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+
+<div class="main-container">
+    <style>
+        .contend{
+            border-style: solid;
+            padding: 20px;
+            border-radius: 15px;
+        }
+    </style>
+    <div class="row m-0 bg-primary fixed-top myNav">
+        <div class="col-md-6 p-0 bg-primary d-flex justify-content-start align-items-center">
+            <h2 class="fw-bold text-white mx-4 my-3">Módulo de Ajustes Conciliación</h2>
+        </div>
+    </div>
+    <div class="row m-0 mt-5">
+        <div class="mb-1 mt-1 row">
+            <div class="col-3 ml-3">
+                <div class="contend mb-2">
+                    <h2>Fecha de Información</h2>
+                    <form th:object="${concil}" th:action="@{/process/conciliationAdj}" method="GET">
+                        <input id="nomb" type="hidden" th:value="${nomb}">
+                        <div class="form-group form-group-sm">
+                            <h6 class="font-weight-bold">Conciliación</h6>
+                            <select style="width: 100%; box-sizing: border-box;" class="form-control form-control-sm" required id="arhcont" name="arhcont">
+                                <option disabled value="" selected hidden>Seleccione un conciliación</option>
+                                <option th:each="item : ${listConcil}" th:value="${item.id}" th:text="${item.nombre}"
+                                        th:selected="${arhcont != null and arhcont.id == item.id }"></option>
+                            </select>
+                            <div class="invalid-feedback">Por favor, seleccione un archivo.</div>
+                        </div>
+                        <div class="form-group form-group-sm">
+                            <h6 class="font-weight-bold">Fecha Conciliación</h6>
+                            <div class="input-group input-group-sm">
+                                <div class="input-group input-group-sm">
+                                    <input type="date" id="period" th:name="period" th:value="${period}" class="form-control form-control-sm" style="width: 100%; box-sizing: border-box;" required>
+                                    <div class="invalid-feedback">Por favor, seleccione una fecha.</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group form-group-sm">
+                            <h6 class="font-weight-bold">Fecha Contabilidad</h6>
+                            <div class="input-group input-group-sm">
+                                <div class="input-group input-group-sm">
+                                    <input disabled type="date" id="period2" th:name="period2" th:value="${period}" class="form-control form-control-sm" style="width: 100%; box-sizing: border-box;">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group form-group-sm">
+                            <h6 class="font-weight-bold">Ajustes</h6>
+                            <select style="width: 100%; box-sizing: border-box;" class="form-control form-control-sm" id="arhaju" name="arhaju">
+                                <option disabled value="" selected hidden>Seleccione un conciliación</option>
+                                <option th:each="item : ${listAdj}" th:value="${item.id}" th:text="${item.nombre}"
+                                        th:selected="${arhcont != null and arhcont.id == item.id }"></option>
+                            </select>
+                            <div class="invalid-feedback">Por favor, seleccione un archivo.</div>
+                        </div>
+                        <div class="d-grid gap-2 col-3 mt-1" style="padding-left:0px">
+                            <button type="submit" class="btn btn-sm btn-primary">Buscar</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="contend mb-2">
+                    <h2>Opciones</h2>
+                    <div>
+                        <div class="d-grid gap-2 col-3 mt-1" style="padding-left:0px">
+                            <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary" type="button">Ver Conciliación</button>
+                        </div>
+                        <div class="d-grid gap-2 col-3 mt-1" style="padding-left:0px">
+                            <button type="button" class="btn btn-sm btn-primary" >Exportar Excel</button>
+                        </div>
+                        <div class="d-grid gap-2 col-3 mt-1" style="padding-left:0px">
+                            <button type="button" class="btn btn-sm btn-primary">Imprimir Ajustes</button>
+                        </div>
+                        <div class="d-grid gap-2 col-3 mt-1" style="padding-left:0px">
+                            <button type="button" class="btn btn-sm btn-primary">Confirmar Ajustes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-8">
+                <div class="col-md-12 contend mb-1">
+                    <h2>Operaciones para Ajustar</h2>
+                    <!--<div class="table-responsive rounded border-primary" th:if="${allLog.size()>0}" style="max-height: 200px; overflow-y: auto;">
+                        <table id="example" class="table table-striped table-hover text-center table-bordered table-sm" width="100%">
+                            <thead class="bg-primary">
+                            <tr>
+                                <th>Código</th>
+                                <th>Fecha Cargue</th>
+                                <th>Cant. Registros</th>
+                                <th>Fecha Proceso</th>
+                                <th>Usuario</th>
+                                <th>Tipo Proceso</th>
+                                <th>Estado Proceso</th>
+                                <th>Novedad</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="rc,iter : ${allLog}">
+                                <td th:text="${iter.count + ((current-1)*5)}"></td>
+                                <td th:text="${#dates.format(rc.fechaCargue,'dd/MM/yyyy')}"></td>
+                                <td th:text="${#numbers.formatDecimal(rc.cantidadRegistros, 0, 'COMMA', -1, 'POINT')}"></td>
+                                <td th:text="${#dates.format(rc.fechaPreciso,'dd/MM/yyyy HH:mm')}"></td>
+                                <td th:text="${rc.usuario}"></td>
+                                <td th:text="${rc.tipoProceso}"></td>
+                                <td th:if="${rc.estadoProceso == 'Exitoso'}"><i class="fa fa-check-circle fa-2x text-success"></i></td>
+                                <td th:if="${rc.estadoProceso == 'Fallido'}"><i class="fa fa-times-circle fa-2x text-danger"></i></td>
+                                <td th:if="${rc.novedad != ''}">
+                                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#novedadModal" th:attr="data-novedad=${rc.novedad}">Ver</button>
+                                </td>
+                                <td th:if="${rc.novedad == ''}">
+                                    <button type="button" class="btn btn-primary btn-sm" disabled>Ver</button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>-->
+                    <div class="alert alert-primary" th:if="${allLog.size()==0}">
+                        No se encontro información asociada.
+                    </div>
+                    <div class="row mt-1" th:if="${last != 0}">
+                        <div class="col-md-4 text-left">
+                            <nav arial-label="Pagination">
+                                <ul class="pagination pagination-sm">
+                                    <li class="page-item" th:classappend="${prev == 0 ? 'disabled' : ''}">
+                                        <a class="page-link"
+                                           th:href="@{/process/{dir}/?page={page}&period={period}&arhcont={arhcont}(arhcont=${arhcont.id},page=${prev},dir=${directory},period=${period})}">Anterior</a>
+                                    </li>
+                                    <li class="page-item" th:classappend="${current == last ? 'disabled' : ''}">
+                                        <a class="page-link"
+                                           th:href="@{/process/{dir}/?page={page}&period={period}&arhcont={arhcont}(arhcont=${arhcont.id},page=${next},dir=${directory},period=${period})}">Siguiente</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <h6 th:utext="${registers} + ' Registros Encontrados'"></h6>
+                        </div>
+                        <div class="col-md-4 text-right">
+                            <h6 class="mx-1" th:utext="'Página ' + ${current} + ' de ' + ${last}"></h6>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-12 contend">
+                    <h2>Saldo de la Cuenta</h2>
+                    <!--<div class="table-responsive rounded border-primary" th:if="${allRCs.size()>0}" style="max-height: 320px; overflow-y: auto;">
+                        <table id="example2" class="table table-striped table-hover text-center table-bordered table-sm" width="100%">
+                            <thead class="bg-primary">
+                            <tr>
+                                <td th:each="rc : ${allColRCs}" th:text="${#strings.toUpperCase(#strings.replace(rc.nombre, 'periodo_preciso', 'fecha contable'))}"></td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="row : ${allRCs}">
+                                    <td th:each="col, colStat : ${row}" th:text="${col}"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>-->
+                    <div class="alert alert-primary" th:if="${allRCs.size()==0}">
+                        No se encontro información asociada.
+                    </div>
+                    <div class="row mt-1" th:if="${lastData != 0}">
+                        <div class="col-md-4 text-left">
+                            <nav arial-label="Pagination">
+                                <ul class="pagination pagination-sm">
+                                    <li class="page-item" th:classappend="${prevData == 0 ? 'disabled' : ''}">
+                                        <a class="page-link"
+                                           th:href="@{/process/{dir}/?pageData={pageData}&arhcont={arhcont}&period={period}(period=${period},pageData=${prevData},dir=${directory},arhcont=${arhcont.id})}">Anterior</a>
+                                    </li>
+                                    <li class="page-item" th:classappend="${currentData == lastData ? 'disabled' : ''}">
+                                        <a class="page-link"
+                                           th:href="@{/process/{dir}/?pageData={pageData}&arhcont={arhcont}&period={period}(period=${period},pageData=${nextData},dir=${directory},arhcont=${arhcont.id})}">Siguiente</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <h6 th:utext="${registersData} + ' Registros Encontrados'"></h6>
+                        </div>
+                        <div class="col-md-4 text-right">
+                            <h6 class="mx-1" th:utext="'Página ' + ${currentData} + ' de ' + ${lastData}"></h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="novedadModal" tabindex="-1" aria-labelledby="novedadModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title" id="novedadModalLabel">Detalle de Novedad</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="novedadText"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function validarYSubir() {
+        var archivoContable = document.getElementById("arhcont");
+        var fechaInformacion = document.getElementById("period");
+        var isValid = true;
+
+        if (archivoContable !=null && !archivoContable.value) {
+            archivoContable.classList.add("is-invalid");
+            isValid = false;
+        } else {
+            archivoContable.classList.remove("is-invalid");
+        }
+
+        if (fechaInformacion !=null && !fechaInformacion.value) {
+            fechaInformacion.classList.add("is-invalid");
+            isValid = false;
+        } else {
+            fechaInformacion.classList.remove("is-invalid");
+        }
+
+        if (isValid) {
+            dialogOpen();
+            subida(archivoContable.value, fechaInformacion.value);
+        }
+    }
+
+    function subida(archivoContable, fechaInformacion) {
+        fetch(`/process/accountingLoad/leerArchivoS?id=${encodeURIComponent(archivoContable)}&fecha=${encodeURIComponent(fechaInformacion)}`)
+        .then(response => response.text())
+        .then(data => {
+            Swal.close();
+            validateAlerts(data,'')
+        })
+        .catch(error => {
+            console.error("Error:", error);
+        });
+    }
+
+    function validarYSubirL() {
+        var customFileD = document.getElementById("customFile");
+        var archivoContable = document.getElementById("arhcont");
+        var fechaInformacion = document.getElementById("period");
+        var isValid = true;
+
+        if (archivoContable != null && !archivoContable.value) {
+            archivoContable.classList.add("is-invalid");
+            isValid = false;
+        } else {
+            archivoContable.classList.remove("is-invalid");
+        }
+
+        if (fechaInformacion != null && !fechaInformacion.value) {
+            fechaInformacion.classList.add("is-invalid");
+            isValid = false;
+        } else {
+            fechaInformacion.classList.remove("is-invalid");
+        }
+
+        if (customFileD != null && !customFileD.value) {
+            customFileD.classList.add("is-invalid");
+            isValid = false;
+        } else {
+            customFileD.classList.remove("is-invalid");
+        }
+
+        if (isValid) {
+            dialogOpen();
+            subidaL(archivoContable.value, fechaInformacion.value,customFileD.files[0]);
+        }
+    }
+
+    function subidaL(archivoContable,fechaInformacion,customFileD) {
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+        var formData = new FormData();
+        formData.append("id", archivoContable);
+        formData.append("fecha", fechaInformacion);
+        formData.append("file", customFileD);
+
+        fetch('/process/accountingLoad/leerArchivoL', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                [csrfHeader]: csrfToken
+            }
+        })
+        .then(response => response.text())
+        .then(data => {
+            Swal.close();
+            validateAlerts(data, '');
+        })
+        .catch(error => {
+            console.error("Error:", error);
+        });
+    }
+
+    function validarYexportar() {
+        var archivoContable = document.getElementById("arhcont");
+        var fechaInformacion = document.getElementById("period");
+        var isValid = true;
+
+        if (archivoContable !=null && !archivoContable.value) {
+            archivoContable.classList.add("is-invalid");
+            isValid = false;
+        } else {
+            archivoContable.classList.remove("is-invalid");
+        }
+
+        if (fechaInformacion !=null && !fechaInformacion.value) {
+            fechaInformacion.classList.add("is-invalid");
+            isValid = false;
+        } else {
+            fechaInformacion.classList.remove("is-invalid");
+        }
+
+        if (isValid) {
+            dialogOpen();
+            exportar(archivoContable.value, fechaInformacion.value);
+        }
+    }
+    function exportar(archivoContable, fechaInformacion) {
+        const encodedId = encodeURIComponent(archivoContable);
+        const encodedFecha = encodeURIComponent(fechaInformacion);
+        const url = `/process/accountingLoad/download?id=${encodedId}&fecha=${encodedFecha}`;
+
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.blob(); // Cambia a blob para manejar la descarga del archivo
+            })
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = document.getElementById("nomb").value+'.xlsx'; // Asigna un nombre al archivo descargado
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                Swal.close();
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("Error al descargar el archivo: " + error.message);
+            });
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+        const modal = document.getElementById('novedadModal');
+        const novedadText = document.getElementById('novedadText');
+
+        modal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget; // Botón que activó el modal
+            const novedad = button.getAttribute('data-novedad'); // Extraer el valor de data-novedad
+            novedadText.textContent = novedad; // Asignar el valor al contenido del modal
+        });
+    });
+
+</script>
+</body>
+</html>
