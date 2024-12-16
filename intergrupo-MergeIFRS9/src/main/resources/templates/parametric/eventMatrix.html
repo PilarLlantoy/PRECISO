@@ -9,7 +9,7 @@
 
 <div class="main-container">
     <style>
-        body, .btn, .form-control {
+        body, .btn, .form-control form-control-sm {
             font-size: 12px;
         }
 
@@ -22,21 +22,20 @@
     </style>
     <div class="row m-0 bg-primary fixed-top myNav">
         <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
-            <h3 class="fw-bold text-white mx-4 my-3">Módulo de Matriz de Eventos</h3>
+            <h2 class="fw-bold text-white mx-4 my-3">Módulo de Matriz de Eventos</h2>
         </div>
     </div>
     <div class="row m-0 px-4 mt-5">
-        <div class="text-left pr-3 col-md-12 my-3">
-
+        <div class="text-left pr-3 col-md-12 my-1">
             <!--SECCION DE FILTROS-->
             <h2>Registros Cargados</h2>
 
             <form method="get" th:action="@{/parametric/searchEventMatrix}">
-                <div class="mb-1 row">
+                <div class="row">
                     <div class="col-md-2">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <label>Tipo Evento</label>
-                            <select class="form-control" name="selectedET" id="selectedET" required>
+                            <select class="form-control form-control-sm" name="selectedET" id="selectedET" required>
                                 <option disabled value="" selected hidden>Seleccione un tipo evento</option>
                                 <option th:each="TE : ${allTEs}" th:value="${TE.id}" th:text="${TE.nombre}"></option>
                             </select>
@@ -44,9 +43,9 @@
                     </div>
 
                     <div class="col-md-2">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <label>Conciliacion</label>
-                            <select class="form-control" name="selectedConcil" id="selectedConcil" onchange="toggleConciliacion()">
+                            <select class="form-control form-control-sm" name="selectedConcil" id="selectedConcil" onchange="toggleConciliacion()">
                                 <option disabled value="" selected hidden>Seleccione una conciliación</option>
                                 <option th:each="concil : ${allConcils}" th:value="${concil.id}" th:text="${concil.nombre}"></option>
                             </select>
@@ -54,36 +53,34 @@
                     </div>
 
                     <div class="col-md-2">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <label>Inventario Conciliacion</label>
-                            <select class="form-control" name="selectedInv" id="selectedInv" onchange="toggleInventario()">
+                            <select class="form-control form-control-sm" name="selectedInv" id="selectedInv" onchange="toggleInventario()">
                                 <option disabled value="" selected hidden>Seleccione un archivo</option>
                             </select>
                         </div>
                     </div>
 
                     <div class="col-md-2">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm">
                             <label>Cuentas</label>
-                            <select class="form-control" name="selectedCuenta" id="selectedCuenta">
+                            <select class="form-control form-control-sm" name="selectedCuenta" id="selectedCuenta">
                                 <option disabled value="" selected hidden>Seleccione una Cuenta</option>
                             </select>
                         </div>
                     </div>
 
                     <div class="col-md-2 d-flex align-items-center">
-                        <button class="btn btn-secondary mr-1" type="submit"><i class="fa fa-search"></i></button>
-                        <a class="btn btn-secondary" th:href="@{/parametric/eventMatrix}"><i class="fas fa-window-close"></i></a>
+                        <button class="btn btn-sm btn-secondary mr-1" type="submit"><i class="fa fa-search"></i></button>
+                        <a class="btn btn-sm btn-secondary" th:href="@{/parametric/eventMatrix}"><i class="fas fa-window-close"></i></a>
                     </div>
 
                     <!-- Campo oculto para el token CSRF -->
                     <input type="hidden" id="csrfToken" th:value="${_csrf.token}" />
 
-                    <div class="col-md-10"></div>
-
                     <div class="col-md-2" style="text-align: right;">
-                        <a class="btn btn-primary mx-1" th:href="@{/parametric/eventMatrix}"><i class="fas fa-redo-alt"></i></a>
-                        <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1" th:onclick="|window.location.href='@{/parametric/createEventMatrix}'|">Crear M.E.</button>
+                        <a class="btn btn-sm btn-primary mx-1" th:href="@{/parametric/eventMatrix}"><i class="fas fa-redo-alt"></i></a>
+                        <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1" th:onclick="|window.location.href='@{/parametric/createEventMatrix}'|">Crear Matriz</button>
                     </div>
 
                 </div>
@@ -122,18 +119,18 @@
                         <td th:if="${event.estado == true}">Activo</td>
                         <td th:if="${event.estado == false}">Inactivo</td>
                         <td>
-                            <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
+                            <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
                                     th:onclick="|window.location.href='@{/parametric/conditionsEventMatrix/{id}(id=${event.id})}'|">Condiciones</button>
                         </td>
                         <td>
-                            <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
+                            <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
                                     th:onclick="|window.location.href='@{/parametric/cuentasEventMatrix/{id}(id=${event.id})}'|">Cuentas</button>
                         </td>
                         <td>
-                            <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
+                            <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
                                     th:onclick="|window.location.href='@{/parametric/validationsEventMatrix/{id}(id=${event.id})}'|">Validaciones</button>
                         <td>
-                            <button th:disabled="${!p_modificar}" class="btn btn-primary mx-1"
+                            <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
                                     th:onclick="|window.location.href='@{/parametric/modifyEventMatrix/{id}(id=${event.id})}'|">Editar</button>
                         </td>
                     </tr>
@@ -143,7 +140,7 @@
             <div class="row" th:if="${last != 0}">
                 <div class="col-md-4 text-left">
                     <nav arial-label="Pagination">
-                        <ul class="pagination">
+                        <ul class="pagination pagination-sm">
                             <li class="page-item" th:classappend="${prev == 0 ? 'disabled' : ''}">
                                 <a class="page-link"
                                    th:href="@{/admin/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${prev},dir=${directory},vId=${vId})}">Anterior</a>

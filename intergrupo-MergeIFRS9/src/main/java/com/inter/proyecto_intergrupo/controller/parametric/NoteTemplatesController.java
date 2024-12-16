@@ -58,8 +58,8 @@ public class NoteTemplatesController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Matriz de Eventos");
-        if(userService.validateEndpoint(user.getId(),"Ver Matriz de Eventos")) { //CAMBIAR A VER Matriz de Eventos
+        Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Plantilla de Notas");
+        if(userService.validateEndpoint(user.getId(),"Ver Plantilla de Notas")) { //CAMBIAR A VER Matriz de Eventos
 
             int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
             PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
@@ -86,6 +86,14 @@ public class NoteTemplatesController {
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.addObject("p_modificar", p_modificar);
 
+            if(params.get("selectedConcil")!=null && !params.get("selectedConcil").toString().trim().equalsIgnoreCase("")) {
+                modelAndView.addObject("selectedConcil", params.get("selectedConcil").toString());
+                System.out.println(params.get("selectedConcil").toString());
+            }
+            if(params.get("selectedInv")!=null && !params.get("selectedInv").toString().trim().equalsIgnoreCase("")) {
+                modelAndView.addObject("selectedInv", params.get("selectedInv").toString());
+                System.out.println(params.get("selectedInv").toString());
+            }
 
             List<Conciliation> allConcils = conciliationService.findAll();
             modelAndView.addObject("allConcils", allConcils);
@@ -264,56 +272,53 @@ public class NoteTemplatesController {
     @GetMapping(value = "/parametric/searchNoteTemplate")
     @ResponseBody
     public ModelAndView searchNoteTemplate(
-            @RequestParam(name = "selectedET") Integer  tipoEvento,
             @RequestParam(name = "selectedConcil", defaultValue= "") Integer  concil,
             @RequestParam(name = "selectedInv", defaultValue= "") Integer  inventario,
-            @RequestParam(name = "selectedCuenta", defaultValue= "") String cuenta,
             @RequestParam Map<String, Object> params
            ) {
 
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Países");
+        Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Plantilla de Notas");
 
-        if(userService.validateEndpoint(user.getId(),"Ver Países")) { //CAMBIAR A VER Matriz de Eventos
+        if(userService.validateEndpoint(user.getId(),"Ver Plantilla de Notas")) {
             int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
             PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
 
-            List<EventMatrix> noteTemplates = eventMatrixService.findByParams(tipoEvento, concil, inventario, cuenta);
-            //List<EventMatrix> noteTemplates = eventMatrixService.findByParams(1, 1, 1, "0");
+            List<NoteTemplate> noteTemplates = noteTemplateService.findByParams(concil, inventario);
 
             int start = (int) pageRequest.getOffset();
             int end = Math.min((start + pageRequest.getPageSize()), noteTemplates.size());
-            Page<EventMatrix> pageEventMatrix = new PageImpl<>(noteTemplates.subList(start, end), pageRequest, noteTemplates.size());
+            Page<NoteTemplate> pageNoteTemplate = new PageImpl<>(noteTemplates.subList(start, end), pageRequest, noteTemplates.size());
 
-            int totalPage=pageEventMatrix.getTotalPages();
+            int totalPage=pageNoteTemplate.getTotalPages();
             if(totalPage>0){
                 List<Integer> pages = IntStream.rangeClosed(1, totalPage).boxed().collect(Collectors.toList());
                 modelAndView.addObject("pages",pages);
             }
-            modelAndView.addObject("allRegisters",pageEventMatrix.getContent());
+            modelAndView.addObject("allRegisters",pageNoteTemplate.getContent());
             modelAndView.addObject("current",page+1);
             modelAndView.addObject("next",page+2);
             modelAndView.addObject("prev",page);
             modelAndView.addObject("last",totalPage);
             modelAndView.addObject("filterExport","Original");
-            modelAndView.addObject("directory","country");
+            modelAndView.addObject("directory","noteTemplates");
             modelAndView.addObject("registers",noteTemplates.size());
             modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.addObject("p_modificar", p_modificar);
+            modelAndView.addObject("selectedConcil", concil);
+            modelAndView.addObject("selectedInv", inventario);
+            System.out.println(concil);
+            System.out.println(inventario);
 
             List<EventType> allTEs = eventTypeService.findAll();
             modelAndView.addObject("allTEs", allTEs);
 
             List<Conciliation> allConcils = conciliationService.findAll();
             modelAndView.addObject("allConcils", allConcils);
-
-            List<AccountEventMatrix> cuentas = accountEventMatrixService.findAllActive();
-
-
-            modelAndView.setViewName("parametric/eventMatrix");
+            modelAndView.setViewName("parametric/noteTemplates");
         }
         else
         {
