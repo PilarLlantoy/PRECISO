@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.*;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -90,13 +91,16 @@ public class AccountingRouteService {
                 if ("Float".equalsIgnoreCase(tipo) || "Integer".equalsIgnoreCase(tipo) || "Bigint".equalsIgnoreCase(tipo)) {
                     try {
                         // Convertir el valor a BigDecimal para evitar notación científica
-                        BigDecimal decimalValue = new BigDecimal(Float.parseFloat(row[i].toString()));
+                        BigDecimal decimalValue = new BigDecimal(row[i].toString());
 
-                        // Redondear a 4 decimales
-                        decimalValue = decimalValue.setScale(4, RoundingMode.HALF_UP);
+                        DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.US);
+                        symbols.setGroupingSeparator(','); // Separador de miles como punto
+                        symbols.setDecimalSeparator('.'); // Separador decimal como coma
 
-                        // Usar DecimalFormat para agregar separadores de miles y punto decimal
-                        DecimalFormat decimalFormat = new DecimalFormat("#,###.####");
+                        DecimalFormat decimalFormat = new DecimalFormat("#,##0.##########", symbols);
+                        decimalFormat.setParseBigDecimal(true);
+
+                        // Formatear el valor
                         String formattedValue = decimalFormat.format(decimalValue);
 
                         processedRow[i] = formattedValue;
@@ -219,19 +223,19 @@ public class AccountingRouteService {
             CampoRC column = data.getCampos().get(i);
 
             // Verificar si la columna es clave primaria y asignar tamaño limitado
-            if (column.getTipo().equalsIgnoreCase("VARCHAR")){
+            //if (column.getTipo().equalsIgnoreCase("VARCHAR") || column.getTipo().equalsIgnoreCase("DATE")){
                 if (column.isPrimario()) {
                     createTableQuery.append(column.getNombre()).append(" VARCHAR(8000)");
                     primaryKeys.add(column.getNombre());
                 } else {
                     createTableQuery.append(column.getNombre()).append(" VARCHAR(MAX)");
                 }
-            }
+            /*}
             else{
                 createTableQuery.append(column.getNombre())
                         .append(" ")
                         .append(column.getTipo());
-            }
+            }*/
 
             if (i < data.getCampos().size() - 1) {
                 createTableQuery.append(", ");
@@ -332,11 +336,12 @@ public class AccountingRouteService {
                                 if (campos.get(i).getTipo().equalsIgnoreCase("Float")) {
                                     if (cell != null) {
                                         // Obtener el valor numérico
-                                        double numericValue = cell.getNumericCellValue();
-
-                                        // Verificar si tiene decimales adicionales y formatear dinámicamente
-                                        DecimalFormat decimalFormat = new DecimalFormat("0.################");
-                                        value = decimalFormat.format(numericValue);
+                                        String numericValue = "";
+                                        if(!campos.get(i).getSeparador().equalsIgnoreCase("."))
+                                            numericValue = formatter.formatCellValue(cell).replace(".","").replace(",",".");
+                                        else
+                                            numericValue = formatter.formatCellValue(cell).replace(",","");
+                                        value = Double.parseDouble(numericValue);
                                     } else {
                                         value = null;
                                     }
@@ -475,27 +480,6 @@ public class AccountingRouteService {
         }
 
     }
-
-    /*public void validationData(AccountingRoute data){
-        String nombreTabla = "PRECISO_TEMP_CONTABLES";
-        Query querySelect = entityManager.createNativeQuery("SELECT b.nombre as referencia, c.nombre as validacion, a.valor_validacion, a.valor_operacion, \n" +
-                "CASE a.operacion when 'Suma' then '+' when 'Resta' then '-' when 'Multiplica' then '*' when 'Divida' then '/' END as Operacion\n" +
-                "FROM PRECISO.dbo.preciso_validaciones_rc a \n" +
-                "inner join PRECISO.dbo.preciso_campos_rc b on a.id_rc = b.id_rc and a.id_campo_referencia=b.id_campo \n" +
-                "inner join PRECISO.dbo.preciso_campos_rc c on a.id_rc = c.id_rc and a.id_campo_validacion=c.id_campo \n" +
-                "where a.id_rc = ? and a.estado=1");
-        querySelect.setParameter(1,data.getId());
-        List<Object[]> validacionLista = querySelect.getResultList();
-        if(!validacionLista.isEmpty()){
-            for(Object[] obj : validacionLista){
-                Query deleteSelect = entityManager.createNativeQuery("UPDATE "+nombreTabla+" SET " +
-                        obj[0].toString()+" = CAST(TRY_CAST("+ obj[0].toString() + " AS DECIMAL(38, 0))*0.01 " +
-                        obj[4].toString() + obj[3].toString()+" AS VARCHAR) WHERE "+obj[1].toString()+"='"+obj[2].toString()+"';");
-                deleteSelect.executeUpdate();
-            }
-        }
-
-    }*/
 
     public void validationData(AccountingRoute data) {
         String nombreTabla = "PRECISO_TEMP_CONTABLES";

@@ -148,14 +148,14 @@ public class ConciliationRouteService {
             CampoRConcil column = listCampos.get(i);
 
             // Verificar si la columna es clave primaria y asignar tamaño limitado
-            if (column.getTipo().equalsIgnoreCase("VARCHAR")){
+            //if (column.getTipo().equalsIgnoreCase("VARCHAR") || column.getTipo().equalsIgnoreCase("DATE")){
                 if (column.isPrimario()) {
                     createTableQuery.append(column.getNombre()).append(" VARCHAR(255)");
                     primaryKeys.add(column.getNombre());
                 } else {
                     createTableQuery.append(column.getNombre()).append(" VARCHAR(MAX)");
                 }
-            }
+           /* }
             else{
                 if (column.isPrimario()) {
                     primaryKeys.add(column.getNombre());
@@ -163,7 +163,7 @@ public class ConciliationRouteService {
                 createTableQuery.append(column.getNombre())
                         .append(" ")
                         .append(column.getTipo());
-            }
+            }*/
 
             if (i < listCampos.size() - 1) {
                 createTableQuery.append(", ");
@@ -337,11 +337,17 @@ public class ConciliationRouteService {
                                 if (campos.get(i).getTipo().equalsIgnoreCase("Float")) {
                                     if (cell != null) {
                                         // Obtener el valor numérico
-                                        double numericValue = cell.getNumericCellValue();
+                                        //Double numericValue = cell.getNumericCellValue();
+                                        String numericValue = "";
+                                        if(!campos.get(i).getSeparador().equalsIgnoreCase("."))
+                                            numericValue = formatter.formatCellValue(cell).replace(".","").replace(",",".");
+                                        else
+                                            numericValue = formatter.formatCellValue(cell).replace(",","");
 
+
+                                        System.out.println(numericValue);
                                         // Verificar si tiene decimales adicionales y formatear dinámicamente
-                                        DecimalFormat decimalFormat = new DecimalFormat("0.################");
-                                        value = decimalFormat.format(numericValue);
+                                        value = Double.parseDouble(numericValue);
                                     } else {
                                         value = null;
                                     }

@@ -351,10 +351,14 @@
         if (tipoCampo === 'Date' || tipoCampo === 'Datetime') {
             formatoFechaContainer.classList.remove('hidden');
             idiomaCampoContainer.classList.remove('hidden');
-            separadorContainer.classList.remove('hidden');
         } else {
             formatoFechaContainer.classList.add('hidden');
             idiomaCampoContainer.classList.add('hidden');
+        }
+
+        if (tipoCampo === 'Float' || (tipoCampo === 'Date' || tipoCampo === 'Datetime')) {
+            separadorContainer.classList.remove('hidden');
+        } else {
             separadorContainer.classList.add('hidden');
         }
     }
