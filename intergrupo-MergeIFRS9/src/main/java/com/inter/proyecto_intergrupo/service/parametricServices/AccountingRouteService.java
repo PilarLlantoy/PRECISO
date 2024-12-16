@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.*;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -322,11 +323,38 @@ public class AccountingRouteService {
                     if (firstRow > 1) {
                         // Usar JdbcTemplate para ejecutar la consulta con lambda
                         jdbcTemplate.update(sqlQuery, ps -> {
+                            DataFormatter formatter = new DataFormatter();
                             for (int i = 0; i < campos.size(); i++) {
                                 Cell cell = row.getCell(i);
                                 Object value = null;
-                                DataFormatter formatter = new DataFormatter();
-                                value = cell != null ? formatter.formatCellValue(cell) : null;
+
+                                // Manejar tipo Float
+                                if (campos.get(i).getTipo().equalsIgnoreCase("Float")) {
+                                    if (cell != null) {
+                                        // Obtener el valor numérico
+                                        double numericValue = cell.getNumericCellValue();
+
+                                        // Verificar si tiene decimales adicionales y formatear dinámicamente
+                                        DecimalFormat decimalFormat = new DecimalFormat("0.################");
+                                        value = decimalFormat.format(numericValue);
+                                    } else {
+                                        value = null;
+                                    }
+                                }
+                                // Manejar tipo Date o Datetime
+                                else if (campos.get(i).getTipo().equalsIgnoreCase("Date") || campos.get(i).getTipo().equalsIgnoreCase("Datetime")) {
+                                    String fechaLeida = cell != null ? formatter.formatCellValue(cell) : null;
+                                    if (fechaLeida != null && !fechaLeida.matches("\\d{2}/\\d{2}/\\d{4}")) {
+                                        // Por ejemplo, convierte de `1/18/99` a `18/01/1999` si es necesario
+                                        fechaLeida = convertirFormatoExcel(fechaLeida, campos.get(i).getFormatoFecha());
+                                    }
+                                    value = fechaLeida != null ? formatoFecha(fechaLeida, campos.get(i).getFormatoFecha(), campos.get(i).getSeparador()) : null;
+                                }
+                                // Manejo de otros tipos
+                                else {
+                                    value = cell != null ? formatter.formatCellValue(cell) : null;
+                                }
+
                                 // Establecer el parámetro correspondiente en el PreparedStatement
                                 ps.setObject(i + 1, value);
                             }
@@ -336,6 +364,51 @@ public class AccountingRouteService {
                     }
                 }
             }
+        }
+    }
+
+    private static String convertirFormatoExcel(String fechaExcel,String formato) {
+        try {
+            System.out.println(fechaExcel+" "+ formato);
+            // Detección de formato "M/d/YY" (de Excel)
+            SimpleDateFormat sdfEntrada = new SimpleDateFormat("M/d/yy");
+            Date fechaDate = sdfEntrada.parse(fechaExcel);
+
+            // Convertir a formato `dd/MM/yyyy`
+            String data = formato.replaceAll("YYYY", "yyyy")
+                    .replaceAll("MM", "MM")
+                    .replaceAll("DD", "dd")
+                    .replaceAll("YY", "yy");
+            SimpleDateFormat sdfSalida = new SimpleDateFormat(data);
+            return sdfSalida.format(fechaDate);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("No se pudo convertir la fecha de Excel: " + fechaExcel, e);
+        }
+    }
+
+    public Date formatoFecha(String fecha, String formatoActual, String separador) {
+        try {
+            String formatoSalida1 = formatoActual.replaceAll("YYYY", "yyyy")
+                    .replaceAll("MM", "MM")
+                    .replaceAll("DD", "dd")
+                    .replaceAll("YY", "yy");
+            System.out.println(formatoSalida1);
+            SimpleDateFormat formatoEntrada = new SimpleDateFormat(formatoSalida1);
+            formatoEntrada.setLenient(false);
+
+            Date fechaDate = formatoEntrada.parse(fecha);
+
+            /*String formatoSalida = formatoActual.replaceAll("YYYY", "yyyy")
+                    .replaceAll("MM", "MM")
+                    .replaceAll("DD", "dd")
+                    .replaceAll("YY", "yy");
+            System.out.println(formatoSalida);
+            SimpleDateFormat formatoSalidaSDF = new SimpleDateFormat(formatoSalida);
+
+            return formatoSalidaSDF.format(fechaDate);*/
+            return fechaDate;
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Fecha inválida o formato incorrecto: " + fecha + " con formato " + formatoActual, e);
         }
     }
 

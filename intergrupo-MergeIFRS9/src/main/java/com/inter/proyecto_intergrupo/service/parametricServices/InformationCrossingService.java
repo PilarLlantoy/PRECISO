@@ -18,6 +18,9 @@ import java.io.BufferedWriter;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
@@ -425,7 +428,7 @@ public class InformationCrossingService {
                 "    [CENTRO_CONTABLE],\n" +
                 "    [CUENTA_CONTABLE_1],\n" +
                 "    [DIVISA_CUENTA_1],\n" +
-                "    CAST(SUM([VALOR_CUENTA_1]) AS VARCHAR) AS TOTAL_VALOR_CUENTA_1" +
+                "    SUM([VALOR_CUENTA_1]) AS TOTAL_VALOR_CUENTA_1" +
                 " FROM " + nombreTabla+" GROUP BY \n" +
                 "    [FECHA_CONCILIACION],\n" +
                 "    [CENTRO_CONTABLE],\n" +
@@ -436,5 +439,41 @@ public class InformationCrossingService {
 
         return querySelect.getResultList();
     }
+
+    public List<Object[]> processList(List<Object[]> datos, List<String> colAroutes) {
+        List<Object[]> processedList = new ArrayList<>();
+
+        for (Object[] row : datos) {
+            Object[] processedRow = new Object[row.length];
+
+            for (int i = 0; i < row.length; i++) {
+                // Verificar si la columna es "SALDO INVENTARIO"
+                if (colAroutes.get(i).equals("SALDO INVENTARIO")) {
+                    System.out.println("SALDO INVENTARIO " + row[i].toString());
+                    try {
+                        // Convertir el valor a BigDecimal para evitar notación científica
+                        BigDecimal decimalValue = new BigDecimal(row[i].toString());
+
+                        // Usar DecimalFormat con soporte para todos los decimales sin truncar
+                        DecimalFormat decimalFormat = new DecimalFormat("#,###.############");
+                        decimalFormat.setRoundingMode(RoundingMode.HALF_UP);
+                        String formattedValue = decimalFormat.format(decimalValue);
+
+                        processedRow[i] = formattedValue;
+                    } catch (Exception e) {
+                        // Si hay algún error en la conversión, dejamos el valor tal cual está
+                        processedRow[i] = row[i];
+                    }
+                } else {
+                    // Si no es de tipo "SALDO INVENTARIO", dejamos el valor tal cual está
+                    processedRow[i] = row[i];
+                }
+            }
+            processedList.add(processedRow);
+        }
+
+        return processedList;
+    }
+
 
 }

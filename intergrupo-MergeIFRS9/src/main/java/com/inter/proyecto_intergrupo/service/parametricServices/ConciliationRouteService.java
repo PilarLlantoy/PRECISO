@@ -335,7 +335,16 @@ public class ConciliationRouteService {
 
                                 // Manejar tipo Float
                                 if (campos.get(i).getTipo().equalsIgnoreCase("Float")) {
-                                    value = cell != null ? formatter.formatCellValue(cell).replace(".", "").replace(",", ".") : null;
+                                    if (cell != null) {
+                                        // Obtener el valor numérico
+                                        double numericValue = cell.getNumericCellValue();
+
+                                        // Verificar si tiene decimales adicionales y formatear dinámicamente
+                                        DecimalFormat decimalFormat = new DecimalFormat("0.################");
+                                        value = decimalFormat.format(numericValue);
+                                    } else {
+                                        value = null;
+                                    }
                                 }
                                 // Manejar tipo Date o Datetime
                                 else if (campos.get(i).getTipo().equalsIgnoreCase("Date") || campos.get(i).getTipo().equalsIgnoreCase("Datetime")) {
@@ -663,13 +672,11 @@ public class ConciliationRouteService {
                 if ("Float".equalsIgnoreCase(tipo) || "Integer".equalsIgnoreCase(tipo) || "Bigint".equalsIgnoreCase(tipo)) {
                     try {
                         // Convertir el valor a BigDecimal para evitar notación científica
-                        BigDecimal decimalValue = new BigDecimal(Float.parseFloat(row[i].toString()));
+                        BigDecimal decimalValue = new BigDecimal(row[i].toString());
 
-                        // Redondear a 4 decimales
-                        decimalValue = decimalValue.setScale(4, RoundingMode.HALF_UP);
-
-                        // Usar DecimalFormat para agregar separadores de miles y punto decimal
-                        DecimalFormat decimalFormat = new DecimalFormat("#,###.####");
+                        // Usar DecimalFormat con soporte para todos los decimales sin truncar
+                        DecimalFormat decimalFormat = new DecimalFormat("#,###.############");
+                        decimalFormat.setRoundingMode(RoundingMode.HALF_UP);
                         String formattedValue = decimalFormat.format(decimalValue);
 
                         processedRow[i] = formattedValue;

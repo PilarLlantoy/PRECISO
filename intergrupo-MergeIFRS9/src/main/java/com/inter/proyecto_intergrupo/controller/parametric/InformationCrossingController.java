@@ -109,10 +109,12 @@ public class InformationCrossingController {
                 modelAndView.addObject("evento",evento);
                 logCruces = informationCrossingService.findAllLog(concil,params.get("period").toString(), evento);
 
-                datos = informationCrossingService.findAllData(concil, fecha, evento);
                 CampoRC crc= new CampoRC();
                 crc.setNombre("periodo_preciso");
                 colDatos =List.of("FECHA CONCILIACION", "CENTRO CONTABLE", "CUENTA CONTABLE","DIVISA","SALDO INVENTARIO");;
+                datos = informationCrossingService.processList(informationCrossingService.findAllData(concil, fecha, evento), colDatos);
+
+
             }
             int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
             PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);

@@ -159,8 +159,7 @@
                             </thead>
                             <tbody>
                             <tr th:each="row : ${allRCs}">
-                                <td th:each="col, colStat : ${row}"
-                                    th:text="${col instanceof T(java.lang.Number) ? #numbers.formatDecimal(col, 2, '###,###.00') : col}"></td>
+                                <td th:each="col, colStat : ${row}" th:text="${col}"></td>
                             </tr>
                             </tbody>
                         </table>
