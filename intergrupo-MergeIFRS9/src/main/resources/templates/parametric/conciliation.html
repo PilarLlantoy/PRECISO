@@ -52,7 +52,7 @@
                     </thead>
                     <tbody>
                     <tr th:each="concil, iter : ${allConcils}">
-                        <td th:text="${iter.count}"></td>
+                        <td th:text="${iter.count + ((current-1)*12)}"></td>
                         <td th:text="${concil.nombre}"></td>
                         <td th:text="${concil.periodicidad}"></td>
                         <td th:text="${concil.sf.nombre}"></td>
