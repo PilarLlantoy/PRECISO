@@ -60,8 +60,11 @@ public class CampoRCService {
         for (int i = 0; i < data.getCampos().size(); i++) {
             CampoRC column = data.getCampos().get(i);
             createTableQuery.append(column.getNombre())
-                    .append(" ")
-                    .append(column.getTipo());
+                    .append(" ");
+            if(column.getTipo().equalsIgnoreCase("Date") || column.getTipo().equalsIgnoreCase("DateTime")|| column.getTipo().equalsIgnoreCase("Time"))
+                createTableQuery.append("VARCHAR").append("(MAX)");
+            else
+                createTableQuery.append(column.getTipo());
 
             if (column.getTipo().equalsIgnoreCase("VARCHAR")) {
                 //createTableQuery.append("(").append(column.getLongitud()).append(")"); //Con Longitud de RC

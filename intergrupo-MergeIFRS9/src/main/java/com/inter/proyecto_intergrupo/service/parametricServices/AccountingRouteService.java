@@ -189,15 +189,9 @@ public class AccountingRouteService {
     }
 
     public boolean findAllDataValidation(AccountingRoute data, String fecha) {
-        String campos = data.getCampos().stream()
-                .map(CampoRC::getNombre)
-                .collect(Collectors.joining(","));
-
-        // Construir la consulta básica
         StringBuilder queryBuilder = new StringBuilder("SELECT * " +
                 "FROM preciso_rc_" + data.getId() + " WHERE periodo_preciso = :fecha");
 
-        // Crear la consulta
         Query querySelect = entityManager.createNativeQuery(queryBuilder.toString());
         querySelect.setParameter("fecha", fecha);
 
@@ -468,21 +462,33 @@ public class AccountingRouteService {
         jdbcTemplate.execute(queryBulk);
 
         String update="";
+        String update1="";
         for (CampoRC campo:data.getCampos()) {
             if(!update.isEmpty() && campo.getTipo().equalsIgnoreCase("Float"))
                 update=update+",";
-            if(campo.getTipo().equalsIgnoreCase("Float") || (campo.getSeparador() == null && campo.getSeparador().equalsIgnoreCase("."))) {
+            if(campo.getTipo().equalsIgnoreCase("Float") && (campo.getSeparador() == null && campo.getSeparador().equalsIgnoreCase("."))) {
                 update = update + campo.getNombre() + " = REPLACE(TRIM(REPLACE(" + campo.getNombre() + ",' .00','0.00')),',','')";
             }
-            else if(campo.getTipo().equalsIgnoreCase("Float") || campo.getSeparador().equalsIgnoreCase(",")) {
+            else if(campo.getTipo().equalsIgnoreCase("Float") && campo.getSeparador().equalsIgnoreCase(",")) {
                 update = update + campo.getNombre() + " = REPLACE(REPLACE(TRIM(REPLACE(" + campo.getNombre() + ",' ,00','0,00')),'.',''),',','.')";
             }
+            if(!update1.isEmpty() && campo.getTipo().equalsIgnoreCase("Bit"))
+                update1=update1+",";
+            if(campo.getTipo().equalsIgnoreCase("Bit"))
+                update1 = update1 + campo.getNombre() + " = REPLACE(REPLACE(TRIM(UPPER(" + campo.getNombre() + ")),'SI','1'),'NO','0')";
+
         }
         if(!update.isEmpty())
         {
             String queryUpdate = "UPDATE PRECISO_TEMP_CONTABLES SET " + update;
             System.out.println("QUERY -> "+queryUpdate);
             jdbcTemplate.execute(queryUpdate);
+        }
+        if(!update1.isEmpty())
+        {
+            String queryUpdate1 = "UPDATE PRECISO_TEMP_CONTABLES SET " + update1;
+            System.out.println("QUERY -> "+queryUpdate1);
+            jdbcTemplate.execute(queryUpdate1);
         }
     }
 

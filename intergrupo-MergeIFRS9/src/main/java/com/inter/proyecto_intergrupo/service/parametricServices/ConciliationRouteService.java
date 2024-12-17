@@ -125,6 +125,16 @@ public class ConciliationRouteService {
         return querySelect.getResultList();
     }
 
+    public boolean findAllDataValidationA(ConciliationRoute data, String fecha) {
+        StringBuilder queryBuilder = new StringBuilder("SELECT * " +
+                "FROM preciso_rconcil_" + data.getId() + " WHERE periodo_preciso = :fecha");
+
+        Query querySelect = entityManager.createNativeQuery(queryBuilder.toString());
+        querySelect.setParameter("fecha", fecha);
+
+        return !querySelect.getResultList().isEmpty();
+    }
+
     public void createTableTemporal(ConciliationRoute data) {
         String nombreTabla = "PRECISO_TEMP_INVENTARIOS";
         /*Query queryDrop = entityManager.createNativeQuery(
@@ -445,16 +455,41 @@ public class ConciliationRouteService {
         if(fuente !=null)
             fichero=fuente;
 
-        /*Query queryBulk = entityManager.createNativeQuery("BULK INSERT " + (nombreTabla) +
-                " FROM '" + fichero +
-                "' WITH ("+complement+ ")");
-        queryBulk.executeUpdate();*/
-
         String queryBulk = "BULK INSERT " + (nombreTabla) +
                 " FROM '" + fichero +
                 "' WITH ("+complement+ ")";
         System.out.println("QUERY -> "+queryBulk);
         jdbcTemplate.execute(queryBulk);
+
+        String update="";
+        String update1="";
+        for (CampoRConcil campo:data.getCampos()) {
+            if(!update.isEmpty() && campo.getTipo().equalsIgnoreCase("Float"))
+                update=update+",";
+            if(campo.getTipo().equalsIgnoreCase("Float") || (campo.getSeparador() == null && campo.getSeparador().equalsIgnoreCase("."))) {
+                update = update + campo.getNombre() + " = REPLACE(TRIM(REPLACE(" + campo.getNombre() + ",' .00','0.00')),',','')";
+            }
+            else if(campo.getTipo().equalsIgnoreCase("Float") || campo.getSeparador().equalsIgnoreCase(",")) {
+                update = update + campo.getNombre() + " = REPLACE(REPLACE(TRIM(REPLACE(" + campo.getNombre() + ",' ,00','0,00')),'.',''),',','.')";
+            }
+            if(!update1.isEmpty() && campo.getTipo().equalsIgnoreCase("Bit"))
+                update1=update1+",";
+            if(campo.getTipo().equalsIgnoreCase("Bit"))
+                update1 = update1 + campo.getNombre() + " = REPLACE(REPLACE(TRIM(UPPER(" + campo.getNombre() + ")),'SI','1'),'NO','0')";
+        }
+        if(!update.isEmpty())
+        {
+            String queryUpdate = "UPDATE PRECISO_TEMP_INVENTARIOS SET " + update;
+            System.out.println("QUERY -> "+queryUpdate);
+            jdbcTemplate.execute(queryUpdate);
+        }
+
+        if(!update1.isEmpty())
+        {
+            String queryUpdate1 = "UPDATE PRECISO_TEMP_CONTABLES SET " + update1;
+            System.out.println("QUERY -> "+queryUpdate1);
+            jdbcTemplate.execute(queryUpdate1);
+        }
     }
 
     public void validationData(ConciliationRoute data) {

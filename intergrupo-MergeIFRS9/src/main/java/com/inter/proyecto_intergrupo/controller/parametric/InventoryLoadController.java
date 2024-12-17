@@ -163,6 +163,7 @@ public class InventoryLoadController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
         ConciliationRoute cr = conciliationRouteService.findById(id);
+        System.out.println("Entro------------------------------>");
         try {
             conciliationRouteService.createTableTemporal(cr);
             conciliationRouteService.generarArchivoFormato(cr.getCampos(), rutaArchivoFormato);
@@ -172,8 +173,14 @@ public class InventoryLoadController {
                 conciliationRouteService.bulkImport(cr,rutaArchivoFormato,fecha,null);
             conciliationRouteService.validationData(cr);
             conciliationRouteService.copyData(cr,fecha);
-            conciliationRouteService.loadLogCargue(user,cr,fecha,"Trasladar Servidor","Exitoso","");
-            return ResponseEntity.ok("Bulk2");
+            if(conciliationRouteService.findAllDataValidationA(cr,fecha)) {
+                conciliationRouteService.loadLogCargue(user, cr, fecha, "Trasladar Servidor", "Exitoso", "");
+                return ResponseEntity.ok("Bulk2");
+            }
+            else {
+                conciliationRouteService.loadLogCargue(user, cr, fecha, "Trasladar Servidor", "Fallido", "Valide el formato de los campos de tipo Float");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk-2");
+            }
         }
         catch (Exception e) {
             e.printStackTrace();

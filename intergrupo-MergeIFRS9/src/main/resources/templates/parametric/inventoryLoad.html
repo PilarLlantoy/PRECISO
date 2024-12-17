@@ -26,6 +26,7 @@
                 <div class="contend mb-2">
                     <h2>Fecha de Información</h2>
                     <form th:object="${concil}" th:action="@{/parametric/inventoryLoad}" method="GET">
+                        <input id="nomb" type="hidden" th:value="${nomb}">
                         <div class="form-group form-group-sm  mb-1">
                             <h6 class="font-weight-bold">Conciliación</h6>
                             <select style="width: 100%; box-sizing: border-box;" class="form-control form-control-sm" required id="selectedConciliacion" name="selectedConciliacion" onchange="toggleConciliation()">
@@ -204,7 +205,7 @@
         </div>
     </div>
     <div class="modal fade" id="novedadModal" tabindex="-1" aria-labelledby="novedadModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h2 class="modal-title" id="novedadModalLabel">Detalle de Novedad</h2>
@@ -283,6 +284,7 @@
     }
 
     function subida(archivoContable, fechaInformacion) {
+    console.log();
         fetch(`/parametric/inventoryLoad/leerArchivoS?id=${encodeURIComponent(archivoContable)}&fecha=${encodeURIComponent(fechaInformacion)}`)
         .then(response => response.text())
         .then(data => {
