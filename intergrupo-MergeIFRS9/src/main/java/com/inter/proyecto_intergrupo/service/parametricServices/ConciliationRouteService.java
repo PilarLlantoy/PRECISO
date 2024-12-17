@@ -486,7 +486,7 @@ public class ConciliationRouteService {
 
         if(!update1.isEmpty())
         {
-            String queryUpdate1 = "UPDATE PRECISO_TEMP_CONTABLES SET " + update1;
+            String queryUpdate1 = "UPDATE PRECISO_TEMP_INVENTARIOS SET " + update1;
             System.out.println("QUERY -> "+queryUpdate1);
             jdbcTemplate.execute(queryUpdate1);
         }

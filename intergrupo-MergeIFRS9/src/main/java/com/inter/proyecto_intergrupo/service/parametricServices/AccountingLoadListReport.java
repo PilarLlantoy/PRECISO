@@ -93,9 +93,7 @@ public class AccountingLoadListReport {
             {
                 if(part!=null) {
                     try{
-                        System.out.println(columnCount+" -> "+part.toString());
                         if(data.length==(columnCount+1)) {
-                            System.out.println("entro en "+columnCount);
                             createCell(row, columnCount++, part, style3);
                         }
                         else if(colAroutes.get(columnCount).getTipo().equalsIgnoreCase("Float"))

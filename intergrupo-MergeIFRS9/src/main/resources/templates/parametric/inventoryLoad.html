@@ -109,8 +109,8 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr th:each="rc : ${allLog}">
-                                <td th:text="${rc.id}"></td>
+                            <tr th:each="rc,iter : ${allLog}">
+                                <td th:text="${iter.count + ((current-1)*5)}"></td>
                                 <td th:text="${#dates.format(rc.fechaCargue,'dd/MM/yyyy')}"></td>
                                 <td th:text="${#numbers.formatDecimal(rc.cantidadRegistros, 0, 'COMMA', -1, 'POINT')}"></td>
                                 <td th:text="${#dates.format(rc.fechaPreciso,'dd/MM/yyyy HH:mm')}"></td>
@@ -165,7 +165,7 @@
                         <table id="example2" class="table table-striped table-hover text-center table-bordered table-sm" width="100%">
                             <thead class="bg-primary">
                             <tr>
-                                <td th:each="rc : ${allColRCs}" th:text="${rc.nombre}"></td>
+                                <td th:each="rc : ${allColRCs}" th:text="${#strings.toUpperCase(#strings.replace(rc.nombre, 'periodo_preciso', 'fecha contable'))}"></td>
                             </tr>
                             </thead>
                             <tbody>

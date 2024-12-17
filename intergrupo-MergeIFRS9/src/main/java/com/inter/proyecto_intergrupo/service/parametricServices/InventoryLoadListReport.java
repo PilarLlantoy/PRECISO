@@ -41,7 +41,7 @@ public class InventoryLoadListReport {
         style.setFont(font);
 
         for (CampoRConcil campo :colCroutes) {
-            createCell(row, count++, campo.getNombre(), style);
+            createCell(row, count++, campo.getNombre().toUpperCase().replace("PERIODO_PRECISO","FECHA CONTABLE"), style);
         }
     }
 
@@ -83,22 +83,23 @@ public class InventoryLoadListReport {
         style2.setFont(font);
         style2.setDataFormat(workbook.createDataFormat().getFormat("#,##0"));
 
+        CellStyle style3 = workbook.createCellStyle();
+        style3.setFont(font);
+        style3.setDataFormat(workbook.createDataFormat().getFormat("dd-MM-yyyy"));
+
         for(Object[] data: aroutes){
             Row row = sheet.createRow(rowCount++);
             int columnCount = 0;
 
             for (int i =0;i<data.length;i++)
             {
-                if(data[i]!=null && colCroutes.get(i).getTipo()!=null && (colCroutes.get(i).getTipo().equalsIgnoreCase("Integer") || colCroutes.get(i).getTipo().equalsIgnoreCase("Bigint")))
+                if(data.length==(columnCount+1) && data[i]!=null) {
+                    createCell(row, columnCount++, data[i], style3);
+                }
+                else if(data[i]!=null && colCroutes.get(i).getTipo()!=null && (colCroutes.get(i).getTipo().equalsIgnoreCase("Integer") || colCroutes.get(i).getTipo().equalsIgnoreCase("Bigint")))
                     createCell(row,columnCount++,Integer.parseInt(data[i].toString()),style2);
                 else if(data[i]!=null && colCroutes.get(i).getTipo()!=null && (colCroutes.get(i).getTipo().equalsIgnoreCase("Float")))
                     createCell(row,columnCount++,Double.parseDouble(data[i].toString()),style1);
-                else if(data[i]!=null && colCroutes.get(i).getTipo()!=null && (colCroutes.get(i).getTipo().equalsIgnoreCase("Date") || colCroutes.get(i).getTipo().equalsIgnoreCase("Datetime"))) {
-                    CellStyle style3 = workbook.createCellStyle();
-                    style3.setFont(font);
-                    style3.setDataFormat(workbook.createDataFormat().getFormat(colCroutes.get(i).getFormatoFecha()));
-                    createCell(row, columnCount++, data[i].toString(), style3);
-                }
                 else if(data[i]!=null)
                     createCell(row,columnCount++,data[i].toString(),style);
                 else
