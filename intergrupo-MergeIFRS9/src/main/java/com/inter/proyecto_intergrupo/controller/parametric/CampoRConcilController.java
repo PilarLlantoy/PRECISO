@@ -16,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.http.ResponseEntity;
 import java.util.List;
 import java.util.Collections;
+import java.util.Map;
 
 
 @Controller
@@ -37,8 +38,12 @@ public class CampoRConcilController {
     public ModelAndView createCampoRConcil(@ModelAttribute CampoRConcil campoNuevo,
                                             @RequestParam(name = "crouteId") String crouteId,
                                             @RequestParam(name = "longitud") String longitud,
-                                            BindingResult bindingResult){
-        ModelAndView modelAndView = new ModelAndView("redirect:/parametric/fieldLoadingConciliationRoute/" + crouteId);
+                                            BindingResult bindingResult,
+                                           @RequestParam Map<String, Object> params){
+        String page="";
+        if(params.get("page")!=null && params.get("page").toString()!=null)
+            page="?page="+params.get("page").toString();
+        ModelAndView modelAndView = new ModelAndView("redirect:/parametric/fieldLoadingConciliationRoute/" + crouteId+page);
         if(longitud!=null && longitud.length()>0 ){
             campoNuevo.setLongitud(longitud);
         }

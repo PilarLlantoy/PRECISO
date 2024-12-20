@@ -171,12 +171,17 @@ public class AccountingLoadController {
             if(ac.getValidaciones().size()!=0)
                 accountingRouteService.validationData(ac);
             accountingRouteService.copyData(ac,fecha);
+
             if(accountingRouteService.findAllDataValidation(ac,fecha)) {
                 jobAutoService.loadLogCargue(user, ac, fecha, "Trasladar Servidor", "Exitoso", "");
                 return ResponseEntity.ok("Bulk1");
             }
+            else if(accountingRouteService.findAllDataTemporal(ac,fecha)) {
+                jobAutoService.loadLogCargue(user, ac, fecha, "Trasladar Servidor", "Fallido", "La ruta "+ac.getRuta()+" es inaccesible. (El sistema no puede encontrar el archivo especificado)");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk-1");
+            }
             else {
-                jobAutoService.loadLogCargue(user, ac, fecha, "Trasladar Servidor", "Fallido", "Valide el formato de los campos de tipo Float");
+                jobAutoService.loadLogCargue(user, ac, fecha, "Trasladar Servidor", "Fallido", "Valide el formato de los campos de tipo Float y Bigint");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk-1");
             }
 
@@ -214,11 +219,11 @@ public class AccountingLoadController {
                 accountingRouteService.validationData(ac);
             accountingRouteService.copyData(ac,fecha);
             if(accountingRouteService.findAllDataValidation(ac,fecha)) {
-                jobAutoService.loadLogCargue(user, ac, fecha, "Trasladar Servidor", "Exitoso", "");
+                jobAutoService.loadLogCargue(user, ac, fecha, "Trasladar Local", "Exitoso", "");
                 return ResponseEntity.ok("Bulk1");
             }
             else {
-                jobAutoService.loadLogCargue(user, ac, fecha, "Trasladar Servidor", "Fallido", "Valide el formato de los campos de tipo Float");
+                jobAutoService.loadLogCargue(user, ac, fecha, "Trasladar Local", "Fallido", "Valide el formato de los campos de tipo Float y Bigint");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk-1");
             }
         }

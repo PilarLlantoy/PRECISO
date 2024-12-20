@@ -76,6 +76,12 @@ public class AccountingRouteService {
         return accountingRouteRepository.findByActivo(true);
     }
 
+    public List<CampoRC> getCamposRC(AccountingRoute data) {
+        Query querySelect = entityManager.createNativeQuery(
+                "select b.* from preciso_rutas_contables a, preciso_campos_rc b where a.id_rc = b.id_rc and a.id_rc = " + data.getId(),CampoRC.class);
+        return querySelect.getResultList();
+    }
+
     public List<Object[]> processList(List<Object[]> aroutes, List<CampoRC> colAroutes) {
         List<Object[]> processedList = new ArrayList<>();
 
@@ -198,6 +204,15 @@ public class AccountingRouteService {
         return !querySelect.getResultList().isEmpty();
     }
 
+    public boolean findAllDataTemporal(AccountingRoute data, String fecha) {
+        StringBuilder queryBuilder = new StringBuilder("SELECT * " +
+                "FROM PRECISO_TEMP_CONTABLES ");
+
+        Query querySelect = entityManager.createNativeQuery(queryBuilder.toString());
+
+        return querySelect.getResultList().isEmpty();
+    }
+
 
     public String encontrarUltimaFechaSubida(AccountingRoute data) {
         Query querySelect = entityManager.createNativeQuery(
@@ -231,8 +246,10 @@ public class AccountingRouteService {
 
         List<String> primaryKeys = new ArrayList<>(); // Almacenar nombres de columnas que son claves primarias
 
-        for (int i = 0; i < data.getCampos().size(); i++) {
-            CampoRC column = data.getCampos().get(i);
+        List<CampoRC> lista =getCamposRC(data);
+
+        for (int i = 0; i < lista.size(); i++) {
+            CampoRC column = lista.get(i);
 
             // Verificar si la columna es clave primaria y asignar tamaño limitado
             //if (column.getTipo().equalsIgnoreCase("VARCHAR") || column.getTipo().equalsIgnoreCase("DATE")){
@@ -249,7 +266,7 @@ public class AccountingRouteService {
                         .append(column.getTipo());
             }*/
 
-            if (i < data.getCampos().size() - 1) {
+            if (i < lista.size() - 1) {
                 createTableQuery.append(", ");
             }
         }
@@ -303,11 +320,12 @@ public class AccountingRouteService {
 
     public void importXlsx(AccountingRoute data, String ruta,String fecha, String fuente) throws PersistenceException, IOException {
         String fichero=ensureTrailingSlash(data.getRuta()) + data.getNombreArchivo() + todayDateConvert(data.getFormatoFecha(),fecha,data.getIdiomaFecha()) + data.getComplementoArchivo() +"."+ data.getTipoArchivo();
+        List<CampoRC> lista =getCamposRC(data);
         if(fuente !=null)
             fichero=fuente;
         if (fichero != null && !fichero.isEmpty()) {
             StringBuilder sqlQueryBuilder = new StringBuilder("INSERT INTO PRECISO_TEMP_CONTABLES (");
-            List<CampoRC> campos = data.getCampos();
+            List<CampoRC> campos = lista;
             // Construir la parte de columnas dinámicamente
             for (int i = 0; i < campos.size(); i++) {
                 sqlQueryBuilder.append(campos.get(i).getNombre());
@@ -461,9 +479,11 @@ public class AccountingRouteService {
         System.out.println("QUERY -> "+queryBulk);
         jdbcTemplate.execute(queryBulk);
 
+        List<CampoRC> lista =getCamposRC(data);
+
         String update="";
         String update1="";
-        for (CampoRC campo:data.getCampos()) {
+        for (CampoRC campo:lista) {
             if(!update.isEmpty() && campo.getTipo().equalsIgnoreCase("Float"))
                 update=update+",";
             if(campo.getTipo().equalsIgnoreCase("Float") && (campo.getSeparador() == null && campo.getSeparador().equalsIgnoreCase("."))) {
@@ -566,7 +586,8 @@ public class AccountingRouteService {
 
     public void copyData(AccountingRoute data,String fecha){
         String nombreTabla = "PRECISO_TEMP_CONTABLES";
-        String campos = data.getCampos().stream()
+        List<CampoRC> lista =getCamposRC(data);
+        String campos = lista.stream()
                 .map(CampoRC::getNombre)
                 .collect(Collectors.joining(","));
 
@@ -725,10 +746,13 @@ public class AccountingRouteService {
                     validationData(ac);
                 copyData(ac, fecha);
                 if(findAllDataValidation(ac,fecha)) {
-                    jobAutoService.loadLogCargue(null, ac, fecha, "Trasladar Servidor", "Exitoso", "");
+                    jobAutoService.loadLogCargue(null, ac, fecha, "Automático", "Exitoso", "");
+                }
+                else if(findAllDataTemporal(ac,fecha)) {
+                    jobAutoService.loadLogCargue(null, ac, fecha, "Automático", "Fallido", "La ruta "+ac.getRuta()+" es inaccesible. (El sistema no puede encontrar el archivo especificado)");
                 }
                 else {
-                    jobAutoService.loadLogCargue(null, ac, fecha, "Trasladar Servidor", "Fallido", "Valide el formato de los campos de tipo Float");
+                    jobAutoService.loadLogCargue(null, ac, fecha, "Automático", "Fallido", "Valide el formato de los campos de tipo Float y Bigint");
                 }
             }
             catch (Exception e) {

@@ -173,12 +173,17 @@ public class InventoryLoadController {
                 conciliationRouteService.bulkImport(cr,rutaArchivoFormato,fecha,null);
             conciliationRouteService.validationData(cr);
             conciliationRouteService.copyData(cr,fecha);
+
             if(conciliationRouteService.findAllDataValidationA(cr,fecha)) {
                 conciliationRouteService.loadLogCargue(user, cr, fecha, "Trasladar Servidor", "Exitoso", "");
                 return ResponseEntity.ok("Bulk2");
             }
+            else if(conciliationRouteService.findAllDataTemporalA(cr,fecha)) {
+                conciliationRouteService.loadLogCargue(user, cr, fecha, "Trasladar Servidor", "Fallido", "La ruta "+cr.getRuta()+" es inaccesible. (El sistema no puede encontrar el archivo especificado)");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk-2");
+            }
             else {
-                conciliationRouteService.loadLogCargue(user, cr, fecha, "Trasladar Servidor", "Fallido", "Valide el formato de los campos de tipo Float");
+                conciliationRouteService.loadLogCargue(user, cr, fecha, "Trasladar Servidor", "Fallido", "Valide el formato de los campos de tipo Float y Bigint");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk-2");
             }
         }
@@ -212,7 +217,19 @@ public class InventoryLoadController {
             conciliationRouteService.validationData(cr);
             conciliationRouteService.copyData(cr,fecha);
             conciliationRouteService.loadLogCargue(user,cr,fecha,"Trasladar Local","Exitoso","");
-            return ResponseEntity.ok("Bulk2");
+
+            if(conciliationRouteService.findAllDataValidationA(cr,fecha)) {
+                conciliationRouteService.loadLogCargue(user, cr, fecha, "Trasladar Local", "Exitoso", "");
+                return ResponseEntity.ok("Bulk2");
+            }
+            else if(conciliationRouteService.findAllDataTemporalA(cr,fecha)) {
+                conciliationRouteService.loadLogCargue(user, cr, fecha, "Trasladar Local", "Fallido", "La ruta "+cr.getRuta()+" es inaccesible. (El sistema no puede encontrar el archivo especificado)");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk-2");
+            }
+            else {
+                conciliationRouteService.loadLogCargue(user, cr, fecha, "Trasladar Local", "Fallido", "Valide el formato de los campos de tipo Float y Bigint");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk-2");
+            }
         }
         catch (Exception e) {
             e.printStackTrace();

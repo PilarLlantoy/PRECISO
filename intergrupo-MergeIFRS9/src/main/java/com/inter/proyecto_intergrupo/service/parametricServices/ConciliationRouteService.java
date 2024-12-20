@@ -135,6 +135,15 @@ public class ConciliationRouteService {
         return !querySelect.getResultList().isEmpty();
     }
 
+    public boolean findAllDataTemporalA(ConciliationRoute data, String fecha) {
+        StringBuilder queryBuilder = new StringBuilder("SELECT * " +
+                "FROM PRECISO_TEMP_INVENTARIOS ");
+
+        Query querySelect = entityManager.createNativeQuery(queryBuilder.toString());
+
+        return querySelect.getResultList().isEmpty();
+    }
+
     public void createTableTemporal(ConciliationRoute data) {
         String nombreTabla = "PRECISO_TEMP_INVENTARIOS";
         /*Query queryDrop = entityManager.createNativeQuery(
@@ -441,7 +450,9 @@ public class ConciliationRouteService {
         if(data.getTipoArchivo().equals("XLS") || data.getTipoArchivo().equals("XLSX"))
             delimitador=";";
 
-        String complement = "FIELDTERMINATOR = '"+delimitador+"', ROWTERMINATOR = '\\n', FIRSTROW = "+data.getFilasOmitidas()+1;
+        int cantidad=data.getFilasOmitidas()+1;
+
+        String complement = "FIELDTERMINATOR = '"+delimitador+"', ROWTERMINATOR = '\\n', FIRSTROW = "+cantidad;
 
         if(data.getTipoArchivo().equals("XLS") || data.getTipoArchivo().equals("XLSX") || data.getTipoArchivo().equals("CSV") || data.getTipoArchivo().equals("TXT"))
             extension="."+data.getTipoArchivo();
@@ -461,9 +472,11 @@ public class ConciliationRouteService {
         System.out.println("QUERY -> "+queryBulk);
         jdbcTemplate.execute(queryBulk);
 
+        List<CampoRConcil> lista =getCamposRcon(data);
+
         String update="";
         String update1="";
-        for (CampoRConcil campo:data.getCampos()) {
+        for (CampoRConcil campo:lista) {
             if(!update.isEmpty() && campo.getTipo().equalsIgnoreCase("Float"))
                 update=update+",";
             if(campo.getTipo().equalsIgnoreCase("Float") || (campo.getSeparador() == null && campo.getSeparador().equalsIgnoreCase("."))) {
@@ -754,7 +767,16 @@ public class ConciliationRouteService {
                     bulkImport(cr,rutaArchivoFormato,fecha,null);
                 validationData(cr);
                 copyData(cr,fecha);
-                loadLogCargue(null,cr,fecha,"Automático","Exitoso","");
+
+                if(findAllDataValidationA(cr,fecha)) {
+                    loadLogCargue(null, cr, fecha, "Automático", "Exitoso", "");
+                }
+                else if(findAllDataTemporalA(cr,fecha)) {
+                    loadLogCargue(null, cr, fecha, "Automático", "Fallido", "La ruta "+cr.getRuta()+" es inaccesible. (El sistema no puede encontrar el archivo especificado)");
+                }
+                else {
+                    loadLogCargue(null, cr, fecha, "Automático", "Fallido", "Valide el formato de los campos de tipo Float y Bigint");
+                }
             }
             catch (Exception e) {
                 e.printStackTrace();
