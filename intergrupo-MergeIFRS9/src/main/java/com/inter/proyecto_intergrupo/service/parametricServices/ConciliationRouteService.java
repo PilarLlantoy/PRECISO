@@ -310,7 +310,11 @@ public class ConciliationRouteService {
     }
 
     public void importXlsx(ConciliationRoute data, String ruta,String fecha, String fuente) throws PersistenceException, IOException {
-        String fichero=ensureTrailingSlash(data.getRuta()) + data.getNombreArchivo() + todayDateConvert(data.getFormatoFecha(),fecha,data.getIdiomaFecha()) +"."+ data.getTipoArchivo();
+        String fichero=ensureTrailingSlash(data.getRuta()) + data.getNombreArchivo() +"."+ data.getTipoArchivo();
+        if(data.isSiglasFechas()){
+            fichero=ensureTrailingSlash(data.getRuta()) + data.getNombreArchivo() + todayDateConvert(data.getFormatoFecha(),fecha,data.getIdiomaFecha()) +"."+ data.getTipoArchivo();
+        }
+
         if(fuente !=null)
             fichero=fuente;
         if (fichero != null && !fichero.isEmpty()) {
