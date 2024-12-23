@@ -483,10 +483,10 @@ public class ConciliationRouteService {
         for (CampoRConcil campo:lista) {
             if(!update.isEmpty() && campo.getTipo().equalsIgnoreCase("Float"))
                 update=update+",";
-            if(campo.getTipo().equalsIgnoreCase("Float") || (campo.getSeparador() == null && campo.getSeparador().equalsIgnoreCase("."))) {
+            if(campo.getTipo().equalsIgnoreCase("Float") && (campo.getSeparador() == null || ( campo.getSeparador() != null && (campo.getSeparador().equalsIgnoreCase(".")||campo.getSeparador().equalsIgnoreCase(""))))) {
                 update = update + campo.getNombre() + " = REPLACE(TRIM(REPLACE(" + campo.getNombre() + ",' .00','0.00')),',','')";
             }
-            else if(campo.getTipo().equalsIgnoreCase("Float") || campo.getSeparador().equalsIgnoreCase(",")) {
+            else if(campo.getTipo().equalsIgnoreCase("Float") && campo.getSeparador().equalsIgnoreCase(",")) {
                 update = update + campo.getNombre() + " = REPLACE(REPLACE(TRIM(REPLACE(" + campo.getNombre() + ",' ,00','0,00')),'.',''),',','.')";
             }
             if(!update1.isEmpty() && campo.getTipo().equalsIgnoreCase("Bit"))

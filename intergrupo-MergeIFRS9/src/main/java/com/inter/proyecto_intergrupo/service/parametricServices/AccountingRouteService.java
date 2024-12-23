@@ -490,7 +490,7 @@ public class AccountingRouteService {
         for (CampoRC campo:lista) {
             if(!update.isEmpty() && campo.getTipo().equalsIgnoreCase("Float"))
                 update=update+",";
-            if(campo.getTipo().equalsIgnoreCase("Float") && (campo.getSeparador() == null && campo.getSeparador().equalsIgnoreCase("."))) {
+            if(campo.getTipo().equalsIgnoreCase("Float") && (campo.getSeparador() == null||(campo.getSeparador() != null && (campo.getSeparador().equalsIgnoreCase("") || campo.getSeparador().equalsIgnoreCase("."))))) {
                 update = update + campo.getNombre() + " = REPLACE(TRIM(REPLACE(" + campo.getNombre() + ",' .00','0.00')),',','')";
             }
             else if(campo.getTipo().equalsIgnoreCase("Float") && campo.getSeparador().equalsIgnoreCase(",")) {

@@ -51,8 +51,8 @@ import java.util.stream.IntStream;
 public class AccountingLoadController {
     private static final int PAGINATIONCOUNT=5;
     private static final int PAGINATIONCOUNTDATA=500;
-    public static final String rutaArchivoFormato = "\\\\co.igrupobbva\\svrfilesystem\\BBVA_VIC06\\DP10\\Preciso\\archivo.fmt";
-    public static final String rutaArchivoFormato1 = "\\\\co.igrupobbva\\svrfilesystem\\BBVA_VIC06\\DP10\\Preciso\\";
+    public static final String rutaArchivoFormato = "\\\\co.igrupobbva\\svrfilesystem\\BBVA_VIC06\\DP10\\Preciso\\Temporales\\archivo.fmt";
+    public static final String rutaArchivoFormato1 = "\\\\co.igrupobbva\\svrfilesystem\\BBVA_VIC06\\DP10\\Preciso\\Temporales\\";
     //public static final String rutaArchivoFormato = "D:\\archivo.fmt";
     //public static final String rutaArchivoFormato1 = "D:\\";
 
