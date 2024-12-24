@@ -63,7 +63,7 @@ public class EventMatrixController {
             int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
             PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
 
-            List<EventMatrix> eventMatrixes = eventMatrixService.findAllActive();
+            List<EventMatrix> eventMatrixes = eventMatrixService.findAllActiveOrdered();
             int start = (int) pageRequest.getOffset();
             int end = Math.min((start + pageRequest.getPageSize()), eventMatrixes.size());
             Page<EventMatrix> pageEventMatrix = new PageImpl<>(eventMatrixes.subList(start, end), pageRequest, eventMatrixes.size());

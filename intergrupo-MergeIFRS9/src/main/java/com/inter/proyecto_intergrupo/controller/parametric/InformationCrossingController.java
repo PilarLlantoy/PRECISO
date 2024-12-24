@@ -76,6 +76,9 @@ public class InformationCrossingController {
     private CondicionMEService condicionMEService;
 
     @Autowired
+    private ValidationMEService validationMEService;
+
+    @Autowired
     private AccountEventMatrixService accountEventMatrixService;
 
     @GetMapping(value="/parametric/informationCrossing")
@@ -93,14 +96,10 @@ public class InformationCrossingController {
             List<Object[]> datos = new ArrayList<>();
             List<String> colDatos = new ArrayList<>();
             List<LogInformationCrossing> logCruces = new ArrayList<>();
-            System.out.println("INICIO "+params.get("arhcont"));
-            System.out.println("INICIO "+params.get("period"));
-            System.out.println("INICIO "+params.get("evento"));
             if(params.get("arhcont") != null && params.get("arhcont").toString() != null
                     && params.get("period") != null && params.get("period").toString() != null
                     && params.get("evento") != null && params.get("evento").toString() != null)
             {
-                System.out.println("NO VENIA VACIO");
                 modelAndView.addObject("period",params.get("period").toString());
                 Conciliation concil = conciliationService.findById(Integer.parseInt(params.get("arhcont").toString()));
                 EventType evento = eventTypeService.findAllById(Integer.parseInt(params.get("evento").toString()));
@@ -211,52 +210,47 @@ public class InformationCrossingController {
             //-----------------------------------------------------------------------------------
             for (ConciliationRoute ruta : listRoutes) {
 
-                //Creamos las tablas finales vacias de cada inventario con los campos agregados
-                informationCrossingService.recreateTable(ruta, id);
-
                 List<EventMatrix> matrices = eventMatrixService.findByConciliationxInventarioxTipoEvento(id, ruta.getId(), evento);
-                for (EventMatrix matriz : matrices) {
+                if(matrices.isEmpty()){
+                    System.out.println("NO se ha creado ninguna matriz");
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk-1");
+                }
 
-                    //Creamos tablas temporales con la data total
-                    informationCrossingService.creatTablaTemporalCruce(ruta);
+                //Creamos tablas temporales con la data total
+                informationCrossingService.creatTablaTemporalCruce(ruta, fecha);
+
+                for (EventMatrix matriz : matrices) {
 
                     //Primero veremos las condiciones
                     List<CondicionEventMatrix> condiciones = condicionMEService.findByMatrizEvento(matriz);
-                    List<Object[]> resultados = null;
+                    String condicion = null;
                     if (condiciones.size() != 0)
-                        informationCrossingService.conditionData(ruta, matriz);
+                        condicion = informationCrossingService.conditionData(ruta, matriz);
 
                     //Completamos informacion de cruce
                     AccountEventMatrix cuenta1 = accountEventMatrixService.findByMatrizEventoTipo1(matriz);
                     AccountEventMatrix cuenta2 = accountEventMatrixService.findByMatrizEventoTipo2(matriz);
-                    informationCrossingService.completarTablaCruce(ruta, fecha, tipoEvento, matriz, cuenta1, cuenta2);
+                    informationCrossingService.completarTablaCruce(ruta, fecha, tipoEvento, matriz, cuenta1, cuenta2, condicion);
 
                     //Realizamos las validaciones
-                    //recuerda corregir para las validaciones que solo sean un reemplazo de palabras
+                    List<ValidationME> validaciones = validationMEService.findByEventMatrix(matriz);
+                    if (validaciones.size() != 0)
+                        informationCrossingService.validationData(ruta, matriz, condicion);
 
                     //Agregamos estos registros a la tabla final
-                    informationCrossingService.rellenarTablaCruceTotal(ruta, id);
+                    //informationCrossingService.rellenarTablaCrucexMatriz(ruta, id);
 
                 }
+
+                //Agregamos estos registros a la tabla final
+                //Creamos las tablas finales vacias de cada inventario con los campos agregados
+                informationCrossingService.recreateTable(ruta, id);
+                System.out.println("RUTA CONCILIACION "+ruta.getDetalle());
 
             }
 
 
-            //RESMIR POR CUENTA
-            //-----------------------------------------------------------------------------------
-
-            /*File dest = new File(rutaArchivo);
-            file.transferTo(dest);
-            accountingRouteService.createTableTemporal(ac);
-            accountingRouteService.generarArchivoFormato(ac.getCampos(), rutaArchivoFormato);
-            if(ac.getTipoArchivo().equalsIgnoreCase("XLS") || ac.getTipoArchivo().equalsIgnoreCase("XLSX"))
-                accountingRouteService.importXlsx(ac,rutaArchivoFormato,fecha,rutaArchivo);
-            else
-                accountingRouteService.bulkImport(ac,rutaArchivoFormato,fecha,rutaArchivo);
-            accountingRouteService.conditionData(ac);
-            accountingRouteService.validationData(ac);
-            accountingRouteService.copyData(ac,fecha);
-            accountingRouteService.loadLogCargue(user,ac,fecha,"Trasladar Local","Exitoso","");*/
+            //accountingRouteService.loadLogCargue(user,ac,fecha,"Trasladar Local","Exitoso","");*/
             return ResponseEntity.ok("Bulk->1");
         }
         catch (Exception e) {

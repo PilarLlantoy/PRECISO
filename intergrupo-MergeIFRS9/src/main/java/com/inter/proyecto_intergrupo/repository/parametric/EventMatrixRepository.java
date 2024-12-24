@@ -11,6 +11,7 @@ import java.util.List;
 public interface EventMatrixRepository extends JpaRepository<EventMatrix,Integer> {
     EventMatrix findAllById(int id);
     List<EventMatrix> findByEstado(boolean estado);
+    List<EventMatrix> findByEstadoOrderByConciliacionIdAscInventarioConciliacionIdAsc(boolean estado);
 
     List<EventMatrix> findAllByEstadoAndConciliacionAndInventarioConciliacion(
             boolean estado, Conciliation conciliacion, ConciliationRoute inventario

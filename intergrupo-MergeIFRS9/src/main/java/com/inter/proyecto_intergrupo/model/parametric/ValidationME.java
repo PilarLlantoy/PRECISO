@@ -21,18 +21,17 @@ public class ValidationME {
     private int id;
 
     @ManyToOne
-    @JoinColumn(name = "id_campo_validacion")
+    @JoinColumn(name = "id_campo_validacion", nullable = false)
     private CampoRConcil campoVal;
 
     @Column(name = "valor_validacion")
     private String valorValidacion;
 
-    @Column(name = "aplica_formula", columnDefinition = "BIT DEFAULT 1")
-    private boolean aplicaFormula = true;
-
+    @Column(name = "aplica_formula", columnDefinition = "BIT DEFAULT 0")
+    private boolean aplicaFormula = false;
 
     @ManyToOne
-    @JoinColumn(name = "id_campo_referencia", nullable = false)
+    @JoinColumn(name = "id_campo_referencia")
     private CampoRConcil campoRef;
 
     @Column(name = "operacion")
@@ -56,9 +55,5 @@ public class ValidationME {
     @ManyToOne
     @JoinColumn(name = "id_me", nullable = false)
     private EventMatrix matrizEvento;
-
-
-
-
 
 }

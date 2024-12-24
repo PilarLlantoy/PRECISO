@@ -1,5 +1,6 @@
 package com.inter.proyecto_intergrupo.repository.parametric;
 
+import com.inter.proyecto_intergrupo.model.parametric.CondicionEventMatrix;
 import com.inter.proyecto_intergrupo.model.parametric.EventMatrix;
 import com.inter.proyecto_intergrupo.model.parametric.ValidationME;
 import com.inter.proyecto_intergrupo.model.parametric.ValidationRC;

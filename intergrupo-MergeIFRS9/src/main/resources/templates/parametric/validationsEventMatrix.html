@@ -32,6 +32,7 @@
         <div class="text-left col-md-12 mb-1">
 
             <form id="miFormulario" th:object="${validationME}" th:action="@{/parametric/createValidacionME}" method="POST">
+
                 <!-- Formulario oculto para pasar el objeto matriz-->
                 <input type="hidden" id="matrizId" name="matrizId" th:value="${matriz.id}" />
 
@@ -42,7 +43,7 @@
                             <input type="text" id="idInput" class="form-control form-control-sm" th:field="*{id}">
                         </div>
                     </div>
-                    <div class="col-md-4" id="validacionContainer">
+                    <div class="col-md-4">
                         <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Campo Validación</h6>
                             <div class="d-flex align-items-center">
@@ -68,15 +69,16 @@
                         <div class="col-12"><h6 class="font-weight-bold">Se adiciona Campo Afecta?</h6></div>
                         <div class="form-group col-md-2">
                             <div class="form-check form-check-inline">
-                                <input id="adCampoAf" name="adCampoAf" th:field="*{adCampoAfecta}" th:id="${adCampoAfecta}"
-                                       th:value="${adCampoAfecta}" type="checkbox" class="styled-checkbox" onchange="toggleFields()">
+                                <input id="adCampoAfecta1" name="adCampoAfecta" th:field="*{adCampoAfecta}" th:id="${adCampoAfecta}"
+                                       th:value="${adCampoAfecta}" type="checkbox" class="styled-checkbox" onchange="toggleFieldsAfecta()">
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-2">
+
+                    <div class="col-md-2 hidden" id="afectaAContainer">
                         <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Afecta a:</h6>
-                            <select class="form-control form-control-sm" required th:name="selectedCampoAf" id="selectedCampoAf">
+                            <select class="form-control form-control-sm"  th:name="selectedCampoAf" id="selectedCampoAf">
                                 <option disabled selected value="">Seleccione un campo</option>
                                 <option th:each="campo : ${campos}" th:value="${campo[0]}" th:text="${campo[1]}"></option>
                             </select>
@@ -87,13 +89,13 @@
                     <div class="col-md-2">
                         <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Campo:<i class="bi bi-caret-down"></i></h6>
-                            <select class="form-control form-control-sm" required th:name="selectedCampo" id="selectedCampo">
+                            <select class="form-control form-control-sm"  th:name="selectedCampo" id="selectedCampo">
                                 <option disabled  selected value="">Seleccione un campo</option>
                                 <option th:each="campo : ${campos}" th:value="${campo[0]}" th:text="${campo[1]}"></option>
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-2" id="operacionContainer">
                         <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Operacion:<i class="bi bi-caret-down"></i></h6>
                             <select class="form-control form-control-sm" name="selectedOperacion" id="selectedOperacion">
@@ -304,7 +306,7 @@
         updateButtonText();
     }
 
-    function toggleFields() {
+    function toggleFieldsFormula() {
         var formulaCheckbox = document.getElementById('formula1');
         var validacionContainer = document.getElementById('validacionContainer');
         var valorValidacion = document.getElementById('valorValidacion');
@@ -316,6 +318,19 @@
             validacionContainer.classList.add('hidden');
             valorValidacion.value = '';
             selectedCampoVal.selectedIndex = 0;
+        }
+    }
+
+    function toggleFieldsAfecta() {
+        var checkbox  = document.getElementById('adCampoAfecta1');
+        var afectaContainer = document.getElementById('afectaAContainer');
+
+        console.log("Checkbox está marcado:", checkbox);
+
+        if (checkbox.checked) {
+            afectaContainer.classList.remove('hidden');
+        } else {
+            afectaContainer.classList.add('hidden');
         }
     }
 
@@ -341,7 +356,7 @@
     }
 
     window.onload = function() {
-        //toggleFields();
+        toggleFieldsAfecta();
     };
 
 </script>

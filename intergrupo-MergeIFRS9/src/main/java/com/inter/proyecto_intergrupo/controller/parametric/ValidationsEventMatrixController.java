@@ -119,29 +119,41 @@ public class ValidationsEventMatrixController {
 
     @PostMapping(value = "/parametric/createValidacionME")
     public ModelAndView createValidacionME(@ModelAttribute ValidationME validationME,
-            @RequestParam(name = "selectedCampoVal") Integer campoValidacion,
-            @RequestParam(name = "selectedCampoAf") Integer campoAfecta,
-            @RequestParam(name = "selectedCampo") Integer campo,
-            @RequestParam(name = "selectedOperacion") String operacion,
-            @RequestParam(name = "matrizId") String matrizId,
+            @RequestParam(name = "selectedCampoVal", defaultValue = "0") Integer campoValidacion,
+            @RequestParam(name = "selectedCampoAf", defaultValue = "0") Integer campoAfecta,
+            @RequestParam(name = "selectedCampo", defaultValue = "0") Integer campo,
+            @RequestParam(name = "selectedOperacion", defaultValue = "0") String operacion,
+            @RequestParam(name = "matrizId", defaultValue = "0") String matrizId,
             BindingResult bindingResult){
 
         ModelAndView modelAndView = new ModelAndView("redirect:/parametric/validationsEventMatrix/" + matrizId);
         try{
 
-            CampoRConcil campoVal = campoRConcilService.findById(campoValidacion);
-            validationME.setCampoVal(campoVal);
+            System.out.println(campoValidacion+" "+ campoAfecta+" "+campo+" "+operacion+" "+matrizId);
 
-            CampoRConcil campoAf = campoRConcilService.findById(campoAfecta);
-            validationME.setCampoAfecta(campoAf);
+            if(campoValidacion!=0){
+                CampoRConcil campoVal = campoRConcilService.findById(campoValidacion);
+                validationME.setCampoVal(campoVal);
+            }
 
-            CampoRConcil camp = campoRConcilService.findById(campo);
-            validationME.setCampoRef(camp);
+            if(campoAfecta!=0){
+                CampoRConcil campoAf = campoRConcilService.findById(campoAfecta);
+                validationME.setCampoAfecta(campoAf);
+            }
 
-            validationME.setOperacion(operacion);
+            if(campo!=0){
+                CampoRConcil camp = campoRConcilService.findById(campo);
+                validationME.setCampoRef(camp);
+            }
 
-            EventMatrix matriz = eventMatrixService.findById(Integer.valueOf(matrizId));
-            validationME.setMatrizEvento(matriz);
+            if(operacion!="0"){
+                validationME.setOperacion(operacion);
+            }
+
+            if(matrizId!="0"){
+                EventMatrix matriz = eventMatrixService.findById(Integer.valueOf(matrizId));
+                validationME.setMatrizEvento(matriz);
+            }
 
             validationMEService.modificar(validationME);
 
