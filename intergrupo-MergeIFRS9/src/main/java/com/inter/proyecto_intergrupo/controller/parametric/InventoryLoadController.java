@@ -86,6 +86,7 @@ public class InventoryLoadController {
 
                 ConciliationRoute cr = conciliationRouteService.findById(Integer.parseInt(params.get("arhcont").toString()));
                 modelAndView.addObject("arhcont",cr);
+                modelAndView.addObject("arhcont1",cr.getId());
                 if(cr!=null && cr.getDetalle()!=null)
                     modelAndView.addObject("nomb",cr.getDetalle());
                 else

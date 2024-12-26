@@ -42,6 +42,7 @@
                         </div>
                         <div class="form-group form-group-sm  mb-1">
                             <h6 class="font-weight-bold">Archivo</h6>
+                            <input type="hidden" id="selectedData" th:value="${arhcont1}">
                             <select style="width: 100%; box-sizing: border-box;" class="form-control form-control-sm" required id="arhcont" name="arhcont">
                                 <option disabled value="" selected hidden>Seleccione un archivo</option>
                                 <option th:each="item : ${listRouteConcil}" th:value="${item.id}" th:text="${item.detalle}"
@@ -242,12 +243,16 @@
             const data = await response.json();
 
             const ruta = document.getElementById('arhcont');
+            const inve = document.getElementById('selectedData');
             ruta.innerHTML = '<option disabled value="" selected hidden>Seleccione un archivo</option>';
 
             data.forEach(campo => {
                 const optionRC = document.createElement('option');
                 optionRC.value = campo[0];
                 optionRC.text = campo[1];
+                 if (inve != null && inve.value == campo[0]) {
+                    optionRC.selected = true; // Marcar la opción como seleccionada
+                }
                 ruta.appendChild(optionRC);
             });
 
@@ -435,6 +440,8 @@
             novedadText.textContent = novedad; // Asignar el valor al contenido del modal
         });
     });
+
+    toggleConciliation();
 
 </script>
 </body>
