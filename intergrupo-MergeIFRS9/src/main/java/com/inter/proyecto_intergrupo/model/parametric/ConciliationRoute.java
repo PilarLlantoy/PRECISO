@@ -47,6 +47,9 @@ public class ConciliationRoute {
     @Column(name = "hora_cargue")
     private LocalTime horaCargue;
 
+    @Column(name = "diasRetardo")
+    private long diasRetardo = 0;
+
     @Column(name = "siglasFechas", columnDefinition = "BIT DEFAULT 0")
     private boolean siglasFechas = false;
 
