@@ -120,6 +120,24 @@ function validateAlerts(operacion,data)
                 }
             });
         }
+    else if(operacion=='Bulk->2')
+            {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    title: '¡Ejecución Fallida!',
+                    text: 'No se pudo procesar el cargue, valide el log de detalle.',
+                    showConfirmButton: true,
+                    allowOutsideClick: false
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const period = document.getElementById('period').value;
+                        const arhcont = document.getElementById('arhcont').value;
+                        const evento = document.getElementById('evento').value;
+                        window.location.href = window.location.origin + window.location.pathname + `?period=${encodeURIComponent(period)}&arhcont=${encodeURIComponent(arhcont)}&evento=${encodeURIComponent(evento)}`;
+                    }
+                });
+            }
     else if(operacion=='Bulk-2')
         {
             Swal.fire({

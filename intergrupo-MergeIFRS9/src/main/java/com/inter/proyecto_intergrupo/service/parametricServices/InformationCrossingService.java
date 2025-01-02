@@ -83,35 +83,63 @@ public class InformationCrossingService {
         logInformationCrossingRepository.save(insert);
     }
 
-    public void recreateTable(ConciliationRoute data, int idConcil) {
+    public List<Object> findTemporal(){
+        List<Object> listTemp = new ArrayList<>();
+        try {
+            Query querySelect = entityManager.createNativeQuery("SELECT * FROM TEMPORAL_ci ");
+            listTemp = querySelect.getResultList();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        return listTemp;
+    }
+
+    public void loadLogCargue(User user, int idConcil, String fecha, String tipo, String estado, String mensaje)
+    {
+        LocalDate localDate = LocalDate.parse(fecha);
+        Date fechaDate = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        Date today=new Date();
+        Conciliation concil= conciliationService.findById(idConcil);
+        LogInformationCrossing insert = new LogInformationCrossing();
+        insert.setFechaProceso(fechaDate);
+        insert.setFechaPreciso(today);
+        if(user!=null)
+            insert.setUsuario(user.getUsuario());
+        else
+            insert.setUsuario("Automático");
+        insert.setTipoProceso(tipo);
+        insert.setNovedad(mensaje);
+        insert.setEstadoProceso(estado);
+        if(user!=null)
+            insert.setUsuario(user.getUsuario());
+        else
+            insert.setUsuario("Automático");
+        insert.setIdConciliacion(concil);
+        logInformationCrossingRepository.save(insert);
+    }
+
+    public void recreateTable(ConciliationRoute data, int idConcil,String fecha) {
         System.out.println("CREANDO LA TABLA FINAL DE ESE INVENTARIO");
         System.out.println("#############################");
 
         String tableName = "preciso_ci_" + idConcil + "_" + data.getId();
 
-        // Validar si la tabla ya existe y sino crearla
-        String dropTableQuery = "IF OBJECT_ID('" + tableName + "', 'U') IS NOT NULL " +
-                "BEGIN DROP TABLE " + tableName + "; END;";
-
-
-        // Crear la tabla manualmente copiando la estructura de TEMPORAL_ci
-        String createTableQuery = "CREATE TABLE ";
+        // PASO 1.
+        // Validar si la tabla no existe, hay que crearla copiando la estructura de TEMPORAL_ci
+        String createTableQuery = "IF OBJECT_ID('" + tableName + "', 'U') IS NULL " +
+                "BEGIN CREATE TABLE ";
         createTableQuery+=(tableName)+(" (");
         for (int i = 0; i < data.getCampos().size(); i++) {
             CampoRConcil column = data.getCampos().get(i);
-            createTableQuery+=(column.getNombre())
-                    +(" ")
-                    +(column.getTipo());
-            if (column.getTipo().equalsIgnoreCase("VARCHAR")) {
-                createTableQuery+=("(MAX)"); // Longitud de MAX para VARCHAR
-            }
-            if (i < data.getCampos().size() - 1) {
+            createTableQuery+=(column.getNombre())+(" ")+(column.getTipo());
+            if (column.getTipo().equalsIgnoreCase("VARCHAR"))
+                createTableQuery+=("(MAX)");
+            if (i < data.getCampos().size() - 1)
                 createTableQuery+=(", ");
-            }
         }
-        if (!data.getCampos().isEmpty()) {
+        if (!data.getCampos().isEmpty())
             createTableQuery+=(", ");
-        }
         createTableQuery+=("INVENTARIO VARCHAR(MAX), ")
                 +("ID_INVENTARIO INT, ")
                 +("FECHA_CONCILIACION DATE, ")
@@ -124,23 +152,21 @@ public class InformationCrossingService {
                 +("CUENTA_CONTABLE_2 VARCHAR(MAX), ")
                 +("DIVISA_CUENTA_2 VARCHAR(MAX), ")
                 +("VALOR_CUENTA_2 FLOAT");
+        createTableQuery+=("); END;");
 
-        // *** Cerrar la definición de la tabla ***
-        createTableQuery+=(");"); // Cerramos correctamente con paréntesis y punto y coma
+        // PASO 2.
+        // Eliminar los registros de la fecha del cruce
+        String deleteQuery = "DELETE FROM " + tableName + " WHERE FECHA_CONCILIACION = :fechaConciliacion";
 
-
-
-        // Paso 3: Insertar registros desde "preciso_rc_<data.getId()>" a la nueva tabla
+        // PASO 3.
+        // Insertar registros desde "preciso_rc_<data.getId()>" a la nueva tabla de esa fecha
         String sourceTableName = "preciso_rconcil_" + data.getId();
         String insertDataQuery = "INSERT INTO "+tableName+" (";
-
         for (int i = 0; i < data.getCampos().size(); i++) {
             CampoRConcil column = data.getCampos().get(i);
             insertDataQuery+=(column.getNombre());
-
-            if (i < data.getCampos().size() - 1) {
+            if (i < data.getCampos().size() - 1)
                 insertDataQuery+=", ";
-            }
         }
         insertDataQuery+=(", INVENTARIO, ")
                 +("ID_INVENTARIO, ")
@@ -154,17 +180,13 @@ public class InformationCrossingService {
                 +("CUENTA_CONTABLE_2, ")
                 +("DIVISA_CUENTA_2, ")
                 +("VALOR_CUENTA_2");
-
         insertDataQuery+=(") SELECT ");
-
         // Agregar los campos correspondientes en el SELECT
         for (int i = 0; i < data.getCampos().size(); i++) {
             CampoRConcil column = data.getCampos().get(i);
             insertDataQuery+=(column.getNombre());
-
-            if (i < data.getCampos().size() - 1) {
+            if (i < data.getCampos().size() - 1)
                 insertDataQuery+=(", ");
-            }
         }
         insertDataQuery+=(", INVENTARIO, ")
                 +("ID_INVENTARIO, ")
@@ -178,20 +200,19 @@ public class InformationCrossingService {
                 +("CUENTA_CONTABLE_2, ")
                 +("DIVISA_CUENTA_2, ")
                 +("VALOR_CUENTA_2");
-
         insertDataQuery+=(" FROM TEMPORAL_ci;");
 
-
+        // PASO 4.
         // Ejecutar las consultas
-        Query dropTable = entityManager.createNativeQuery(dropTableQuery);
-        dropTable.executeUpdate();
-
         Query createTable = entityManager.createNativeQuery(createTableQuery);
         createTable.executeUpdate();
 
+        Query deleteRecords = entityManager.createNativeQuery(deleteQuery);
+        deleteRecords.setParameter("fechaConciliacion", fecha);
+        deleteRecords.executeUpdate();
+
         Query insertData = entityManager.createNativeQuery(insertDataQuery);
         insertData.executeUpdate();
-
     }
 
 
@@ -210,21 +231,16 @@ public class InformationCrossingService {
             createTableQuery.append(column.getNombre())
                     .append(" ")
                     .append(column.getTipo());
-
-            if (column.getTipo().equalsIgnoreCase("VARCHAR")) {
+            if (column.getTipo().equalsIgnoreCase("VARCHAR"))
                 createTableQuery.append("(MAX)"); // Longitud de MAX para VARCHAR
-            }
-
-            if (i < data.getCampos().size() - 1) {
+            if (i < data.getCampos().size() - 1)
                 createTableQuery.append(", ");
-            }
         }
 
         // Paso 2: Agregar los nuevos campos específicos
         if (!data.getCampos().isEmpty()) {
             createTableQuery.append(", ");
         }
-
         createTableQuery.append("INVENTARIO VARCHAR(MAX), ")
                 .append("ID_INVENTARIO INT IDENTITY(1,1), ")
                 .append("FECHA_CONCILIACION DATE, ")
@@ -237,9 +253,7 @@ public class InformationCrossingService {
                 .append("CUENTA_CONTABLE_2 VARCHAR(MAX), ")
                 .append("DIVISA_CUENTA_2 VARCHAR(MAX), ")
                 .append("VALOR_CUENTA_2 FLOAT");
-
-        // *** Cerrar la definición de la tabla ***
-        createTableQuery.append(");"); // Cerramos correctamente con paréntesis y punto y coma
+        createTableQuery.append(");");
 
         // Validar si la tabla ya existe y eliminarla
         String dropTableQuery = "IF OBJECT_ID('" + tableName + "', 'U') IS NOT NULL " +
@@ -253,27 +267,20 @@ public class InformationCrossingService {
         // Paso 3: Insertar registros desde "preciso_rc_<data.getId()>" a la nueva tabla
         String sourceTableName = "preciso_rconcil_" + data.getId();
         StringBuilder insertDataQuery = new StringBuilder("INSERT INTO ").append(tableName).append(" (");
-
         // Agregar solo los nombres de los campos existentes en la tabla original
         for (int i = 0; i < data.getCampos().size(); i++) {
             CampoRConcil column = data.getCampos().get(i);
             insertDataQuery.append(column.getNombre());
-
             if (i < data.getCampos().size() - 1) {
                 insertDataQuery.append(", ");
             }
         }
-
         insertDataQuery.append(") SELECT ");
-
-        // Agregar los campos correspondientes en el SELECT
         for (int i = 0; i < data.getCampos().size(); i++) {
             CampoRConcil column = data.getCampos().get(i);
             insertDataQuery.append(column.getNombre());
-
-            if (i < data.getCampos().size() - 1) {
+            if (i < data.getCampos().size() - 1)
                 insertDataQuery.append(", ");
-            }
         }
 
         insertDataQuery.append(" FROM ").append(sourceTableName).append(" WHERE periodo_preciso = ?;");
@@ -477,27 +484,35 @@ public class InformationCrossingService {
 
     */
 
-    public List<Object[]> findAllData(Conciliation concil, String fecha,EventType evento) {
-        List<ConciliationRoute> listRoutes = conciliationRouteService.getRoutesByConciliation(concil.getId()); //RUTAS CONCILIACIONES
+    public List<Object[]> findAllData(Conciliation concil, String fecha, EventType evento) {
+        List<ConciliationRoute> listRoutes = conciliationRouteService.getRoutesByConciliation(concil.getId()); // RUTAS CONCILIACIONES
         StringBuilder queryBuilder = new StringBuilder("");
-        for(int i=0; i<listRoutes.size();i++) {
-            String nombreTabla = "preciso_ci_"+concil.getId()+"_"+listRoutes.get(i).getId();
+        for (int i = 0; i < listRoutes.size(); i++) {
+            String nombreTabla = "preciso_ci_" + concil.getId() + "_" + listRoutes.get(i).getId();
             if (i != 0) queryBuilder.append(" UNION ALL ");
 
-            queryBuilder.append("SELECT [FECHA_CONCILIACION], [CENTRO_CONTABLE], [CUENTA_CONTABLE_1] as CUENTA_CONTABLE," +
-                    " [DIVISA_CUENTA_1] as DIVISA_CUENTA, SUM([VALOR_CUENTA_1]) AS TOTAL_VALOR_CUENTA FROM " + nombreTabla +
-                    " GROUP BY [FECHA_CONCILIACION], [CENTRO_CONTABLE], [CUENTA_CONTABLE_1], [DIVISA_CUENTA_1]" +
-                    " UNION ALL " +
-                    " SELECT [FECHA_CONCILIACION], [CENTRO_CONTABLE], [CUENTA_CONTABLE_2] as CUENTA_CONTABLE, [DIVISA_CUENTA_2] as DIVISA_CUENTA," +
-                    " SUM([VALOR_CUENTA_2]) AS TOTAL_VALOR_CUENTA FROM " + nombreTabla +
-                    " GROUP BY [FECHA_CONCILIACION], [CENTRO_CONTABLE], [CUENTA_CONTABLE_2], [DIVISA_CUENTA_2]");
+            queryBuilder.append("SELECT [FECHA_CONCILIACION], [CENTRO_CONTABLE], [CUENTA_CONTABLE_1] as CUENTA_CONTABLE, " +
+                    "[DIVISA_CUENTA_1] as DIVISA_CUENTA, SUM([VALOR_CUENTA_1]) AS TOTAL_VALOR_CUENTA " +
+                    "FROM " + nombreTabla + " " +
+                    "WHERE [FECHA_CONCILIACION] = :fecha " +
+                    "GROUP BY [FECHA_CONCILIACION], [CENTRO_CONTABLE], [CUENTA_CONTABLE_1], [DIVISA_CUENTA_1] " +
+                    "UNION ALL " +
+                    "SELECT [FECHA_CONCILIACION], [CENTRO_CONTABLE], [CUENTA_CONTABLE_2] as CUENTA_CONTABLE, " +
+                    "[DIVISA_CUENTA_2] as DIVISA_CUENTA, SUM([VALOR_CUENTA_2]) AS TOTAL_VALOR_CUENTA " +
+                    "FROM " + nombreTabla + " " +
+                    "WHERE [FECHA_CONCILIACION] = :fecha " +
+                    "GROUP BY [FECHA_CONCILIACION], [CENTRO_CONTABLE], [CUENTA_CONTABLE_2], [DIVISA_CUENTA_2]");
         }
-        queryBuilder.append(" order by [FECHA_CONCILIACION], [CENTRO_CONTABLE], CUENTA_CONTABLE, DIVISA_CUENTA ");
+        queryBuilder.append(" ORDER BY [FECHA_CONCILIACION], [CENTRO_CONTABLE], CUENTA_CONTABLE, DIVISA_CUENTA");
         // Crear la consulta
         Query querySelect = entityManager.createNativeQuery(queryBuilder.toString());
 
+        // Establecer el parámetro de fecha
+        querySelect.setParameter("fecha", fecha);
+
         return querySelect.getResultList();
     }
+
 
     public List<Object[]> processList(List<Object[]> datos, List<String> colAroutes) {
         List<Object[]> processedList = new ArrayList<>();

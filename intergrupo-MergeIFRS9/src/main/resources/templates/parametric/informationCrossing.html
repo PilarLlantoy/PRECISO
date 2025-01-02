@@ -83,10 +83,6 @@
                             <button th:disabled="${!p_modificar}" class="btn btn-primary"
                                     th:onclick="|validarYSubir()|" type="button">Confirmar Conciliación</button>
                         </div>
-                        <div class="d-grid gap-2 col-3 mt-1" style="padding-left:0px">
-                            <button th:disabled="${!p_modificar}" class="btn btn-primary"
-                                    th:onclick="|validarYSubir()|" type="button">Reanudar Proceso</button>
-                        </div>
                     </div>
                 </div>
 
@@ -130,11 +126,11 @@
                                 <ul class="pagination">
                                     <li class="page-item" th:classappend="${prev == 0 ? 'disabled' : ''}">
                                         <a class="page-link"
-                                           th:href="@{/parametric/{dir}/?page={page}&period={period}&arhcont={arhcont}(arhcont=${arhcont.id},page=${prev},dir=${directory},period=${period})}">Anterior</a>
+                                           th:href="@{/parametric/{dir}/?page={page}&period={period}&arhcont={arhcont}&evento={evento}(arhcont=${arhcont.id},page=${prev},dir=${directory},period=${period},evento=${evento.id})}">Anterior</a>
                                     </li>
                                     <li class="page-item" th:classappend="${current == last ? 'disabled' : ''}">
                                         <a class="page-link"
-                                           th:href="@{/parametric/{dir}/?page={page}&period={period}&arhcont={arhcont}(arhcont=${arhcont.id},page=${next},dir=${directory},period=${period})}">Siguiente</a>
+                                           th:href="@{/parametric/{dir}/?page={page}&period={period}&arhcont={arhcont}&evento={evento}(arhcont=${arhcont.id},page=${next},dir=${directory},period=${period},evento=${evento.id})}">Siguiente</a>
                                     </li>
                                 </ul>
                             </nav>

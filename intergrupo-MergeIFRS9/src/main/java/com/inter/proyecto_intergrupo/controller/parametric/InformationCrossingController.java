@@ -154,7 +154,7 @@ public class InformationCrossingController {
             modelAndView.addObject("listRouteCont",listAroutes);
             modelAndView.addObject("listConcil",listConcil);
             modelAndView.addObject("listTypeEvent",listTypeEvent);
-            modelAndView.addObject("directory","accountingLoad");
+            modelAndView.addObject("directory","informationCrossing");
             modelAndView.addObject("registers",logCruces.size());
             modelAndView.addObject("registersData",datos.size());
             modelAndView.addObject("userName", user.getPrimerNombre());
@@ -201,7 +201,7 @@ public class InformationCrossingController {
                 for (String error : faltaCarga)
                     message += (error) + " ";
                 informationCrossingService.loadLogInformationCrossing(user, id, evento, fecha, "Generar Cuentas", "Fallido", message);
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk-1");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk->2");
             } else
                 System.out.println("NO falta cargar archivos");
 
@@ -213,7 +213,9 @@ public class InformationCrossingController {
                 List<EventMatrix> matrices = eventMatrixService.findByConciliationxInventarioxTipoEvento(id, ruta.getId(), evento);
                 if(matrices.isEmpty()){
                     System.out.println("NO se ha creado ninguna matriz");
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk-1");
+                    informationCrossingService.loadLogCargue(user, id, fecha, "Generar cuentas", "Fallido",
+                            "La conciliacion no tiene minguna matriz asociada");
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk->2");
                 }
 
                 //Creamos tablas temporales con la data total
@@ -237,20 +239,17 @@ public class InformationCrossingController {
                     if (validaciones.size() != 0)
                         informationCrossingService.validationData(ruta, matriz, condicion);
 
-                    //Agregamos estos registros a la tabla final
-                    //informationCrossingService.rellenarTablaCrucexMatriz(ruta, id);
-
                 }
 
                 //Agregamos estos registros a la tabla final
                 //Creamos las tablas finales vacias de cada inventario con los campos agregados
-                informationCrossingService.recreateTable(ruta, id);
+                informationCrossingService.recreateTable(ruta, id, fecha);
                 System.out.println("RUTA CONCILIACION "+ruta.getDetalle());
 
             }
 
-
-            //accountingRouteService.loadLogCargue(user,ac,fecha,"Trasladar Local","Exitoso","");*/
+            //SE LOGRO EL CRUCE
+            informationCrossingService.loadLogInformationCrossing(user, id, evento, fecha, "Generar Cuentas", "Exitoso", "");
             return ResponseEntity.ok("Bulk->1");
         }
         catch (Exception e) {
@@ -259,8 +258,8 @@ public class InformationCrossingController {
             while (rootCause.getCause() != null) {
                 rootCause = rootCause.getCause(); // Navega a la causa raíz
             }
-            //accountingRouteService.loadLogCargue(user,ac,fecha,"Trasladar Local","Fallido",rootCause.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk-1");
+            informationCrossingService.loadLogInformationCrossing(user, id, evento, fecha, "Generar Cuentas", "Fallido",rootCause.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk->2");
         }
     }
 
