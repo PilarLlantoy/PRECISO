@@ -53,6 +53,9 @@ public class AccountingRoute {
     @Column(name = "idiomaFecha")
     private String idiomaFecha;
 
+    @Column(name = "diasRetardo")
+    private long diasRetardo = 0;
+
     @Column(name = "hora_cargue")
     private LocalTime horaCargue;
 

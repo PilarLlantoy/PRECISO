@@ -9,14 +9,6 @@
 
 <div class="main-container">
     <style>
-        body, .btn, .form-control {
-            font-size: 12px;
-        }
-
-        h2{
-            font-size: 18px;
-            font-weight: bold;
-        }
 
         .big-checkbox {width: 1rem; height: 1rem; top:0.5rem}
 
@@ -26,7 +18,7 @@
 
         .alineacionHorizontal {
             display: flex;
-            align-items: end;
+            align-items: center;
         }
 
         .checkHorizontal {
@@ -37,7 +29,7 @@
     </style>
     <div class="row m-0 bg-primary fixed-top myNav">
         <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
-            <h3 class="fw-bold text-white mx-4 my-3">Cuadro de Mando</h3>
+            <h2 class="fw-bold text-white mx-4 my-3">Cuadro de Mando</h2>
         </div>
     </div>
     <div class="row m-0 px-4 mt-5">
@@ -60,24 +52,20 @@
                 <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
 
                     <div class="row mt-1 mx-1">
-                        <div class="text-left pr-3 col-md-12 mt-3">
-                            <div class="mb-3 p-3 row border rounded">
-                                <h2>CUADRO DE MANDO - INVENTARIOS</h2>
-
+                        <div class="text-left pr-3 col-md-12">
+                            <div class="px-3 py-1 row border rounded">
                                 <form method="get" th:action="@{/parametric/searchEventMatrix}">
                                     <div class="mb-1 row alineacionHorizontal">
                                         <div class="col-md-2">
                                             <h6 class="font-weight-bold">Fecha Información</h6>
-                                            <div class="input-group">
-                                                <div class="input-group">
-                                                    <input type="date" id="period" th:name="period" class="form-control" style="width: 100%; box-sizing: border-box;" required>
-                                                    <div class="invalid-feedback">Por favor, seleccione una fecha.</div>
-                                                </div>
+                                            <div class="input-group input-group-sm">
+                                                <input type="date" id="period" th:name="period" class="form-control form-control-sm" style="width: 100%; box-sizing: border-box;" required>
+                                                <div class="invalid-feedback">Por favor, seleccione una fecha.</div>
                                             </div>
                                         </div>
                                         <div class="col-md-2 d-flex align-items-center">
-                                            <button class="btn btn-secondary mr-1" type="submit"><i class="fa fa-search"></i></button>
-                                            <a class="btn btn-secondary" th:href="@{/parametric/eventMatrix}"><i class="fas fa-window-close"></i></a>
+                                            <button class="btn btn-sm btn-secondary mr-1" type="submit"><i class="fa fa-search"></i></button>
+                                            <a class="btn btn-sm btn-secondary" th:href="@{/parametric/eventMatrix}"><i class="fas fa-window-close"></i></a>
                                         </div>
                                         <!-- Campo oculto para el token CSRF -->
                                         <input type="hidden" id="csrfToken" th:value="${_csrf.token}" />
@@ -85,8 +73,7 @@
                                 </form>
                             </div>
                         </div>
-                        <div class="col-md-12 p-0">
-                            <h3>Inventarios</h3>
+                        <div class="col-md-12 p-0"> 
                             <div>
                                 <div class="form-group mb-1 checkHorizontal">
                                     <h6 class="font-weight-bold">Seleccionar todos:</h6>
@@ -129,21 +116,18 @@
                                     </tr>
                                     </tbody>
                                 </table>
-                                <div th:if="${#lists.isEmpty(allLog2)}">
-                                    <div class="alert alert-info">No hay registros disponibles.</div>
-                                </div>
                             </div>
                             <div class="row" th:if="${last2 != 0}">
                                 <div class="col-md-4 text-left">
                                     <nav arial-label="Pagination">
-                                        <ul class="pagination">
+                                        <ul class="pagination pagination-sm">
                                             <li class="page-item" th:classappend="${prev2 == 0 ? 'disabled' : ''}">
                                                 <a class="page-link"
                                                    th:href="@{/parametric/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${prev},dir=${directory},vId=${vId})}">Anterior</a>
                                             </li>
                                             <li class="page-item" th:classappend="${current2 == last2 ? 'disabled' : ''}">
                                                 <a class="page-link"
-                                                   th:href="@{/admin/{parametric}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${next},dir=${directory},vId=${vId})}">Siguiente</a>
+                                                   th:href="@{/parametric/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${next},dir=${directory},vId=${vId})}">Siguiente</a>
                                             </li>
                                         </ul>
                                     </nav>
@@ -162,10 +146,10 @@
                         </div>
                         <div class="col-md-12 row justify-content-center">
                             <div class="d-grid gap-2 col-2">
-                                <a th:disabled="${!p_modificar}" type="button" class="btn btn-primary text-white" onclick="descartar()">Exportar Excel</a>
+                                <a th:disabled="${!p_modificar}" type="button" class="btn btn-sm btn-primary text-white" onclick="descartar()">Exportar Excel</a>
                             </div>
                             <div class="d-grid gap-2 col-2">
-                                <a th:disabled="${!p_modificar}" type="submit" class="btn btn-primary text-white">Generar Cargue Masivo</a>
+                                <a th:disabled="${!p_modificar}" type="submit" class="btn btn-sm btn-primary text-white">Generar Cargue Masivo</a>
                             </div>
                         </div>
                     </div>
@@ -175,24 +159,20 @@
                 <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
 
                     <div class="row mt-1 mx-1">
-                        <div class="text-left pr-3 col-md-12 mt-3">
-                            <div class="mb-3 p-3 row border rounded">
-                                <h2>CUADRO DE MANDO - CONTABLES</h2>
-
+                        <div class="text-left pr-3 col-md-12">
+                            <div class="px-3 py-1 row border rounded">
                                 <form method="get" th:action="@{/parametric/searchEventMatrix}">
                                     <div class="mb-1 row alineacionHorizontal">
                                         <div class="col-md-2">
                                             <h6 class="font-weight-bold">Fecha Información</h6>
-                                            <div class="input-group">
-                                                <div class="input-group">
-                                                    <input type="date" id="period" th:name="period" class="form-control" style="width: 100%; box-sizing: border-box;" required>
-                                                    <div class="invalid-feedback">Por favor, seleccione una fecha.</div>
-                                                </div>
+                                            <div class="input-group input-group-sm">
+                                                <input type="date" id="period" th:name="period" class="form-control form-control-sm" style="width: 100%; box-sizing: border-box;" required>
+                                                <div class="invalid-feedback">Por favor, seleccione una fecha.</div>
                                             </div>
                                         </div>
                                         <div class="col-md-2 d-flex align-items-center">
-                                            <button class="btn btn-secondary mr-1" type="submit"><i class="fa fa-search"></i></button>
-                                            <a class="btn btn-secondary" th:href="@{/parametric/eventMatrix}"><i class="fas fa-window-close"></i></a>
+                                            <button class="btn btn-sm btn-secondary mr-1" type="submit"><i class="fa fa-search"></i></button>
+                                            <a class="btn btn-sm btn-secondary" th:href="@{/parametric/eventMatrix}"><i class="fas fa-window-close"></i></a>
                                         </div>
                                         <!-- Campo oculto para el token CSRF -->
                                         <input type="hidden" id="csrfToken" th:value="${_csrf.token}" />
@@ -201,7 +181,6 @@
                             </div>
                         </div>
                         <div class="col-md-12 p-0">
-                            <h3>Contables</h3>
                             <div>
                                 <div class="form-group mb-1 checkHorizontal">
                                     <h6 class="font-weight-bold">Seleccionar todos:</h6>
@@ -240,14 +219,11 @@
                                     </tr>
                                     </tbody>
                                 </table>
-                                <div th:if="${#lists.isEmpty(allEventType)}">
-                                    <div class="alert alert-info">No hay registros disponibles.</div>
-                                </div>
                             </div>
                             <div class="row" th:if="${last != 0}">
                                 <div class="col-md-4 text-left">
                                     <nav arial-label="Pagination">
-                                        <ul class="pagination">
+                                        <ul class="pagination pagination-sm">
                                             <li class="page-item" th:classappend="${prev == 0 ? 'disabled' : ''}">
                                                 <a class="page-link" th:href="@{/parametric/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${prev},dir=${directory},vId=${vId})}">Anterior</a>
                                             </li>
@@ -271,10 +247,10 @@
                         </div>
                         <div class="col-md-12 row justify-content-center">
                             <div class="d-grid gap-2 col-2">
-                                <a th:disabled="${!p_modificar}" type="button" class="btn btn-primary text-white" onclick="descartar()">Exportar Excel</a>
+                                <a th:disabled="${!p_modificar}" type="button" class="btn btn-sm btn-primary text-white" onclick="descartar()">Exportar Excel</a>
                             </div>
                             <div class="d-grid gap-2 col-2">
-                                <a th:disabled="${!p_modificar}" type="submit" class="btn btn-primary text-white">Generar Cargue Masivo</a>
+                                <a th:disabled="${!p_modificar}" type="submit" class="btn btn-sm btn-primary text-white">Generar Cargue Masivo</a>
                             </div>
                         </div>
                     </div>

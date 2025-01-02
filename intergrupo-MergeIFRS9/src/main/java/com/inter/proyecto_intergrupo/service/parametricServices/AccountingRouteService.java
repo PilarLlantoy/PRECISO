@@ -303,9 +303,11 @@ public class AccountingRouteService {
         return locale;
     }
 
-    public String todayDateConvert(String formato,String fecha,String idioma) {
+    public String todayDateConvert(String formato,String fecha,String idioma,AccountingRoute data) {
         LocalDate fechaHoy = LocalDate.now();
-        LocalDate today = fechaHoy.minusDays(1);
+        LocalDate today = fechaHoy;
+        if(data.getDiasRetardo()!=0)
+            today = fechaHoy.minusDays(data.getDiasRetardo());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(formato,convertRegion(idioma));
         if(fecha.isEmpty()) {
             return today.format(formatter).replace(".","");
@@ -313,7 +315,9 @@ public class AccountingRouteService {
         else
         {
             LocalDate fecha2 = LocalDate.parse(fecha);
-            LocalDate fechaCast = fecha2.minusDays(1);
+            LocalDate fechaCast = fecha2;
+            if(data.getDiasRetardo()!=0)
+                fechaCast = fecha2.minusDays(data.getDiasRetardo());
             return fechaCast.format(formatter).replace(".","");
         }
     }
@@ -321,7 +325,7 @@ public class AccountingRouteService {
     public void importXlsx(AccountingRoute data, String ruta,String fecha, String fuente) throws PersistenceException, IOException {
         String fichero=ensureTrailingSlash(data.getRuta()) + data.getNombreArchivo() + data.getComplementoArchivo() +"."+ data.getTipoArchivo();
         if(data.isSiglasFechas()){
-            fichero=ensureTrailingSlash(data.getRuta()) + data.getNombreArchivo() + todayDateConvert(data.getFormatoFecha(),fecha,data.getIdiomaFecha()) + data.getComplementoArchivo() +"."+ data.getTipoArchivo();
+            fichero=ensureTrailingSlash(data.getRuta()) + data.getNombreArchivo() + todayDateConvert(data.getFormatoFecha(),fecha,data.getIdiomaFecha(),data) + data.getComplementoArchivo() +"."+ data.getTipoArchivo();
         }
         List<CampoRC> lista =getCamposRC(data);
 
@@ -467,7 +471,7 @@ public class AccountingRouteService {
         if(delimitador.equalsIgnoreCase(""))
             complement="FORMATFILE = '" + ruta + "', ROWTERMINATOR = '\\r\\n', FIRSTROW = " + cantFilas;
 
-        String fichero=ensureTrailingSlash(data.getRuta()) + data.getNombreArchivo() + todayDateConvert(data.getFormatoFecha(),fecha,data.getIdiomaFecha()) + data.getComplementoArchivo() + extension;
+        String fichero=ensureTrailingSlash(data.getRuta()) + data.getNombreArchivo() + todayDateConvert(data.getFormatoFecha(),fecha,data.getIdiomaFecha(),data) + data.getComplementoArchivo() + extension;
         if(fuente !=null)
             fichero=fuente;
 
@@ -491,10 +495,10 @@ public class AccountingRouteService {
             if(!update.isEmpty() && campo.getTipo().equalsIgnoreCase("Float"))
                 update=update+",";
             if(campo.getTipo().equalsIgnoreCase("Float") && (campo.getSeparador() == null||(campo.getSeparador() != null && (campo.getSeparador().equalsIgnoreCase("") || campo.getSeparador().equalsIgnoreCase("."))))) {
-                update = update + campo.getNombre() + " = REPLACE(TRIM(REPLACE(" + campo.getNombre() + ",' .00','0.00')),',','')";
+                update = update + campo.getNombre() + " = REPLACE(REPLACE(REPLACE(" + campo.getNombre() + ",' .00','0.00'),' ',''),',','')";
             }
             else if(campo.getTipo().equalsIgnoreCase("Float") && campo.getSeparador().equalsIgnoreCase(",")) {
-                update = update + campo.getNombre() + " = REPLACE(REPLACE(TRIM(REPLACE(" + campo.getNombre() + ",' ,00','0,00')),'.',''),',','.')";
+                update = update + campo.getNombre() + " = REPLACE(REPLACE(REPLACE(REPLACE(" + campo.getNombre() + ",' ,00','0,00'),' ',''),'.',''),',','.')";
             }
             if(!update1.isEmpty() && campo.getTipo().equalsIgnoreCase("Bit"))
                 update1=update1+",";
@@ -731,6 +735,7 @@ public class AccountingRouteService {
     @Scheduled(cron = "0 0/30 * * * ?")
     public void processJob()  {
         LocalDateTime fechaHoy = LocalDateTime.now();
+        fechaHoy = fechaHoy.minusDays(1);
         DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String fecha = fechaHoy.format(formato);
         List<AccountingRoute> list = findByJob();
