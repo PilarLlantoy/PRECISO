@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+<div class="main-container">
+    <div class="row m-0 bg-primary fixed-top myNav">
+        <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
+            <h2 class="fw-bold text-white mx-4 my-3">Maestro de Inventarios</h2>
+        </div>
+        <div class="col-md-6 d-flex align-items-center justify-content-end pe-5">
+            <form class="form-inline" method="get" th:action="@{/parametric/searchMasterinvent}">
+                <div class="input-group input-group-sm">
+                    <input type="text" class="form-control form-control-sm" th:name="vId" placeholder="Buscar..." required>
+                    <div class="input-group-append">
+                        <select class="form-control form-control-sm" th:name="vFilter" required>
+                            <option disabled value="" selected hidden>Seleccione un filtro</option>
+                            <option th:each="item : ${columns}" th:value="${item}" th:text="${item}"></option>
+                        </select>
+                    </div>
+                    <div class="input-group-append d-flex align-items-center">
+                        <button class="btn btn-secondary btn-sm" type="submit"><i class="fa fa-search"></i></button>
+                        <a class="btn btn-secondary btn-sm" th:href="@{/parametric/masterinvent}"><i class="fas fa-window-close"></i></a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="content">
+        <div class="row px-4 mt-4">
+            <div class="text-left col-md-6  mt-3">
+                <form enctype="multipart/form-data" id="fileUploadForm" method="post" th:action="@{/parametric/masterinvent}">
+                    <div class="form-group form-group-sm">
+                        <label>Cargue Masivo: </label>
+                        <input accept=".xls,.xlsx,.xlsm" class="custom-file-control"
+                                                               id="file"
+                                                               name="file" required type="file">
+                        <button class="btn btn-primary btn-sm" type="submit">Cargar</button>
+                    </div>
+                </form>
+            </div>
+            <div class="text-right col-md-6  mt-3">
+                <a class="btn btn-primary btn-sm mx-1" th:href="@{/parametric/masterinvent}"><i class="fas fa-redo-alt"></i></a>
+                <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm mx-1" th:onclick="|window.location.href='@{/parametric/createMasterinvent}'|">Crear Registro Maestro</button>
+            </div>
+            <div class="col-md-12">
+                <div class="table-responsive rounded border-primary">
+                    <div th:if="${#lists.isEmpty(allData)}">
+                        <div class="alert alert-info">No hay registros disponibles.</div>
+                    </div>
+                    <div th:unless="${#lists.isEmpty(allData)}">
+                        <table id="example" class="table table-sm table-striped table-hover text-center table-bordered" width="100%">
+                            <thead class="bg-primary">
+                            <tr>
+                                <th>Conciliación</th>
+                                <th>Fecha Conciliación</th>
+                                <th>Contable</th>
+                                <th>Fecha Contable</th>
+                                <th>Cargue Conciliación</th>
+                                <th>Cargue Contable</th>
+                                <th>Aplica Semana</th>
+                                <th COLSPAN="1">Acciones</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="data,iter : ${allData}">
+                                <td th:text="${data[0]}"></td>
+                                <td th:text="${data[1]}"></td>
+                                <td th:text="${data[2]}"></td>
+                                <td th:text="${data[3]}"></td>
+                                <td th:if="${data[4] == true}"><i class="fa fa-check-circle fa-2x text-success"></i></td>
+                                <td th:if="${data[4] == false}"><i class="fa fa-times-circle fa-2x text-danger"></i></td>
+                                <td th:if="${data[5] == true}"><i class="fa fa-check-circle fa-2x text-success"></i></td>
+                                <td th:if="${data[5] == false}"><i class="fa fa-times-circle fa-2x text-danger"></i></td>
+                                <td th:if="${data[6] == true}"><i class="fa fa-check-circle fa-2x text-success"></i></td>
+                                <td th:if="${data[6] == false}"><i class="fa fa-times-circle fa-2x text-danger"></i></td>
+                                <td>
+                                    <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm mx-1"
+                                            th:onclick="|window.location.href='@{/parametric/modifyMasterinvent/{id}(id=${data[7]})}'|">Editar</button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal -->
+            <div class="modal fade" id="eliminarModal" tabindex="-1" role="dialog" aria-labelledby="eliminarModal" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2 class="modal-title" id="exampleModalLabel">Inactivar Tipo Evento</h2>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            ¿Estás seguro de inactivar el tipo de evento seleccionado?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger btn-sm" th:onclick="borrar()" data-dismiss="modal">
+                                Inactivar
+                            </button>
+                            <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Regresar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Campo oculto para el token CSRF -->
+            <input type="hidden" id="csrfToken" th:value="${_csrf.token}" />
+        </div>
+        <div class="row" th:if="${last != 0}">
+            <div class="col-md-4 text-left">
+                <nav arial-label="Pagination">
+                    <ul class="pagination pagination-sm">
+                        <li class="page-item" th:classappend="${prev == 0 ? 'disabled' : ''}">
+                            <a class="page-link"
+                               th:href="@{/parametric/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${prev},dir=${directory},vId=${vId})}">Anterior</a>
+                        </li>
+                        <li class="page-item" th:classappend="${current == last ? 'disabled' : ''}">
+                            <a class="page-link"
+                               th:href="@{/parametric/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${next},dir=${directory},vId=${vId})}">Siguiente</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="col-md-4 text-center">
+                <h6 th:utext="${registers} + ' Registros Encontrados'"></h6>
+            </div>
+            <div class="col-md-4 text-right">
+                <h6 class="mx-1" th:utext="'Página ' + ${current} + ' de ' + ${last}"></h6>
+            </div>
+        </div>
+        <div th:if="${filterExport != 'Original'}" class="d-flex align-items-center justify-content-center">
+            <h5><span class="badge badge-pill text-light badge-info badge-sm ">¡La Tabla se encuentra Filtrada!</span>
+            </h5>
+        </div>
+        <div class="d-flex align-items-center justify-content-center">
+            <a th:href="@{/parametric/masterinvent/download/?vFilter={vFilter}&vId={vId}(vFilter=${vFilter},vId=${vId})}"
+               class="btn btn-primary btn-sm">Exportar</a>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"
+        integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"
+        integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
+        crossorigin="anonymous"></script>
+<script type="text/javascript">
+    var queryString = window.location.search;
+    var urlParams = new URLSearchParams(queryString);
+    var respuesta = urlParams.get('resp');
+    var row = urlParams.get('row');
+    var column = urlParams.get('colum');
+    validateAlerts(respuesta, row, column);
+    $(document).ready(function () {
+        $('#sidebarCollapse').on('click', function () {
+            $('#sidebar').toggleClass('active');
+        });
+    });
+    
+    //MODAL DE BORRAR
+    
+    var seleccionado = -1;
+    var csrfToken = $("#csrfToken").val(); // Obtener el token CSRF
+
+    function seleccionarTipoEvento(id) {
+        seleccionado=id
+    }
+
+    function borrar(){
+        var url = '/parametric/deleteMasterinvent/' + seleccionado;
+        // Realizar la solicitud POST con el token CSRF
+        $.post(url, {_csrf: csrfToken})
+            .done(function(response) {
+                //console.log("Solicitud POST completada con éxito");
+                location.reload();
+            })
+            .fail(function(xhr, status, error) {
+                console.error("Ocurrió un error al enviar la solicitud POST: " + error);
+            });
+    }
+</script>
+</body>
+
+</html>

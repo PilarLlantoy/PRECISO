@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+
+<div class="main-container">
+    <style>
+        body, .btn, .form-control form-control-sm {
+            font-size: 12px;
+        }
+
+        h2{
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .big-checkbox {width: 1rem; height: 1rem; top:0.5rem}
+    </style>
+    <div class="row m-0 bg-primary fixed-top myNav">
+        <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
+            <h2 class="fw-bold text-white mx-4 my-3">Módulo de Ajustes Libres</h2>
+        </div>
+    </div>
+    <div class="row m-0 px-4 mt-5">
+        <div class="text-left pr-3 col-md-12 mt-1">
+            <h2>Registros Cargados</h2>
+            <form method="get" th:action="@{/parametric/searchNoteTemplate}">
+                <div class="row">
+                    <div class="col-md-2">
+                        <div class="form-group form-group-sm">
+                            <h6 class="font-weight-bold">Conciliacion</h6>
+                            <select class="form-control form-control-sm" name="selectedConcil" id="selectedConcil" onchange="toggleConciliacion()" required>
+                                <option disabled value="" selected hidden>Seleccione una conciliación</option>
+                                <option th:each="concil : ${allConcils}" th:value="${concil.id}" th:text="${concil.nombre}" th:selected="${selectedConcil != null and selectedConcil == concil.id }"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group form-group-sm">
+                            <h6 class="font-weight-bold">Plantilla</h6>
+                            <select class="form-control form-control-sm" name="selectedInv" id="selectedInv">
+                                <option disabled value="" selected hidden>Seleccione una plantilla</option>
+                            </select>
+                            <input type="hidden" id="selectedData" th:value="${selectedInv}">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group form-group-sm">
+                            <h6 class="font-weight-bold">Usuario</h6>
+                            <select class="form-control form-control-sm" name="selectedInv" id="selectedUser">
+                                <option disabled value="" selected hidden>Seleccione un usuario</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group form-group-sm">
+                            <h6 class="font-weight-bold">Estado</h6>
+                            <select class="form-control form-control-sm" name="selectedInv" id="selectedState">
+                                <option disabled value="" selected hidden>Seleccione un estado</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2 d-flex align-items-center">
+                        <button class="btn btn-sm btn-secondary mr-1" type="submit"><i class="fa fa-search"></i></button>
+                        <a class="btn btn-sm btn-secondary" th:href="@{/parametric/noteTemplates}"><i class="fas fa-window-close"></i></a>
+                    </div>
+                    <input type="hidden" id="csrfToken" th:value="${_csrf.token}" />
+                    <div class="text-right col-md-6">
+                        <a th:disabled="${!p_modificar}" class="text-white btn btn-sm btn-primary mx-1" th:onclick="|window.location.href='@{/parametric/createNoteTemplate}'|">Crear Ajuste</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-12 p-0">
+            <div class="table-responsive rounded border-primary">
+                <table id="example" class="table table-striped table-hover text-center table-bordered table-sm" width="100%">
+                    <thead class="bg-primary">
+                    <tr>
+                        <th>Código</th>
+                        <th>Aplica Conci.</th>
+                        <th>Conciliación</th>
+                        <th>Fecha Conci.</th>
+                        <th>Fecha Conta.</th>
+                        <th>Plantilla</th>
+                        <th>Estado</th>
+                        <th>Usuario</th>
+                        <th>Ajuste</th>
+                        <th>Semf.</th>
+                        <th COLSPAN="2">Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="register : ${allRegisters}">
+                        <td th:text="${register.id}"></td>
+                        <td th:if="${register.aplicaConciliacion == true}">Sí</td>
+                        <td th:if="${register.aplicaConciliacion == false}">No</td>
+                        <td th:text="${register.conciliacion}"></td>
+                        <td th:text="${register.fechaConciliacion}"></td>
+                        <td th:text="${register.fechaContabilidad}"></td>
+                        <td th:text="${register.plantilla}"></td>
+                        <td th:if="${register.estado == true}">Confirmado</td>
+                        <td th:if="${register.estado == false}">No Confirmado</td>
+                        <td th:text="${register.usuario}"></td>
+                        <td th:text="${register.ajuste}"></td>
+                        <td th:if="${register.semaforo == true}"><i class="fa fa-check-circle fa-2x text-success"></i></td>
+                        <td th:if="${register.semaforo == false}"><i class="fa fa-times-circle fa-2x text-danger"></i></td>
+                        <td>
+                            <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
+                                    th:onclick="|window.location.href='@{/process/cuentasNoteFreeAdj/{id}(id=${register.id})}'|">Notas</button>
+                        </td>
+                        <td>
+                            <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
+                                    th:onclick="|window.location.href='@{/process/modifyFreeAdj/{id}(id=${register.id})}'|">Editar</button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="row" th:if="${last != 0}">
+                <div class="col-md-4 text-left">
+                    <nav arial-label="Pagination">
+                        <ul class="pagination pagination-sm">
+                            <li class="page-item" th:classappend="${prev == 0 ? 'disabled' : ''}">
+                                <a class="page-link"
+                                   th:href="@{/admin/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${prev},dir=${directory},vId=${vId})}">Anterior</a>
+                            </li>
+                            <li class="page-item" th:classappend="${current == last ? 'disabled' : ''}">
+                                <a class="page-link"
+                                   th:href="@{/admin/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${next},dir=${directory},vId=${vId})}">Siguiente</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="col-md-4 text-center">
+                    <h6 th:utext="${registers} + ' Registros Encontrados'"></h6>
+                </div>
+                <div class="col-md-4 text-right">
+                    <h6 class="mx-1" th:utext="'Página ' + ${current} + ' de ' + ${last}"></h6>
+                </div>
+            </div>
+            <div class="d-flex align-items-center justify-content-center" th:if="${filterExport != 'Original'}">
+                <h5><span class="badge badge-pill text-light badge-info py-2 px-5">¡La Tabla se encuentra Filtrada!</span>
+                </h5>
+            </div>
+        </div>
+
+    </div>
+</div>
+</div>
+
+<script>
+    async function toggleConciliacion() {
+        const concilID = document.getElementById('selectedConcil').value;
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+        if (concilID) {
+            const response = await fetch(`/process/obtenerRutasConcilByConcil/${concilID}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                }
+            });
+
+            const data = await response.json();
+
+            const ruta = document.getElementById('selectedInv');
+            const inve = document.getElementById('selectedData');
+            ruta.innerHTML = '<option disabled value="" selected hidden>Seleccione un archivo</option>';
+
+            data.forEach(campo => {
+                const optionRC = document.createElement('option');
+                optionRC.value = campo[0];
+                optionRC.text = campo[1];
+                if (inve != null && inve.value == campo[0]) {
+                    optionRC.selected = true; // Marcar la opción como seleccionada
+                }
+                ruta.appendChild(optionRC);
+            });
+
+        }
+    }
+
+    window.onload = function() {
+        toggleConciliacion();
+    };
+
+</script>
+</body>
+</html>

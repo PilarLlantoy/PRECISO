@@ -54,6 +54,13 @@
                                    th:value="${activo}" type="checkbox" class="styled-checkbox">
                         </div>
                     </div>
+                    <div class="col-md-1">
+                        <div class="form-group mb-1">
+                            <h6 class="font-weight-bold">Sobreescribir</h6>
+                            <input id="sobreescribirInput" name="sobreescribir" th:field="*{sobreescribir}"
+                                   th:value="${sobreescribir}" type="checkbox" class="styled-checkbox">
+                        </div>
+                    </div>
                     <div class="col-md-2">
                         <div class="form-group mb-1">
                             <h6 class="font-weight-bold">Maneja Siglas de Fechas</h6>
@@ -67,7 +74,7 @@
                             <input type="text" class="form-control form-control-sm"  th:field="*{nombre}"  required>
                         </div>
                     </div>
-                    <div class="col-md-5">
+                    <div class="col-md-4">
                         <div class="form-group">
                             <h6 class="font-weight-bold">Ruta: </h6>
                             <input type="text" class="form-control form-control-sm"  th:field="*{ruta}"  required>

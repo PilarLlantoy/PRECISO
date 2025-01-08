@@ -47,6 +47,9 @@ public class AccountingRoute {
     @Column(name = "siglasFechas", columnDefinition = "BIT DEFAULT 0")
     private boolean siglasFechas = false;
 
+    @Column(name = "sobreescribir", columnDefinition = "BIT DEFAULT 0")
+    private boolean sobreescribir = false;
+
     @Column(name = "formatoFecha")
     private String formatoFecha;
 
