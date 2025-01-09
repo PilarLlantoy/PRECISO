@@ -599,21 +599,20 @@ public class AccountingRouteService {
                 .map(CampoRC::getNombre)
                 .collect(Collectors.joining(","));
 
-        Query querySelect = entityManager.createNativeQuery( "DELETE FROM preciso_rc_" + data.getId());
-        List<Object> temporal = querySelect.getResultList();
-
-        if(data.isSobreescribir() && temporal.size()>0)
-        {
-            String deleteAll = "DELETE FROM preciso_rc_" + data.getId();
-            System.out.println("QUERY -> " + deleteAll);
-            jdbcTemplate.execute(deleteAll);
-        }
-
-
         String deleteSelect = "DELETE FROM preciso_rc_" + data.getId() + " WHERE periodo_preciso = '" + fecha + "' ; \n" +
                 "INSERT INTO preciso_rc_" + data.getId() + " (" + campos + ",periodo_preciso" + ") SELECT " + campos + ",CAST('" + fecha + "' AS DATE) FROM " + nombreTabla;
         System.out.println("QUERY -> " + deleteSelect);
         jdbcTemplate.execute(deleteSelect);
+
+        Query querySelect = entityManager.createNativeQuery( "SELECT TOP 2 * FROM preciso_rc_" + data.getId() + " WHERE periodo_preciso = '" + fecha + "' ;");
+        List<Object> temporal = querySelect.getResultList();
+
+        if(data.isSobreescribir() && temporal.size()>0)
+        {
+            String deleteAll = "DELETE FROM preciso_rc_" + data.getId() + " WHERE periodo_preciso != '" + fecha + "' ;";
+            System.out.println("QUERY -> " + deleteAll);
+            jdbcTemplate.execute(deleteAll);
+        }
     }
 
     public void generarArchivoFormato(List<CampoRC> campos, String rutaArchivoFormato) throws IOException, PersistenceException {
