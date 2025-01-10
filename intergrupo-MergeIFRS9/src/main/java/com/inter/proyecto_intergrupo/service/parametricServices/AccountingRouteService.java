@@ -558,8 +558,8 @@ public class AccountingRouteService {
                 "SELECT b.nombre as referencia, c.nombre as validacion, a.valor_validacion, a.valor_operacion, " +
                         "CASE a.operacion WHEN 'Suma' THEN '+' WHEN 'Resta' THEN '-' WHEN 'Multiplica' THEN '*' WHEN 'Divida' THEN '/' ELSE '' END as Operacion " +
                         "FROM PRECISO.dbo.preciso_validaciones_rc a " +
-                        "INNER JOIN PRECISO.dbo.preciso_campos_rc b ON a.id_rc = b.id_rc AND a.id_campo_referencia = b.id_campo " +
-                        "INNER JOIN PRECISO.dbo.preciso_campos_rc c ON a.id_rc = c.id_rc AND a.id_campo_validacion = c.id_campo " +
+                        "LEFT JOIN PRECISO.dbo.preciso_campos_rc b ON a.id_rc = b.id_rc AND a.id_campo_referencia = b.id_campo " +
+                        "LEFT JOIN PRECISO.dbo.preciso_campos_rc c ON a.id_rc = c.id_rc AND a.id_campo_validacion = c.id_campo " +
                         "WHERE a.id_rc = ? AND a.estado = 1");
         querySelect.setParameter(1, data.getId());
         List<Object[]> validacionLista = querySelect.getResultList();
@@ -573,18 +573,17 @@ public class AccountingRouteService {
                 if (!operacion.isEmpty()) {
                     queryUpdate = "UPDATE " + nombreTabla + " SET " +
                             obj[0].toString() + " = CAST(TRY_CAST(" + obj[0].toString() + " AS DECIMAL(38, 0)) * 0.01 " +
-                            operacion + obj[3].toString() + " AS VARCHAR) " +
-                            "WHERE " + obj[1].toString() + " = '" + obj[2].toString() + "';";
+                            operacion + obj[3].toString() + " AS VARCHAR) ";
+                            if(obj[1]!=null && !obj[1].toString().equalsIgnoreCase(""))
+                                queryUpdate = queryUpdate+"WHERE " + obj[1].toString() + " = '" + obj[2].toString() + "';";
                 } else {
                     queryUpdate = "UPDATE " + nombreTabla + " SET " +
-                            obj[0].toString() + " = '" + obj[3].toString() + "' " +
-                            "WHERE " + obj[1].toString() + " = '" + obj[2].toString() + "';";
+                            obj[0].toString() + " = '" + obj[3].toString() + "' " ;
+                            if(obj[1]!=null && !obj[1].toString().equalsIgnoreCase(""))
+                                queryUpdate=queryUpdate+"WHERE " + obj[1].toString() + " = '" + obj[2].toString() + "';";
                 }
 
                 // Ejecutar la consulta
-                /*Query deleteSelect = entityManager.createNativeQuery(queryUpdate);
-                deleteSelect.executeUpdate();*/
-
                 System.out.println("QUERY -> "+queryUpdate);
                 jdbcTemplate.execute(queryUpdate);
             }
