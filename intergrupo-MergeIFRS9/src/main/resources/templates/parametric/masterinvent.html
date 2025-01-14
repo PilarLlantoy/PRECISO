@@ -45,6 +45,7 @@
             <div class="text-right col-md-6  mt-3">
                 <a class="btn btn-primary btn-sm mx-1" th:href="@{/parametric/masterinvent}"><i class="fas fa-redo-alt"></i></a>
                 <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm mx-1" th:onclick="|window.location.href='@{/parametric/createMasterinvent}'|">Crear Registro Maestro</button>
+                <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm mx-1" th:onclick="|window.location.href='@{/parametric/generateDates}'|">Generar Fechas</button>
             </div>
             <div class="col-md-12">
                 <div class="table-responsive rounded border-primary">
@@ -61,26 +62,28 @@
                                 <th>Fecha Contable</th>
                                 <th>Cargue Conciliación</th>
                                 <th>Cargue Contable</th>
-                                <th>Aplica Semana</th>
+                                <!--<th>Aplica Semana</th>-->
                                 <th COLSPAN="1">Acciones</th>
                             </tr>
                             </thead>
                             <tbody>
                             <tr th:each="data,iter : ${allData}">
                                 <td th:text="${data[0]}"></td>
-                                <td th:text="${data[1]}"></td>
+                                <td th:text="${#dates.format(data[1],'yyyy-MM-dd')}"></td>
                                 <td th:text="${data[2]}"></td>
-                                <td th:text="${data[3]}"></td>
+                                <td th:text="${#dates.format(data[3],'yyyy-MM-dd')}"></td>
                                 <td th:if="${data[4] == true}"><i class="fa fa-check-circle fa-2x text-success"></i></td>
                                 <td th:if="${data[4] == false}"><i class="fa fa-times-circle fa-2x text-danger"></i></td>
                                 <td th:if="${data[5] == true}"><i class="fa fa-check-circle fa-2x text-success"></i></td>
                                 <td th:if="${data[5] == false}"><i class="fa fa-times-circle fa-2x text-danger"></i></td>
-                                <td th:if="${data[6] == true}"><i class="fa fa-check-circle fa-2x text-success"></i></td>
-                                <td th:if="${data[6] == false}"><i class="fa fa-times-circle fa-2x text-danger"></i></td>
+                                <!--<td th:if="${data[6] == true}"><i class="fa fa-check-circle fa-2x text-success"></i></td>
+                                <td th:if="${data[6] == false}"><i class="fa fa-times-circle fa-2x text-danger"></i></td>-->
                                 <td>
-                                    <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm mx-1"
-                                            th:onclick="|window.location.href='@{/parametric/modifyMasterinvent/{id}(id=${data[7]})}'|">Editar</button>
+                                    <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm mx-1" th:onclick="|window.location.href='@{/parametric/modifyMasterinvent/{id}(id=${data[7]})}'|">Editar</button>
                                 </td>
+                                <!--<td>
+                                    <button class="btn btn-danger btn-sm" id="clearTableOne" th:data1="${c.id}" th:onclick="'javascript:operationDeleteOne(this.getAttribute(\'data1\'),\'master\')'">Eliminar</button>
+                                </td>-->
                             </tr>
                             </tbody>
                         </table>

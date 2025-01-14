@@ -29,6 +29,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -39,7 +41,7 @@ import java.util.stream.IntStream;
 @Controller
 public class MasterInventController {
     private static final int PAGINATIONCOUNT=12;
-    private List<String> listColumns=List.of("Conciliación","Contable","Aplica Semana");
+    private List<String> listColumns=List.of("Conciliación","Contable");
     Logger logger = LogManager.getLogger(LogManager.ROOT_LOGGER_NAME);
     @Autowired
     private UserService userService;
@@ -132,20 +134,31 @@ public class MasterInventController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName",user.getPrimerNombre());
-        modelAndView.addObject("userEmail",user.getCorreo());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         MasterInvent toModify = masterInventService.findAllById(id);
-        modelAndView.addObject("objetoModify",toModify);
+        modelAndView.addObject("objeto",toModify);
+        modelAndView.addObject("concil",masterInventService.getAllConcil());
         modelAndView.addObject("id",toModify.getId());
+        modelAndView.addObject("fechaConciliacion1",toModify.getFechaConciliacion().format(formatter));
+        modelAndView.addObject("fechaCargueContable1",toModify.getFechaCargueContable().format(formatter));
         modelAndView.setViewName("parametric/modifyMasterinvent");
         return modelAndView;
     }
 
     @PostMapping(value = "/parametric/modifyMasterinvent")
-    public ModelAndView updateMasterinvent(@ModelAttribute MasterInvent objeto){
+    public ModelAndView updateMasterinvent(@ModelAttribute MasterInvent objeto,@RequestParam Map<String, Object> params){
         ModelAndView modelAndView = new ModelAndView("redirect:/parametric/masterinvent");
-        masterInventService.modificar(objeto);
-        modelAndView.addObject("resp", "Modify1");
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        masterInventService.eliminar(objeto);
+        if(masterInventService.findByConcilConta(String.valueOf(objeto.getCodigoConciliacion().getNombre()),String.valueOf(objeto.getCodigoCargueContable().getNombre()),LocalDate.parse(params.get("fechaConciliacion1").toString(), dateFormat)).size()==0) {
+            modelAndView.addObject("resp", "Modify1");
+            objeto.setFechaConciliacion(LocalDate.parse(params.get("fechaConciliacion1").toString(), dateFormat));
+            objeto.setFechaCargueContable(LocalDate.parse(params.get("fechaCargueContable1").toString(), dateFormat));
+            masterInventService.modificar(objeto);
+        }
+        else {
+            modelAndView.addObject("resp", "Maes-2");
+        }
         return modelAndView;
     }
 
@@ -163,29 +176,42 @@ public class MasterInventController {
     }
 
 
+    @GetMapping(value = "/parametric/generateDates")
+    public ModelAndView generateDates(){
+        ModelAndView modelAndView = new ModelAndView("redirect:/parametric/masterinvent");
+        try {
+            masterInventService.generateDates();
+            modelAndView.addObject("resp", "Maes1");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            modelAndView.addObject("resp", "Maes-1");
+        }
+        return modelAndView;
+    }
+
     @GetMapping(value = "/parametric/createMasterinvent")
     public ModelAndView showCreateMasterinvent(){
         ModelAndView modelAndView = new ModelAndView();
         MasterInvent objeto = new MasterInvent();
         modelAndView.addObject("objeto",objeto);
+        modelAndView.addObject("concil",masterInventService.getAllConcil());
         modelAndView.setViewName("/parametric/createMasterinvent");
         return modelAndView;
     }
 
     @PostMapping(value = "/parametric/createMasterinvent")
-    public ModelAndView createMasterInvent(@ModelAttribute MasterInvent objeto, BindingResult bindingResult){
+    public ModelAndView createMasterInvent(@ModelAttribute MasterInvent objeto,@RequestParam Map<String, Object> params){
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         ModelAndView modelAndView = new ModelAndView("redirect:/parametric/masterinvent");
-        MasterInvent exist = masterInventService.findAllById(objeto.getId());
-        if(exist != null){
-            bindingResult
-                    .rejectValue("pais", "error.pais",
-                            "El pais ya se ha registrado");
-        }
-        if(bindingResult.hasErrors()){
-            modelAndView.setViewName("parametric/createMasterinvent");
-        }else{
+        if(masterInventService.findByConcilConta(String.valueOf(objeto.getCodigoConciliacion().getNombre()),String.valueOf(objeto.getCodigoCargueContable().getNombre()),LocalDate.parse(params.get("fechaConciliacion1").toString(), dateFormat)).size()==0) {
             modelAndView.addObject("resp", "Add1");
+            objeto.setFechaConciliacion(LocalDate.parse(params.get("fechaConciliacion1").toString(), dateFormat));
+            objeto.setFechaCargueContable(LocalDate.parse(params.get("fechaCargueContable1").toString(), dateFormat));
             masterInventService.modificar(objeto);
+        }
+        else {
+            modelAndView.addObject("resp", "Maes-2");
         }
         return modelAndView;
 
@@ -199,7 +225,7 @@ public class MasterInventController {
 
         int page=params.get("page")==null?0:(Integer.valueOf(params.get("page").toString())-1);
         PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
-        List<MasterInvent> list;
+        List<Object[]> list;
         if(params==null)
             list=masterInventService.findByFilter("inactivo", "Estado");
         else
@@ -207,7 +233,7 @@ public class MasterInventController {
 
         int start = (int)pageRequest.getOffset();
         int end = Math.min((start + pageRequest.getPageSize()), list.size());
-        Page<MasterInvent> pageTypeEntity = new PageImpl<>(list.subList(start, end), pageRequest, list.size());
+        Page<Object[]> pageTypeEntity = new PageImpl<>(list.subList(start, end), pageRequest, list.size());
 
         int totalPage=pageTypeEntity.getTotalPages();
         if(totalPage>0){

@@ -69,6 +69,7 @@
                                 <select class="form-control form-control-sm" name="selectedPeriodicidad" id="selectedPeriodicidad" required th:field="*{periodicidad}">
                                     <option disabled value="" selected hidden>Seleccione periodicidad</option>
                                     <option th:value="diario" th:selected="${concil.periodicidad == 'diario'}">Diario</option>
+                                    <option th:value="semanal" th:selected="${concil.periodicidad == 'semanal'}">Semanal</option>
                                     <option th:value="mensual" th:selected="${concil.periodicidad == 'mensual'}">Mensual</option>
                                 </select>
                             </div>

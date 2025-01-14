@@ -40,6 +40,36 @@ function validateAlerts(operacion,data)
             showConfirmButton: true
         })
     }
+    else if(operacion=='Maes1')
+    {
+        Swal.fire({
+            position: 'center',
+            icon: 'success',
+            title: '¡Generación Exitosa!',
+            text: 'Se generaron los registros de las fechas de maestro de forma correcta.',
+            showConfirmButton: true
+        })
+    }
+    else if(operacion=='Maes-1')
+    {
+        Swal.fire({
+            position: 'center',
+            icon: 'error',
+            title: '¡Generación Fallida!',
+            text: 'Se presento un error al generar las fechas.',
+            showConfirmButton: true
+        })
+    }
+    else if(operacion=='Maes-2')
+    {
+        Swal.fire({
+            position: 'center',
+            icon: 'warning',
+            title: '¡Registro Duplicado!',
+            text: 'No se pudo insertar el registro, revise la información ingresada.',
+            showConfirmButton: true
+        })
+    }
     else if(operacion=='Date-1')
     {
         Swal.fire({

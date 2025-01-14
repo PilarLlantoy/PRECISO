@@ -12,6 +12,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 
@@ -43,7 +44,7 @@ public class MasterInventListReport {
         createCell(row, 3, "Fecha Contable", style);
         createCell(row, 4, "Estado Conciliación", style);
         createCell(row, 5, "Estado Contable", style);
-        createCell(row, 6, "Aplica Semana", style);
+        //createCell(row, 6, "Aplica Semana", style);
     }
 
     private void createCell(Row row, int columCount, Object value, CellStyle style){
@@ -69,6 +70,8 @@ public class MasterInventListReport {
     private void writeDataLines(List<Object[]> data1){
         int rowCount = 1;
 
+        //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
         CellStyle style = workbook.createCellStyle();
         CellStyle style1 = workbook.createCellStyle();
         CellStyle style2 = workbook.createCellStyle();
@@ -84,12 +87,12 @@ public class MasterInventListReport {
             Row row = sheet.createRow(rowCount++);
             int columnCount = 0;
             createCell(row,columnCount++,data[0].toString(),style);
-            createCell(row,columnCount++,data[1].toString(),style2);
+            createCell(row,columnCount++,data[1].toString().replace(" 00:00:00.0",""),style2);
             createCell(row,columnCount++,data[2].toString(),style);
-            createCell(row,columnCount++,data[3].toString(),style2);
+            createCell(row,columnCount++,data[3].toString().replace(" 00:00:00.0",""),style2);
             createCell(row,columnCount++,data[4].toString().equalsIgnoreCase("1") ? "Si" : "No",style);
             createCell(row,columnCount++,data[5].toString().equalsIgnoreCase("1") ? "Si" : "No",style);
-            createCell(row,columnCount++,data[6].toString().equalsIgnoreCase("1") ? "Si" : "No",style);
+            //createCell(row,columnCount++,data[6].toString().equalsIgnoreCase("1") ? "Si" : "No",style);
         }
     }
 

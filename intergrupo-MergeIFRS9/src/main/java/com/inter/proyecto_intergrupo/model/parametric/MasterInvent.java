@@ -2,7 +2,7 @@ package com.inter.proyecto_intergrupo.model.parametric;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -23,14 +23,14 @@ public class MasterInvent {
     private Conciliation codigoConciliacion;
 
     @Column(name = "fecha_conciliacion")
-    private Date fechaConciliacion;
+    private LocalDate fechaConciliacion;
 
     @ManyToOne
     @JoinColumn(name = "codigo_cargue_contable")
     private AccountingRoute codigoCargueContable;
 
     @Column(name = "fecha_cargue_contable")
-    private Date fechaCargueContable;
+    private LocalDate  fechaCargueContable;
 
     @Column(name = "estado_cargue_conciliacion", columnDefinition = "BIT DEFAULT 0")
     private boolean estadoCargueConciliacion = false;

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+
+<div class="main-container">
+    </style>
+    <div class="row m-0 bg-primary fixed-top myNav">
+        <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
+            <h2 class="fw-bold text-white mx-4 my-3">Maestro Inventarios</h2>
+        </div>
+    </div>
+    <div id="content">
+        <form class="mt-5 mx-3" th:object="${objeto}" th:action="@{/parametric/createMasterinvent}" method="POST">
+            <div class="row">
+                <div class="text-right col-md-12">
+                    <a class="btn btn-danger btn-sm mx-1" th:href="@{/parametric/masterinvent}"><i class="fa-solid fa-left-long"></i> Regresar</a>
+                    <button type="submit" class="btn btn-primary btn-sm px-2">Agregar Registro</button>
+                </div>
+            </div>
+            <div class="row mx-3 px-5">
+                <div class="col-md-4">
+                    <div class="form-group form-group-sm">
+                        <h6 class="font-weight-bold">Conciliación</h6>
+                        <select class="form-control form-control-sm" name="selectedCampoVal" id="selectedCampoVal" th:field="*{codigoConciliacion}">
+                            <option disabled value="" selected hidden>Seleccione Campo</option>
+                            <option th:each="campoVal : ${concil}" th:value="${campoVal.id}" th:text="${campoVal.nombre}" th:attr="data-ruta=${campoVal.rutaContable.nombre}, data-id=${campoVal.rutaContable.id}"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group form-group-sm">
+                        <h6 class="font-weight-bold">Fecha Conciliación</h6>
+                        <input type="date" class="form-control form-control-sm" th:name="fechaConciliacion1" required>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                </div>
+                <div class="col-md-4 border-bottom">
+                    <div class="form-group form-group-sm">
+                        <h6 class="font-weight-bold">Ruta Contable</h6>
+                        <input class="form-control form-control-sm" type="text" readonly name="selectedCampoCon" id="selectedCampoCon">
+                        <input type="hidden" name="rutaContableId" id="rutaContableId" th:field="*{codigoCargueContable}">
+                    </div>
+                </div>
+                <div class="col-md-4 border-bottom">
+                    <div class="form-group form-group-sm">
+                        <h6 class="font-weight-bold">Fecha Contable</h6>
+                        <input type="date" class="form-control form-control-sm" th:name="fechaCargueContable1" required>
+                    </div>
+                </div>
+                <div class="col-md-4 border-bottom">
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+<script>
+    // Función para actualizar el valor del campo readonly y el campo oculto
+    function updateRutaContable() {
+        // Obtén el select y la opción seleccionada
+        const selectElement = document.getElementById('selectedCampoVal');
+        const selectedOption = selectElement.options[selectElement.selectedIndex];
+
+        // Obtén el valor de 'data-ruta' y 'data-id'
+        const rutaContable = selectedOption.getAttribute('data-ruta');
+        const rutaContableId = selectedOption.getAttribute('data-id');
+
+        // Asigna los valores a los campos correspondientes
+        document.getElementById('selectedCampoCon').value = rutaContable || '';
+        document.getElementById('rutaContableId').value = rutaContableId || '';
+    }
+
+    // Llama a la función al cargar la página
+    document.addEventListener('DOMContentLoaded', function () {
+        updateRutaContable(); // Inicializar en la carga
+    });
+
+    // Llama a la función cuando cambia el select
+    document.getElementById('selectedCampoVal').addEventListener('change', updateRutaContable);
+</script>
+</body>
+</html>
