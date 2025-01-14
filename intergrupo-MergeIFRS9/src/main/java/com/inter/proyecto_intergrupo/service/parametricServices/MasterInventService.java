@@ -182,13 +182,13 @@ public class MasterInventService {
 
     public void generateDates() {
         LocalDate today = LocalDate.now();
-        LocalDate twoMonthsLater = today.plusMonths(11);
+        LocalDate twoMonthsLater = today.plusMonths(2);
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String todayStr = today.format(formatter);
 
         // Borrar registros existentes
-        String deleteQuery = "DELETE FROM preciso_maestro_inventarios WHERE fecha_conciliacion >= :today";
+        String deleteQuery = "DELETE FROM preciso_maestro_inventarios WHERE fecha_conciliacion >= :today ";
         entityManager.createNativeQuery(deleteQuery)
                 .setParameter("today", todayStr)
                 .executeUpdate();
@@ -232,7 +232,7 @@ public class MasterInventService {
             if (insertQuery.length() > 0) {
                 String finalInsertQuery = insertQuery.substring(0, insertQuery.length() - 1);
                 entityManager.createNativeQuery(finalInsertQuery).executeUpdate();
-                updateLoads();
+                //updateLoads();
             }
         }
     }
@@ -240,8 +240,9 @@ public class MasterInventService {
     public void updateLoads(){
         for (MasterInvent master : findAll()) {
             Query query = entityManager.createNativeQuery("UPDATE preciso_maestro_inventarios SET estado_cargue_conciliacion = 1\n" +
-                    "WHERE EXISTS ( SELECT top 1 * FROM preciso_rc_"+master.getCodigoConciliacion().getId()+" WHERE periodo_preciso = ? );");
+                    "WHERE EXISTS ( SELECT top 1 * FROM preciso_rc_"+master.getCodigoConciliacion().getId()+" WHERE periodo_preciso = ? and id = ? );");
             query.setParameter(1, master.getFechaConciliacion());
+            query.setParameter(2, master.getId());
             query.executeUpdate();
         }
     }
