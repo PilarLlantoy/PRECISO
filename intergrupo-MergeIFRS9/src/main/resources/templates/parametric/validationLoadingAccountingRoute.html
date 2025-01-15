@@ -49,7 +49,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4" id="validacionContainer">
+                    <div class="col-md-4">
                         <div class="form-group form-group-sm  ">
                             <h6 class="font-weight-bold">Campo Validación</h6>
                             <div class="d-flex align-items-center">
@@ -74,7 +74,7 @@
                                     <option th:value="Divida">Divida</option>
                                 </select>
                                 <p class="font-weight-bold mx-1 mb-0" style="line-height: 1.5;">=</p>
-                                <input type="number" class="form-control form-control-sm  " th:field="*{valorOperacion}" required>
+                                <input type="number" class="form-control form-control-sm  " th:field="*{valorOperacion}">
                             </div>
                         </div>
                     </div>
@@ -253,16 +253,13 @@
 
     function toggleFields() {
         var formulaCheckbox = document.getElementById('formula1');
-        var validacionContainer = document.getElementById('validacionContainer');
-        var valorValidacion = document.getElementById('valorValidacion');
-        var selectedCampoVal = document.getElementById('selectedCampoVal');
+        var valorValidacion = document.querySelector("select[name='selectedOperacion']");
 
         if (formulaCheckbox.checked) {
-            validacionContainer.classList.remove('hidden');
+            valorValidacion.disabled = false; // Habilitar el campo
         } else {
-            validacionContainer.classList.add('hidden');
-            valorValidacion.value = '';
-            selectedCampoVal.selectedIndex = 0;
+            valorValidacion.disabled = true; // Deshabilitar el campo
+            valorValidacion.value = ''; // Limpiar el valor
         }
         updateButtonText();
     }
