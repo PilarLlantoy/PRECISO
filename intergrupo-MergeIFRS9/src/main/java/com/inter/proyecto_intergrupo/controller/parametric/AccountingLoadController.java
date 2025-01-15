@@ -252,7 +252,7 @@ public class AccountingLoadController {
         String headerValue = "attachment; filename="+ac.getNombre().replace(" ","_") + currentDateTime + ".xlsx";
         response.setHeader(headerKey, headerValue);
         List<Object[]> aroutes = accountingRouteService.findAllData(ac,fecha, null, null,ac.getCampos());
-        List<CampoRC> colAroutes = ac.getCampos();
+        List<CampoRC> colAroutes = accountingRouteService.findByCampoVisual(ac);
         CampoRC crc= new CampoRC();
         crc.setNombre("periodo_preciso");
         ac.getCampos().add(crc);

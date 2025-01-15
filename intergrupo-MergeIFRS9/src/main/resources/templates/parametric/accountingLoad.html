@@ -63,7 +63,7 @@
                             <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary"
                                     th:onclick="|validarYSubir()|" type="button">Cargar Manual</button>
                         </div>
-                        <div class="d-grid gap-2 col-3 mt-1" style="padding-left:0px">
+                        <div class="col-3 mt-1" style="padding-left:0px">
                             <button type="button" class="btn btn-sm btn-primary" th:onclick="|validarYexportar()|" th:if="${allRCs.size()!=0}">Exportar Excel</button>
                             <button type="button" class="btn btn-sm btn-primary" th:if="${allRCs.size()==0}" disabled>Exportar Excel</button>
                         </div>
