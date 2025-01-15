@@ -40,9 +40,14 @@ public class AccountingLoadListReport {
         font.setFontHeight(11);
         style.setFont(font);
 
+        List<String> camposVal = new ArrayList<>();
+
         for (CampoRC campo :colAroutes) {
+            camposVal.add(campo.getNombre().toUpperCase());
             createCell(row, count++, campo.getNombre().toUpperCase().replace("PERIODO_PRECISO","FECHA CONTABLE"), style);
         }
+        if(!camposVal.contains("PERIODO_PRECISO"))
+            createCell(row, count++, "FECHA CONTABLE", style);
     }
 
     private void createCell(Row row, int columCount, Object value, CellStyle style){
@@ -84,7 +89,7 @@ public class AccountingLoadListReport {
 
         CellStyle style3 = workbook.createCellStyle();
         style3.setFont(font);
-        style3.setDataFormat(workbook.createDataFormat().getFormat("dd-MM-yyyy"));
+        style3.setDataFormat(workbook.createDataFormat().getFormat("yyyy-MM-dd"));
 
         for(Object[] data: aroutes){
             Row row = sheet.createRow(rowCount++);
