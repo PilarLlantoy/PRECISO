@@ -182,7 +182,7 @@ public class MasterInventService {
 
     public void generateDates() {
         LocalDate today = LocalDate.now();
-        LocalDate twoMonthsLater = today.plusMonths(2);
+        LocalDate twoMonthsLater = today.plusMonths(11);
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String todayStr = today.format(formatter);
@@ -215,14 +215,29 @@ public class MasterInventService {
                 }
                 for (LocalDate monthStart = today.withDayOfMonth(1); !monthStart.isAfter(twoMonthsLater); monthStart = monthStart.plusMonths(1)) {
                     LocalDate lastDayOfMonth = calculateMonthlyDate(conciliation, monthStart);
-                    if (!lastDayOfMonth.isAfter(twoMonthsLater) && !data.contains(conciliation.getId()+"_"+lastDayOfMonth)) {
+                    while (!appliesOnDay(conciliation, lastDayOfMonth)) {
+                        lastDayOfMonth = lastDayOfMonth.minusDays(1); // Retrocede un día
+                        if (lastDayOfMonth.isBefore(monthStart)) {
+                            lastDayOfMonth = null;
+                            break;
+                        }
+                    }
+                    if (lastDayOfMonth != null && !lastDayOfMonth.isAfter(twoMonthsLater)
+                            && !data.contains(conciliation.getId() + "_" + lastDayOfMonth)) {
                         appendInsertValues(insertQuery, conciliation, lastDayOfMonth, formatter);
                     }
                 }
             } else if ("Mensual".equalsIgnoreCase(conciliation.getPeriodicidad())) {
                 for (LocalDate monthStart = today.withDayOfMonth(1); !monthStart.isAfter(twoMonthsLater); monthStart = monthStart.plusMonths(1)) {
                     LocalDate lastDayOfMonth = calculateMonthlyDate(conciliation, monthStart);
-                    if (!lastDayOfMonth.isAfter(twoMonthsLater)) {
+                    while (!appliesOnDay(conciliation, lastDayOfMonth)) {
+                        lastDayOfMonth = lastDayOfMonth.minusDays(1); // Retrocede un día
+                        if (lastDayOfMonth.isBefore(monthStart)) {
+                            lastDayOfMonth = null;
+                            break;
+                        }
+                    }
+                    if (lastDayOfMonth != null && !lastDayOfMonth.isAfter(twoMonthsLater)) {
                         appendInsertValues(insertQuery, conciliation, lastDayOfMonth, formatter);
                     }
                 }
