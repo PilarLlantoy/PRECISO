@@ -125,7 +125,7 @@ public class ConditionsEventMatrixController {
     @PostMapping(value = "/parametric/createCondicionEventMatrix")
     public ModelAndView createCondicionEventMatrix(@ModelAttribute CondicionEventMatrix condicion,
                                                    @RequestParam(name = "matrizId") String matrixId,
-                                                   @RequestParam(name = "selectedOperacion") String operacion,
+                                                   @RequestParam(name = "selectedOperacion", defaultValue= "") String operacion,
                                                    @RequestParam(name = "selectedCampo") String idcampo,
                                                    BindingResult bindingResult) {
 

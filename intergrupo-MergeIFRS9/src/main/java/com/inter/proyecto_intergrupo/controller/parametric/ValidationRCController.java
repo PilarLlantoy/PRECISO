@@ -104,7 +104,7 @@ public class ValidationRCController {
     @PostMapping(value = "/parametric/createValidacionRC")
     public ModelAndView createValidacionRC(@ModelAttribute ValidationRC validationRC,
                                            @RequestParam(name = "selectedCampoRef") String campoRefid,
-                                           @RequestParam(name = "selectedOperacion") String operacion,
+                                           @RequestParam(name = "selectedOperacion",defaultValue = "") String operacion,
                                            @RequestParam(name = "arouteId") String arouteId,
                                            BindingResult bindingResult){
         ModelAndView modelAndView = new ModelAndView("redirect:/parametric/validationLoadingAccountingRoute/" + arouteId);
