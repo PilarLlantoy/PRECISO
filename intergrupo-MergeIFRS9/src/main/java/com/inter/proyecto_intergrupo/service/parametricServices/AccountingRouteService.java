@@ -134,6 +134,12 @@ public class AccountingRouteService {
         return accountingRouteRepository.findAllById(id);
     }
 
+    public List<CampoRC> findByCampoVisual(AccountingRoute accountingRoute){
+        Query querySelect = entityManager.createNativeQuery("select * from preciso_campos_rc where id_rc = ? and visualizacion = 1 ", CampoRC.class);
+        querySelect.setParameter(1,accountingRoute.getId());
+        return querySelect.getResultList();
+    }
+
     public List<AccountingRoute> findByJob() {
         LocalTime now = LocalTime.now(); // Hora actual
         LocalTime thirtyMinutesBefore = now.minusMinutes(29); // Hora hace 30 minutos

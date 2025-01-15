@@ -34,16 +34,6 @@
                 <div class="row">
                     <div class="col-md-2">
                         <div class="form-group form-group-sm">
-                            <label>Tipo Evento</label>
-                            <select class="form-control form-control-sm" name="selectedET" id="selectedET" required>
-                                <option disabled value="" selected hidden>Seleccione un tipo evento</option>
-                                <option th:each="TE : ${allTEs}" th:value="${TE.id}" th:text="${TE.nombre}"></option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="col-md-2">
-                        <div class="form-group form-group-sm">
                             <label>Conciliacion</label>
                             <select class="form-control form-control-sm" name="selectedConcil" id="selectedConcil" onchange="toggleConciliacion()">
                                 <option disabled value="" selected hidden>Seleccione una conciliación</option>
@@ -51,7 +41,6 @@
                             </select>
                         </div>
                     </div>
-
                     <div class="col-md-2">
                         <div class="form-group form-group-sm">
                             <label>Inventario Conciliacion</label>
@@ -60,7 +49,15 @@
                             </select>
                         </div>
                     </div>
-
+                    <div class="col-md-2">
+                        <div class="form-group form-group-sm">
+                            <label>Tipo Evento</label>
+                            <select class="form-control form-control-sm" name="selectedET" id="selectedET" required>
+                                <option disabled value="" selected hidden>Seleccione un tipo evento</option>
+                                <option th:each="TE : ${allTEs}" th:value="${TE.id}" th:text="${TE.nombre}"></option>
+                            </select>
+                        </div>
+                    </div>
                     <div class="col-md-2">
                         <div class="form-group form-group-sm">
                             <label>Cuentas</label>

@@ -92,13 +92,15 @@ public class AccountingLoadController {
                 else
                     modelAndView.addObject("nomb","Vacio");
 
+                List<CampoRC> campos =accountingRouteService.findByCampoVisual(ac);
+
                 logAroutes = accountingRouteService.findAllLog(ac,params.get("period").toString());
-                aroutes = accountingRouteService.processList(accountingRouteService.findAllData(ac,params.get("period").toString(), null, null),ac.getCampos());
+                aroutes = accountingRouteService.processList(accountingRouteService.findAllData(ac,params.get("period").toString(), null, null),campos);
 
                 CampoRC crc= new CampoRC();
                 crc.setNombre("periodo_preciso");
-                ac.getCampos().add(crc);
-                colAroutes = ac.getCampos();
+                campos.add(crc);
+                colAroutes = campos;
             }
             int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
             PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);

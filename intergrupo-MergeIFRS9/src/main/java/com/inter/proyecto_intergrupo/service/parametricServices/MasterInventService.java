@@ -186,7 +186,7 @@ public class MasterInventService {
 
     public void generateDates() {
         LocalDate today = LocalDate.now();
-        LocalDate twoMonthsLater = today.plusMonths(11);
+        LocalDate twoMonthsLater = today.plusMonths(2);
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String todayStr = today.format(formatter);
