@@ -95,7 +95,7 @@ public class AccountingLoadController {
                 List<CampoRC> campos =accountingRouteService.findByCampoVisual(ac);
 
                 logAroutes = accountingRouteService.findAllLog(ac,params.get("period").toString());
-                aroutes = accountingRouteService.processList(accountingRouteService.findAllData(ac,params.get("period").toString(), null, null),campos);
+                aroutes = accountingRouteService.processList(accountingRouteService.findAllData(ac,params.get("period").toString(), null, null,campos),campos);
 
                 CampoRC crc= new CampoRC();
                 crc.setNombre("periodo_preciso");
@@ -251,7 +251,7 @@ public class AccountingLoadController {
         String headerKey = "Content-Disposition";
         String headerValue = "attachment; filename="+ac.getNombre().replace(" ","_") + currentDateTime + ".xlsx";
         response.setHeader(headerKey, headerValue);
-        List<Object[]> aroutes = accountingRouteService.findAllData(ac,fecha, null, null);
+        List<Object[]> aroutes = accountingRouteService.findAllData(ac,fecha, null, null,ac.getCampos());
         List<CampoRC> colAroutes = ac.getCampos();
         CampoRC crc= new CampoRC();
         crc.setNombre("periodo_preciso");

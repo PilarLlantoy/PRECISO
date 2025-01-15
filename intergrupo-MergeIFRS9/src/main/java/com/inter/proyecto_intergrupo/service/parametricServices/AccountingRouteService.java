@@ -177,8 +177,8 @@ public class AccountingRouteService {
         return logAccountingLoadRepository.findAllByOrderByFechaCargueAsc();
     }
 
-    public List<Object[]> findAllData(AccountingRoute data, String fecha, String cadena, String campo) {
-        String campos = data.getCampos().stream()
+    public List<Object[]> findAllData(AccountingRoute data, String fecha, String cadena, String campo,List<CampoRC> camposAux) {
+        String campos = camposAux.stream()
                 .map(CampoRC::getNombre)
                 .collect(Collectors.joining(","));
 
