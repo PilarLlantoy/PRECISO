@@ -16,6 +16,7 @@ import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,6 +40,9 @@ public class MasterInventService {
 
     @Autowired
     private MasterInventRepository masterInvertRepository;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     @PersistenceContext
     EntityManager entityManager;
@@ -252,14 +256,16 @@ public class MasterInventService {
         }
     }
 
-    public void updateLoads(){
-        for (MasterInvent master : findAll()) {
-            Query query = entityManager.createNativeQuery("UPDATE preciso_maestro_inventarios SET estado_cargue_conciliacion = 1\n" +
-                    "WHERE EXISTS ( SELECT top 1 * FROM preciso_rc_"+master.getCodigoConciliacion().getId()+" WHERE periodo_preciso = ? and id = ? );");
-            query.setParameter(1, master.getFechaConciliacion());
-            query.setParameter(2, master.getId());
-            query.executeUpdate();
-        }
+    public void updateLoads(AccountingRoute accountingRoute,String fecha){
+        String query = "IF EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'preciso_rc_"+accountingRoute.getId()+"')\n" +
+                "BEGIN\n" +
+                "UPDATE preciso_maestro_inventarios SET estado_cargue_cargue_contable = 1 WHERE EXISTS (SELECT TOP 1 * FROM preciso_rc_"+accountingRoute.getId()+" WHERE periodo_preciso = '"+fecha+"' ) AND codigo_cargue_contable = '"+accountingRoute.getId()+"' AND fecha_cargue_contable = '"+fecha+"' ;\n" +
+                "END\n" +
+                "ELSE\n" +
+                "BEGIN\n" +
+                "UPDATE preciso_maestro_inventarios SET estado_cargue_cargue_contable = 0 WHERE codigo_cargue_contable = '"+accountingRoute.getId()+"' AND fecha_cargue_contable = '"+fecha+"' ;\n" +
+                "END";
+        jdbcTemplate.execute(query);
     }
 
     public List<Conciliation> findByConciliacion(String conciliacion){
@@ -281,7 +287,9 @@ public class MasterInventService {
     }
 
     public MasterInvent modificar(MasterInvent master){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         masterInvertRepository.save(master);
+        updateLoads(master.getCodigoCargueContable(),master.getFechaCargueContable().format(formatter));
        return master;
     }
 

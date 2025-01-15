@@ -56,6 +56,9 @@ public class AccountingRouteService {
     @Autowired
     private JobAutoService jobAutoService;
 
+    @Autowired
+    private MasterInventService masterInventService;
+
     @PersistenceContext
     EntityManager entityManager;
 
@@ -740,6 +743,10 @@ public class AccountingRouteService {
         return query.getResultList();
     }
 
+    public void updateLoads(AccountingRoute ac,String fecha){
+        masterInventService.updateLoads(ac,fecha);
+    }
+
 
     @Scheduled(cron = "0 0/30 * * * ?")
     public void processJob()  {
@@ -763,6 +770,7 @@ public class AccountingRouteService {
                 if (vrc.size() != 0)
                     validationData(ac);
                 copyData(ac, fecha);
+                updateLoads(ac,fecha);
                 if(findAllDataValidation(ac,fecha)) {
                     jobAutoService.loadLogCargue(null, ac, fecha, "Automático", "Exitoso", "");
                 }
