@@ -49,12 +49,12 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4" id="validacionContainer">
+                    <div class="col-md-4">
                         <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Campo Validación</h6>
                             <div class="d-flex align-items-center">
                                 <select class="form-control form-control-sm" name="selectedCampoVal" id="selectedCampoVal" th:field="*{campoVal}">
-                                    <option disabled value="" selected hidden>Seleccione Campo</option>
+                                    <option value="" selected >Seleccione Campo</option>
                                     <option th:each="campoVal : ${campos}" th:value="${campoVal.id}" th:text="${campoVal.nombre}"></option>
                                 </select>
                                 <p class="font-weight-bold mx-1 mb-0" style="line-height: 1.5;">=</p>
@@ -66,15 +66,15 @@
                         <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Operación:</h6>
                             <div class="d-flex align-items-center">
-                                <select class="form-control form-control-sm" name="selectedOperacion" id="selectedOperacion">
-                                    <option disabled value="" selected hidden>Seleccione operación</option>
+                                <select class="form-control form-control-sm" name="selectedOperacion" id="selectedOperacion" required>
+                                    <option disabled value="" selected >Seleccione operación</option>
                                     <option th:value="Suma">Suma</option>
                                     <option th:value="Resta">Resta</option>
                                     <option th:value="Multiplica">Multiplica</option>
                                     <option th:value="Divida">Divida</option>
                                 </select>
                                 <p class="font-weight-bold mx-1 mb-0" style="line-height: 1.5;">=</p>
-                                <input type="text" class="form-control form-control-sm" th:field="*{valorOperacion}" required>
+                                <input type="text" id="valorOperacion1" class="form-control form-control-sm" th:field="*{valorOperacion}">
                             </div>
                         </div>
                     </div>
@@ -249,16 +249,12 @@
 <script>
     function toggleFields() {
         var formulaCheckbox = document.getElementById('formula1');
-        var validacionContainer = document.getElementById('validacionContainer');
-        var valorValidacion = document.getElementById('valorValidacion');
-        var selectedCampoVal = document.getElementById('selectedCampoVal');
+        var valorOperacion = document.querySelector("select[name='selectedOperacion']");
 
         if (formulaCheckbox.checked) {
-            validacionContainer.classList.remove('hidden');
+            valorOperacion.disabled = false; // Habilitar el campo
         } else {
-            validacionContainer.classList.add('hidden');
-            valorValidacion.value = '';
-            selectedCampoVal.selectedIndex = 0;
+            valorOperacion.disabled = true; // Deshabilitar el campo
         }
         updateButtonText();
     }

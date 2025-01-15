@@ -534,12 +534,14 @@ public class ConciliationRouteService {
                 if (!operacion.isEmpty()) {
                     queryUpdate = "UPDATE " + nombreTabla + " SET " +
                             obj[0].toString() + " = CAST(TRY_CAST(" + obj[0].toString() + " AS DECIMAL(38, 0)) * 0.01 " +
-                            operacion + obj[3].toString() + " AS VARCHAR) " +
-                            "WHERE " + obj[1].toString() + " = '" + obj[2].toString() + "';";
+                            operacion + obj[3].toString() + " AS VARCHAR) ";
+                    if(obj[1]!=null && !obj[1].toString().equalsIgnoreCase("") && obj[2]!=null)
+                        queryUpdate = queryUpdate+"WHERE " + obj[1].toString() + " = '" + obj[2].toString() + "';";
                 } else {
                     queryUpdate = "UPDATE " + nombreTabla + " SET " +
-                            obj[0].toString() + " = '" + obj[3].toString() + "' " +
-                            "WHERE " + obj[1].toString() + " = '" + obj[2].toString() + "';";
+                            obj[0].toString() + " = '" + obj[3].toString() + "' ";
+                    if(obj[1]!=null && !obj[1].toString().equalsIgnoreCase("") && obj[2]!=null)
+                        queryUpdate = queryUpdate+"WHERE " + obj[1].toString() + " = '" + obj[2].toString() + "';";
                 }
 
                 // Ejecutar la consulta

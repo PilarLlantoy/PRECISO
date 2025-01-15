@@ -54,7 +54,7 @@
                             <h6 class="font-weight-bold">Campo Validación</h6>
                             <div class="d-flex align-items-center">
                                 <select class="form-control form-control-sm  " name="selectedCampoVal" id="selectedCampoVal" th:field="*{campoVal}">
-                                    <option disabled value="" selected hidden>Seleccione Campo</option>
+                                    <option value="" selected >Seleccione Campo</option>
                                     <option th:each="campoVal : ${campos}" th:value="${campoVal.id}" th:text="${campoVal.nombre}"></option>
                                 </select>
                                 <p class="font-weight-bold mx-1 mb-0" style="line-height: 1.5;">=</p>
@@ -67,7 +67,7 @@
                             <h6 class="font-weight-bold">Operación:</h6>
                             <div class="d-flex align-items-center">
                                 <select class="form-control form-control-sm  " name="selectedOperacion" id="selectedOperacion" required>
-                                    <option disabled value="" selected hidden>Seleccione operación</option>
+                                    <option disabled value="" selected >Seleccione operación</option>
                                     <option th:value="Suma">Suma</option>
                                     <option th:value="Resta">Resta</option>
                                     <option th:value="Multiplica">Multiplica</option>
