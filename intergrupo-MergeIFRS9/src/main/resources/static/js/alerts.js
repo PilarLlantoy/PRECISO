@@ -150,6 +150,24 @@ function validateAlerts(operacion,data)
                 }
             });
         }
+    else if(operacion=='Bulk--1')
+        {
+            Swal.fire({
+                position: 'center',
+                icon: 'success',
+                title: '¡Ejecución Exitosa!',
+                text: 'La generación de conciliacón se realizó de forma correcta en el sistema.',
+                showConfirmButton: true,
+                allowOutsideClick: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const period = document.getElementById('period').value;
+                    const period2 = document.getElementById('period2').value;
+                    const arhcont = document.getElementById('arhcont').value;
+                    window.location.href = window.location.origin + window.location.pathname + `?arhcont=${encodeURIComponent(arhcont)}&period=${encodeURIComponent(period)}&period2=${encodeURIComponent(period2)}`;
+                }
+            });
+        }
     else if(operacion=='Bulk->2')
             {
                 Swal.fire({
@@ -183,6 +201,24 @@ function validateAlerts(operacion,data)
                     const arhcont = document.getElementById('arhcont').value;
                     const concil = document.getElementById('selectedConciliacion').value;
                     window.location.href = window.location.origin + window.location.pathname + `?period=${encodeURIComponent(period)}&selectedConciliacion=${encodeURIComponent(concil)}&arhcont=${encodeURIComponent(arhcont)}`;
+                }
+            });
+        }
+    else if(operacion=='Bulk--2')
+        {
+            Swal.fire({
+                position: 'center',
+                icon: 'error',
+                title: '¡Ejecución Fallida!',
+                text: 'No se pudo procesar la conciliación, valide el log de detalle.',
+                showConfirmButton: true,
+                allowOutsideClick: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const period = document.getElementById('period').value;
+                    const period2 = document.getElementById('period2').value;
+                    const arhcont = document.getElementById('arhcont').value;
+                    window.location.href = window.location.origin + window.location.pathname + `?arhcont=${encodeURIComponent(arhcont)}&period=${encodeURIComponent(period)}&period2=${encodeURIComponent(period2)}`;
                 }
             });
         }

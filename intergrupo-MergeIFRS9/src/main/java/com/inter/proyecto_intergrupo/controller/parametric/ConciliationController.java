@@ -61,6 +61,15 @@ public class ConciliationController {
     private CampoRConcilService campoRConcilService;
 
     @Autowired
+    private MasterInventService masterInventService;
+
+    @Autowired
+    private EventTypeService eventTypeService;
+
+    @Autowired
+    private InformationCrossingService informationCrossingService;
+
+    @Autowired
     private CampoRCService campoRCService;
 
     @GetMapping(value="/parametric/conciliation")
@@ -383,38 +392,39 @@ public class ConciliationController {
         Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Cargue Contable");
         if(userService.validateEndpoint(user.getId(),"Ver Cargue Contable")) {
             List<Conciliation> listConcil = conciliationService.findAllActive();
-            List<Object[]> aroutes = new ArrayList<>();
-            List<CampoRC> colAroutes = new ArrayList<>();
-            List<LogInformationCrossing> logCruces = new ArrayList<>();
+            List<Object[]> registros = new ArrayList<>();
+            List<String> colRegistros = new ArrayList<>();
+            List<LogConciliation> logConciliacion = new ArrayList<>();
+
             if(params.get("arhcont") != null && params.get("arhcont").toString() != null
                     && params.get("period") != null && params.get("period").toString() != null
-                    && params.get("evento") != null && params.get("evento").toString() != null)
+                    && params.get("period2") != null && params.get("period2").toString() != null)
             {
                 modelAndView.addObject("period",params.get("period").toString());
                 Conciliation concil = conciliationService.findById(Integer.parseInt(params.get("arhcont").toString()));
                 modelAndView.addObject("arhcont",concil);
-                logCruces = null;
-                /*aroutes = accountingRouteService.findAllData(ac,params.get("period").toString(), null, null);
-                CampoRC crc= new CampoRC();
-                crc.setNombre("periodo_preciso");
-                ac.getCampos().add(crc);
-                colAroutes = ac.getCampos();*/
+                colRegistros = List.of("FECHA", "CENTRO CONTABLE", "CUENTA CONTABLE","DIVISA CUENTA","SALDO INVENTARIO", "SALDO CONTABLE", "TOTAL");;
+                registros = conciliationService.processList(conciliationService.findAllData(concil,params.get("period").toString()),colRegistros);
+                logConciliacion = conciliationService.findAllLog(concil,params.get("period").toString());
+
             }
             int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
             PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
             int start = (int) pageRequest.getOffset();
-            int end = Math.min((start + pageRequest.getPageSize()), logCruces.size());
-            Page<LogInformationCrossing> pageLog= new PageImpl<>(logCruces.subList(start, end), pageRequest, logCruces.size());
+
+            int end = Math.min((start + pageRequest.getPageSize()), logConciliacion.size());
+            Page<LogConciliation> pageLog= new PageImpl<>(logConciliacion.subList(start, end), pageRequest, logConciliacion.size());
             int totalPage=pageLog.getTotalPages();
             if(totalPage>0){
                 List<Integer> pages = IntStream.rangeClosed(1, totalPage).boxed().collect(Collectors.toList());
                 modelAndView.addObject("pages",pages);
             }
+
             int pageData=params.get("pageData")!=null?(Integer.valueOf(params.get("pageData").toString())-1):0;
             PageRequest pageRequestData=PageRequest.of(pageData,PAGINATIONCOUNTDATA);
             int startData = (int) pageRequestData.getOffset();
-            int endData = Math.min((startData + pageRequestData.getPageSize()), aroutes.size());
-            Page<Object[]> pageLogData= new PageImpl<>(aroutes.subList(startData, endData), pageRequestData, aroutes.size());
+            int endData = Math.min((startData + pageRequestData.getPageSize()), registros.size());
+            Page<Object[]> pageLogData= new PageImpl<>(registros.subList(startData, endData), pageRequestData, registros.size());
             int totalPageData=pageLogData.getTotalPages();
             if(totalPageData>0){
                 List<Integer> pagesData = IntStream.rangeClosed(1, totalPageData).boxed().collect(Collectors.toList());
@@ -422,7 +432,7 @@ public class ConciliationController {
             }
             modelAndView.addObject("allLog",pageLog.getContent());
             modelAndView.addObject("allRCs",pageLogData.getContent());
-            modelAndView.addObject("allColRCs",colAroutes);
+            modelAndView.addObject("allColRCs",colRegistros);
             modelAndView.addObject("current",page+1);
             modelAndView.addObject("next",page+2);
             modelAndView.addObject("prev",page);
@@ -434,8 +444,8 @@ public class ConciliationController {
             modelAndView.addObject("filterExport","Original");
             modelAndView.addObject("listConcil",listConcil);
             modelAndView.addObject("directory","accountingLoad");
-            modelAndView.addObject("registers",logCruces.size());
-            modelAndView.addObject("registersData",aroutes.size());
+            modelAndView.addObject("registers",logConciliacion.size());
+            modelAndView.addObject("registersData",registros.size());
             modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.addObject("p_modificar", p_modificar);
@@ -447,6 +457,44 @@ public class ConciliationController {
             modelAndView.setViewName("admin/errorMenu");
         }
         return modelAndView;
+    }
+
+
+    //GENERAR CONCILIACION
+    //-----------------------------------
+
+    @PostMapping("/parametric/conciliation/generateConciliation")
+    @ResponseBody
+    public ResponseEntity<String> generateConciliation(@RequestParam int id,
+                                                 @RequestParam String fecha,
+                                                 @RequestParam String fechaContabilidad) {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findUserByUserName(auth.getName());
+        Conciliation conciliacion = conciliationService.findById(id);
+        EventType evento = eventTypeService.findByName("Conciliación").get(0);
+
+        System.out.println("GENERAR CONCILIACION");
+        System.out.println("======================");
+        System.out.println(conciliacion.getNombre()+" "+ fecha+" "+ fechaContabilidad);
+        try {
+            conciliationService.generarConciliacion(conciliacion,fecha);
+            conciliationService.loadLogConciliation(user, id, fecha, "Exitoso", "");
+            return ResponseEntity.ok("Bulk--1");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            Throwable rootCause = e;
+            while (rootCause.getCause() != null) {
+                rootCause = rootCause.getCause(); // Navega a la causa raíz
+            }
+            conciliationService.loadLogConciliation(user, id, fecha, "Fallido",rootCause.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk--2");
+        }
+
+
+
+
     }
 
 }

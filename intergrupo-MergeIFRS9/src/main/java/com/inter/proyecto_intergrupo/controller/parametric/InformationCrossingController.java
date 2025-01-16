@@ -60,6 +60,7 @@ public class InformationCrossingController {
 
     @Autowired
     private ConciliationService conciliationService;
+
     @Autowired
     private ConciliationRouteService conciliationRouteService;
 
@@ -96,6 +97,7 @@ public class InformationCrossingController {
             List<Object[]> datos = new ArrayList<>();
             List<String> colDatos = new ArrayList<>();
             List<LogInformationCrossing> logCruces = new ArrayList<>();
+
             if(params.get("arhcont") != null && params.get("arhcont").toString() != null
                     && params.get("period") != null && params.get("period").toString() != null
                     && params.get("evento") != null && params.get("evento").toString() != null)
@@ -110,10 +112,9 @@ public class InformationCrossingController {
 
                 CampoRC crc= new CampoRC();
                 crc.setNombre("periodo_preciso");
-                colDatos =List.of("FECHA CONCILIACION", "CENTRO CONTABLE", "CUENTA CONTABLE","DIVISA","SALDO INVENTARIO");;
+                colDatos =List.of("FECHA CONCILIACION", "CENTRO CONTABLE", "CUENTA CONTABLE","DIVISA","SALDO INVENTARIO", "TIPO EVENTO");;
                 datos = informationCrossingService.processList(informationCrossingService.findAllData(concil, fecha, evento), colDatos);
-
-
+                colDatos =List.of("FECHA CONCILIACION", "CENTRO CONTABLE", "CUENTA CONTABLE","DIVISA","SALDO INVENTARIO");
             }
             int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
             PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
@@ -222,22 +223,23 @@ public class InformationCrossingController {
                 informationCrossingService.creatTablaTemporalCruce(ruta, fecha);
 
                 for (EventMatrix matriz : matrices) {
+                    if(matriz.isEstado()){ //SOLO LAS MATRICES ACTIVAS
+                        //Primero veremos las condiciones
+                        List<CondicionEventMatrix> condiciones = condicionMEService.findByMatrizEvento(matriz);
+                        String condicion = null;
+                        if (condiciones.size() != 0)
+                            condicion = informationCrossingService.conditionData(ruta, matriz);
 
-                    //Primero veremos las condiciones
-                    List<CondicionEventMatrix> condiciones = condicionMEService.findByMatrizEvento(matriz);
-                    String condicion = null;
-                    if (condiciones.size() != 0)
-                        condicion = informationCrossingService.conditionData(ruta, matriz);
+                        //Completamos informacion de cruce
+                        AccountEventMatrix cuenta1 = accountEventMatrixService.findByMatrizEventoTipo1(matriz);
+                        AccountEventMatrix cuenta2 = accountEventMatrixService.findByMatrizEventoTipo2(matriz);
+                        informationCrossingService.completarTablaCruce(ruta, fecha, tipoEvento, matriz, cuenta1, cuenta2, condicion);
 
-                    //Completamos informacion de cruce
-                    AccountEventMatrix cuenta1 = accountEventMatrixService.findByMatrizEventoTipo1(matriz);
-                    AccountEventMatrix cuenta2 = accountEventMatrixService.findByMatrizEventoTipo2(matriz);
-                    informationCrossingService.completarTablaCruce(ruta, fecha, tipoEvento, matriz, cuenta1, cuenta2, condicion);
-
-                    //Realizamos las validaciones
-                    List<ValidationME> validaciones = validationMEService.findByEventMatrix(matriz);
-                    if (validaciones.size() != 0)
-                        informationCrossingService.validationData(ruta, matriz, condicion);
+                        //Realizamos las validaciones
+                        List<ValidationME> validaciones = validationMEService.findByEventMatrix(matriz);
+                        if (validaciones.size() != 0)
+                            informationCrossingService.validationData(ruta, matriz, condicion);
+                    }
 
                 }
 
@@ -249,6 +251,7 @@ public class InformationCrossingController {
             }
 
             //SE LOGRO EL CRUCE
+            conciliationService.generarTablaCruceCompleto_x_Conciliacion(id, fecha, evento);
             informationCrossingService.loadLogInformationCrossing(user, id, evento, fecha, "Generar Cuentas", "Exitoso", "");
             return ResponseEntity.ok("Bulk->1");
         }

@@ -50,6 +50,7 @@ public class InformationCrossingService {
     public InformationCrossingService(LogInformationCrossingRepository logInformationCrossingRepository) {
         this.logInformationCrossingRepository = logInformationCrossingRepository;
     }
+
     public List<LogInformationCrossing> findAllLog(Conciliation concil, String fecha, EventType evento) {
         LocalDate localDate = LocalDate.parse(fecha);
         Date fechaDate = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
@@ -487,28 +488,20 @@ public class InformationCrossingService {
     public List<Object[]> findAllData(Conciliation concil, String fecha, EventType evento) {
         List<ConciliationRoute> listRoutes = conciliationRouteService.getRoutesByConciliation(concil.getId()); // RUTAS CONCILIACIONES
         StringBuilder queryBuilder = new StringBuilder("");
-        for (int i = 0; i < listRoutes.size(); i++) {
-            String nombreTabla = "preciso_ci_" + concil.getId() + "_" + listRoutes.get(i).getId();
-            if (i != 0) queryBuilder.append(" UNION ALL ");
+        String nombreTabla = "preciso_ci_" + concil.getId() ;
+        queryBuilder.append("SELECT FECHA_CONCILIACION, CENTRO_CONTABLE, CUENTA_CONTABLE, DIVISA_CUENTA, sum([TOTAL_VALOR_CUENTA]) AS TOTAL_VALOR_CUENTA " +
+                "FROM " + nombreTabla + " " +
+                "WHERE FECHA_CONCILIACION = :fecha AND TIPO_EVENTO = :tipoEvento " +  // Corregido el espacio
+                "GROUP BY [FECHA_CONCILIACION], [CENTRO_CONTABLE], [CUENTA_CONTABLE], [DIVISA_CUENTA], TIPO_EVENTO");
 
-            queryBuilder.append("SELECT [FECHA_CONCILIACION], [CENTRO_CONTABLE], [CUENTA_CONTABLE_1] as CUENTA_CONTABLE, " +
-                    "[DIVISA_CUENTA_1] as DIVISA_CUENTA, SUM([VALOR_CUENTA_1]) AS TOTAL_VALOR_CUENTA " +
-                    "FROM " + nombreTabla + " " +
-                    "WHERE [FECHA_CONCILIACION] = :fecha " +
-                    "GROUP BY [FECHA_CONCILIACION], [CENTRO_CONTABLE], [CUENTA_CONTABLE_1], [DIVISA_CUENTA_1] " +
-                    "UNION ALL " +
-                    "SELECT [FECHA_CONCILIACION], [CENTRO_CONTABLE], [CUENTA_CONTABLE_2] as CUENTA_CONTABLE, " +
-                    "[DIVISA_CUENTA_2] as DIVISA_CUENTA, SUM([VALOR_CUENTA_2]) AS TOTAL_VALOR_CUENTA " +
-                    "FROM " + nombreTabla + " " +
-                    "WHERE [FECHA_CONCILIACION] = :fecha " +
-                    "GROUP BY [FECHA_CONCILIACION], [CENTRO_CONTABLE], [CUENTA_CONTABLE_2], [DIVISA_CUENTA_2]");
-        }
-        queryBuilder.append(" ORDER BY [FECHA_CONCILIACION], [CENTRO_CONTABLE], CUENTA_CONTABLE, DIVISA_CUENTA");
+        queryBuilder.append(" ORDER BY FECHA_CONCILIACION, CENTRO_CONTABLE, CUENTA_CONTABLE, DIVISA_CUENTA, TIPO_EVENTO");
+
         // Crear la consulta
         Query querySelect = entityManager.createNativeQuery(queryBuilder.toString());
 
         // Establecer el parámetro de fecha
         querySelect.setParameter("fecha", fecha);
+        querySelect.setParameter("tipoEvento", evento.getNombre());
 
         return querySelect.getResultList();
     }
@@ -516,7 +509,6 @@ public class InformationCrossingService {
 
     public List<Object[]> processList(List<Object[]> datos, List<String> colAroutes) {
         List<Object[]> processedList = new ArrayList<>();
-
         for (Object[] row : datos) {
             Object[] processedRow = new Object[row.length];
 

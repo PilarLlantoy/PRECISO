@@ -816,4 +816,57 @@ public class AccountingRouteService {
         auditRepository.save(insert);
     }
 
+    public String generarCadenaDeCuentas(List<AccountConcil> cuentas) {
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < cuentas.size(); i++) {
+            sb.append(cuentas.get(i).getValor()); // Asumiendo que getValor() devuelve un String o número
+            if (i < cuentas.size() - 1) {
+                sb.append(", "); // Agrega una coma solo si no es el último elemento
+            }
+        }
+
+        return sb.toString();
+    }
+
+    public List<Object[]> resumeAR(Conciliation concil, String fechapp, EventType evento) {
+        String campoCentro = concil.getCentro();
+        String campoCuenta = concil.getCuenta();
+        String campoDivisa = concil.getDivisa();
+        String campoSaldo = concil.getSaldo();
+
+        String nombreTabla = "preciso_rc_" + concil.getRutaContable().getId();
+
+        List<AccountConcil> cuentas = concil.getArregloCuentas();
+        String cuentasConcil = generarCadenaDeCuentas(cuentas); // Genera cadena "101, 102, 103"
+        System.out.println(cuentasConcil);
+
+        String fecha = "2024-12-02";
+
+        // Construir el query
+        StringBuilder queryBuilder = new StringBuilder();
+        queryBuilder.append("SELECT \n")
+                .append("periodo_preciso AS FECHA_CONCILIACION, \n")
+                .append(campoCentro).append(" AS CENTRO_CONTABLE, \n")
+                .append("CAST(").append(campoCuenta).append(" AS BIGINT) AS CUENTA_CONTABLE, \n")
+                .append(campoDivisa).append(" AS DIVISA_CUENTA, \n")
+                .append("SUM(TRY_CAST(").append(campoSaldo).append(" AS DECIMAL(18, 2))) AS TOTAL_VALOR_CUENTA \n")
+                .append("FROM ").append(nombreTabla).append("\n")
+                .append("WHERE periodo_preciso = :fecha AND ")
+                .append(campoCuenta).append(" IN (").append(cuentasConcil).append(") \n")
+                .append("GROUP BY periodo_preciso, ")
+                .append(campoCentro).append(", ")
+                .append(campoCuenta).append(", ")
+                .append(campoDivisa);
+
+        // Crear la consulta
+        Query querySelect = entityManager.createNativeQuery(queryBuilder.toString());
+        querySelect.setParameter("fecha", fecha);
+
+        return querySelect.getResultList();
+    }
+
+
+
+
 }
