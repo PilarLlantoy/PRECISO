@@ -36,7 +36,7 @@
                             <h6 class="font-weight-bold">Fecha Conciliación</h6>
                             <div class="input-group">
                                 <div class="input-group">
-                                    <input type="date" id="period" th:name="period" th:value="${period}" class="form-control" style="width: 100%; box-sizing: border-box;" required>
+                                    <input type="date" id="period" th:name="period" th:value="${period}" class="form-control" style="width: 100%; box-sizing: border-box;" required onchange="toggleFechaConciliacion()">
                                     <div class="invalid-feedback">Por favor, seleccione una fecha.</div>
                                 </div>
                             </div>
@@ -205,6 +205,15 @@
         </div>
     </div>
 </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"
+        integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
+        crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"
+        integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
+        crossorigin="anonymous"></script>
+
 <script>
 
 
@@ -223,6 +232,35 @@
         document.getElementById('period2Hidden').value = this.value;
     });
 
+    async function toggleFechaConciliacion() {
+        const concilID = document.getElementById('arhcont').value;
+        const fechaInformacion = document.getElementById('period').value;
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+        if (concilID) {
+            const response = await fetch(`/parametric/obtenerFechaCont/${concilID}/${fechaInformacion}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                }
+            });
+
+            const data = await response.json();
+
+            const campo = data[0]; // Accede directamente al primer (y único) elemento
+            if (campo === undefined) {
+                // Si no se encuentra el campo, muestra el alert
+                alert('Falta completar el maestro de inventarios');
+                return; // Sale de la función si no se encuentra el campo
+            }
+
+            const fechaCont = campo[0].split('T')[0]; // Extrae solo la fecha (año-mes-día)
+            document.getElementById('period2').value = fechaCont;
+            document.getElementById('period2Hidden').value = fechaCont;
+        }
+    }
 
    //GENERAR CONCILIACION
    //---------------------------------------------------------------------

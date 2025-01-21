@@ -16,4 +16,8 @@ public interface LogConciliationRepository extends JpaRepository<LogConciliation
     List<LogConciliation> findAllByIdConciliacionAndFechaProceso(
             Conciliation conciliacion, Date fecha);
     List<LogConciliation> findAllByUsuario(String usuario);
+
+    // Ordenar por fechaProceso de forma descendente (más reciente primero)
+    List<LogConciliation> findAllByIdConciliacionAndFechaProcesoOrderByIdDesc(
+            Conciliation conciliacion, Date fecha);
 }

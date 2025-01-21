@@ -212,12 +212,13 @@ public class ConciliationService {
 
 
 
-    public void generarConciliacion(Conciliation concil, String fecha) {
+    public void generarConciliacion(Conciliation concil, String fecha, String fechaCont, int idCont) {
         String campoCentro = concil.getCentro();
         String campoCuenta = concil.getCuenta();
         String campoDivisa = concil.getDivisa();
         String campoSaldo = concil.getSaldo();
-        String nombreTablaContable = "preciso_rc_" + concil.getRutaContable().getId();
+
+        String nombreTablaContable = "preciso_rc_" + idCont;
         String nombreTablaConciliacion = "preciso_ci_" + concil.getId();
 
         List<AccountConcil> cuentas = concil.getArregloCuentas();
@@ -239,7 +240,7 @@ public class ConciliationService {
                 .append("LEFT JOIN\n")
                 .append("(SELECT periodo_preciso AS FECHA, [" + campoCentro + "] AS CENTRO_CONTABLE, CAST([" + campoCuenta + "] AS BIGINT) AS CUENTA_CONTABLE, [" + campoDivisa + "] AS DIVISA_CUENTA, SUM(TRY_CAST([" + campoSaldo + "] AS DECIMAL(18, 2))) AS TOTAL_VALOR_CUENTA\n")
                 .append("FROM [" + nombreTablaContable + "]\n")
-                .append("WHERE periodo_preciso = '" + fecha + "' AND CAST([" + campoCuenta + "] AS BIGINT) IN (" + cuentasConcil + ")\n")
+                .append("WHERE periodo_preciso = '" + fechaCont + "' AND CAST([" + campoCuenta + "] AS BIGINT) IN (" + cuentasConcil + ")\n")
                 .append("GROUP BY periodo_preciso, [" + campoCentro + "], [" + campoCuenta + "], [" + campoDivisa + "]\n")
                 .append(") t2\n")
                 .append("ON  t1.FECHA = t2.FECHA AND t1.CENTRO_CONTABLE = t2.CENTRO_CONTABLE AND t1.CUENTA_CONTABLE = t2.CUENTA_CONTABLE AND t1.DIVISA_CUENTA = t2.DIVISA_CUENTA");
@@ -395,13 +396,8 @@ public class ConciliationService {
     public List<Object[]> findAllData(Conciliation concil, String fecha) {
 
         // Construir la consulta básica
-        StringBuilder queryBuilder = new StringBuilder("SELECT [FECHA]\n" +
-                "      ,[CENTRO_CONTABLE]\n" +
-                "      ,[CUENTA_CONTABLE]\n" +
-                "      ,[DIVISA_CUENTA]\n" +
-                "      ,[total_valor_cuenta1]\n" +
-                "      ,[total_valor_cuenta2]\n" +
-                "      ,[TOTAL]" +
+        StringBuilder queryBuilder = new StringBuilder("SELECT [FECHA], [CENTRO_CONTABLE], [CUENTA_CONTABLE], " +
+                "[DIVISA_CUENTA], [total_valor_cuenta1], [total_valor_cuenta2], [TOTAL] " +
                 "FROM preciso_conciliacion_" + concil.getId() + " WHERE FECHA = :fecha");
 
         // Crear la consulta
@@ -448,7 +444,8 @@ public class ConciliationService {
     public List<LogConciliation> findAllLog(Conciliation concil, String fecha) {
         LocalDate localDate = LocalDate.parse(fecha);
         Date fechaDate = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-        return logConciliationRepository.findAllByIdConciliacionAndFechaProceso(concil,fechaDate);
+        //return logConciliationRepository.findAllByIdConciliacionAndFechaProceso(concil,fechaDate);
+        return logConciliationRepository.findAllByIdConciliacionAndFechaProcesoOrderByIdDesc(concil,fechaDate);
     }
 
     public void loadLogConciliation(User user,int concil,String fecha, String estado, String mensaje)
@@ -479,6 +476,17 @@ public class ConciliationService {
 
         logConciliationRepository.save(insert);
     }
+
+
+    public List<Object[]> findFechaCont(int concilID, String fecha) {
+        fecha += "  00:00:00.0000000";
+        Query query = entityManager.createNativeQuery(
+                "SELECT fecha_cargue_contable, codigo_cargue_contable FROM " +
+                        "preciso_maestro_inventarios WHERE codigo_conciliacion = :concilID and fecha_conciliacion = '" + fecha + "'");
+        query.setParameter("concilID", concilID);
+        return query.getResultList();
+    }
+
 
 
 }

@@ -400,7 +400,9 @@ public class ConciliationController {
                     && params.get("period") != null && params.get("period").toString() != null
                     && params.get("period2") != null && params.get("period2").toString() != null)
             {
+                System.out.println("periodo " +params.get("period2"));
                 modelAndView.addObject("period",params.get("period").toString());
+                modelAndView.addObject("period2",params.get("period2").toString());
                 Conciliation concil = conciliationService.findById(Integer.parseInt(params.get("arhcont").toString()));
                 modelAndView.addObject("arhcont",concil);
                 colRegistros = List.of("FECHA", "CENTRO CONTABLE", "CUENTA CONTABLE","DIVISA CUENTA","SALDO INVENTARIO", "SALDO CONTABLE", "TOTAL");;
@@ -430,6 +432,7 @@ public class ConciliationController {
                 List<Integer> pagesData = IntStream.rangeClosed(1, totalPageData).boxed().collect(Collectors.toList());
                 modelAndView.addObject("pagesData",pagesData);
             }
+
             modelAndView.addObject("allLog",pageLog.getContent());
             modelAndView.addObject("allRCs",pageLogData.getContent());
             modelAndView.addObject("allColRCs",colRegistros);
@@ -443,7 +446,7 @@ public class ConciliationController {
             modelAndView.addObject("lastData",totalPageData);
             modelAndView.addObject("filterExport","Original");
             modelAndView.addObject("listConcil",listConcil);
-            modelAndView.addObject("directory","accountingLoad");
+            modelAndView.addObject("directory","generateConciliation");
             modelAndView.addObject("registers",logConciliacion.size());
             modelAndView.addObject("registersData",registros.size());
             modelAndView.addObject("userName", user.getPrimerNombre());
@@ -476,9 +479,9 @@ public class ConciliationController {
 
         System.out.println("GENERAR CONCILIACION");
         System.out.println("======================");
-        System.out.println(conciliacion.getNombre()+" "+ fecha+" "+ fechaContabilidad);
         try {
-            conciliationService.generarConciliacion(conciliacion,fecha);
+            String idCont = conciliationService.findFechaCont(id, fecha).get(0)[1].toString();
+            conciliationService.generarConciliacion(conciliacion,fecha, fechaContabilidad, Integer.valueOf(idCont));
             conciliationService.loadLogConciliation(user, id, fecha, "Exitoso", "");
             return ResponseEntity.ok("Bulk--1");
         }
@@ -492,9 +495,14 @@ public class ConciliationController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk--2");
         }
 
+    }
 
-
-
+    @GetMapping("/parametric/obtenerFechaCont/{concilID}/{fechaInformacion}")
+    @ResponseBody
+    public List<Object[]> obtenerCamposRC(@PathVariable("concilID") Integer idRCont,
+                                          @PathVariable("fechaInformacion") String fechaInformacion) {
+        List<Object[]> campos = conciliationService.findFechaCont(idRCont, fechaInformacion);
+        return campos;
     }
 
 }
