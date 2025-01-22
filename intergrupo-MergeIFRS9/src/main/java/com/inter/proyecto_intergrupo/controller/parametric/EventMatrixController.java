@@ -79,7 +79,7 @@ public class EventMatrixController {
             modelAndView.addObject("prev",page);
             modelAndView.addObject("last",totalPage);
             modelAndView.addObject("filterExport","Original");
-            modelAndView.addObject("directory","country");
+            modelAndView.addObject("directory","eventMatrix");
             modelAndView.addObject("registers",eventMatrixes.size());
             modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
@@ -274,7 +274,7 @@ public class EventMatrixController {
             modelAndView.addObject("prev",page);
             modelAndView.addObject("last",totalPage);
             modelAndView.addObject("filterExport","Original");
-            modelAndView.addObject("directory","country");
+            modelAndView.addObject("directory","eventMatrix");
             modelAndView.addObject("registers",eventMatrixes.size());
             modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
