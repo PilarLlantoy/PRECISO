@@ -240,10 +240,10 @@ public class EventMatrixController {
     @GetMapping(value = "/parametric/searchEventMatrix")
     @ResponseBody
     public ModelAndView searchEventMatrix(
-            @RequestParam(name = "selectedET") Integer  tipoEvento,
-            @RequestParam(name = "selectedConcil", defaultValue= "") Integer  concil,
-            @RequestParam(name = "selectedInv", defaultValue= "") Integer  inventario,
-            @RequestParam(name = "selectedCuenta", defaultValue= "") String cuenta,
+            @RequestParam(name = "selectedET", defaultValue= "0") Integer  tipoEvento,
+            @RequestParam(name = "selectedConcil", defaultValue= "0") Integer  concil,
+            @RequestParam(name = "selectedInv", defaultValue= "0") Integer  inventario,
+            @RequestParam(name = "selectedCuenta", defaultValue= "0") String cuenta,
             @RequestParam Map<String, Object> params
            ) {
 
@@ -279,6 +279,11 @@ public class EventMatrixController {
             modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.addObject("p_modificar", p_modificar);
+
+            modelAndView.addObject("selectedConcil1", concil);
+            modelAndView.addObject("selectedInv1", inventario);
+            modelAndView.addObject("selectedET1", tipoEvento);
+            modelAndView.addObject("selectedCuenta1", cuenta);
 
             List<EventType> allTEs = eventTypeService.findAll();
             modelAndView.addObject("allTEs", allTEs);

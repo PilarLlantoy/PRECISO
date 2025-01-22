@@ -36,33 +36,35 @@
                         <div class="form-group form-group-sm">
                             <label>Conciliacion</label>
                             <select class="form-control form-control-sm" name="selectedConcil" id="selectedConcil" onchange="toggleConciliacion()">
-                                <option disabled value="" selected hidden>Seleccione una conciliación</option>
-                                <option th:each="concil : ${allConcils}" th:value="${concil.id}" th:text="${concil.nombre}"></option>
+                                <option disabled value="0" selected hidden>Seleccione una conciliación</option>
+                                <option th:each="concil : ${allConcils}" th:value="${concil.id}" th:text="${concil.nombre}" th:selected="${concil.id != null and concil.id == selectedConcil1}"></option>
                             </select>
                         </div>
                     </div>
                     <div class="col-md-2">
                         <div class="form-group form-group-sm">
+                            <input type="hidden" id="valueInv1" name="valueInv1" th:value="${selectedInv1}">
                             <label>Inventario Conciliacion</label>
                             <select class="form-control form-control-sm" name="selectedInv" id="selectedInv" onchange="toggleInventario()">
-                                <option disabled value="" selected hidden>Seleccione un archivo</option>
+                                <option value="0" selected >Seleccione un archivo</option>
                             </select>
                         </div>
                     </div>
                     <div class="col-md-2">
                         <div class="form-group form-group-sm">
                             <label>Tipo Evento</label>
-                            <select class="form-control form-control-sm" name="selectedET" id="selectedET" required>
-                                <option disabled value="" selected hidden>Seleccione un tipo evento</option>
-                                <option th:each="TE : ${allTEs}" th:value="${TE.id}" th:text="${TE.nombre}"></option>
+                            <select class="form-control form-control-sm" name="selectedET" id="selectedET">
+                                <option  value="0" selected >Seleccione un tipo evento</option>
+                                <option th:each="TE : ${allTEs}" th:value="${TE.id}" th:text="${TE.nombre}" th:selected="${TE.id != null and TE.id == selectedET1}"></option>
                             </select>
                         </div>
                     </div>
                     <div class="col-md-2">
                         <div class="form-group form-group-sm">
                             <label>Cuentas</label>
+                            <input type="hidden" id="valueCuen1" name="valueCuen1" th:value="${selectedCuenta1}">
                             <select class="form-control form-control-sm" name="selectedCuenta" id="selectedCuenta">
-                                <option disabled value="" selected hidden>Seleccione una Cuenta</option>
+                                <option value="0" selected >Seleccione una Cuenta</option>
                             </select>
                         </div>
                     </div>
@@ -77,7 +79,7 @@
 
                     <div class="col-md-2" style="text-align: right;">
                         <a class="btn btn-sm btn-primary mx-1" th:href="@{/parametric/eventMatrix}"><i class="fas fa-redo-alt"></i></a>
-                        <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1" th:onclick="|window.location.href='@{/parametric/createEventMatrix}'|">Crear Matriz</button>
+                        <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1" type="button" th:onclick="|window.location.href='@{/parametric/createEventMatrix}'|">Crear Matriz</button>
                     </div>
 
                 </div>
@@ -184,12 +186,18 @@
             const data = await response.json();
 
             const ruta = document.getElementById('selectedInv');
-            ruta.innerHTML = '<option disabled value="" selected hidden>Seleccione un archivo</option>';
+            const valueInv = document.getElementById('valueInv1').value;
+
+            ruta.innerHTML = '<option selected value="0" >Seleccione un archivo</option>';
 
             data.forEach(campo => {
                 const optionRC = document.createElement('option');
                 optionRC.value = campo[0];
                 optionRC.text = campo[1];
+                if(campo[0] != null && campo[0] == valueInv)
+                {
+                    optionRC.selected=true;
+                }
                 ruta.appendChild(optionRC);
             });
 
@@ -215,15 +223,24 @@
             const data = await response.json();
 
             const cuentaSelect = document.getElementById('selectedCuenta');
-            cuentaSelect.innerHTML = '<option disabled value="" selected hidden>Seleccione una Cuenta</option>';
+            const valueCuen = document.getElementById('valueCuen1').value;
+            cuentaSelect.innerHTML = '<option value="0" selected>Seleccione una Cuenta</option>';
 
             data.forEach(cuenta => {
                 const option = document.createElement('option');
                 option.value = cuenta;
                 option.text = cuenta;
+                if(cuenta != null && cuenta == valueCuen)
+                {
+                    option.selected=true;
+                }
                 cuentaSelect.appendChild(option);
             });
         }
+    }
+    window.onload=function(){
+        toggleConciliacion();
+        toggleInventario();
     }
 </script>
 </body>

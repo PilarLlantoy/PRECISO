@@ -105,32 +105,34 @@ public class EventMatrixService {
         StringBuilder queryBuilder1 = new StringBuilder("SELECT pme.* FROM preciso_matriz_eventos pme " +
                 "LEFT JOIN preciso_cuentas_matriz_eventos pcm ON pcm.id_matriz_evento = pme.id WHERE tipo=1 ");
 
-        // Agregar condiciones según los parámetros para el primer query
-        if (idTipoEvento != null) {
-            queryBuilder1.append(" AND pme.id_tipo_evento = ").append(idTipoEvento);
-        }
-        if (idConciliacion != null && idTipoEvento != null) {
+        if (idConciliacion != 0) {
             queryBuilder1.append(" AND pme.id_conciliacion = ").append(idConciliacion);
         }
-        if (idInventarioConciliacion != null && idConciliacion != null && idTipoEvento != null) {
+        if (idInventarioConciliacion != 0) {
             queryBuilder1.append(" AND pme.id_inventario_conciliacion = ").append(idInventarioConciliacion);
         }
-        if (cuentaGanancia != null && !cuentaGanancia.isEmpty() && idInventarioConciliacion != null && idConciliacion != null && idTipoEvento != null) {
+        if (idTipoEvento != 0) {
+            queryBuilder1.append(" AND pme.id_tipo_evento = ").append(idTipoEvento);
+        }
+        if (cuentaGanancia != null && !cuentaGanancia.equalsIgnoreCase("0")) {
             queryBuilder1.append(" AND pcm.cuenta_ganancia = '").append(cuentaGanancia).append("'");
         }
 
         // Segundo query sin LEFT JOIN
-        StringBuilder queryBuilder2 = new StringBuilder("SELECT pme.* FROM preciso_matriz_eventos pme WHERE 1=1 ");
+        StringBuilder queryBuilder2 = new StringBuilder("SELECT pme.* FROM preciso_matriz_eventos pme " +
+                "LEFT JOIN preciso_cuentas_matriz_eventos pcm ON pcm.id_matriz_evento = pme.id WHERE tipo=2 ");
 
-        // Agregar condiciones según los parámetros para el segundo query
-        if (idTipoEvento != null) {
-            queryBuilder2.append(" AND pme.id_tipo_evento = ").append(idTipoEvento);
+        if (idConciliacion != 0) {
+            queryBuilder1.append(" AND pme.id_conciliacion = ").append(idConciliacion);
         }
-        if (idConciliacion != null && idTipoEvento != null) {
-            queryBuilder2.append(" AND pme.id_conciliacion = ").append(idConciliacion);
+        if (idInventarioConciliacion != 0) {
+            queryBuilder1.append(" AND pme.id_inventario_conciliacion = ").append(idInventarioConciliacion);
         }
-        if (idInventarioConciliacion != null && idConciliacion != null && idTipoEvento != null) {
-            queryBuilder2.append(" AND pme.id_inventario_conciliacion = ").append(idInventarioConciliacion);
+        if (idTipoEvento != 0) {
+            queryBuilder1.append(" AND pme.id_tipo_evento = ").append(idTipoEvento);
+        }
+        if (cuentaGanancia != null && !cuentaGanancia.equalsIgnoreCase("0")) {
+            queryBuilder1.append(" AND pcm.cuenta_ganancia = '").append(cuentaGanancia).append("'");
         }
 
         // Combinar ambas consultas usando UNION ALL
