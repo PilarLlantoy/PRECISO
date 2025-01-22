@@ -63,7 +63,7 @@ public class EventMatrixController {
             int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
             PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
 
-            List<EventMatrix> eventMatrixes = eventMatrixService.findAllActiveOrdered();
+            List<EventMatrix> eventMatrixes = eventMatrixService.findAllOrdered();
             int start = (int) pageRequest.getOffset();
             int end = Math.min((start + pageRequest.getPageSize()), eventMatrixes.size());
             Page<EventMatrix> pageEventMatrix = new PageImpl<>(eventMatrixes.subList(start, end), pageRequest, eventMatrixes.size());
@@ -217,8 +217,11 @@ public class EventMatrixController {
             CampoRConcil campoOperacion = campoRConcilService.findById(Integer.valueOf(idCampoOperacion));
             eventMatrix.setCampoOperacion(campoOperacion);
 
-            CampoRConcil campoContable= campoRConcilService.findById(Integer.valueOf(idCampoContable));
-            eventMatrix.setCampoCC(campoContable);
+            if(!idCampoContable.equalsIgnoreCase("N"))
+            {
+                CampoRConcil campoContable= campoRConcilService.findById(Integer.valueOf(idCampoContable));
+                eventMatrix.setCampoCC(campoContable);
+            }
 
             eventMatrixService.modificar(eventMatrix);
         }

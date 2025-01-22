@@ -44,7 +44,9 @@ public class EventMatrixService {
         return eventMatrixRepository.findByEstadoOrderByConciliacionIdAscInventarioConciliacionIdAsc(true);
     }
 
-
+    public List<EventMatrix> findAllOrdered() {
+        return eventMatrixRepository.findByOrderByConciliacionIdAscInventarioConciliacionIdAsc();
+    }
     public List<EventMatrix> findAllByEstadoAndConciliacionAndInventarioConciliacion(Conciliation concil, ConciliationRoute inv) {
         return eventMatrixRepository.findAllByEstadoAndConciliacionAndInventarioConciliacion(true, concil, inv);
     }
