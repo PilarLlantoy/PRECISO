@@ -104,8 +104,8 @@ public class EventMatrixService {
 
     public List<EventMatrix> findByParams(Integer idTipoEvento, Integer idConciliacion, Integer idInventarioConciliacion, String cuentaGanancia) {
         // Primer query con LEFT JOIN
-        StringBuilder queryBuilder1 = new StringBuilder("SELECT pme.* FROM preciso_matriz_eventos pme " +
-                "LEFT JOIN preciso_cuentas_matriz_eventos pcm ON pcm.id_matriz_evento = pme.id WHERE tipo=1 ");
+        StringBuilder queryBuilder1 = new StringBuilder("SELECT distinct pme.* FROM preciso_matriz_eventos pme " +
+                "LEFT JOIN preciso_cuentas_matriz_eventos pcm ON pcm.id_matriz_evento = pme.id WHERE tipo in (1,2) ");
 
         if (idConciliacion != 0) {
             queryBuilder1.append(" AND pme.id_conciliacion = ").append(idConciliacion);
@@ -119,32 +119,9 @@ public class EventMatrixService {
         if (cuentaGanancia != null && !cuentaGanancia.equalsIgnoreCase("0")) {
             queryBuilder1.append(" AND pcm.cuenta_ganancia = '").append(cuentaGanancia).append("'");
         }
-
-        // Segundo query sin LEFT JOIN
-        StringBuilder queryBuilder2 = new StringBuilder("SELECT pme.* FROM preciso_matriz_eventos pme " +
-                "LEFT JOIN preciso_cuentas_matriz_eventos pcm ON pcm.id_matriz_evento = pme.id WHERE tipo=2 ");
-
-        if (idConciliacion != 0) {
-            queryBuilder1.append(" AND pme.id_conciliacion = ").append(idConciliacion);
-        }
-        if (idInventarioConciliacion != 0) {
-            queryBuilder1.append(" AND pme.id_inventario_conciliacion = ").append(idInventarioConciliacion);
-        }
-        if (idTipoEvento != 0) {
-            queryBuilder1.append(" AND pme.id_tipo_evento = ").append(idTipoEvento);
-        }
-        if (cuentaGanancia != null && !cuentaGanancia.equalsIgnoreCase("0")) {
-            queryBuilder1.append(" AND pcm.cuenta_ganancia = '").append(cuentaGanancia).append("'");
-        }
-
-        // Combinar ambas consultas usando UNION ALL
-        StringBuilder combinedQuery = new StringBuilder();
-        combinedQuery.append(queryBuilder1);
-        combinedQuery.append(" UNION ");
-        combinedQuery.append(queryBuilder2);
 
         // Ejecutar la consulta combinada y devolver resultados
-        Query query = entityManager.createNativeQuery(combinedQuery.toString(), EventMatrix.class);
+        Query query = entityManager.createNativeQuery(queryBuilder1.toString(), EventMatrix.class);
         return query.getResultList();
     }
 

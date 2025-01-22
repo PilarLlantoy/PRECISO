@@ -53,7 +53,7 @@
                     <div class="col-md-2">
                         <div class="form-group form-group-sm">
                             <label>Tipo Evento</label>
-                            <select class="form-control form-control-sm" name="selectedET" id="selectedET">
+                            <select class="form-control form-control-sm" name="selectedET" id="selectedET" onchange="toggleInventario()">
                                 <option  value="0" selected >Seleccione un tipo evento</option>
                                 <option th:each="TE : ${allTEs}" th:value="${TE.id}" th:text="${TE.nombre}" th:selected="${TE.id != null and TE.id == selectedET1}"></option>
                             </select>
@@ -208,11 +208,19 @@
         const tipoEventoID = document.getElementById('selectedET').value;
         const concilID = document.getElementById('selectedConcil').value;
         const inventarioID = document.getElementById('selectedInv').value;
+        const valueInvID = document.getElementById('valueInv1').value;
+        var valueInvFin = 0;
         const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
         const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
 
-        if (tipoEventoID && concilID && inventarioID) {
-            const response = await fetch(`/parametric/obtenerCuentas/${tipoEventoID}/${concilID}/${inventarioID}`, {
+
+        if(inventarioID != 0)
+            valueInvFin= inventarioID;
+        else
+            valueInvFin= valueInvID;
+        console.log(tipoEventoID , concilID , inventarioID,valueInvID,valueInvFin);
+        if (tipoEventoID && concilID && valueInvFin) {
+            const response = await fetch(`/parametric/obtenerCuentas/${tipoEventoID}/${concilID}/${valueInvFin}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
