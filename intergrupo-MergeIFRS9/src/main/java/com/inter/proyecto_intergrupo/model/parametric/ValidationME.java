@@ -27,8 +27,8 @@ public class ValidationME {
     @Column(name = "valor_validacion")
     private String valorValidacion;
 
-    @Column(name = "aplica_formula", columnDefinition = "BIT DEFAULT 0")
-    private boolean aplicaFormula = false;
+    @Column(name = "aplica_formula", columnDefinition = "BIT DEFAULT 1")
+    private boolean aplicaFormula = true;
 
     @ManyToOne
     @JoinColumn(name = "id_campo_referencia")

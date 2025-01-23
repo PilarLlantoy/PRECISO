@@ -381,13 +381,20 @@ public class InformationCrossingService {
                     campo = obj[2].toString();
                     condicion = condicion + ") AND (";
                 }
+
                 String operacion = null;
-                if(obj[2].equals("igual")) operacion = " = '";
-                if(obj[2].equals("noContiene")) operacion = " != '";
-                if(obj[2].equals("diferente")) operacion = " != '";
-                condicion=condicion+obj[1]+operacion+obj[3].toString()+"'";//nombre condicion valor ->  PE: Divisa_entrada	= COP
+                if(obj[2].equals("igual")) operacion = " = '"+ obj[3].toString()+ "'";
+                if(obj[2].equals("diferente")) operacion = " <> '"+ obj[3].toString()+ "'";
+                if(obj[2].equals("contiene")) operacion = " LIKE '%" + obj[3].toString() + "%'";
+                if(obj[2].equals("noContiene")) operacion = " NOT LIKE '%" + obj[3].toString() + "%'";
+                if(obj[2].equals("mayorQue")) operacion = " > "+ obj[3].toString()+ "'";
+                if(obj[2].equals("menorQue")) operacion = " < "+ obj[3].toString()+ "'";
+                condicion = condicion + obj[1] + operacion ; //nombre condicion valor -> Ejemplo: Divisa_entrada = 'COP'
+
             }
-            return condicion+")";
+            condicion+=")";
+            System.out.println("CONDICION "+  condicion);
+            return condicion;
         }
         return null;
     }
