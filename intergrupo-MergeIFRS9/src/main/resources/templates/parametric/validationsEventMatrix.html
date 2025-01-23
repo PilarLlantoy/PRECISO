@@ -71,7 +71,7 @@
                         <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Afecta a:</h6>
                             <select class="form-control form-control-sm"  th:name="selectedCampoAf" id="selectedCampoAf">
-                                <option disabled selected value="">Seleccione un campo</option>
+                                <option selected value="">Seleccione un campo</option>
                                 <option th:each="campo : ${campos}" th:value="${campo[0]}" th:text="${campo[1]}"></option>
                             </select>
                         </div>
@@ -91,11 +91,11 @@
                         </div>
                     </div>
 
-                    <div class="col-md-2 hidden" id="campoContainer">
+                    <div class="col-md-2" id="campoContainer">
                         <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Campo:<i class="bi bi-caret-down"></i></h6>
                             <select class="form-control form-control-sm"  th:name="selectedCampo" id="selectedCampo">
-                                <option disabled  selected value="">Seleccione un campo</option>
+                                <option selected value="">Seleccione un campo</option>
                                 <option th:each="campo : ${campos}" th:value="${campo[0]}" th:text="${campo[1]}"></option>
                             </select>
                         </div>
@@ -104,7 +104,7 @@
                         <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Operacion:<i class="bi bi-caret-down"></i></h6>
                             <select class="form-control form-control-sm" name="selectedOperacion" id="selectedOperacion">
-                                <option disabled value="" selected >Seleccione operación</option>
+                                <option value="" selected >Seleccione operación</option>
                                 <option th:value="Suma">Suma</option>
                                 <option th:value="Resta">Resta</option>
                                 <option th:value="Multiplica">Multiplica</option>
@@ -331,16 +331,13 @@
     function toggleFieldsFormula() {
         var formulaCheckbox = document.getElementById('aplicaFormula1');
         var operacionContainer = document.getElementById('operacionContainer');
-        var campoContainer = document.getElementById('campoContainer');
 
         console.log(formulaCheckbox);
 
         if (formulaCheckbox.checked) {
             operacionContainer.classList.remove('hidden');
-            campoContainer.classList.remove('hidden');
         } else {
             operacionContainer.classList.add('hidden');
-            campoContainer.classList.add('hidden');
         }
     }
 
