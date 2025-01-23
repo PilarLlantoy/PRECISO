@@ -28,6 +28,9 @@ public class LogInformationCrossing {
     private String estadoConciliacion;
     @Column(name = "tipoProceso")
     private String tipoProceso;
+    @Column(name = "confirmarConciliacion", columnDefinition = "BIT DEFAULT 0")
+    private boolean confirmarConciliacion = false;
+    //correr: update [PRECISO].[dbo].[preciso_log_cruce_informacion] set confirmar_conciliacion = 0
     @ManyToOne
     @JoinColumn(name = "idConciliacion", nullable = false)
     private Conciliation idConciliacion;

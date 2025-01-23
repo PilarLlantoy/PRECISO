@@ -150,6 +150,24 @@ function validateAlerts(operacion,data)
                 }
             });
         }
+    else if(operacion=='Bulk->3')
+        {
+            Swal.fire({
+                position: 'center',
+                icon: 'success',
+                title: '¡Ejecución Exitosa!',
+                text: 'La generación de cuentas ya ha sido aprobada anteriormente.',
+                showConfirmButton: true,
+                allowOutsideClick: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const period = document.getElementById('period').value;
+                    const arhcont = document.getElementById('arhcont').value;
+                    const evento = document.getElementById('evento').value;
+                    window.location.href = window.location.origin + window.location.pathname + `?period=${encodeURIComponent(period)}&arhcont=${encodeURIComponent(arhcont)}&evento=${encodeURIComponent(evento)}`;
+                }
+            });
+        }
     else if(operacion=='Bulk--1')
         {
             Swal.fire({

@@ -54,6 +54,8 @@
                             <div class="invalid-feedback">Por favor, seleccione un archivo.</div>
                         </div>
 
+                        <input type="hidden" id="ultLog" name="ultLog" th:value="${ultLog != null ? ultLog[4] : 0}">
+
                         <div class="d-grid gap-2 col-3 mt-1" style="padding-left:0px">
                             <button type="submit" class="btn btn-primary">Buscar</button>
                         </div>
@@ -64,7 +66,8 @@
                     <h2>Opciones</h2>
                     <div>
                         <div class="d-grid gap-2 col-3 mt-1" style="padding-left:0px">
-                            <button th:disabled="${!p_modificar}" class="btn btn-primary"
+                            <button class="btn btn-primary"
+                                    th:disabled="${!p_modificar or (ultLog != null and ultLog[3] == true)}"
                                     th:onclick="|generarCuentas()|" type="button">Generar Cuentas</button>
                         </div>
                         <div class="d-grid gap-2 col-3 mt-1" style="padding-left:0px">
@@ -80,7 +83,10 @@
                                     th:onclick="|validarYSubir()|" type="button">Exportar Novedades</button>
                         </div>
                         <div class="d-grid gap-2 col-3 mt-1" style="padding-left:0px">
-                            <button th:disabled="${!p_modificar}" class="btn btn-primary"
+                            <button class="btn btn-primary"
+                                    th:disabled="${!p_modificar or (ultLog != null and ultLog[3] == true) or ultLog==null}"
+                                    data-toggle="modal"
+                                    data-target="#confirmarModal"
                                     th:onclick="|validarYSubir()|" type="button">Confirmar Conciliación</button>
                         </div>
                     </div>
@@ -190,8 +196,40 @@
             </div>
         </div>
 
+        <!-- Modal -->
+        <div class="modal fade" id="confirmarModal" tabindex="-1" role="dialog" aria-labelledby="confirmarModal" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title" id="exampleModalLabel">Confirmar Proceso</h2>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        ¿Estás seguro de confirmar el proceso?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary btn-sm" th:onclick="confirmarConciliacion()" data-dismiss="modal">
+                            Confirmar
+                        </button>
+                        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
+
+<!-- Bootstrap JS and dependencies -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
 
     //GENERAR CUENTAS
@@ -293,6 +331,26 @@
         .catch(error => {
             console.error("Error:", error);
         });
+    }
+
+    function confirmarConciliacion(){
+        const valueCuen = document.getElementById('ultLog').value;
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+        var url = '/parametric/confirmarParaConciliacion/' + valueCuen;
+
+        // Realizar la solicitud POST con el token CSRF
+        $.post(url, {_csrf: csrfToken})
+            .done(function(response) {
+                if (response === false) {
+                    $('#errorModal').modal('show');
+                }
+                else location.reload();
+            })
+            .fail(function(xhr, status, error) {
+                console.error("Ocurrió un error al enviar la solicitud POST: " + error);
+            });
     }
 
     /*

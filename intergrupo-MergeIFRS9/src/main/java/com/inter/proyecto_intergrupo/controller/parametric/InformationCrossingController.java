@@ -1,4 +1,5 @@
 package com.inter.proyecto_intergrupo.controller.parametric;
+import com.inter.proyecto_intergrupo.model.admin.Cargo;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.inter.proyecto_intergrupo.model.admin.User;
@@ -18,10 +19,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -98,6 +96,9 @@ public class InformationCrossingController {
             List<String> colDatos = new ArrayList<>();
             List<LogInformationCrossing> logCruces = new ArrayList<>();
 
+            //El ultimo log de la fecha, conciliacion y tipo evento registrado
+            Object[] ultLog = null;
+
             if(params.get("arhcont") != null && params.get("arhcont").toString() != null
                     && params.get("period") != null && params.get("period").toString() != null
                     && params.get("evento") != null && params.get("evento").toString() != null)
@@ -109,6 +110,8 @@ public class InformationCrossingController {
                 modelAndView.addObject("arhcont",concil);
                 modelAndView.addObject("evento",evento);
                 logCruces = informationCrossingService.findAllLog(concil,params.get("period").toString(), evento);
+
+                ultLog = informationCrossingService.findLatestLog(params.get("period").toString(),concil.getId(), evento.getId());
 
                 CampoRC crc= new CampoRC();
                 crc.setNombre("periodo_preciso");
@@ -161,6 +164,7 @@ public class InformationCrossingController {
             modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.addObject("p_modificar", p_modificar);
+            modelAndView.addObject("ultLog", ultLog);
             modelAndView.setViewName("parametric/informationCrossing");
         }
         else
@@ -187,6 +191,13 @@ public class InformationCrossingController {
         System.out.println(listRoutes.size());
         List<Object[]> croutes = new ArrayList<>();
         List<String> faltaCarga = new ArrayList<>();
+
+        Boolean ultLog = (Boolean) informationCrossingService.findLatestLog(fecha, id, evento)[3];
+
+        System.out.println("ES APLICADO "+ultLog);
+        if(ultLog){
+            return ResponseEntity.ok("Bulk->3");
+        }
 
         List<LogInventoryLoad> logConcilroutes = new ArrayList<>();
         try {
@@ -264,7 +275,29 @@ public class InformationCrossingController {
             informationCrossingService.loadLogInformationCrossing(user, id, evento, fecha, "Generar Cuentas", "Fallido",rootCause.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk->2");
         }
+
     }
+
+    @PostMapping(value = "/parametric/confirmarParaConciliacion/{id}")
+    public  ResponseEntity<Boolean>  confirmarParaConciliacion(@PathVariable int id) {
+        System.out.println(id);
+
+        try {
+            if ( id==0) {
+                System.out.println("Id incorrecto para cruce de informacion");
+                return ResponseEntity.ok(false);
+            }
+            informationCrossingService.confirmarConciliacion(id);
+            return ResponseEntity.ok(true);
+        } catch (Exception e) {
+            // Manejar excepciones
+            System.out.println("Error al confirmar conciliacion: " + e.getMessage());
+            return ResponseEntity.ok(false);
+        }
+    }
+
+
+
 
 
 }

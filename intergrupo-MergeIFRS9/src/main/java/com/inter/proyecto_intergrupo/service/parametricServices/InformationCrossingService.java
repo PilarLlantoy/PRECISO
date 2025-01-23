@@ -1,5 +1,6 @@
 package com.inter.proyecto_intergrupo.service.parametricServices;
 
+import com.inter.proyecto_intergrupo.model.admin.ControlPanelIfrs;
 import com.inter.proyecto_intergrupo.model.admin.User;
 import com.inter.proyecto_intergrupo.model.parametric.*;
 import com.inter.proyecto_intergrupo.repository.admin.AuditRepository;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 import javax.persistence.Query;
@@ -20,6 +22,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -435,55 +438,6 @@ public class InformationCrossingService {
     }
 
 
-   /* public List<Object[]> conditionDataSelect(ConciliationRoute data, int idConcil){
-        String nombreTabla = "preciso_ci_"+idConcil+"_"+data.getId();
-
-        Query querySelect = entityManager.createNativeQuery("SELECT\n" +
-                "\t\ta.id_campo,\n" +
-                "\t\tc.nombre,\n" +
-                "\t\ta.condicion,\n" +
-                "\t\ta.valor_condicion\t  \n" +
-                "  FROM [PRECISO].[dbo].[preciso_condiciones_matriz_evento] a\n" +
-                "  left join [PRECISO].[dbo].[preciso_matriz_eventos] b\n" +
-                "\ton a.id_matriz = b.id\n" +
-                "  left join [PRECISO].[dbo].[preciso_campos_rconcil] c\n" +
-                "\ton a.id_matriz = b.id \n" +
-                "\tand a.id_campo = c.id_campo\n" +
-                "  where b.id_inventario_conciliacion = ? \n" +
-                "    and a.estado=1 \n" +
-                "  order by a.id_campo\n");
-        querySelect.setParameter(1,data.getId());
-
-        List<Object[]> condicionesLista = querySelect.getResultList();
-        if(!condicionesLista.isEmpty()){
-            String condicion = "(";
-            String campo = condicionesLista.get(0)[2].toString();
-            for(Object[] obj : condicionesLista){
-                if(campo.equals(obj[2]) && !condicion.equals("(")){
-                    condicion = condicion + " OR ";
-                }
-                else if(!condicion.equals("(")){
-                    campo = obj[2].toString();
-                    condicion = condicion + ") AND (";
-                }
-                String operacion = null;
-                if(obj[2].equals("igual")) operacion = " = '";
-                if(obj[2].equals("noContiene")) operacion = " != '";
-                if(obj[2].equals("diferente")) operacion = " != '";
-
-                condicion=condicion+obj[1]+operacion+obj[3].toString()+"'";//nombre condicion valor ->  PE: Divisa_entrada	= COP
-            }
-
-            Query query = entityManager.createNativeQuery("SELECT * FROM "+nombreTabla+" WHERE ("+ condicion +"));");
-
-            return query.getResultList();
-
-        }
-        return null;
-
-    }
-
-    */
 
     public List<Object[]> findAllData(Conciliation concil, String fecha, EventType evento) {
         List<ConciliationRoute> listRoutes = conciliationRouteService.getRoutesByConciliation(concil.getId()); // RUTAS CONCILIACIONES
@@ -538,6 +492,39 @@ public class InformationCrossingService {
         }
 
         return processedList;
+    }
+
+    public Object[] findLatestLog(String fechaPreciso, int idConciliacion, int idEvento) {
+        StringBuilder queryBuilder = new StringBuilder();
+
+        queryBuilder.append("SELECT TOP 1 fecha_preciso, id_conciliacion, id_evento, confirmar_conciliacion, id_lci ")
+                .append("FROM preciso_log_cruce_informacion ")
+                .append("WHERE fecha_proceso LIKE '")
+                .append(fechaPreciso).append("%' ")  // Insertamos el valor real
+                .append("AND id_evento = ")
+                .append(idEvento).append(" ")  // Insertamos el valor real
+                .append("AND id_conciliacion = ")
+                .append(idConciliacion).append(" ")
+                .append("ORDER BY fecha_preciso DESC");
+
+        // Imprimir el query con los valores ya insertados
+        System.out.println("QUERY COMPLETO: " + queryBuilder.toString());
+
+        // Crear la consulta con parámetros dinámicos (más seguro)
+        Query querySelect = entityManager.createNativeQuery(queryBuilder.toString());
+
+        try {
+            return (Object[]) querySelect.getSingleResult(); // Retorna el único resultado esperado
+        } catch (NoResultException e) {
+            return null; // Retorna null si no encuentra nada
+        }
+    }
+
+    public void confirmarConciliacion(int id){
+        Query query = entityManager.createNativeQuery("UPDATE preciso_log_cruce_informacion SET confirmar_conciliacion = 1 , tipo_proceso='Confirmada para conciliación'" +
+                "WHERE id_lci = ?");
+        query.setParameter(1, id);
+        query.executeUpdate();
     }
 
 
