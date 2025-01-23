@@ -395,16 +395,32 @@ public class ConciliationService {
 
     public List<Object[]> findAllData(Conciliation concil, String fecha) {
 
-        // Construir la consulta básica
-        StringBuilder queryBuilder = new StringBuilder("SELECT [FECHA], [CENTRO_CONTABLE], [CUENTA_CONTABLE], " +
-                "[DIVISA_CUENTA], [total_valor_cuenta1], [total_valor_cuenta2], [TOTAL] " +
-                "FROM preciso_conciliacion_" + concil.getId() + " WHERE FECHA = :fecha");
+        try {
+            // Construir la consulta básica
+            StringBuilder queryBuilder = new StringBuilder("IF EXISTS (SELECT 1 " +
+                    "FROM INFORMATION_SCHEMA.TABLES " +
+                    "WHERE TABLE_NAME = 'preciso_conciliacion_"+concil.getId()+"') " +
+                    "BEGIN " +
+                    "SELECT [FECHA], [CENTRO_CONTABLE], [CUENTA_CONTABLE], " +
+                    "[DIVISA_CUENTA], [total_valor_cuenta1], [total_valor_cuenta2], [TOTAL] " +
+                    "FROM preciso_conciliacion_" + concil.getId() + " WHERE FECHA = :fecha " +
+                    "END\n" +
+                    "ELSE\n" +
+                    "BEGIN\n" +
+                    "    SELECT NULL AS FECHA_CONCILIACION \n" +
+                    "    WHERE 1 = 0; \n" +
+                    "END");
 
-        // Crear la consulta
-        Query querySelect = entityManager.createNativeQuery(queryBuilder.toString());
-        querySelect.setParameter("fecha", fecha);
+            // Crear la consulta
+            Query querySelect = entityManager.createNativeQuery(queryBuilder.toString());
+            querySelect.setParameter("fecha", fecha);
 
-        return querySelect.getResultList();
+            return querySelect.getResultList();
+        }
+        catch (Exception e)
+        {
+            return new ArrayList<>();
+        }
     }
 
     public List<Object[]> processList(List<Object[]> datos, List<String> colAroutes) {

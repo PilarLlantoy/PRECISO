@@ -115,7 +115,7 @@ public class InformationCrossingController {
 
                 CampoRC crc= new CampoRC();
                 crc.setNombre("periodo_preciso");
-                colDatos =List.of("FECHA CONCILIACION", "CENTRO CONTABLE", "CUENTA CONTABLE","DIVISA","SALDO INVENTARIO", "TIPO EVENTO");;
+                colDatos =List.of("FECHA CONCILIACION", "CENTRO CONTABLE", "CUENTA CONTABLE","DIVISA","SALDO INVENTARIO", "TIPO EVENTO");
                 datos = informationCrossingService.processList(informationCrossingService.findAllData(concil, fecha, evento), colDatos);
                 colDatos =List.of("FECHA CONCILIACION", "CENTRO CONTABLE", "CUENTA CONTABLE","DIVISA","SALDO INVENTARIO");
             }
@@ -192,7 +192,12 @@ public class InformationCrossingController {
         List<Object[]> croutes = new ArrayList<>();
         List<String> faltaCarga = new ArrayList<>();
 
-        Boolean ultLog = (Boolean) informationCrossingService.findLatestLog(fecha, id, evento)[3];
+
+        Object[] result = informationCrossingService.findLatestLog(fecha, id, evento);
+
+        Boolean ultLog = result != null && result.length > 3 && result[3] instanceof Boolean
+                ? (Boolean) result[3]
+                : false;
 
         System.out.println("ES APLICADO "+ultLog);
         if(ultLog){

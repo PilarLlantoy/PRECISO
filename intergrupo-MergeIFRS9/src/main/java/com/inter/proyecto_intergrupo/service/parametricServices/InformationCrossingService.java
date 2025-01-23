@@ -447,24 +447,42 @@ public class InformationCrossingService {
 
 
     public List<Object[]> findAllData(Conciliation concil, String fecha, EventType evento) {
-        List<ConciliationRoute> listRoutes = conciliationRouteService.getRoutesByConciliation(concil.getId()); // RUTAS CONCILIACIONES
-        StringBuilder queryBuilder = new StringBuilder("");
-        String nombreTabla = "preciso_ci_" + concil.getId() ;
-        queryBuilder.append("SELECT FECHA_CONCILIACION, CENTRO_CONTABLE, CUENTA_CONTABLE, DIVISA_CUENTA, sum([TOTAL_VALOR_CUENTA]) AS TOTAL_VALOR_CUENTA " +
-                "FROM " + nombreTabla + " " +
-                "WHERE FECHA_CONCILIACION = :fecha AND TIPO_EVENTO = :tipoEvento " +  // Corregido el espacio
-                "GROUP BY [FECHA_CONCILIACION], [CENTRO_CONTABLE], [CUENTA_CONTABLE], [DIVISA_CUENTA], TIPO_EVENTO");
+        List<Object[]>list = new ArrayList<>();
+        try {
+            List<ConciliationRoute> listRoutes = conciliationRouteService.getRoutesByConciliation(concil.getId()); // RUTAS CONCILIACIONES
+            StringBuilder queryBuilder = new StringBuilder("");
+            String nombreTabla = "preciso_ci_" + concil.getId();
+            queryBuilder.append("IF EXISTS (SELECT 1 \n" +
+                    "           FROM INFORMATION_SCHEMA.TABLES \n" +
+                    "           WHERE TABLE_NAME = '"+nombreTabla+"')\n" +
+                    "BEGIN " +
+                    "SELECT FECHA_CONCILIACION, CENTRO_CONTABLE, CUENTA_CONTABLE, DIVISA_CUENTA, sum([TOTAL_VALOR_CUENTA]) AS TOTAL_VALOR_CUENTA " +
+                    "FROM " + nombreTabla + " " +
+                    "WHERE FECHA_CONCILIACION = :fecha AND TIPO_EVENTO = :tipoEvento " +  // Corregido el espacio
+                    "GROUP BY [FECHA_CONCILIACION], [CENTRO_CONTABLE], [CUENTA_CONTABLE], [DIVISA_CUENTA], TIPO_EVENTO");
 
-        queryBuilder.append(" ORDER BY FECHA_CONCILIACION, CENTRO_CONTABLE, CUENTA_CONTABLE, DIVISA_CUENTA, TIPO_EVENTO");
+            queryBuilder.append(" ORDER BY FECHA_CONCILIACION, CENTRO_CONTABLE, CUENTA_CONTABLE, DIVISA_CUENTA, TIPO_EVENTO; END " +
+                    "ELSE\n" +
+                    "BEGIN\n" +
+                    "    SELECT NULL AS FECHA_CONCILIACION, NULL AS CENTRO_CONTABLE, NULL AS CUENTA_CONTABLE, \n" +
+                    "           NULL AS DIVISA_CUENTA, NULL AS TOTAL_VALOR_CUENTA\n" +
+                    "    WHERE 1 = 0;\n" +
+                    "END");
 
-        // Crear la consulta
-        Query querySelect = entityManager.createNativeQuery(queryBuilder.toString());
+            // Crear la consulta
+            Query querySelect = entityManager.createNativeQuery(queryBuilder.toString());
 
-        // Establecer el parámetro de fecha
-        querySelect.setParameter("fecha", fecha);
-        querySelect.setParameter("tipoEvento", evento.getNombre());
+            // Establecer el parámetro de fecha
+            querySelect.setParameter("fecha", fecha);
+            querySelect.setParameter("tipoEvento", evento.getNombre());
+            list= querySelect.getResultList();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return list;
 
-        return querySelect.getResultList();
     }
 
 
