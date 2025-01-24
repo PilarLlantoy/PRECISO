@@ -1,10 +1,7 @@
 package com.inter.proyecto_intergrupo.service.parametricServices;
 
 import com.inter.proyecto_intergrupo.model.admin.Cargo;
-import com.inter.proyecto_intergrupo.model.parametric.AccountingRoute;
-import com.inter.proyecto_intergrupo.model.parametric.CampoRC;
-import com.inter.proyecto_intergrupo.model.parametric.CampoRConcil;
-import com.inter.proyecto_intergrupo.model.parametric.ConciliationRoute;
+import com.inter.proyecto_intergrupo.model.parametric.*;
 import com.inter.proyecto_intergrupo.repository.admin.AuditRepository;
 import com.inter.proyecto_intergrupo.repository.parametric.CampoRCRepository;
 import com.inter.proyecto_intergrupo.repository.parametric.CampoRConcilRepository;
@@ -91,6 +88,14 @@ public class CampoRConcilService {
                 "WHERE  nv.visualizacion=1 and nv.estado=1 and b.nombre = :principal");
         validate.setParameter("principal", principal);
         return validate.getResultList();
+    }
+
+    public Integer findConsecutivo(EventMatrix matrixExists)
+    {
+        Query validate = entityManager.createNativeQuery("select isnull(max(consecutivo),0) from preciso_matriz_eventos where id_conciliacion = ? and id_inventario_conciliacion =  ? ");
+        validate.setParameter(1,matrixExists.getConciliacion().getId());
+        validate.setParameter(2,matrixExists.getInventarioConciliacion().getId());
+        return (Integer) validate.getSingleResult();
     }
 
     public List<String> validatePrincipal2(String principal) {

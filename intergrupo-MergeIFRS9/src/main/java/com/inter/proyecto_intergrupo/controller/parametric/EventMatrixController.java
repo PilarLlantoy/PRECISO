@@ -184,7 +184,7 @@ public class EventMatrixController {
                 eventMatrix.setCampoCC(campoContable);
             }
 
-
+            eventMatrix.setConsecutivo(campoRConcilService.findConsecutivo(eventMatrix)+1);
             eventMatrixService.modificar(eventMatrix);
         }
         return modelAndView;

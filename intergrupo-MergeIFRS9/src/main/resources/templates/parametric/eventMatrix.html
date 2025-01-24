@@ -107,7 +107,7 @@
                     <tr th:each="event : ${allEvents}">
                         <td th:text="${event.conciliacion.nombre}"></td>
                         <td th:text="${event.inventarioConciliacion.detalle}"></td>
-                        <td th:text="${event.id}"></td>
+                        <td th:text="${event.consecutivo}"></td>
                         <td th:text="${event.tipoEvento.nombre}"></td>
                         <td th:text="${@accountEventMatrixService.findByMatrizEventoTipo1(event)?.cuentaGanancia ?: ''}"></td>
                         <td th:text="${@accountEventMatrixService.findByMatrizEventoTipo2(event)?.cuentaGanancia ?: ''}"></td>

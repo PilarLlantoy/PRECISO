@@ -475,7 +475,7 @@ public class ConciliationController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
         Conciliation conciliacion = conciliationService.findById(id);
-        EventType evento = eventTypeService.findByName("Conciliación").get(0);
+        //EventType evento = eventTypeService.findByName("Conciliación").get(0);
 
         System.out.println("GENERAR CONCILIACION");
         System.out.println("======================");

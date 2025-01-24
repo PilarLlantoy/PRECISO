@@ -199,14 +199,14 @@ public class ConciliationService {
 
     public String generarCadenaDeCuentas(List<AccountConcil> cuentas) {
         StringBuilder sb = new StringBuilder();
-
+        sb.append("'");
         for (int i = 0; i < cuentas.size(); i++) {
             sb.append(cuentas.get(i).getValor()); // Asumiendo que getValor() devuelve un String o número
             if (i < cuentas.size() - 1) {
-                sb.append(", "); // Agrega una coma solo si no es el último elemento
+                sb.append("', '"); // Agrega una coma solo si no es el último elemento
             }
         }
-
+        sb.append("'");
         return sb.toString();
     }
 
@@ -234,13 +234,13 @@ public class ConciliationService {
                 .append("FROM \n")
                 .append("(SELECT [FECHA_CONCILIACION] AS FECHA, [CENTRO_CONTABLE], [CUENTA_CONTABLE], DIVISA_CUENTA, SUM([TOTAL_VALOR_CUENTA]) AS TOTAL_VALOR_CUENTA\n")
                 .append("FROM [" + nombreTablaConciliacion + "]\n")
-                .append("WHERE [FECHA_CONCILIACION] = '" + fecha + "' AND CAST([CUENTA_CONTABLE] AS BIGINT) IN (" + cuentasConcil + ")\n")
+                .append("WHERE [FECHA_CONCILIACION] = '" + fecha + "' AND [CUENTA_CONTABLE] IN (" + cuentasConcil + ")\n")
                 .append("GROUP BY [FECHA_CONCILIACION], [CENTRO_CONTABLE], [CUENTA_CONTABLE], [DIVISA_CUENTA]\n")
                 .append(") t1\n")
                 .append("LEFT JOIN\n")
-                .append("(SELECT periodo_preciso AS FECHA, [" + campoCentro + "] AS CENTRO_CONTABLE, CAST([" + campoCuenta + "] AS BIGINT) AS CUENTA_CONTABLE, [" + campoDivisa + "] AS DIVISA_CUENTA, SUM(TRY_CAST([" + campoSaldo + "] AS DECIMAL(18, 2))) AS TOTAL_VALOR_CUENTA\n")
+                .append("(SELECT periodo_preciso AS FECHA, [" + campoCentro + "] AS CENTRO_CONTABLE, [" + campoCuenta + "] AS CUENTA_CONTABLE, [" + campoDivisa + "] AS DIVISA_CUENTA, SUM(TRY_CAST([" + campoSaldo + "] AS DECIMAL(18, 2))) AS TOTAL_VALOR_CUENTA\n")
                 .append("FROM [" + nombreTablaContable + "]\n")
-                .append("WHERE periodo_preciso = '" + fechaCont + "' AND CAST([" + campoCuenta + "] AS BIGINT) IN (" + cuentasConcil + ")\n")
+                .append("WHERE periodo_preciso = '" + fechaCont + "' AND [" + campoCuenta + "]  IN (" + cuentasConcil + ")\n")
                 .append("GROUP BY periodo_preciso, [" + campoCentro + "], [" + campoCuenta + "], [" + campoDivisa + "]\n")
                 .append(") t2\n")
                 .append("ON  t1.FECHA = t2.FECHA AND t1.CENTRO_CONTABLE = t2.CENTRO_CONTABLE AND t1.CUENTA_CONTABLE = t2.CUENTA_CONTABLE AND t1.DIVISA_CUENTA = t2.DIVISA_CUENTA");

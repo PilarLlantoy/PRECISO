@@ -17,6 +17,9 @@ public class EventMatrix {
     @Column(name = "id")
     private int id; //Matriz
 
+    @Column(name = "consecutivo")
+    private int consecutivo;
+
     @ManyToOne
     @JoinColumn(name = "id_conciliacion", nullable = false)
     private Conciliation conciliacion;

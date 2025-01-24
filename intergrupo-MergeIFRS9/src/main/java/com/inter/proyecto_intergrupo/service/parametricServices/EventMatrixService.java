@@ -105,7 +105,7 @@ public class EventMatrixService {
     public List<EventMatrix> findByParams(Integer idTipoEvento, Integer idConciliacion, Integer idInventarioConciliacion, String cuentaGanancia) {
         // Primer query con LEFT JOIN
         StringBuilder queryBuilder1 = new StringBuilder("SELECT distinct pme.* FROM preciso_matriz_eventos pme " +
-                "LEFT JOIN preciso_cuentas_matriz_eventos pcm ON pcm.id_matriz_evento = pme.id WHERE tipo in (1,2) ");
+                "LEFT JOIN preciso_cuentas_matriz_eventos pcm ON pcm.id_matriz_evento = pme.id WHERE 1=1 ");
 
         if (idConciliacion != 0) {
             queryBuilder1.append(" AND pme.id_conciliacion = ").append(idConciliacion);

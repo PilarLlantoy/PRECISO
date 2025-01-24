@@ -303,11 +303,6 @@ public class InformationCrossingService {
                                     AccountEventMatrix cuenta2,
                                     String condicion) {
 
-        if(condicion==null){
-            System.out.println("NO SE HAN LLENADO LAS CONDICIONES");
-            return;
-        }
-
         String valorCuenta = null;
         if (cuenta2 != null && cuenta2.getCampoValorCuenta() != null) {
             valorCuenta = cuenta2.getCampoValorCuenta().getNombre();
@@ -333,7 +328,9 @@ public class InformationCrossingService {
             queryBuilder.append("VALOR_CUENTA_2 = ").append(valorCuenta).append(" ");
         }
 
-        queryBuilder.append(" WHERE "+condicion);
+        if(condicion!=null){
+            queryBuilder.append(" WHERE "+condicion);
+        }
 
         // Completar la consulta
         String query = queryBuilder.toString();
