@@ -48,5 +48,9 @@ public class AccountConcilService {
        return cuenta;
     }
 
+    public void eliminar(int idCuenta) {
+        accountConcilRepository.deleteById(idCuenta);
+    }
+
 
 }

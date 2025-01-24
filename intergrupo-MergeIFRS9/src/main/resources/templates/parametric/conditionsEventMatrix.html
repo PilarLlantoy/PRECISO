@@ -51,12 +51,16 @@
                             <h6 class="font-weight-bold">Condición:<i class="bi bi-caret-down"></i></h6>
                             <select class="form-control form-control-sm" name="selectedOperacion" id="selectedOperacion" required>
                                 <option disabled value="" selected hidden>Seleccione operación</option>
-                                <option th:value="igual">Igual a</option>
-                                <option th:value="diferente">Diferente a</option>
+                                <option th:value="agrupa">Agrupa</option>
                                 <option th:value="contiene">Contiene</option>
-                                <option th:value="noContiene">No Contiene</option>
+                                <option th:value="diferente">Diferente a</option>
+                                <option th:value="igual">Igual a</option>
+                                <option th:value="mayorIgualQue">Mayor Igual Que</option>
                                 <option th:value="mayorQue">Mayor Que</option>
+                                <option th:value="menorIgualQue">Menor Igual Que</option>
                                 <option th:value="menorQue">Menor Que</option>
+                                <option th:value="noAgrupa">No Agrupa</option>
+                                <option th:value="noContiene">No Contiene</option>
                             </select>
                         </div>
                     </div>
@@ -102,12 +106,16 @@
                     <tbody>
                     <tr th:each="cond : ${allCondiciones}">
                         <td th:text="${cond.campo.nombre}"></td>
-                        <td th:if="${cond.condicion == 'igual'}">Igual a</td>
-                        <td th:if="${cond.condicion == 'diferente'}" >Diferente a</td>
+                        <td th:if="${cond.condicion == 'agrupa'}">Agrupa</td>
                         <td th:if="${cond.condicion == 'contiene'}" >Contiene</td>
-                        <td th:if="${cond.condicion == 'noContiene'}" >No Contiene</td>
+                        <td th:if="${cond.condicion == 'diferente'}" >Diferente a</td>
+                        <td th:if="${cond.condicion == 'igual'}">Igual a</td>
+                        <td th:if="${cond.condicion == 'mayorIgualQue'}" >Mayor Igual Que</td>
                         <td th:if="${cond.condicion == 'mayorQue'}" >Mayor Que</td>
+                        <td th:if="${cond.condicion == 'menorIgualQue'}" >Menor Igual Que</td>
                         <td th:if="${cond.condicion == 'menorQue'}" >Menor Que</td>
+                        <td th:if="${cond.condicion == 'noAgrupa'}">No Agrupa</td>
+                        <td th:if="${cond.condicion == 'noContiene'}" >No Contiene</td>
                         <td th:text="${cond.valorCondicion}"></td>
                         <td>
                             <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"

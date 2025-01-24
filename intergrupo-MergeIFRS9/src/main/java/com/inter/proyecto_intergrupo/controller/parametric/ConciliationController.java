@@ -288,9 +288,7 @@ public class ConciliationController {
     public ModelAndView deleteAccountConcil(@PathVariable int idConcil, @PathVariable int idCuenta){
         ModelAndView modelAndView = new ModelAndView("redirect:/parametric/accountsConciliation/"+idConcil);
         try {
-            AccountConcil cuenta = accountConcilService.findById(idCuenta);
-            cuenta.setEstado(false);
-            accountConcilService.modificar(cuenta);
+            accountConcilService.eliminar(idCuenta);
         }
         catch (Exception e) {
             e.printStackTrace();

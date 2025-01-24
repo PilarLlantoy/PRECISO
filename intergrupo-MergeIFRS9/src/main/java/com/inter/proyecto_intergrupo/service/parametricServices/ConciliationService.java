@@ -24,10 +24,7 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -197,17 +194,54 @@ public class ConciliationService {
 
     }
 
-    public String generarCadenaDeCuentas(List<AccountConcil> cuentas) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("'");
+    public static Map<String, String> separarCuentas(List<AccountConcil> cuentas) {
+        List<String> valoresExactos = new ArrayList<>();
+        List<String> patronesLike = new ArrayList<>();
+
         for (int i = 0; i < cuentas.size(); i++) {
-            sb.append(cuentas.get(i).getValor()); // Asumiendo que getValor() devuelve un String o número
-            if (i < cuentas.size() - 1) {
-                sb.append("', '"); // Agrega una coma solo si no es el último elemento
-            }
+
+            if (cuentas.get(i).getValor().contains("%"))
+                patronesLike.add(cuentas.get(i).getValor());
+            else
+                valoresExactos.add(cuentas.get(i).getValor());
         }
-        sb.append("'");
-        return sb.toString();
+
+        // Construir las cadenas formateadas
+        String valoresExactosStr = String.join(", ", valoresExactos);
+        String patronesLikeStr = String.join(", ", patronesLike);
+
+        Map<String, String> resultado = new HashMap<>();
+        resultado.put("valoresExactos", valoresExactosStr);
+        resultado.put("patronesLike", patronesLikeStr);
+
+        return resultado;
+    }
+
+    private String construirCondicionSQL(String campo, Map<String, String> resultado) {
+        List<String> condiciones = new ArrayList<>();
+
+        // Agregar valores exactos si existen (asegurando comillas simples)
+        if (!resultado.get("valoresExactos").isEmpty()) {
+            String[] valoresExactosArray = resultado.get("valoresExactos").split(", ");
+            List<String> valoresExactosConComillas = new ArrayList<>();
+            for (String valor : valoresExactosArray) {
+                valoresExactosConComillas.add("'" + valor + "'");
+            }
+            condiciones.add("CAST([" + campo + "] AS BIGINT) IN (" + String.join(", ", valoresExactosConComillas) + ")");
+        }
+
+        // Agregar patrones LIKE si existen (asegurando comillas simples)
+        if (!resultado.get("patronesLike").isEmpty()) {
+            String[] patrones = resultado.get("patronesLike").split(", ");
+            List<String> likes = new ArrayList<>();
+            for (String patron : patrones) {
+                likes.add("[" + campo + "] LIKE '" + patron + "'");
+            }
+            condiciones.add(String.join(" OR ", likes));
+        }
+
+        // Unir ambas condiciones con OR si existen ambas
+        return String.join(" OR ", condiciones);
     }
 
 
@@ -222,35 +256,44 @@ public class ConciliationService {
         String nombreTablaConciliacion = "preciso_ci_" + concil.getId();
 
         List<AccountConcil> cuentas = concil.getArregloCuentas();
-        String cuentasConcil = generarCadenaDeCuentas(cuentas); // Genera cadena "101, 102, 103"
-        System.out.println(cuentasConcil);
 
+        // Separar valores exactos y patrones
+        Map<String, String> resultado = separarCuentas(cuentas);
+
+        System.out.println("Valores exactos: " + resultado.get("valoresExactos"));
+        System.out.println("Patrones: " + resultado.get("patronesLike"));
+
+        // Construcción de las condiciones dinámicas
+        String condicionCuentaConcil = construirCondicionSQL("CUENTA_CONTABLE", resultado);
+        String condicionCuentaContable = construirCondicionSQL(campoCuenta, resultado);
+
+        // Construcción de la consulta
         StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append("SELECT \n")
                 .append("t1.FECHA, t1.CENTRO_CONTABLE, t1.CUENTA_CONTABLE, t1.DIVISA_CUENTA, " +
                         "t1.TOTAL_VALOR_CUENTA AS total_valor_cuenta1, " +
-                        "COALESCE(t2.TOTAL_VALOR_CUENTA,0) AS total_valor_cuenta2," +
-                        "t1.TOTAL_VALOR_CUENTA-COALESCE(t2.TOTAL_VALOR_CUENTA,0) AS TOTAL\n")
+                        "COALESCE(t2.TOTAL_VALOR_CUENTA,0) AS total_valor_cuenta2, " +
+                        "t1.TOTAL_VALOR_CUENTA - COALESCE(t2.TOTAL_VALOR_CUENTA,0) AS TOTAL\n")
                 .append("FROM \n")
                 .append("(SELECT [FECHA_CONCILIACION] AS FECHA, [CENTRO_CONTABLE], [CUENTA_CONTABLE], DIVISA_CUENTA, SUM([TOTAL_VALOR_CUENTA]) AS TOTAL_VALOR_CUENTA\n")
                 .append("FROM [" + nombreTablaConciliacion + "]\n")
-                .append("WHERE [FECHA_CONCILIACION] = '" + fecha + "' AND [CUENTA_CONTABLE] IN (" + cuentasConcil + ")\n")
+                .append("WHERE [FECHA_CONCILIACION] = '" + fecha + "' AND (" + condicionCuentaConcil + ")\n")
                 .append("GROUP BY [FECHA_CONCILIACION], [CENTRO_CONTABLE], [CUENTA_CONTABLE], [DIVISA_CUENTA]\n")
                 .append(") t1\n")
                 .append("LEFT JOIN\n")
-                .append("(SELECT periodo_preciso AS FECHA, [" + campoCentro + "] AS CENTRO_CONTABLE, [" + campoCuenta + "] AS CUENTA_CONTABLE, [" + campoDivisa + "] AS DIVISA_CUENTA, SUM(TRY_CAST([" + campoSaldo + "] AS DECIMAL(18, 2))) AS TOTAL_VALOR_CUENTA\n")
+                .append("(SELECT periodo_preciso AS FECHA, [" + campoCentro + "] AS CENTRO_CONTABLE, [" + campoCuenta + "] AS CUENTA_CONTABLE, [" +
+                        campoDivisa + "] AS DIVISA_CUENTA, SUM(TRY_CAST([" + campoSaldo + "] AS DECIMAL(18, 2))) AS TOTAL_VALOR_CUENTA\n")
                 .append("FROM [" + nombreTablaContable + "]\n")
-                .append("WHERE periodo_preciso = '" + fechaCont + "' AND [" + campoCuenta + "]  IN (" + cuentasConcil + ")\n")
+                .append("WHERE periodo_preciso = '" + fechaCont + "' AND (" + condicionCuentaContable + ")\n")
                 .append("GROUP BY periodo_preciso, [" + campoCentro + "], [" + campoCuenta + "], [" + campoDivisa + "]\n")
                 .append(") t2\n")
-                .append("ON  t1.FECHA = t2.FECHA AND t1.CENTRO_CONTABLE = t2.CENTRO_CONTABLE AND t1.CUENTA_CONTABLE = t2.CUENTA_CONTABLE AND t1.DIVISA_CUENTA = t2.DIVISA_CUENTA");
+                .append("ON  t1.FECHA = t2.FECHA AND t1.CENTRO_CONTABLE = t2.CENTRO_CONTABLE AND CAST(t1.CUENTA_CONTABLE AS BIGINT) = CAST(t2.CUENTA_CONTABLE AS BIGINT)AND t1.DIVISA_CUENTA = t2.DIVISA_CUENTA");
 
         // HACER LA SELECCION
         Query querySelect = entityManager.createNativeQuery(queryBuilder.toString());
         List<Object[]> resultados = querySelect.getResultList();
         llenadoConciliacion(concil, resultados, fecha);
     }
-
 
 
     public void llenadoConciliacion(Conciliation concil, List<Object[]> resultados, String fecha){
@@ -404,6 +447,7 @@ public class ConciliationService {
                     "SELECT [FECHA], [CENTRO_CONTABLE], [CUENTA_CONTABLE], " +
                     "[DIVISA_CUENTA], [total_valor_cuenta1], [total_valor_cuenta2], [TOTAL] " +
                     "FROM preciso_conciliacion_" + concil.getId() + " WHERE FECHA = :fecha " +
+                    "ORDER BY [FECHA], [CENTRO_CONTABLE], [CUENTA_CONTABLE], [DIVISA_CUENTA]" +
                     "END\n" +
                     "ELSE\n" +
                     "BEGIN\n" +
