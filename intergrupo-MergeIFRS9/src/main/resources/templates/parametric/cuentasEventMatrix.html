@@ -132,7 +132,7 @@
                         <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Maneja Divisa:</h6>
                             <input id="mDivisaInput" name="mDivisaInput" th:id="${mDivisaInput}" type="checkbox" class="styled-checkbox"
-                                th:field="*{manejaDivisa}" th:value="${manejaDivisa}">
+                                th:field="*{manejaDivisa}" th:value="${manejaDivisa}" onchange="toggleCampoDivisa1()">
                         </div>
                     </div>
                     <div class="col-md-2">
@@ -164,7 +164,7 @@
                         <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Maneja Fórmula?</h6>
                             <input id="mFormulaInput" name="mFormulaInput" th:id="${mFormulaInput}" type="checkbox" class="styled-checkbox"
-                                th:field="*{manejaFormula}" th:value="${manejaFormula}">
+                                th:field="*{manejaFormula}" th:value="${manejaFormula}" onchange="toggleManejaFormula1()">
                         </div>
                     </div>
                     <div class="col-md-2">
@@ -212,7 +212,7 @@
                     <div class="col-md-2">
                         <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Campo Valor Operación 2:<i class="bi bi-caret-down"></i></h6>
-                            <input th:field="*{valorOp2}" th:value="${valorOp2}" type="text" class="form-control form-control-sm">
+                            <input th:field="*{valorOp2}" th:value="${valorOp2}" id="inputCVOD1" type="text" class="form-control form-control-sm">
                             <select class="form-control form-control-sm" name="selectedCVOD1" id="selectedCVOD1">
                                 <option value="0" th:selected="${cuenta1.campoValorOp2 == null}">Seleccione un campo</option>
                                 <option th:each="campo : ${camposInventario}" th:value="${campo[0]}" th:text="${campo[1]}"
@@ -325,10 +325,10 @@
                         <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Maneja Divisa:</h6>
                             <input id="mDivisaInput2" name="mDivisaInput2" th:id="${mDivisaInput2}" type="checkbox" class="styled-checkbox"
-                                   th:field="*{manejaDivisa}" th:value="${manejaDivisa}">
+                                   th:field="*{manejaDivisa}" th:value="${manejaDivisa}" onchange="toggleCampoDivisa2()">
                         </div>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-2" >
                         <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Campo Divisa:<i class="bi bi-caret-down"></i></h6>
                             <select class="form-control form-control-sm" name="selectedCD2" id="selectedCD2">
@@ -357,7 +357,7 @@
                         <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Maneja Fórmula?</h6>
                             <input id="mFormulaInput2" name="mFormulaInput2" th:id="${mFormulaInput2}" type="checkbox" class="styled-checkbox"
-                                   th:field="*{manejaFormula}" th:value="${manejaFormula}">
+                                   th:field="*{manejaFormula}" th:value="${manejaFormula}" onchange="toggleManejaFormula2()">
                         </div>
                     </div>
                     <div class="col-md-2">
@@ -404,7 +404,7 @@
                     <div class="col-md-2">
                         <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Campo Valor Operación 2:<i class="bi bi-caret-down"></i></h6>
-                            <input th:field="*{valorOp2}" th:value="${valorOp2}" type="text" class="form-control form-control-sm">
+                            <input th:field="*{valorOp2}" th:value="${valorOp2}" id="inputCVOD2" type="text" class="form-control form-control-sm">
                             <select class="form-control form-control-sm" name="selectedCVOD2" id="selectedCVOD2">
                                 <option value="0" th:selected="${cuenta2.campoValorOp2 == null}">Seleccione un campo</option>
                                 <option th:each="campo : ${camposInventario}" th:value="${campo[0]}" th:text="${campo[1]}"
@@ -647,18 +647,6 @@
 
     // Función para marcar el checkbox correspondiente al abrir el modal
     $('#cuentaModal').on('shown.bs.modal', function (event) {
-        /*
-        if (selectedId) {
-            // Recorrer todos los checkboxes y marcar el que tenga el valor igual a selectedId
-            $('input[type="checkbox"]').each(function() {
-                if (this.value === selectedId) {
-                    this.checked = true;
-                } else {
-                    this.checked = false; // Desmarcar los demás checkboxes
-                }
-            });
-        }
-        */
         var button = $(event.relatedTarget);
         buttomModal = button.data('parametro');
     });
@@ -1014,8 +1002,59 @@
         campoContResultante.innerHTML = '<option disabled value="0" selected hidden>Seleccione un campo</option>';
     }
 
+    //FUNCION PARA HABILITAR EL CAMPO DIVISA
+    function toggleCampoDivisa1() {
+        let checkbox = document.getElementById("manejaDivisa1");
+        let select = document.getElementById("selectedCD1");
 
+        select.disabled = !checkbox.checked;
+    }
+    function toggleCampoDivisa2() {
+        let checkbox = document.getElementById("manejaDivisa2");
+        let select = document.getElementById("selectedCD2");
 
+        select.disabled = !checkbox.checked;
+    }
+
+    //FUNCION PARA HABILITAR LOS CAMPOS DE LA FORMULA
+    function toggleManejaFormula1() {
+    console.log("AYUDA");
+        let checkbox = document.getElementById("manejaFormula1");
+        let selectedCVOU1 = document.getElementById("selectedCVOU1");
+        let selectedOperacion1 = document.getElementById("selectedOperacion1");
+        let selectedCVOD1 = document.getElementById("selectedCVOD1");
+        let inputCVOD1 = document.getElementById("inputCVOD1");
+        //se deshabilita
+        let selectedCVC1 = document.getElementById("selectedCVC1");
+
+        selectedCVOU1.disabled = !checkbox.checked;
+        selectedOperacion1.disabled = !checkbox.checked;
+        selectedCVOD1.disabled = !checkbox.checked;
+        inputCVOD1.disabled = !checkbox.checked;
+        selectedCVC1.disabled = checkbox.checked;
+    }
+    function toggleManejaFormula2() {
+        let checkbox = document.getElementById("manejaFormula2");
+        let selectedCVOU2 = document.getElementById("selectedCVOU2");
+        let selectedOperacion2 = document.getElementById("selectedOperacion2");
+        let selectedCVOD2 = document.getElementById("selectedCVOD2");
+        let inputCVOD2 = document.getElementById("inputCVOD2");
+        //se deshabilita
+        let selectedCVC2 = document.getElementById("selectedCVC2");
+
+        selectedCVOU2.disabled = !checkbox.checked;
+        selectedOperacion2.disabled = !checkbox.checked;
+        selectedCVOD2.disabled = !checkbox.checked;
+        inputCVOD2.disabled = !checkbox.checked;
+        selectedCVC2.disabled = checkbox.checked;
+    }
+
+    window.onload = function() {
+        toggleCampoDivisa1();
+        toggleCampoDivisa2();
+        toggleManejaFormula1();
+        toggleManejaFormula2();
+    };
 
 
 

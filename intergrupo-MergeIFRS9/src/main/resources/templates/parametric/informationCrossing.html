@@ -87,7 +87,7 @@
                                     th:disabled="${!p_modificar or (ultLog != null and ultLog[3] == true) or ultLog==null}"
                                     data-toggle="modal"
                                     data-target="#confirmarModal"
-                                    th:onclick="|validarYSubir()|" type="button">Confirmar Conciliación</button>
+                                    th:onclick="|validarYSubir()|" type="button">Confirmar Cruce</button>
                         </div>
                     </div>
                 </div>
@@ -210,7 +210,7 @@
                         ¿Estás seguro de confirmar el proceso?
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-primary btn-sm" th:onclick="confirmarConciliacion()" data-dismiss="modal">
+                        <button type="button" class="btn btn-primary btn-sm" th:onclick="confirmarCruce()" data-dismiss="modal">
                             Confirmar
                         </button>
                         <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cancelar</button>
@@ -333,7 +333,7 @@
         });
     }
 
-    function confirmarConciliacion(){
+    function confirmarCruce(){
         const valueCuen = document.getElementById('ultLog').value;
         const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
         const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');

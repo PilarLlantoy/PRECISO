@@ -357,6 +357,7 @@ public class ConciliationService {
     }
 
     public List<Object[]> generarTablaCruceCompleto_x_Conciliacion(int concilId, String fecha, int tipoEventoId) {
+        System.out.println("ESTAMOS RECREANDO LA TABLA PARA LA COMBINACION EN EL CRUCE");
         Conciliation conciliacion = findById(concilId);
         EventType tipoEvento = eventTypeService.findAllById(tipoEventoId);
         List<ConciliationRoute> listRoutes = conciliationRouteService.getRoutesByConciliation(concilId); // Obtener las rutas
@@ -390,7 +391,7 @@ public class ConciliationService {
         // Eliminar los registros que tienen la misma FECHA_CONCILIACION y el mismo INVENTARIO
         queryBuilder.append("DELETE FROM ").append(nombreTabla)
                 .append(" WHERE FECHA_CONCILIACION = '").append(fecha).append("' ")
-                .append("AND INVENTARIO = '").append(conciliacion.getNombre()).append("' ")
+                //.append("AND INVENTARIO = '").append(conciliacion.getNombre()).append("' ")
                 .append("AND TIPO_EVENTO = '").append(tipoEvento.getNombre()).append("';");
 
         // Ejecutar la consulta de eliminación

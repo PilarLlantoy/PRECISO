@@ -1,6 +1,5 @@
 package com.inter.proyecto_intergrupo.service.parametricServices;
 
-import com.inter.proyecto_intergrupo.model.admin.ControlPanelIfrs;
 import com.inter.proyecto_intergrupo.model.admin.User;
 import com.inter.proyecto_intergrupo.model.parametric.*;
 import com.inter.proyecto_intergrupo.repository.admin.AuditRepository;
@@ -22,17 +21,20 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
 public class InformationCrossingService {
+
     @Autowired
     private final LogInformationCrossingRepository logInformationCrossingRepository;
+
     @PersistenceContext
     EntityManager entityManager;
+
     @Autowired
     private AuditRepository auditRepository;
+
     @Autowired
     private LogAccountingLoadRepository logAccountingLoadRepository;
 
@@ -48,7 +50,6 @@ public class InformationCrossingService {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-
     @Autowired
     public InformationCrossingService(LogInformationCrossingRepository logInformationCrossingRepository) {
         this.logInformationCrossingRepository = logInformationCrossingRepository;
@@ -60,8 +61,7 @@ public class InformationCrossingService {
         return logInformationCrossingRepository.findAllByIdConciliacionAndFechaProcesoAndIdEventoOrderByIdDesc(concil,fechaDate, evento);
     }
 
-    public void loadLogInformationCrossing(User user,int concil, int event, String fecha, String tipo, String estado, String mensaje)
-    {
+    public void loadLogInformationCrossing(User user,int concil, int event, String fecha, String tipo, String estado, String mensaje) {
         LocalDate localDate = LocalDate.parse(fecha);
         Date fechaDate = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
         Date today=new Date();
@@ -99,8 +99,7 @@ public class InformationCrossingService {
         return listTemp;
     }
 
-    public void loadLogCargue(User user, int idConcil, String fecha, String tipo, String estado, String mensaje)
-    {
+    public void loadLogCargue(User user, int idConcil, String fecha, String tipo, String estado, String mensaje) {
         LocalDate localDate = LocalDate.parse(fecha);
         Date fechaDate = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
         Date today=new Date();
@@ -124,8 +123,8 @@ public class InformationCrossingService {
     }
 
     public void recreateTable(ConciliationRoute data, int idConcil,String fecha) {
-        System.out.println("CREANDO LA TABLA FINAL DE ESE INVENTARIO");
-        System.out.println("#############################");
+        //System.out.println("CREANDO LA TABLA FINAL DE ESE INVENTARIO");
+        //System.out.println("#############################");
 
         String tableName = "preciso_ci_" + idConcil + "_" + data.getId();
 
@@ -164,7 +163,6 @@ public class InformationCrossingService {
 
         // PASO 3.
         // Insertar registros desde "preciso_rc_<data.getId()>" a la nueva tabla de esa fecha
-        String sourceTableName = "preciso_rconcil_" + data.getId();
         String insertDataQuery = "INSERT INTO "+tableName+" (";
         for (int i = 0; i < data.getCampos().size(); i++) {
             CampoRConcil column = data.getCampos().get(i);
@@ -185,6 +183,7 @@ public class InformationCrossingService {
                 +("DIVISA_CUENTA_2, ")
                 +("VALOR_CUENTA_2");
         insertDataQuery+=(") SELECT ");
+
         // Agregar los campos correspondientes en el SELECT
         for (int i = 0; i < data.getCampos().size(); i++) {
             CampoRConcil column = data.getCampos().get(i);
@@ -192,6 +191,7 @@ public class InformationCrossingService {
             if (i < data.getCampos().size() - 1)
                 insertDataQuery+=(", ");
         }
+
         insertDataQuery+=(", INVENTARIO, ")
                 +("ID_INVENTARIO, ")
                 +("FECHA_CONCILIACION, ")
@@ -218,11 +218,6 @@ public class InformationCrossingService {
         Query insertData = entityManager.createNativeQuery(insertDataQuery);
         insertData.executeUpdate();
     }
-
-
-
-
-
 
     public void creatTablaTemporalCruce(ConciliationRoute data, String fecha){
         StringBuilder createTableQuery = new StringBuilder("CREATE TABLE ");
@@ -295,6 +290,14 @@ public class InformationCrossingService {
         insertData.executeUpdate();
     }
 
+    public String operacionSimbolo(String op){
+        if(op.equals("Multiplica")) return "*";
+        if(op.equals("Suma")) return "+";
+        if(op.equals("Resta")) return "-";
+        if(op.equals("Divida")) return "/";
+        return "";
+    }
+
     public void completarTablaCruce(ConciliationRoute data,
                                     String fecha,
                                     EventType tipoEvento,
@@ -303,14 +306,39 @@ public class InformationCrossingService {
                                     AccountEventMatrix cuenta2,
                                     String condicion) {
 
-        String valorCuenta = null;
+        String valorCuenta1 = null;
+        System.out.println("OPERACION CUENTA 1 "+cuenta2.getOperacion());
+        if (cuenta1 != null && !cuenta1.isManejaFormula()) {
+            valorCuenta1 = cuenta1.getCampoValorCuenta().getNombre();
+        } else if (cuenta1 != null) {
+            valorCuenta1 = cuenta1.getCampoValorOp1().getNombre() + " " +operacionSimbolo(cuenta1.getOperacion()) + " " +cuenta1.getValorOp2();
+        }
+        System.out.println(valorCuenta1);
+
+        String valorCuenta3 = null;
+        System.out.println("OPERACION CUENTA 2 "+cuenta2.getOperacion());
+        if (cuenta2 != null && !cuenta2.isManejaFormula()) {
+            valorCuenta3 = cuenta2.getCampoValorCuenta().getNombre();
+        } else if (cuenta1 != null) {
+            valorCuenta3 = cuenta2.getCampoValorOp1().getNombre() + " " +operacionSimbolo(cuenta2.getOperacion()) + " " +cuenta2.getValorOp2();
+        }
+        System.out.println(valorCuenta3);
+
+        String valorCuenta2 = null;
         if (cuenta2 != null && cuenta2.getCampoValorCuenta() != null) {
-            valorCuenta = cuenta2.getCampoValorCuenta().getNombre();
+            valorCuenta2 = cuenta2.getCampoValorCuenta().getNombre();
         } else if (cuenta2 != null && cuenta2.getCampoValorOp1() != null) {
-            valorCuenta = cuenta2.getCampoValorOp1().getNombre() + "*" + cuenta2.getValorOp2();
+            valorCuenta2 = cuenta2.getCampoValorOp1().getNombre() + "*" + cuenta2.getValorOp2();
         }
 
-        // Crear la base de la consulta SQL
+        Boolean uvrCop1 = cuenta1.isConvierteUVRaCOP();
+        Boolean uvrCop2 = cuenta2 != null && cuenta2.isConvierteUVRaCOP();
+
+        //System.out.println("VEAMOS QUE HAY AQUI");
+        //System.out.println("UVR a COP en cuenta1: " + uvrCop1); // Verifica si es true o false
+        //System.out.println("UVR a COP en cuenta2: " + uvrCop2); // Verifica si es true o false
+
+        // Construcción de la consulta SQL
         StringBuilder queryBuilder = new StringBuilder("UPDATE TEMPORAL_ci SET ");
         queryBuilder.append("INVENTARIO = ?, ");
         queryBuilder.append("FECHA_CONCILIACION = ?, ");
@@ -318,18 +346,34 @@ public class InformationCrossingService {
         queryBuilder.append("CDGO_MATRIZ_EVENTO = ?, ");
         queryBuilder.append("CENTRO_CONTABLE = ?, ");
         queryBuilder.append("CUENTA_CONTABLE_1 = ?, ");
-        queryBuilder.append("DIVISA_CUENTA_1 = ").append(cuenta1.getCampoDivisa().getNombre()).append(", ");
-        queryBuilder.append("VALOR_CUENTA_1 = ").append(cuenta1.getCampoValorCuenta().getNombre());
+
+        // Aplicar conversión de UVR a COP en DIVISA_CUENTA_1
+        if (uvrCop1) {
+            queryBuilder.append("DIVISA_CUENTA_1 = CASE WHEN ").append(cuenta1.getCampoDivisa().getNombre())
+                    .append(" = 'UVR' THEN 'COP' ELSE ").append(cuenta1.getCampoDivisa().getNombre()).append(" END, ");
+        } else {
+            queryBuilder.append("DIVISA_CUENTA_1 = ").append(cuenta1.getCampoDivisa().getNombre()).append(", ");
+        }
+
+        queryBuilder.append("VALOR_CUENTA_1 = ").append(valorCuenta1).append(" ");
 
         // Si cuenta2 no es nula, agregar los valores relacionados a cuenta2
         if (cuenta2 != null) {
             queryBuilder.append(", CUENTA_CONTABLE_2 = ?, ");
-            queryBuilder.append("DIVISA_CUENTA_2 = ").append(cuenta2.getCampoDivisa().getNombre()).append(", ");
-            queryBuilder.append("VALOR_CUENTA_2 = ").append(valorCuenta).append(" ");
+
+            // Aplicar conversión de UVR a COP en DIVISA_CUENTA_2
+            if (uvrCop2) {
+                queryBuilder.append("DIVISA_CUENTA_2 = CASE WHEN ").append(cuenta2.getCampoDivisa().getNombre())
+                        .append(" = 'UVR' THEN 'COP' ELSE ").append(cuenta2.getCampoDivisa().getNombre()).append(" END, ");
+            } else {
+                queryBuilder.append("DIVISA_CUENTA_2 = ").append(cuenta2.getCampoDivisa().getNombre()).append(", ");
+            }
+
+            queryBuilder.append("VALOR_CUENTA_2 = ").append(valorCuenta3).append(" ");
         }
 
-        if(condicion!=null){
-            queryBuilder.append(" WHERE "+condicion);
+        if (condicion != null) {
+            queryBuilder.append(" WHERE ").append(condicion);
         }
 
         // Completar la consulta
@@ -352,7 +396,6 @@ public class InformationCrossingService {
         // Ejecutar la consulta
         updateQuery.executeUpdate();
     }
-
 
     public String conditionData(ConciliationRoute data, EventMatrix matriz){
         String nombreTabla = "TEMPORAL_ci";
@@ -399,7 +442,7 @@ public class InformationCrossingService {
                 condicion = condicion + obj[1] + operacion;
             }
             condicion+=")";
-            System.out.println("CONDICION "+  condicion);
+            //System.out.println("CONDICION "+  condicion);
             return condicion;
         }
         return null;
@@ -490,7 +533,6 @@ public class InformationCrossingService {
         return list;
 
     }
-
 
     public List<Object[]> processList(List<Object[]> datos, List<String> colAroutes) {
         List<Object[]> processedList = new ArrayList<>();
