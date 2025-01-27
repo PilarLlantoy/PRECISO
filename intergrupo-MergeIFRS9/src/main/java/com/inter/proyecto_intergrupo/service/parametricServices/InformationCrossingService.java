@@ -306,30 +306,26 @@ public class InformationCrossingService {
                                     AccountEventMatrix cuenta2,
                                     String condicion) {
 
+        String centroContable = matriz.isManejaCC() ? matriz.getCampoCC().getNombre() : matriz.getCentroContable();
+
         String valorCuenta1 = null;
-        System.out.println("OPERACION CUENTA 1 "+cuenta2.getOperacion());
+        //System.out.println("OPERACION CUENTA 1 "+cuenta2.getOperacion());
         if (cuenta1 != null && !cuenta1.isManejaFormula()) {
             valorCuenta1 = cuenta1.getCampoValorCuenta().getNombre();
         } else if (cuenta1 != null) {
             valorCuenta1 = cuenta1.getCampoValorOp1().getNombre() + " " +operacionSimbolo(cuenta1.getOperacion()) + " " +cuenta1.getValorOp2();
         }
-        System.out.println(valorCuenta1);
+        //System.out.println(valorCuenta1);
 
         String valorCuenta3 = null;
-        System.out.println("OPERACION CUENTA 2 "+cuenta2.getOperacion());
+        //System.out.println("OPERACION CUENTA 2 "+cuenta2.getOperacion());
         if (cuenta2 != null && !cuenta2.isManejaFormula()) {
             valorCuenta3 = cuenta2.getCampoValorCuenta().getNombre();
         } else if (cuenta1 != null) {
             valorCuenta3 = cuenta2.getCampoValorOp1().getNombre() + " " +operacionSimbolo(cuenta2.getOperacion()) + " " +cuenta2.getValorOp2();
         }
-        System.out.println(valorCuenta3);
+        //System.out.println(valorCuenta3);
 
-        String valorCuenta2 = null;
-        if (cuenta2 != null && cuenta2.getCampoValorCuenta() != null) {
-            valorCuenta2 = cuenta2.getCampoValorCuenta().getNombre();
-        } else if (cuenta2 != null && cuenta2.getCampoValorOp1() != null) {
-            valorCuenta2 = cuenta2.getCampoValorOp1().getNombre() + "*" + cuenta2.getValorOp2();
-        }
 
         Boolean uvrCop1 = cuenta1.isConvierteUVRaCOP();
         Boolean uvrCop2 = cuenta2 != null && cuenta2.isConvierteUVRaCOP();
@@ -385,7 +381,7 @@ public class InformationCrossingService {
         updateQuery.setParameter(2, fecha);
         updateQuery.setParameter(3, tipoEvento.getNombre());
         updateQuery.setParameter(4, matriz.getId());
-        updateQuery.setParameter(5, matriz.getCentroContable());
+        updateQuery.setParameter(5, centroContable);
         updateQuery.setParameter(6, cuenta1.getCuentaGanancia());
 
         // Si cuenta2 no es nula, agregar el parámetro adicional

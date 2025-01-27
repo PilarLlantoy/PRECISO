@@ -95,20 +95,22 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-4 hidden" id="CampoCentroContable">
-                        <div class="form-group  form-group-sm">
+                    <div class="col-md-4">
+                        <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Campo Centro Contable:<i class="bi bi-caret-down"></i></h6>
                             <select class="form-control form-control-sm" name="campocontable" id="campocontable">
                                 <option disabled value="" selected hidden>Seleccione Campo</option>
                                 <option th:each="campo : ${campos}" th:value="${campo.id}" th:text="${campo.nombre}"
-                                    th:selected="${eventMatrix.campoCC != null and campo.id == eventMatrix.campoCC.id}"></option>
+                                        th:selected="${eventMatrix.campoCC != null and campo.id == eventMatrix.campoCC.id}">
+                                </option>
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-4" id="CentroContable">
+
+                    <div class="col-md-4">
                         <div class="form-group">
                             <h6 class="font-weight-bold">Centro Contable:</h6>
-                            <input type="text" class="form-control form-control-sm" name="ccontable" id="ccontable" th:field="*{centroContable}" >
+                            <input type="text" class="form-control form-control-sm" name="ccontable" id="ccontable" th:field="*{centroContable}">
                         </div>
                     </div>
 
@@ -216,15 +218,15 @@
 
     function toggleFields() {
         var manejaCCCheckbox = document.getElementById('manejaCC');
-        var CampoCentroContableContainer = document.getElementById('CampoCentroContable');
-        //var CentroContableContainer = document.getElementById('CentroContable');
+        var campoCentroContable = document.getElementById('campocontable');
+        var centroContableInput = document.getElementById('ccontable');
 
         if (manejaCCCheckbox.checked) {
-            CampoCentroContableContainer.classList.remove('hidden');
-            //CentroContableContainer.classList.remove('hidden');
+            campoCentroContable.disabled = false;
+            centroContableInput.disabled = true;
         } else {
-            CampoCentroContableContainer.classList.add('hidden');
-            //CentroContableContainer.classList.add('hidden');
+            campoCentroContable.disabled = true;
+            centroContableInput.disabled = false;
         }
     }
 

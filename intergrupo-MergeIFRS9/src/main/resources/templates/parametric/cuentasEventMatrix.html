@@ -98,7 +98,7 @@
                         <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Cuenta Pérdida:</h6>
                             <div class="d-flex align-items-center">
-                                <input type="text" class="form-control form-control-sm" th:field="*{cuentaPerdida}" id="selectedCP1">
+                                <input type="text" class="form-control form-control-sm" th:field="*{cuentaPerdida}" id="selectedCP1" th:disabled="${!matriz.PYG}">
                                 <i class="bi bi-question-circle-fill ml-1"
                                    type="button"
                                    data-toggle="modal"
@@ -292,7 +292,7 @@
                         <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Cuenta Pérdida:</h6>
                             <div class="d-flex align-items-center">
-                                <input type="text" class="form-control form-control-sm" th:field="*{cuentaPerdida}" id="selectedCP2">
+                                <input type="text" class="form-control form-control-sm" th:field="*{cuentaPerdida}" id="selectedCP2" th:disabled="${!matriz.PYG}">
                                 <i class="bi bi-question-circle-fill ml-1"
                                    type="button"
                                    data-toggle="modal"
