@@ -306,33 +306,30 @@ public class InformationCrossingService {
                                     AccountEventMatrix cuenta2,
                                     String condicion) {
 
-        String centroContable = matriz.isManejaCC() ? matriz.getCampoCC().getNombre() : matriz.getCentroContable();
-
+        System.out.println("VEAMOS " + cuenta1.getCampoValorOp2() + " " + cuenta2.getValorOp2());
         String valorCuenta1 = null;
-        //System.out.println("OPERACION CUENTA 1 "+cuenta2.getOperacion());
-        if (cuenta1 != null && !cuenta1.isManejaFormula()) {
+        if (cuenta1 != null && !cuenta1.isManejaFormula())
             valorCuenta1 = cuenta1.getCampoValorCuenta().getNombre();
-        } else if (cuenta1 != null) {
-            valorCuenta1 = cuenta1.getCampoValorOp1().getNombre() + " " +operacionSimbolo(cuenta1.getOperacion()) + " " +cuenta1.getValorOp2();
+        else if (cuenta1 != null)
+            valorCuenta1 = cuenta1.getCampoValorOp1().getNombre() + " " + operacionSimbolo(cuenta1.getOperacion()) + " " +
+                    (cuenta1.getCampoValorOp2()!=null ? cuenta1.getCampoValorOp2() : cuenta1.getValorOp2());
+
+        // Aplicar ABS si cuenta1.isValorAbsoluto() es true
+        if (cuenta1 != null && cuenta1.isValorAbsoluto()) {
+            valorCuenta1 = "ABS(" + valorCuenta1 + ")";
         }
-        //System.out.println(valorCuenta1);
 
-        String valorCuenta3 = null;
-        //System.out.println("OPERACION CUENTA 2 "+cuenta2.getOperacion());
-        if (cuenta2 != null && !cuenta2.isManejaFormula()) {
-            valorCuenta3 = cuenta2.getCampoValorCuenta().getNombre();
-        } else if (cuenta1 != null) {
-            valorCuenta3 = cuenta2.getCampoValorOp1().getNombre() + " " +operacionSimbolo(cuenta2.getOperacion()) + " " +cuenta2.getValorOp2();
+        String valorCuenta2 = null;
+        if (cuenta2 != null && !cuenta2.isManejaFormula())
+            valorCuenta2 = cuenta2.getCampoValorCuenta().getNombre();
+        else if (cuenta2 != null)
+            valorCuenta2 = cuenta2.getCampoValorOp1().getNombre() + " " + operacionSimbolo(cuenta2.getOperacion()) + " " +
+                    (cuenta2.getCampoValorOp2()!=null ? cuenta2.getCampoValorOp2() : cuenta2.getValorOp2());
+
+        // Aplicar ABS si cuenta2.isValorAbsoluto() es true
+        if (cuenta2 != null && cuenta2.isValorAbsoluto()) {
+            valorCuenta2 = "ABS(" + valorCuenta2 + ")";
         }
-        //System.out.println(valorCuenta3);
-
-
-        Boolean uvrCop1 = cuenta1.isConvierteUVRaCOP();
-        Boolean uvrCop2 = cuenta2 != null && cuenta2.isConvierteUVRaCOP();
-
-        //System.out.println("VEAMOS QUE HAY AQUI");
-        //System.out.println("UVR a COP en cuenta1: " + uvrCop1); // Verifica si es true o false
-        //System.out.println("UVR a COP en cuenta2: " + uvrCop2); // Verifica si es true o false
 
         // Construcción de la consulta SQL
         StringBuilder queryBuilder = new StringBuilder("UPDATE TEMPORAL_ci SET ");
@@ -344,12 +341,17 @@ public class InformationCrossingService {
         queryBuilder.append("CUENTA_CONTABLE_1 = ?, ");
 
         // Aplicar conversión de UVR a COP en DIVISA_CUENTA_1
-        if (uvrCop1) {
+        if (cuenta1.isConvierteUVRaCOP())
             queryBuilder.append("DIVISA_CUENTA_1 = CASE WHEN ").append(cuenta1.getCampoDivisa().getNombre())
                     .append(" = 'UVR' THEN 'COP' ELSE ").append(cuenta1.getCampoDivisa().getNombre()).append(" END, ");
-        } else {
+        else if (cuenta1.isConvierteDivisa())
+            queryBuilder.append("DIVISA_CUENTA_1 = CASE ")
+                .append("WHEN ").append(cuenta1.getCampoDivisa().getNombre()).append(" IN ('USD', 'EUR', 'COP') THEN ")
+                .append(cuenta1.getCampoDivisa().getNombre()).append(" ")
+                .append("WHEN ").append(cuenta1.getCampoDivisa().getNombre()).append(" = 'COD' THEN 'COP' ")
+                .append("ELSE 'RST' END, ");
+        else
             queryBuilder.append("DIVISA_CUENTA_1 = ").append(cuenta1.getCampoDivisa().getNombre()).append(", ");
-        }
 
         queryBuilder.append("VALOR_CUENTA_1 = ").append(valorCuenta1).append(" ");
 
@@ -358,19 +360,23 @@ public class InformationCrossingService {
             queryBuilder.append(", CUENTA_CONTABLE_2 = ?, ");
 
             // Aplicar conversión de UVR a COP en DIVISA_CUENTA_2
-            if (uvrCop2) {
+            if (cuenta2.isConvierteUVRaCOP())
                 queryBuilder.append("DIVISA_CUENTA_2 = CASE WHEN ").append(cuenta2.getCampoDivisa().getNombre())
                         .append(" = 'UVR' THEN 'COP' ELSE ").append(cuenta2.getCampoDivisa().getNombre()).append(" END, ");
-            } else {
+            else if (cuenta2.isConvierteDivisa())
+                queryBuilder.append("DIVISA_CUENTA_2 = CASE ")
+                        .append("WHEN ").append(cuenta2.getCampoDivisa().getNombre()).append(" IN ('USD', 'EUR', 'COP') THEN ")
+                        .append(cuenta2.getCampoDivisa().getNombre()).append(" ")
+                        .append("WHEN ").append(cuenta2.getCampoDivisa().getNombre()).append(" = 'COD' THEN 'COP' ")
+                        .append("ELSE 'RST' END, ");
+            else
                 queryBuilder.append("DIVISA_CUENTA_2 = ").append(cuenta2.getCampoDivisa().getNombre()).append(", ");
-            }
 
-            queryBuilder.append("VALOR_CUENTA_2 = ").append(valorCuenta3).append(" ");
+            queryBuilder.append("VALOR_CUENTA_2 = ").append(valorCuenta2).append(" ");
         }
 
-        if (condicion != null) {
+        if (condicion != null)
             queryBuilder.append(" WHERE ").append(condicion);
-        }
 
         // Completar la consulta
         String query = queryBuilder.toString();
@@ -381,13 +387,12 @@ public class InformationCrossingService {
         updateQuery.setParameter(2, fecha);
         updateQuery.setParameter(3, tipoEvento.getNombre());
         updateQuery.setParameter(4, matriz.getId());
-        updateQuery.setParameter(5, centroContable);
+        updateQuery.setParameter(5, matriz.isManejaCC() ? matriz.getCampoCC().getNombre() : matriz.getCentroContable());
         updateQuery.setParameter(6, cuenta1.getCuentaGanancia());
 
         // Si cuenta2 no es nula, agregar el parámetro adicional
-        if (cuenta2 != null) {
+        if (cuenta2 != null)
             updateQuery.setParameter(7, cuenta2.getCuentaGanancia());
-        }
 
         // Ejecutar la consulta
         updateQuery.executeUpdate();
