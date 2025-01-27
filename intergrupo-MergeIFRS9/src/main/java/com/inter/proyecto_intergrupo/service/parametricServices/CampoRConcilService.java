@@ -92,7 +92,7 @@ public class CampoRConcilService {
 
     public Integer findConsecutivo(EventMatrix matrixExists)
     {
-        Query validate = entityManager.createNativeQuery("select isnull(max(consecutivo),0) from preciso_matriz_eventos where id_conciliacion = ? and id_inventario_conciliacion =  ? ");
+        Query validate = entityManager.createNativeQuery("select isnull(max(consecutivo),1) from preciso_matriz_eventos where id_conciliacion = ? and id_inventario_conciliacion =  ? ");
         validate.setParameter(1,matrixExists.getConciliacion().getId());
         validate.setParameter(2,matrixExists.getInventarioConciliacion().getId());
         return (Integer) validate.getSingleResult();
