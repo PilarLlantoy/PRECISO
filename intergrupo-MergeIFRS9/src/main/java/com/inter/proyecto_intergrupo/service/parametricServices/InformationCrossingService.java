@@ -12,6 +12,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 import javax.persistence.Query;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -607,6 +611,16 @@ public class InformationCrossingService {
                 "WHERE id_lci = ?");
         query.setParameter(1, id);
         query.executeUpdate();
+    }
+
+    public List<Object[]> findEventosPorConcil(int concilId) {
+        Query query = entityManager.createNativeQuery(
+                "SELECT distinct a.id_tipo_evento, b.nombre_tipo_evento " +
+                        "FROM preciso_matriz_eventos a " +
+                        "LEFT JOIN preciso_tipo_evento b ON a.id_tipo_evento = b.id_tipo_evento" +
+                        " WHERE a.id_conciliacion = :concilId");
+        query.setParameter("concilId", concilId);
+        return query.getResultList();
     }
 
 

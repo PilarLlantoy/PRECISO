@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+
+<div class="main-container">
+    <div class="row m-0 bg-primary fixed-top myNav">
+        <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
+            <h2 class="fw-bold text-white mx-4 my-3">Módulo de Parámetros Reportes</h2>
+        </div>
+        <div class="col-md-6 d-flex align-items-center justify-content-end pe-5">
+        </div>
+    </div>
+    <div class="row m-0 px-4 mt-5">
+        <div class="text-right col-md-12 mt-1">
+            <a class="btn btn-sm btn-primary mx-1" th:href="@{/parametric/conciliation}"><i class="fas fa-redo-alt"></i></a>
+            <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1" th:onclick="|window.location.href='@{/parametric/createParametroReportes}'|">Crear Parametro</button>
+        </div>
+        <div class="col-md-12 p-0">
+            <div class="table-responsive rounded border-primary">
+                <table id="example" class="table table-striped table-hover text-center table-bordered table-sm" width="100%">
+                    <thead class="bg-primary">
+                    <tr>
+                        <th>Codigo</th>
+                        <th>Reporte</th>
+                        <th>Aplica Festivo</th>
+                        <th>Activo</th>
+                        <th>Insumo</th>
+                        <th COLSPAN="8">Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="concil, iter : ${allConcils}">
+                        <td th:text="${iter.count + ((current-1)*12)}"></td>
+                        <td th:text="${concil.nombre}"></td>
+                        <td th:if="${concil.activo == true}">Activo</td>
+                        <td th:if="${concil.activo == false}">Inactivo</td>
+                        <td th:if="${concil.festivo == true}">Activo</td>
+                        <td th:if="${concil.festivo == false}">Inactivo</td>
+                        <td th:text="${concil.sfc.nombre}"></td>
+                        <td>
+                            <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
+                                    th:onclick="|window.location.href='@{/parametric/modifyConciliation/{id}(id=${concil.id})}'|">Editar</button>
+                        </td>
+                        <td>
+                            <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
+                                    th:onclick="|window.location.href='@{/parametric/accountsConciliation/{id}(id=${concil.id})}'|">Campos</button>
+                        </td>
+                        <td>
+                            <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
+                                    th:onclick="|window.location.href='@{/parametric/accountsConciliation/{id}(id=${concil.id})}'|">Filtros</button>
+                        </td>
+                        <td>
+                            <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
+                                    th:onclick="|window.location.href='@{/parametric/accountsConciliation/{id}(id=${concil.id})}'|">Fuentes</button>
+                        </td>
+                        <td>
+                            <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
+                                    th:onclick="|window.location.href='@{/parametric/accountsConciliation/{id}(id=${concil.id})}'|">Estructuras</button>
+                        </td>
+                        <td>
+                            <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
+                                    th:onclick="|window.location.href='@{/parametric/accountsConciliation/{id}(id=${concil.id})}'|">Fuen. Adicion</button>
+                        </td>
+                        <td>
+                            <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
+                                    th:onclick="|window.location.href='@{/parametric/accountsConciliation/{id}(id=${concil.id})}'|">Vald. Adicion</button>
+                        </td>
+                        <td>
+                            <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
+                                    th:onclick="|window.location.href='@{/parametric/accountsConciliation/{id}(id=${concil.id})}'|">Rsl. Adicion</button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="row" th:if="${last != 0}">
+                <div class="col-md-4 text-left">
+                    <nav arial-label="Pagination">
+                        <ul class="pagination pagination-sm">
+                            <li class="page-item" th:classappend="${prev == 0 ? 'disabled' : ''}">
+                                <a class="page-link"
+                                   th:href="@{/parametric/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${prev},dir=${directory},vId=${vId})}">Anterior</a>
+                            </li>
+                            <li class="page-item" th:classappend="${current == last ? 'disabled' : ''}">
+                                <a class="page-link"
+                                   th:href="@{/parametric/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${next},dir=${directory},vId=${vId})}">Siguiente</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="col-md-4 text-center">
+                    <h6 th:utext="${registers} + ' Registros Encontrados'"></h6>
+                </div>
+                <div class="col-md-4 text-right">
+                    <h6 class="mx-1" th:utext="'Página ' + ${current} + ' de ' + ${last}"></h6>
+                </div>
+            </div>
+            <div class="d-flex align-items-center justify-content-center" th:if="${filterExport != 'Original'}">
+                <h5><span class="badge badge-pill text-light badge-info badge-sm ">¡La Tabla se encuentra Filtrada!</span>
+                </h5>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+</div>
+<script type="text/javascript">
+    var queryString = window.location.search;
+    var urlParams = new URLSearchParams(queryString);
+    var respuesta = urlParams.get('resp');
+    var data = urlParams.get('data');
+    validateAlerts(respuesta, data);
+    $(document).ready(function () {
+        $('#sidebarCollapse').on('click', function () {
+            $('#sidebar').toggleClass('active');
+        });
+    });
+</script>
+</body>
+</html>

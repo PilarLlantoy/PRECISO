@@ -28,7 +28,7 @@
                     <form th:object="${concil}" th:action="@{/parametric/informationCrossing}" method="GET">
                         <div class="form-group mb-1">
                             <h6 class="font-weight-bold">Conciliación</h6>
-                            <select style="width: 100%; box-sizing: border-box;" class="form-control" required id="arhcont" name="arhcont">
+                            <select style="width: 100%; box-sizing: border-box;" class="form-control" required id="arhcont" name="arhcont" onchange="toggleConciliacion()">
                                 <option disabled value="" selected hidden>Seleccione un archivo</option>
                                 <option th:each="item : ${listConcil}" th:value="${item.id}" th:text="${item.nombre}"
                                         th:selected="${arhcont != null and arhcont.id == item.id }"></option>
@@ -231,6 +231,36 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
+
+    async function toggleConciliacion() {
+        const concilID = document.getElementById('arhcont').value;
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+        if (concilID) {
+            const response = await fetch(`/parametric/obtenerTiposEventoByConcil/${concilID}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                }
+            });
+
+            const data = await response.json();
+
+            const evento = document.getElementById('evento');
+            evento.innerHTML = '<option selected value="0" >Seleccione un archivo</option>';
+
+            data.forEach(campo => {
+            console.log(campo[0], campo[1]);
+                const option = document.createElement('option');
+                option.value = campo[0];
+                option.text = campo[1];
+                evento.appendChild(option);
+            });
+
+        }
+    }
 
     //GENERAR CUENTAS
     //---------------------------------------------------------------------

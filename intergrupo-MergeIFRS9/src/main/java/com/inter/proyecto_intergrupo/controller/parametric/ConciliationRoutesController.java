@@ -7,6 +7,7 @@ import com.inter.proyecto_intergrupo.model.parametric.*;
 import com.inter.proyecto_intergrupo.service.adminServices.UserService;
 import com.inter.proyecto_intergrupo.service.parametricServices.ConciliationRouteService;
 import com.inter.proyecto_intergrupo.service.parametricServices.ConciliationService;
+import com.inter.proyecto_intergrupo.service.parametricServices.InformationCrossingService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,9 @@ public class ConciliationRoutesController {
 
     @Autowired
     private ConciliationRouteService conciliationRouteService;
+
+    @Autowired
+    private InformationCrossingService informationCrossingService;
 
     @GetMapping(value="/parametric/conciliationRoutes")
     public ModelAndView showConciliation(@RequestParam Map<String, Object> params) {
@@ -373,6 +377,13 @@ public class ConciliationRoutesController {
     public List<Object[]> obtenerRutasConcilByConcil(@PathVariable("concilID") Integer concilID) {
         List<Object[]> campos = conciliationRouteService.findRutasByConcil(concilID);
         return campos;
+    }
+
+    @GetMapping("/parametric/obtenerTiposEventoByConcil/{concilID}")
+    @ResponseBody
+    public List<Object[]> obtenerTiposEventoByConcil(@PathVariable("concilID") Integer concilID) {
+        List<Object[]> eventos = informationCrossingService.findEventosPorConcil(concilID);
+        return eventos;
     }
 
 }
