@@ -206,7 +206,7 @@ public class InformationCrossingController {
 
         List<LogInventoryLoad> logConcilroutes = new ArrayList<>();
         try {
-            for (ConciliationRoute ruta : listRoutes) {
+            /*for (ConciliationRoute ruta : listRoutes) {
                 croutes = conciliationRouteService.findAllData(ruta, fecha);
                 System.out.println(ruta.getDetalle() + " " + croutes);
                 if (croutes.isEmpty()) {
@@ -220,7 +220,7 @@ public class InformationCrossingController {
                 informationCrossingService.loadLogInformationCrossing(user, id, evento, fecha, "Generar Cuentas", "Fallido", message);
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk->2");
             } else
-                System.out.println("NO falta cargar archivos");
+                System.out.println("NO falta cargar archivos");*/
 
 
             //GENERAR CRUCE DE INVENTARIO
@@ -228,12 +228,12 @@ public class InformationCrossingController {
             for (ConciliationRoute ruta : listRoutes) {
 
                 List<EventMatrix> matrices = eventMatrixService.findByConciliationxInventarioxTipoEvento(id, ruta.getId(), evento);
-                if(matrices.isEmpty()){
+                /*if(matrices.isEmpty()){
                     System.out.println("NO se ha creado ninguna matriz");
                     informationCrossingService.loadLogCargue(user, id, fecha, "Generar cuentas", "Fallido",
                             "La conciliacion no tiene minguna matriz asociada");
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk->2");
-                }
+                }*/
 
                 //Creamos tablas temporales con la data total
                 informationCrossingService.creatTablaTemporalCruce(ruta, fecha);
