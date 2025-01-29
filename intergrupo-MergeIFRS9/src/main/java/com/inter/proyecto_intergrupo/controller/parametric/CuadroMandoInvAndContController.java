@@ -79,25 +79,13 @@ public class CuadroMandoInvAndContController {
             List<LogAccountingLoad> logAroutes = new ArrayList<>();
             List<Object[]> logCroutes = new ArrayList<>();
 
-            //if(params.get("arhcont") != null && params.get("arhcont").toString() != null && params.get("period") != null && params.get("period").toString() != null)
-            //{
-                //modelAndView.addObject("period",params.get("period").toString());
-                //AccountingRoute ac = accountingRouteService.findById(Integer.parseInt(params.get("arhcont").toString()));
-                //modelAndView.addObject("arhcont",ac);
-
-                //logAroutes = accountingRouteService.findAllLog(ac,params.get("period").toString());
+            if(params.get("period") != null && params.get("period").toString() != null){
                 logAroutes = accountingRouteService.findAllLogByDate();
                 System.out.println(logAroutes.size()+ " RA");
 
-                logCroutes = conciliationRouteService.findAllLogByDate();
+                logCroutes = conciliationRouteService.findAllLogByDate(params.get("period").toString());
                 System.out.println(logAroutes.size()+ " RA");
-
-                //aroutes = accountingRouteService.findAllData(ac,params.get("period").toString(), null, null);
-                //CampoRC crc= new CampoRC();
-                //crc.setNombre("periodo_preciso");
-                //ac.getCampos().add(crc);
-                //colAroutes = ac.getCampos();
-            //}
+            }
 
             //CONTABLES
             //*-------------------------------------------------
@@ -188,6 +176,8 @@ public class CuadroMandoInvAndContController {
             modelAndView.addObject("registers2",logCroutes.size());
             modelAndView.addObject("registersInventarios",logCroutes.size());
             modelAndView.addObject("registersData2",croutes.size());
+            if(params.get("period")!=null)
+                modelAndView.addObject("period",params.get("period").toString());
         }
         else
         {

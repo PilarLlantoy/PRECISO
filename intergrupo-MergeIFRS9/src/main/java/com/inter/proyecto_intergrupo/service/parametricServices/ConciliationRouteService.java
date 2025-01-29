@@ -671,7 +671,7 @@ public class ConciliationRouteService {
         return logInventoryLoadRepository.findAllByIdCRAndFechaCargueOrderByIdDesc(cr,fechaDate);
     }
 
-    public List<Object[]> findAllLogByDate() {
+    public List<Object[]> findAllLogByDate(String fecha) {
         Query query = entityManager.createNativeQuery(
                 "WITH CTE AS (\n" +
                         "    SELECT \n" +
@@ -688,6 +688,7 @@ public class ConciliationRouteService {
                         "        ROW_NUMBER() OVER (PARTITION BY [fecha_cargue], [idcr] ORDER BY [fecha_preciso] DESC) AS row_num\n" +
                         "    FROM \n" +
                         "        [PRECISO].[dbo].[preciso_log_cargues_inventarios]\n" +
+                        "    WHERE fecha_preciso like ?" +
                         ")\n" +
                         "SELECT [id_lci],\n" +              //0
                         "    [cantidad_registros],\n" +     //1
@@ -703,6 +704,7 @@ public class ConciliationRouteService {
                         "WHERE row_num = 1\n" +
                         "ORDER BY \n" +
                         "[fecha_cargue], [idcr];");
+        query.setParameter(1, fecha+"%");
         return query.getResultList();
     }
 
