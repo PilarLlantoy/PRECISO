@@ -34,49 +34,57 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="concil, iter : ${allConcils}">
+                    <tr th:each="parametro, iter : ${allParametros}">
                         <td th:text="${iter.count + ((current-1)*12)}"></td>
-                        <td th:text="${concil.nombre}"></td>
-                        <td th:if="${concil.activo == true}">Activo</td>
-                        <td th:if="${concil.activo == false}">Inactivo</td>
-                        <td th:if="${concil.festivo == true}">Activo</td>
-                        <td th:if="${concil.festivo == false}">Inactivo</td>
-                        <td th:text="${concil.sfc.nombre}"></td>
+                        <td th:text="${parametro.detalle}"></td>
+
+                        <td th:if="${parametro.activo == true}">Activo</td>
+                        <td th:if="${parametro.activo == false}">Inactivo</td>
+
+                        <td th:if="${parametro.festivo == true}">Activo</td>
+                        <td th:if="${parametro.festivo == false}">Inactivo</td>
+
+                        <td th:if="${parametro.tipoInsumo == 'contable'}">Contable</td>
+                        <td th:if="${parametro.tipoInsumo == 'conciliacion'}">Conciliación</td>
+                        <td th:if="${parametro.tipoInsumo == 'inventarios'}">Inventarios</td>
                         <td>
                             <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
-                                    th:onclick="|window.location.href='@{/parametric/modifyConciliation/{id}(id=${concil.id})}'|">Editar</button>
+                                    th:onclick="|window.location.href='@{/parametric/modifyParametroReportes/{id}(id=${parametro.id})}'|">Editar</button>
                         </td>
                         <td>
                             <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
-                                    th:onclick="|window.location.href='@{/parametric/accountsConciliation/{id}(id=${concil.id})}'|">Campos</button>
+                                    th:onclick="|window.location.href='@{/parametric/fieldLoadingParametrosReportes/{id}(id=${parametro.id})}'|">Campos</button>
                         </td>
                         <td>
                             <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
-                                    th:onclick="|window.location.href='@{/parametric/accountsConciliation/{id}(id=${concil.id})}'|">Filtros</button>
+                                    th:onclick="|window.location.href='@{/parametric/accountsConciliation/{id}(id=${parametro.id})}'|">Filtros</button>
                         </td>
                         <td>
                             <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
-                                    th:onclick="|window.location.href='@{/parametric/accountsConciliation/{id}(id=${concil.id})}'|">Fuentes</button>
+                                    th:onclick="|window.location.href='@{/parametric/accountsConciliation/{id}(id=${parametro.id})}'|">Fuentes</button>
                         </td>
                         <td>
                             <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
-                                    th:onclick="|window.location.href='@{/parametric/accountsConciliation/{id}(id=${concil.id})}'|">Estructuras</button>
+                                    th:onclick="|window.location.href='@{/parametric/accountsConciliation/{id}(id=${parametro.id})}'|">Estructuras</button>
                         </td>
                         <td>
                             <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
-                                    th:onclick="|window.location.href='@{/parametric/accountsConciliation/{id}(id=${concil.id})}'|">Fuen. Adicion</button>
+                                    th:onclick="|window.location.href='@{/parametric/accountsConciliation/{id}(id=${parametro.id})}'|">Fuen. Adicion</button>
                         </td>
                         <td>
                             <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
-                                    th:onclick="|window.location.href='@{/parametric/accountsConciliation/{id}(id=${concil.id})}'|">Vald. Adicion</button>
+                                    th:onclick="|window.location.href='@{/parametric/accountsConciliation/{id}(id=${parametro.id})}'|">Vald. Adicion</button>
                         </td>
                         <td>
                             <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
-                                    th:onclick="|window.location.href='@{/parametric/accountsConciliation/{id}(id=${concil.id})}'|">Rsl. Adicion</button>
+                                    th:onclick="|window.location.href='@{/parametric/accountsConciliation/{id}(id=${parametro.id})}'|">Rsl. Adicion</button>
                         </td>
                     </tr>
                     </tbody>
                 </table>
+                <div th:if="${#lists.isEmpty(allParametros)}">
+                    <div class="alert alert-info">No hay registros disponibles.</div>
+                </div>
             </div>
             <div class="row" th:if="${last != 0}">
                 <div class="col-md-4 text-left">

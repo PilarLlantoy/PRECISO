@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+
+<div class="main-container">
+    <div class="row m-0 bg-primary fixed-top myNav">
+        <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
+            <h2 class="fw-bold text-white mx-4 my-3">Cargue Campos</h2>
+        </div>
+    </div>
+    <div class="row mt-5 pt-3 px-4">
+        <div class="text-left col-md-6">
+            <h2>Cargue de campos</h2>
+        </div>
+        <div class="text-right col-md-6">
+            <a class="btn btn-sm btn-danger mx-1" th:href="@{/parametric/parametrosReportes}"><i class="fa-solid fa-left-long"></i> Regresar</a>
+        </div>
+    </div>
+    <div class="row px-4">
+        <div class="text-left col-md-12">
+            <form id="miFormulario" th:object="${campo}" th:action="@{/parametric/createCampoParamReportes}" method="POST">
+
+                <div class="px-3 pt-1 mb-1 row border rounded">
+                    <div hidden class="col-md-2">
+                        <div class="form-group form-group-sm">
+                            <h6 class="font-weight-bold">ID</h6>
+                            <input type="text" id="idInput" class="form-control form-control-sm" th:field="*{id}">
+                            <input type="hidden" id="page" name="page" class="form-control form-control-sm" th:value="${current}">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group form-group-sm">
+                            <h6 class="font-weight-bold">Detalle Campo</h6>
+                            <input type="text" class="form-control form-control-sm" th:field="*{detalle}" pattern="\S+"
+                                   title="No se permiten espacios en este campo." oninput="this.value = this.value.replace(/\s/g, '')" required>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="col-12"><h6 class="font-weight-bold">Campo Filtrado</h6></div>
+                        <div class="form-group form-group-sm col-md-2">
+                            <div class="form-check form-check-inline">
+                                <input id="filtrado" name="filtrado" th:field="*{filtrado}" th:id="${filtrado}"
+                                       th:value="${filtrado}" type="checkbox" class="styled-checkbox ms-2">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="col-12"><h6 class="font-weight-bold">Campo Primario</h6></div>
+                        <div class="form-group form-group-sm col-md-2">
+                            <div class="form-check form-check-inline">
+                                <input id="primario" name="primario" th:field="*{primario}" th:id="${primario}"
+                                       th:value="${primario}" type="checkbox" class="styled-checkbox ms-2">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="col-12"><h6 class="font-weight-bold">Seleccionado Adicion?</h6></div>
+                        <div class="form-group form-group-sm col-md-2">
+                            <div class="form-check form-check-inline">
+                                <input id="adicion" name="adicion" th:field="*{adicion}" th:id="${adicion}"
+                                       th:value="${adicion}" type="checkbox" class="styled-checkbox ms-2">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                    </div>
+
+                    <div class="col-md-2">
+                        <div class="form-group form-group-sm">
+                            <h6 class="font-weight-bold">Tipo de Campo</h6>
+                            <select class="form-control form-control-sm" name="selectedTipoCampo" id="selectedTipoCampo" th:field="*{tipo}" required onchange="toggleFechaIdiomaFields()">
+                                <option th:if="${campo.tipo == null}" hidden selected disabled value="">Seleccione tipo</option>
+                                <option th:if="${campo.tipo != null}" hidden selected th:text="${campoRC.tipo}" th:value="${campo.tipo}"></option>
+                                <option th:value="Integer" th:text="Integer"></option>
+                                <option th:value="Bigint" th:text="Bigint"></option>
+                                <option th:value="Float" th:text="Float"></option>
+                                <option th:value="Varchar" th:text="Varchar"></option>
+                                <option th:value="Date" th:text="Date"></option>
+                                <option th:value="Time" th:text="Time"></option>
+                                <option th:value="Datetime" th:text="Datetime"></option>
+                                <option th:value="Bit" th:text="Bit"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="col-12"><h6 class="font-weight-bold">Asociado a Fuente Adic.?</h6></div>
+                        <div class="form-group form-group-sm col-md-2">
+                            <div class="form-check form-check-inline">
+                                <input id="fuenteAdicion" name="fuenteAdicion" th:field="*{fuenteAdicion}" th:id="${fuenteAdicion}"
+                                       th:value="${fuenteAdicion}" type="checkbox" class="styled-checkbox ms-2">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group form-group-sm">
+                            <h6 class="font-weight-bold">Longitud de Campo
+                            <i  class="fas fa-question-circle text-muted"
+                            data-bs-toggle="tooltip"
+                            data-bs-placement="top"
+                            title="Se debe diligenciar si el fichero no tiene delimitador.
+                            Si se deja en blanco, se considera como un MAX."
+                            ></i>
+                            </h6>
+                            <input type="number" class="form-control form-control-sm" name="longitud" id="longitud" min="1">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group form-group-sm">
+                            <h6 class="font-weight-bold">Tipo Filtro</h6>
+                            <select class="form-control form-control-sm" name="selectedTipoCampo" id="selectedTipoFiltro" th:field="*{tipoFiltro}" required onchange="toggleFechaIdiomaFields()">
+                                <option th:if="${campo.tipoFiltro == null}" hidden selected disabled value="">Seleccione tipo</option>
+                                <option th:if="${campo.tipoFiltro != null}" hidden selected th:text="${campoRC.tipoFiltro}" th:value="${campo.tipoFiltro}"></option>
+                                <option th:value="Integer" th:text="Integer"></option>
+                                <option th:value="Bigint" th:text="Bigint"></option>
+                                <option th:value="Float" th:text="Float"></option>
+                                <option th:value="Varchar" th:text="Varchar"></option>
+                                <option th:value="Date" th:text="Date"></option>
+                                <option th:value="Time" th:text="Time"></option>
+                                <option th:value="Datetime" th:text="Datetime"></option>
+                                <option th:value="Bit" th:text="Bit"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group form-group-sm">
+                            <h6 class="font-weight-bold">Orden:</h6>
+                            <input type="text" class="form-control form-control-sm" th:field="*{orden}">
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <!-- miFormulario oculto para pasar el objeto croute -->
+                <input type="hidden" id="paramId" name="paramId" th:value="${parametro.id}" />
+
+                <div class="row">
+                    <div class="d-grid gap-2 col-1">
+                        <button th:disabled="${!p_modificar}" type="button" class="btn btn-sm btn-primary" onclick="descartar()">Eliminar</button>
+                    </div>
+                    <div class="d-grid gap-2 col-1">
+                        <button th:disabled="${!p_modificar}" id="actionButton" type="submit" class="btn btn-sm btn-primary">Agregar</button>
+                    </div>
+                    <div class="col-auto">
+                        <div class="border-start ms-3" style="height: 100%;"></div>
+                    </div>
+                    <div class="d-grid gap-2 col-1">
+                        <button type="button" class="btn btn-sm btn-primary" } onclick="Limpiar()">Deseleccionar Item</button>
+                    </div>
+                </div>
+            </form>
+
+
+        </div>
+        <div class="col-md-12 p-0">
+            <div class="table-responsive rounded border-primary">
+                <h2>Campos registrados</h2>
+                <table id="example" class="table table-striped table-hover text-center table-bordered table-sm" width="100%">
+                    <thead class="bg-primary">
+                    <tr>
+                        <th>Código Campo</th>
+                        <th>Detalle Campo</th>
+                        <th>Primario</th>
+                        <th>Tipo Campo</th>
+                        <th>Longitud</th>
+                        <th>Adicionado</th>
+                        <th>Orden</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="camp, iter : ${allCampos}">
+                        <!--<td th:text="${camp.id}"></td>-->
+                        <td th:text="${iter.count + ((current-1)*12)}"></td>
+                        <td th:text="${camp.detalle}"></td>
+                        <td th:if="${camp.primario == true}">Sí</td>
+                        <td th:if="${camp.primario == false}">No</td>
+                        <td th:text="${camp.tipo}"></td>
+                        <td th:text="${camp.longitud}"></td>
+                        <td th:if="${camp.adicion == true}">Sí</td>
+                        <td th:if="${camp.adicion == false}">No</td>
+                        <td th:text="${camp.orden}"></td>
+                        <td>
+                            <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
+                                    th:data-id="${camp.id}"
+                                    th:data-detalle="${camp.detalle}"
+                                    th:data-filtrado="${camp.filtrado}"
+                                    th:data-primario="${camp.primario}"
+                                    th:data-adicion="${camp.adicion}"
+                                    th:data-tipo="${camp.tipo}"
+                                    th:data-fuenteAdicion="${camp.fuenteAdicion}"
+                                    th:data-longitud="${camp.longitud}"
+                                    th:data-tipoFiltro="${camp.tipoFiltro}"
+                                    th:data-orden="${camp.orden}"
+                                    onclick="cargarCampos(this)">Seleccionar</button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="row" th:if="${last != 0}">
+                <div class="col-md-4 text-left">
+                    <nav arial-label="Pagination">
+                        <ul class="pagination pagination-sm">
+                            <li class="page-item" th:classappend="${prev == 0 ? 'disabled' : ''}">
+                                <a class="page-link"
+                                   th:href="@{/parametric/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${prev},dir=${directory},vId=${vId})}">Anterior</a>
+                            </li>
+                            <li class="page-item" th:classappend="${current == last ? 'disabled' : ''}">
+                                <a class="page-link"
+                                   th:href="@{/parametric/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${next},dir=${directory},vId=${vId})}">Siguiente</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="col-md-4 text-center">
+                    <h6 th:utext="${registers} + ' Registros Encontrados'"></h6>
+                </div>
+                <div class="col-md-4 text-right">
+                    <h6 class="mx-1" th:utext="'Página ' + ${current} + ' de ' + ${last}"></h6>
+                </div>
+            </div>
+            <div class="d-flex align-items-center justify-content-center" th:if="${filterExport != 'Original'}">
+                <h5><span class="badge badge-pill text-light badge-info py-2 px-5">¡La Tabla se encuentra Filtrada!</span>
+                </h5>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+</div>
+
+<script>
+
+    function cargarCampos(button) {
+        var id = button.getAttribute("data-id");
+        var detalle = button.getAttribute("data-detalle");
+        var tipo = button.getAttribute("data-tipo");
+        var longitud = button.getAttribute("data-longitud");
+        var tipoFiltro = button.getAttribute("data-tipoFiltro");
+        var orden = button.getAttribute("data-orden");
+
+        var filtrado = button.getAttribute("data-filtrado") === 'true';
+        var primario = button.getAttribute("data-primario") === 'true';
+        var adicion = button.getAttribute("data-adicion") === 'true';
+        var fuenteAdicion = button.getAttribute("data-fuenteAdicion") === 'true';
+
+        // Asignar los valores a los campos del miFormulario
+        document.querySelector("input[name='id']").value = id;
+        document.querySelector("input[name='detalle']").value = detalle;
+        document.querySelector("input[name='longitud']").value = longitud;
+        document.querySelector("input[name='orden']").value = orden;
+
+        document.querySelector("input[name='filtrado']").checked = filtrado;
+        document.querySelector("input[name='primario']").checked = primario;
+        document.querySelector("input[name='adicion']").checked = adicion;
+        document.querySelector("input[name='fuenteAdicion']").checked = fuenteAdicion;
+
+        var selectTipoCampo = document.querySelector("select[name='tipo']");
+        if (!selectTipoCampo.querySelector('option[value="' + tipo + '"]')) {
+            console.error("El valor '" + tipo + "' no está en las opciones del select.");
+        }
+        else{
+            selectTipoCampo.value = tipo.trim(); // Asigna el valor directamente
+        }
+        var selectTipoFiltro = document.querySelector("select[name='tipoFiltro']");
+        selectTipoFiltro.value = tipoFiltro; // Asigna el valor directamente
+        if (!selectTipoFiltro.querySelector('option[value="' + tipoFiltro + '"]')) {
+            console.error("El valor '" + tipoFiltro + "' no está en las opciones del select.");
+        }
+
+    }
+
+    function descartar() {
+        const id = document.querySelector("input[name='id']").value;
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+        const parametroId = document.getElementById('paramId').value;
+
+        if (id) {
+            fetch(`/parametric/deleteCampoParamReportes/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                }
+            }).then(response => {
+                if (response.ok) {
+                    // Verifica que la URL de redirección se construya correctamente
+                    window.location.href = `/parametric/fieldLoadingParametrosReportes/${parametroId}`;
+                } else {
+                    // Manejo de errores
+                    console.error('Error al eliminar el registro:', response.statusText);
+                }
+            }).catch(error => {
+                // Manejo de errores
+                console.error('Error:', error);
+            });
+        }
+        updateButtonText();
+    }
+
+</script>
+
+<script>
+
+    function toggleFechaIdiomaFields() {
+       var tipoCampo = document.getElementById('selectedTipoCampo').value;
+       var formatoFechaContainer = document.getElementById('formatoFechaContainer');
+       var idiomaCampoContainer = document.getElementById('idiomaCampoContainer');
+       var separadorContainer = document.getElementById('separadorContainer');
+
+       if (tipoCampo === 'Date' || tipoCampo === 'Datetime') {
+           formatoFechaContainer.classList.remove('hidden');
+           idiomaCampoContainer.classList.remove('hidden');
+       } else {
+           formatoFechaContainer.classList.add('hidden');
+           idiomaCampoContainer.classList.add('hidden');
+       }
+
+       if (tipoCampo === 'Float' || (tipoCampo === 'Date' || tipoCampo === 'Datetime')) {
+           separadorContainer.classList.remove('hidden');
+       } else {
+           separadorContainer.classList.add('hidden');
+       }
+       updateButtonText();
+   }
+
+   function updateButtonText() {
+         const idInput = document.getElementById("idInput");
+        const actionButton = document.getElementById("actionButton");
+
+        // Elimina espacios antes de validar
+        const value = idInput.value.trim();
+        console.log(value);
+        // Cambia el texto según el estado del campo
+        if (value === "0") {
+            actionButton.textContent = "Agregar";
+        } else {
+            actionButton.textContent = "Modificar";
+        }
+    }
+
+   function Limpiar() {
+       document.getElementById('miFormulario').reset();
+       toggleFechaIdiomaFields();
+   }
+
+   window.onload = function() {
+       //toggleFechaIdiomaFields();
+   };
+</script>
+</body>
+</html>
