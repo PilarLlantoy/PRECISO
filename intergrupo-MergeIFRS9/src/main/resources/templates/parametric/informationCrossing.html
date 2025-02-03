@@ -249,7 +249,7 @@
             const data = await response.json();
 
             const evento = document.getElementById('evento');
-            evento.innerHTML = '<option selected value="0" >Seleccione un archivo</option>';
+            evento.innerHTML = '<option selected value="" >Seleccione un archivo</option>';
 
             data.forEach(campo => {
             console.log(campo[0], campo[1]);

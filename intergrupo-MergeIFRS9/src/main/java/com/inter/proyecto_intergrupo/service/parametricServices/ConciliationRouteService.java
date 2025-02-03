@@ -688,7 +688,7 @@ public class ConciliationRouteService {
                         "        ROW_NUMBER() OVER (PARTITION BY [fecha_cargue], [idcr] ORDER BY [fecha_preciso] DESC) AS row_num\n" +
                         "    FROM \n" +
                         "        [PRECISO].[dbo].[preciso_log_cargues_inventarios]\n" +
-                        "    WHERE fecha_preciso like ?" +
+                        "    WHERE fecha_cargue like ?" +
                         ")\n" +
                         "SELECT [id_lci],\n" +              //0
                         "    [cantidad_registros],\n" +     //1

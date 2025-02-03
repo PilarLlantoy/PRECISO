@@ -116,11 +116,11 @@
                                         <ul class="pagination pagination-sm">
                                             <li class="page-item" th:classappend="${prev2 == 0 ? 'disabled' : ''}">
                                                 <a class="page-link"
-                                                   th:href="@{/parametric/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${prev},dir=${directory},vId=${vId})}">Anterior</a>
+                                                   th:href="@{/parametric/{dir}/?page={page}&vId={vId}&vFilter={vFilter}&period={period}(period=${period},vFilter=${vFilter},page=${prev},dir=${directory},vId=${vId})}">Anterior</a>
                                             </li>
                                             <li class="page-item" th:classappend="${current2 == last2 ? 'disabled' : ''}">
                                                 <a class="page-link"
-                                                   th:href="@{/parametric/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${next},dir=${directory},vId=${vId})}">Siguiente</a>
+                                                   th:href="@{/parametric/{dir}/?page={page}&vId={vId}&vFilter={vFilter}&period={period}(period=${period},vFilter=${vFilter},page=${next},dir=${directory},vId=${vId})}">Siguiente</a>
                                             </li>
                                         </ul>
                                     </nav>

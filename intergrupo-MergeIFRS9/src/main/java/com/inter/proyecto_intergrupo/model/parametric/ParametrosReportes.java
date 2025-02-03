@@ -45,5 +45,8 @@ public class ParametrosReportes {
     @OneToMany(mappedBy = "parametroReportes", cascade = CascadeType.ALL)
     private List<CampoParamReportes> campos;
 
+    @OneToMany(mappedBy = "parametroReportes", cascade = CascadeType.ALL)
+    private List<FilterParametroReportes> filtros;
+
 
 }

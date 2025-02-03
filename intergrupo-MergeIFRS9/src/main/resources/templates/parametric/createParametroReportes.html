@@ -43,7 +43,7 @@
                     <div class="col-md-2">
                         <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Aplica Festivo</h6>
-                            <input id="festivoInput" name="festivo" th:field="*{festivo}" th:id="${festivo}"
+                            <input id="festivoInput" name="festivo" th:field="*{festivo}" th:id="${festivo}" onchange="toggleFestivos()"
                                    th:value="${festivo}" type="checkbox" class="styled-checkbox">
                         </div>
                     </div>
@@ -85,7 +85,7 @@
                         <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Pais:<i class="bi bi-caret-down"></i></h6>
                             <select class="form-control form-control-sm" th:name="selectedPais" id="selectedPais">
-                                <option disabled hidden selected value="">Seleccione un pais</option>
+                                <option selected value="">Seleccione un pais</option>
                                 <option th:each="pais : ${paises}" th:text="${pais.nombre}" th:value="${pais.nombre}"></option>
                             </select>
                         </div>
@@ -107,6 +107,21 @@
         crossorigin="anonymous"></script>
 <script>
 
+    function toggleFestivos() {
+        var manejaCCCheckbox = document.getElementById('festivo1');
+        var pais = document.getElementById('selectedPais');
+
+        if (manejaCCCheckbox.checked) {
+            pais.disabled = false;
+        } else {
+            pais.disabled = true;
+        }
+    }
+
+    // Inicializar el estado de los campos cuando la página se carga
+    window.onload = function() {
+        toggleFestivos();
+    };
 
 </script>
 </body>

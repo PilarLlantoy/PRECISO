@@ -130,31 +130,12 @@ public class ParametrosReportesController {
     @GetMapping(value = "/parametric/modifyParametroReportes/{id}")
     public ModelAndView showModifyParametroReportes(@PathVariable int id){
         ModelAndView modelAndView = new ModelAndView();
-        Conciliation concil = conciliationService.findById(id);
+        ParametrosReportes parametro = parametrosReportesService.findById(id);
 
         List<Country> allCountries = countryService.findAll();
-        List<SourceSystem> allSFs = sourceSystemService.findAll();
-        List<SourceSystem> allSFCCs = sourceSystemService.findAll();
-        List<Currency> allDivisas = currencyService.findAll();
-        List<AccountingRoute> rutasContables = accountingRouteService.findAll();
-
-        //LISTAS QUE VAN A SER LLENADAS POR FRONT
-        List<CampoRC> campoCentro = concil.getRutaContable().getCampos();
-        List<CampoRC> campoCuenta = concil.getRutaContable().getCampos();
-        List<CampoRC> campoDivisa = concil.getRutaContable().getCampos();
-        List<CampoRC> campoSaldo = concil.getRutaContable().getCampos();
-        modelAndView.addObject("rutasContables", rutasContables);
-        modelAndView.addObject("camposCentro",campoCentro);
-        modelAndView.addObject("camposCuenta",campoCuenta);
-        modelAndView.addObject("camposDivisa",campoDivisa);
-        modelAndView.addObject("camposSaldo",campoSaldo);
-
         modelAndView.addObject("paises", allCountries);
-        modelAndView.addObject("sfs", allSFs);
-        modelAndView.addObject("sfcs", allSFCCs);
-        modelAndView.addObject("divisas", allDivisas);
-        modelAndView.addObject("rutasContables", rutasContables);
-        modelAndView.addObject("concil",concil);
+
+        modelAndView.addObject("parametro",parametro);
         modelAndView.setViewName("/parametric/modifyParametroReportes");
         return modelAndView;
     }
@@ -177,6 +158,25 @@ public class ParametrosReportesController {
         }
 
         modelAndView.addObject("resp", "Add1");
+        return modelAndView;
+    }
+
+    @PostMapping(value = "/parametric/modifyParametrosReportes")
+    public ModelAndView modifyParametrosReportes(@ModelAttribute ParametrosReportes parametro,
+                                     @RequestParam(name = "selectedPais") String pais,
+                                     BindingResult bindingResult){
+
+        ModelAndView modelAndView = new ModelAndView("redirect:/parametric/parametrosReportes/");
+        if(bindingResult.hasErrors()){
+            modelAndView.setViewName("parametric/modifyParametrosReportes");
+        }else {
+
+            Country paisSeleccionado = countryService.findCountryByName(pais).get(0);
+            parametro.setPais(paisSeleccionado);
+            parametrosReportesService.modificar(parametro);
+        }
+
+        modelAndView.addObject("resp", "Modify1");
         return modelAndView;
     }
 
@@ -273,5 +273,98 @@ public class ParametrosReportesController {
         }
     }
 
+    @GetMapping(value = "/parametric/filtersParametroReportes/{id}")
+    public ModelAndView filtersParametroReportes(@PathVariable int id, @RequestParam Map<String, Object> params){
+        ModelAndView modelAndView = new ModelAndView();
+        ParametrosReportes parametro = parametrosReportesService.findById(id);
+        modelAndView.addObject("parametro",parametro);
+
+        List<FilterParametroReportes> filtros = parametro.getFiltros();
+
+        int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
+        PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
+        int start = (int) pageRequest.getOffset();
+        int end = Math.min((start + pageRequest.getPageSize()), filtros.size());
+
+        Page<FilterParametroReportes> pageConciliation = new PageImpl<>(filtros.subList(start, end), pageRequest, filtros.size());
+        List<CampoParamReportes> campos = parametro.getCampos();
+        modelAndView.addObject("campos",campos);
+
+        int totalPage=pageConciliation.getTotalPages();
+        if(totalPage>0){
+            List<Integer> pages = IntStream.rangeClosed(1, totalPage).boxed().collect(Collectors.toList());
+            modelAndView.addObject("pages",pages);
+        }
+        modelAndView.addObject("current",page+1);
+        modelAndView.addObject("next",page+2);
+        modelAndView.addObject("prev",page);
+        modelAndView.addObject("last",totalPage);
+        modelAndView.addObject("directory","filtersParametroReportes/"+id);
+        modelAndView.addObject("allCondiciones",pageConciliation.getContent());
+        modelAndView.addObject("registers",filtros.size());
+        modelAndView.addObject("filterExport","Original");
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findUserByUserName(auth.getName());
+        modelAndView.addObject("userName", user.getPrimerNombre());
+        modelAndView.addObject("userEmail", user.getCorreo());
+        Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Rutas Contables");
+        modelAndView.addObject("p_modificar", p_modificar);
+
+
+        FilterParametroReportes filtro = new FilterParametroReportes();
+        modelAndView.addObject("filtro",filtro);
+
+
+        modelAndView.setViewName("parametric/filtersParametroReportes");
+        return modelAndView;
+    }
+
+    @GetMapping(value = "/parametric/sourcesParametroReportes/{id}")
+    public ModelAndView sourcesParametroReportes(@PathVariable int id, @RequestParam Map<String, Object> params){
+        ModelAndView modelAndView = new ModelAndView();
+        ParametrosReportes parametro = parametrosReportesService.findById(id);
+        modelAndView.addObject("parametro",parametro);
+
+        List<FilterParametroReportes> filtros = parametro.getFiltros();
+
+        int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
+        PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
+        int start = (int) pageRequest.getOffset();
+        int end = Math.min((start + pageRequest.getPageSize()), filtros.size());
+
+        Page<FilterParametroReportes> pageConciliation = new PageImpl<>(filtros.subList(start, end), pageRequest, filtros.size());
+        List<CampoParamReportes> campos = parametro.getCampos();
+        modelAndView.addObject("campos",campos);
+
+        int totalPage=pageConciliation.getTotalPages();
+        if(totalPage>0){
+            List<Integer> pages = IntStream.rangeClosed(1, totalPage).boxed().collect(Collectors.toList());
+            modelAndView.addObject("pages",pages);
+        }
+        modelAndView.addObject("current",page+1);
+        modelAndView.addObject("next",page+2);
+        modelAndView.addObject("prev",page);
+        modelAndView.addObject("last",totalPage);
+        modelAndView.addObject("directory","sourcesParametroReportes/"+id);
+        modelAndView.addObject("allCondiciones",pageConciliation.getContent());
+        modelAndView.addObject("registers",filtros.size());
+        modelAndView.addObject("filterExport","Original");
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findUserByUserName(auth.getName());
+        modelAndView.addObject("userName", user.getPrimerNombre());
+        modelAndView.addObject("userEmail", user.getCorreo());
+        Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Rutas Contables");
+        modelAndView.addObject("p_modificar", p_modificar);
+
+
+        FilterParametroReportes filtro = new FilterParametroReportes();
+        modelAndView.addObject("filtro",filtro);
+
+
+        modelAndView.setViewName("parametric/sourcesParametroReportes");
+        return modelAndView;
+    }
 
 }
