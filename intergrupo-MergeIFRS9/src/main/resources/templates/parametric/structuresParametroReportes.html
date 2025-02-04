@@ -10,12 +10,12 @@
 <div class="main-container">
     <div class="row m-0 bg-primary fixed-top myNav">
         <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
-            <h2 class="fw-bold text-white mx-4 my-3">Cargue de Fuentes de Parametros Reportes</h2>
+            <h2 class="fw-bold text-white mx-4 my-3">Cargue de Estructura de Parametros Reportes</h2>
         </div>
     </div>
     <div class="row mt-5 ml-1 px-2">
         <div class="text-left col-md-6">
-            <h2>Cargue de Fuentes de Reportes</h2>
+            <h2>Cargue de Estructura de Reportes</h2>
         </div>
         <div class="text-right col-md-6">
             <a class="btn btn-sm btn-danger mx-1" th:href="@{/parametric/parametrosReportes}"><i class="fa-solid fa-left-long"></i> Regresar</a>
@@ -31,35 +31,15 @@
                             <input id="idInput" type="text" class="form-control form-control-sm  " th:field="*{id}">
                         </div>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-6">
                         <div class="form-group form-group-sm">
-                            <h6 class="font-weight-bold">Fuente</h6>
+                            <h6 class="font-weight-bold">Estructura</h6>
                             <select class="form-control form-control-sm" name="selectedConcil" id="selectedConcil" required onchange="toggleConciliacion()">
-                                <option disabled value="" selected hidden>Seleccione Fuente</option>
+                                <option disabled value="" selected hidden>Seleccione Estructura</option>
                                 <option th:each="fuente : ${conciliaciones}" th:value="${fuente.id}" th:text="${fuente.detalle}"></option>
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-2">
-                        <div class="form-group form-group-sm">
-                            <h6 class="font-weight-bold">Inventario</h6>
-                            <select class="form-control form-control-sm" name="selectedInventario" id="selectedInventario" required onchange="toggleInventario()">
-                                <option disabled value="" selected hidden>Seleccione Inventario</option>
-                                <option th:each="inventario : ${inventarios}" th:value="${inventario.id}" th:text="${inventario.detalle}"></option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="col-md-2">
-                        <div class="form-group form-group-sm">
-                            <h6 class="font-weight-bold">Evento</h6>
-                            <select class="form-control form-control-sm" name="selectedEvento" id="selectedEvento" required>
-                                <option disabled value="" selected hidden>Seleccione Evento</option>
-                                <option th:each="evento : ${eventos}" th:value="${evento.id}" th:text="${evento.detalle}"></option>
-                            </select>
-                        </div>
-                    </div>
-
                 </div>
 
                 <!-- Formulario oculto para pasar el objeto aroute -->
@@ -85,15 +65,16 @@
         </div>
         <div class="col-md-12 p-0">
             <div class="table-responsive rounded border-primary">
-                <h2>Condiciones registradas</h2>
+                <h2>Campos registrados</h2>
                 <table id="example" class="table table-striped table-hover text-center table-bordered table-sm" width="100%">
                     <thead class="bg-primary">
                     <tr>
-                        <th>Item</th>
-                        <th>Fuente</th>
-                        <th>Inventario</th>
-                        <th>Evento</th>
-                        <th COLSPAN="2">Acciones</th>
+                        <th>Campo Reporte</th>
+                        <th>Campo 1</th>
+                        <th>Operacion</th>
+                        <th>Campo 2</th>
+                        <th>Aplica formula</th>
+                        <th>Valor formula</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -102,20 +83,10 @@
                         <td th:text="${fuente.fuente.detalle}"></td>
                         <td th:text="${fuente.inventario.detalle}"></td>
                         <td th:text="${fuente.evento.nombre}"></td>
+                        <td th:text="${fuente.evento.nombre}"></td>
+                        <td th:text="${fuente.evento.nombre}"></td>
 
-                        <td>
-                            <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
-                                    th:data-id="${fuente.id}"
-                                    th:data-concil="${fuente.fuente.id}"
-                                    th:data-inventario="${fuente.inventario.id}"
-                                    th:data-evento="${fuente.evento.id}"
-                                    onclick="cargarCampos(this)">Seleccionar</button>
-                        </td>
-                        <td>
-                            <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
-                                    th:data-id="${fuente.id}"
-                                    onclick="cargarCampos(this)">Ir Estructura</button>
-                        </td>
+
                     </tr>
                     </tbody>
                 </table>

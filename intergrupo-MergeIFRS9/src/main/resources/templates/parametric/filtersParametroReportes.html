@@ -23,7 +23,7 @@
     </div>
     <div class="row px-4">
         <div class="text-left col-md-12 mb-1">
-            <form id="miFormulario" th:object="${filtro}" th:action="@{/parametric/createCondicionRC}" method="POST">
+            <form id="miFormulario" th:object="${filtro}" th:action="@{/parametric/createFilterParametroReportes}" method="POST">
                 <div class="px-3 pt-1 mb-1 row border rounded">
                     <div hidden class="col-md-2">
                         <div class="form-group form-group-sm ">
@@ -32,13 +32,13 @@
                         </div>
                     </div>
                     <div class="col-2">
-                        <div class="form-group form-group-sm  row">
+                        <div class="form-group form-group-sm row">
                             <!-- <label class="col-sm-4 col-form-label pr-0">Campo</label> -->
                             <h6 class="font-weight-bold">Campo</h6>
                             <div class="col-sm-8 pl-0">
                                 <select class="form-control form-control-sm  " name="selectedCampo" id="selectedCampo" required>
                                     <option hidden selected disabled value="">Seleccione Campo</option>
-                                    <option th:each="campo : ${campos}" th:value="${campo.id}" th:text="${campo.nombre}"></option>
+                                    <option th:each="campo : ${campos}" th:value="${campo.id}" th:text="${campo.detalle}"></option>
                                 </select>
                             </div>
                         </div>
@@ -62,8 +62,8 @@
 
                 </div>
 
-                <!-- Formulario oculto para pasar el objeto aroute -->
-                <input type="hidden" id="parametroId" name="parametroId" th:value="${parametro.id}" />
+                <!-- Formulario oculto para pasar el objeto parametro -->
+                <input type="hidden" id="paramId" name="paramId" th:value="${parametro.id}" />
 
                 <div class="row">
                     <div class="d-grid gap-2 col-1">
@@ -98,13 +98,13 @@
                     <tbody>
                     <tr th:each="cond, iter : ${allCondiciones}">
                         <td th:text="${iter.count + ((current-1)*12)}"></td>
-                        <td th:text="${cond.campo.nombre}"></td>
+                        <td th:text="${cond.campo.detalle}"></td>
                         <td th:text="${cond.valorCondicion}"></td>
 
                         <td>
                             <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
                                     th:data-id="${cond.id}"
-                                    th:data-campo="${cond.campo.nombre}"
+                                    th:data-campo="${cond.campo.detalle}"
                                     th:data-valorCondicion="${cond.valorCondicion}"
                                     onclick="cargarCampos(this)">Seleccionar</button>
                         </td>
@@ -180,10 +180,10 @@
         const valorCondicion = document.querySelector("input[name='valorCondicion']").value;
         const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
         const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
-        const arouteId = document.getElementById('arouteId').value;
+        const paramId = document.getElementById('paramId').value;
 
         if (id && selectCampo && valorCondicion) {
-            fetch(`/parametric/deleteCondicionRC/${id}`, {
+            fetch(`/parametric/deleteFilterParametroReportes/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -191,7 +191,7 @@
                 }
             }).then(response => {
                 if (response.ok) {
-                    window.location.href = `/parametric/conditionLoadingAccountingRoute/${arouteId}`;
+                    window.location.href = `/parametric/filtersParametroReportes/${paramId}`;
                 }
             }).catch(error => {
                 // Manejo de errores

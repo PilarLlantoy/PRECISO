@@ -112,17 +112,11 @@
                     <div class="col-md-2">
                         <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Tipo Filtro</h6>
-                            <select class="form-control form-control-sm" name="selectedTipoCampo" id="selectedTipoFiltro" th:field="*{tipoFiltro}" required onchange="toggleFechaIdiomaFields()">
-                                <option th:if="${campo.tipoFiltro == null}" hidden selected disabled value="">Seleccione tipo</option>
+                            <select class="form-control form-control-sm" name="selectedTipoFiltro" id="selectedTipoFiltro" th:field="*{tipoFiltro}">
+                                <option th:if="${campo.tipoFiltro == null}"  selected value="">Seleccione tipo</option>
                                 <option th:if="${campo.tipoFiltro != null}" hidden selected th:text="${campoRC.tipoFiltro}" th:value="${campo.tipoFiltro}"></option>
-                                <option th:value="Integer" th:text="Integer"></option>
-                                <option th:value="Bigint" th:text="Bigint"></option>
-                                <option th:value="Float" th:text="Float"></option>
-                                <option th:value="Varchar" th:text="Varchar"></option>
-                                <option th:value="Date" th:text="Date"></option>
-                                <option th:value="Time" th:text="Time"></option>
-                                <option th:value="Datetime" th:text="Datetime"></option>
-                                <option th:value="Bit" th:text="Bit"></option>
+                                <option th:value="Puntual" th:text="Puntual"></option>
+                                <option th:value="Rangos" th:text="Rangos"></option>
                             </select>
                         </div>
                     </div>
@@ -269,10 +263,13 @@
         else{
             selectTipoCampo.value = tipo.trim(); // Asigna el valor directamente
         }
+
         var selectTipoFiltro = document.querySelector("select[name='tipoFiltro']");
-        selectTipoFiltro.value = tipoFiltro; // Asigna el valor directamente
         if (!selectTipoFiltro.querySelector('option[value="' + tipoFiltro + '"]')) {
-            console.error("El valor '" + tipoFiltro + "' no está en las opciones del select.");
+            console.warn("El valor '" + tipoFiltro + "' no está en las opciones del select. Asignando valor vacío.");
+            selectTipoFiltro.value = ""; // Asigna el valor vacío para seleccionar la opción por defecto
+        } else {
+            selectTipoFiltro.value = tipoFiltro;
         }
 
     }

@@ -386,4 +386,11 @@ public class ConciliationRoutesController {
         return eventos;
     }
 
+    @GetMapping("/parametric/obtenerTiposEventoByConcilByInv/{concilID}/{invId}")
+    @ResponseBody
+    public List<Object[]> obtenerTiposEventoByConcilByInv(@PathVariable("concilID") Integer concilID, @PathVariable("invId") Integer invId) {
+        List<Object[]> eventos = informationCrossingService.findEventosxConcilxInv(concilID, invId);
+        return eventos;
+    }
+
 }

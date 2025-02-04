@@ -623,5 +623,16 @@ public class InformationCrossingService {
         return query.getResultList();
     }
 
+    public List<Object[]> findEventosxConcilxInv(int concilId, int invId) {
+        Query query = entityManager.createNativeQuery(
+                "SELECT distinct a.id_tipo_evento, b.nombre_tipo_evento " +
+                        "FROM preciso_matriz_eventos a " +
+                        "LEFT JOIN preciso_tipo_evento b ON a.id_tipo_evento = b.id_tipo_evento" +
+                        " WHERE a.id_conciliacion = :concilId AND a.id_inventario_conciliacion = :invId");
+        query.setParameter("concilId", concilId);
+        query.setParameter("invId", invId);
+        return query.getResultList();
+    }
+
 
 }
