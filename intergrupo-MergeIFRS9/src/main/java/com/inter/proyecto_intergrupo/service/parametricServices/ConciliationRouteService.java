@@ -663,6 +663,13 @@ public class ConciliationRouteService {
         return query.getResultList();
     }
 
+    public List<ConciliationRoute> findByConcil(int concilId) {
+        Query query = entityManager.createNativeQuery(
+                "SELECT * FROM preciso_rutas_conciliaciones WHERE id_conciliacion = :concilId", ConciliationRoute.class);
+        query.setParameter("concilId", concilId);
+        return query.getResultList();
+    }
+
     //PARA CARGUE DE INVENTARIOS
 
     public List<LogInventoryLoad> findAllLog(ConciliationRoute cr, String fecha) {

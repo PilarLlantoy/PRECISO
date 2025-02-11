@@ -25,6 +25,7 @@
             <div class="col-3 ml-3">
                 <div class="contend mb-3">
                     <h2>Fecha de Información</h2>
+                    <input id="nomb" type="hidden" th:value="${nomb}">
                     <form th:object="${concil}" th:action="@{/parametric/informationCrossing}" method="GET">
                         <div class="form-group mb-1">
                             <h6 class="font-weight-bold">Conciliación</h6>
@@ -71,12 +72,12 @@
                                     th:onclick="|generarCuentas()|" type="button">Generar Cuentas</button>
                         </div>
                         <div class="d-grid gap-2 col-3 mt-1" style="padding-left:0px">
-                            <button th:disabled="${!p_modificar}" class="btn btn-primary"
-                                    th:onclick="|validarYSubir()|" type="button">Exportar Consolidado</button>
+                            <button type="button" class="btn btn-sm btn-primary" th:onclick="|validarYexportar()|" th:if="${allRCs.size()!=0}">Exportar Consolidado</button>
+                            <button type="button" class="btn btn-sm btn-primary" th:if="${allRCs.size()==0}" disabled>Exportar Consolidado</button>
                         </div>
                         <div class="d-grid gap-2 col-3 mt-1" style="padding-left:0px">
-                            <button th:disabled="${!p_modificar}" class="btn btn-primary"
-                                    th:onclick="|validarYSubir()|" type="button">Exportar Detallado</button>
+                            <button type="button" class="btn btn-sm btn-primary" th:onclick="|validarYexportarD()|" th:if="${allRCs.size()!=0}">Exportar Detallado</button>
+                            <button type="button" class="btn btn-sm btn-primary" th:if="${allRCs.size()==0}" disabled>Exportar Detallado</button>
                         </div>
                         <div class="d-grid gap-2 col-3 mt-1" style="padding-left:0px">
                             <button th:disabled="${!p_modificar}" class="btn btn-primary"
@@ -318,51 +319,8 @@
             console.error("Error:", error);
         });
     }
-    //EXPORTAR CONSOLIDADO
+    //CONFIRMACIÓN
     //---------------------------------------------------------------------
-    function exportarConsolidado() {
-        var concilacion = document.getElementById("arhcont");
-        var fechaInformacion = document.getElementById("period");
-        var evento = document.getElementById("evento");
-        var isValid = true;
-        if (concilacion !=null && !concilacion.value) {
-            concilacion.classList.add("is-invalid");
-            isValid = false;
-        } else {
-            concilacion.classList.remove("is-invalid");
-        }
-
-        if (fechaInformacion !=null && !fechaInformacion.value) {
-            fechaInformacion.classList.add("is-invalid");
-            isValid = false;
-        } else {
-            fechaInformacion.classList.remove("is-invalid");
-        }
-
-        if (evento !=null && !evento.value) {
-            evento.classList.add("is-invalid");
-            isValid = false;
-        } else {
-           evento.classList.remove("is-invalid");
-        }
-        if (isValid) {
-            dialogOpen();
-            exportacionConsolidado(conciliacion.value, fechaInformacion.value, evento.value);
-        }
-    }
-
-    function exportacionConsolidado(conciliacion, fechaInformacion, evento) {
-        fetch(`/parametric/informationCrossing/generateAccount?id=${encodeURIComponent(conciliacion)}&fecha=${encodeURIComponent(fechaInformacion)}&evento=${encodeURIComponent(evento)}`)
-        .then(response => response.text())
-        .then(data => {
-            Swal.close();
-            validateAlerts(data,'')
-        })
-        .catch(error => {
-            console.error("Error:", error);
-        });
-    }
-
     function confirmarCruce(){
         const valueCuen = document.getElementById('ultLog').value;
         const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
@@ -382,20 +340,130 @@
                 console.error("Ocurrió un error al enviar la solicitud POST: " + error);
             });
     }
+    //EXPORTAR CONSOLIDADO
+    //---------------------------------------------------------------------
+    function validarYexportar() {
+        var eventoD = document.getElementById("evento");
+        var archivoContable = document.getElementById("arhcont");
+        var fechaInformacion = document.getElementById("period");
+        var isValid = true;
 
-    /*
-    document.addEventListener('DOMContentLoaded', function () {
-        const modal = document.getElementById('novedadModal');
-        const novedadText = document.getElementById('novedadText');
+        if (eventoD !=null && !eventoD.value) {
+            eventoD.classList.add("is-invalid");
+            isValid = false;
+        } else {
+            eventoD.classList.remove("is-invalid");
+        }
+        if (archivoContable !=null && !archivoContable.value) {
+            archivoContable.classList.add("is-invalid");
+            isValid = false;
+        } else {
+            archivoContable.classList.remove("is-invalid");
+        }
 
-        modal.addEventListener('show.bs.modal', function (event) {
-            const button = event.relatedTarget; // Botón que activó el modal
-            const novedad = button.getAttribute('data-novedad'); // Extraer el valor de data-novedad
-            novedadText.textContent = novedad; // Asignar el valor al contenido del modal
-        });
-    });
-    */
+        if (fechaInformacion !=null && !fechaInformacion.value) {
+            fechaInformacion.classList.add("is-invalid");
+            isValid = false;
+        } else {
+            fechaInformacion.classList.remove("is-invalid");
+        }
 
+        if (isValid) {
+            dialogOpen();
+            exportar(archivoContable.value, fechaInformacion.value, eventoD.value);
+        }
+    }
+    function exportar(archivoContable, fechaInformacion, eventoD) {
+        const encodedId = encodeURIComponent(archivoContable);
+        const encodedFecha = encodeURIComponent(fechaInformacion);
+        const encodedEvento = encodeURIComponent(eventoD);
+        const url = `/parametric/informationCrossing/download?id=${encodedId}&fecha=${encodedFecha}&evento=${encodedEvento}`;
+
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.blob(); // Cambia a blob para manejar la descarga del archivo
+            })
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = document.getElementById("nomb").value+'_Consolidado.xlsx'; // Asigna un nombre al archivo descargado
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                Swal.close();
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("Error al descargar el archivo: " + error.message);
+            });
+    }
+    //EXPORTAR DETALLADO
+    //---------------------------------------------------------------------
+    function validarYexportarD() {
+        var eventoD = document.getElementById("evento");
+        var archivoContable = document.getElementById("arhcont");
+        var fechaInformacion = document.getElementById("period");
+        var isValid = true;
+
+        if (eventoD !=null && !eventoD.value) {
+            eventoD.classList.add("is-invalid");
+            isValid = false;
+        } else {
+            eventoD.classList.remove("is-invalid");
+        }
+        if (archivoContable !=null && !archivoContable.value) {
+            archivoContable.classList.add("is-invalid");
+            isValid = false;
+        } else {
+            archivoContable.classList.remove("is-invalid");
+        }
+
+        if (fechaInformacion !=null && !fechaInformacion.value) {
+            fechaInformacion.classList.add("is-invalid");
+            isValid = false;
+        } else {
+            fechaInformacion.classList.remove("is-invalid");
+        }
+
+        if (isValid) {
+            dialogOpen();
+            exportarD(archivoContable.value, fechaInformacion.value, eventoD.value);
+        }
+    }
+    function exportarD(archivoContable, fechaInformacion, eventoD) {
+        const encodedId = encodeURIComponent(archivoContable);
+        const encodedFecha = encodeURIComponent(fechaInformacion);
+        const encodedEvento = encodeURIComponent(eventoD);
+        const url = `/parametric/informationCrossing/downloadDetail?id=${encodedId}&fecha=${encodedFecha}&evento=${encodedEvento}`;
+
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.blob(); // Cambia a blob para manejar la descarga del archivo
+            })
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = document.getElementById("nomb").value+'_Detallado.xlsx'; // Asigna un nombre al archivo descargado
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                Swal.close();
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("Error al descargar el archivo: " + error.message);
+            });
+    }
 
 </script>
 </body>
