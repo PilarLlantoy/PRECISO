@@ -113,8 +113,8 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr th:each="rc : ${allLog}">
-                                <td th:text="${rc.id}"></td>
+                            <tr th:each="rc,iter : ${allLog}">
+                                <td th:text="${iter.count + ((current-1)*5)}"></td>
                                 <td th:text="${#dates.format(rc.fechaProceso,'yyyy-MM-dd')}"></td>
                                 <td th:text="${rc.novedad}"></td>
                                 <td th:text="${#dates.format(rc.fechaPreciso,'yyyy-MM-dd HH:mm:ss')}"></td>
@@ -456,6 +456,69 @@
                 a.style.display = 'none';
                 a.href = url;
                 a.download = document.getElementById("nomb").value+'_Detallado.xlsx'; // Asigna un nombre al archivo descargado
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                Swal.close();
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("Error al descargar el archivo: " + error.message);
+            });
+    }
+
+    //EXPORTAR NOVEDADES
+    //---------------------------------------------------------------------
+    function validarYexportarN() {
+        var eventoD = document.getElementById("evento");
+        var archivoContable = document.getElementById("arhcont");
+        var fechaInformacion = document.getElementById("period");
+        var isValid = true;
+
+        if (eventoD !=null && !eventoD.value) {
+            eventoD.classList.add("is-invalid");
+            isValid = false;
+        } else {
+            eventoD.classList.remove("is-invalid");
+        }
+        if (archivoContable !=null && !archivoContable.value) {
+            archivoContable.classList.add("is-invalid");
+            isValid = false;
+        } else {
+            archivoContable.classList.remove("is-invalid");
+        }
+
+        if (fechaInformacion !=null && !fechaInformacion.value) {
+            fechaInformacion.classList.add("is-invalid");
+            isValid = false;
+        } else {
+            fechaInformacion.classList.remove("is-invalid");
+        }
+
+        if (isValid) {
+            dialogOpen();
+            exportarN(archivoContable.value, fechaInformacion.value, eventoD.value);
+        }
+    }
+    function exportarN(archivoContable, fechaInformacion, eventoD) {
+        const encodedId = encodeURIComponent(archivoContable);
+        const encodedFecha = encodeURIComponent(fechaInformacion);
+        const encodedEvento = encodeURIComponent(eventoD);
+        const url = `/parametric/informationCrossing/downloadNov?id=${encodedId}&fecha=${encodedFecha}&evento=${encodedEvento}`;
+
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.blob(); // Cambia a blob para manejar la descarga del archivo
+            })
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = document.getElementById("nomb").value+'_Novedades.xlsx'; // Asigna un nombre al archivo descargado
                 document.body.appendChild(a);
                 a.click();
                 window.URL.revokeObjectURL(url);

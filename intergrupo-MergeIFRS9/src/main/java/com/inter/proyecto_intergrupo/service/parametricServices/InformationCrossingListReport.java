@@ -3,6 +3,7 @@ package com.inter.proyecto_intergrupo.service.parametricServices;
 import com.inter.proyecto_intergrupo.model.parametric.CampoRConcil;
 import com.inter.proyecto_intergrupo.model.parametric.Conciliation;
 import com.inter.proyecto_intergrupo.model.parametric.ConciliationRoute;
+import com.inter.proyecto_intergrupo.model.parametric.LogInformationCrossing;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
@@ -187,5 +188,61 @@ public class InformationCrossingListReport {
 
             sheets.put(sheetName, sheet);
         }
+    }
+
+    public void exportNove(HttpServletResponse response, List<LogInformationCrossing> crList, String fecha) throws IOException {
+        writeHeaderLineNove(crList,fecha);
+
+        ServletOutputStream outputStream = response.getOutputStream();
+        workbook.write(outputStream);
+        workbook.close();
+        outputStream.flush();
+        outputStream.close();
+    }
+
+    private void writeHeaderLineNove(List<LogInformationCrossing> crList,String fecha){
+        XSSFSheet sheet = workbook.createSheet("Novedades");
+
+        Row row0 = sheet.createRow(0);
+        int columCount = 0;
+
+        CellStyle style = workbook.createCellStyle();
+        XSSFFont font = workbook.createFont();
+        font.setFontHeight(10);
+        style.setFont(font);
+
+        CellStyle style1 = workbook.createCellStyle();
+        style1.setFont(font);
+        style1.setDataFormat(workbook.createDataFormat().getFormat("#,##0.00"));
+
+        CellStyle style2 = workbook.createCellStyle();
+        style2.setFont(font);
+        style2.setDataFormat(workbook.createDataFormat().getFormat("#,##0"));
+
+        CellStyle style3 = workbook.createCellStyle();
+        style3.setFont(font);
+        style3.setDataFormat(workbook.createDataFormat().getFormat("yyyy-MM-dd"));
+
+        Query query = entityManager.createNativeQuery("SELECT COLUMN_NAME,DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'preciso_log_cruce_informacion' ");
+        List<Object[]> campos =  query.getResultList();
+        for (Object[] campo :campos) {
+            createCell(row0,columCount++,campo[0].toString(),style);
+        }
+        int rowCount = 1;
+
+        for (int i =0; i<crList.size();i++)
+        {
+            Row row = sheet.createRow(rowCount++);
+            int columnCount = 0;
+
+            if(campos.get(i)[1].toString().equalsIgnoreCase("float"))
+                if(crList.get(i)!=null) createCell(row,columnCount++,Double.parseDouble(crList.get(i).toString()),style1); else createCell(row,columnCount++,"",style);
+            else if(campos.get(i)[1].toString().equalsIgnoreCase("int"))
+                if(crList.get(i)!=null) createCell(row,columnCount++,Integer.parseInt(crList.get(i).toString()),style2); else createCell(row,columnCount++,"",style);
+            else
+            if(crList.get(i)!=null) createCell(row,columnCount++,crList.get(i).toString(),style); else createCell(row,columnCount++,"",style);
+
+        }
+        sheets.put("Novedades", sheet);
     }
 }

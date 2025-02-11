@@ -337,4 +337,20 @@ public class InformationCrossingController {
         InformationCrossingListReport listReport = new InformationCrossingListReport(null,null,cr,entityManager);
         listReport.exportDetail(response,crList,fecha);
     }
+
+    @GetMapping(value = "/parametric/informationCrossing/downloadNov")
+    @ResponseBody
+    public void exportToExcelNov(HttpServletResponse response, @RequestParam(defaultValue = "0") String id, @RequestParam(defaultValue = "0") String fecha, @RequestParam(defaultValue = "0") String evento) throws IOException {
+        response.setContentType("application/octet-stream");
+        Conciliation cr = conciliationService.findById(Integer.parseInt(id));
+        EventType eventType = eventTypeService.findAllById(Integer.parseInt(id));
+        List<LogInformationCrossing> crList = informationCrossingService.findAllLog(cr,fecha,eventType);
+        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+        String currentDateTime = dateFormatter.format(new Date());
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename="+cr.getNombre().replace(" ","_") + currentDateTime + ".xlsx";
+        response.setHeader(headerKey, headerValue);
+        InformationCrossingListReport listReport = new InformationCrossingListReport(null,null,cr,entityManager);
+        listReport.exportNove(response,crList,fecha);
+    }
 }
