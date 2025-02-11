@@ -27,27 +27,27 @@
                     <h2>Fecha de Información</h2>
                     <input id="nomb" type="hidden" th:value="${nomb}">
                     <form th:object="${concil}" th:action="@{/parametric/informationCrossing}" method="GET">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm mb-1">
                             <h6 class="font-weight-bold">Conciliación</h6>
-                            <select style="width: 100%; box-sizing: border-box;" class="form-control" required id="arhcont" name="arhcont" onchange="toggleConciliacion()">
+                            <select style="width: 100%; box-sizing: border-box;" class="form-control form-control-sm" required id="arhcont" name="arhcont" onchange="toggleConciliacion()">
                                 <option disabled value="" selected hidden>Seleccione un archivo</option>
                                 <option th:each="item : ${listConcil}" th:value="${item.id}" th:text="${item.nombre}"
                                         th:selected="${arhcont != null and arhcont.id == item.id }"></option>
                             </select>
                             <div class="invalid-feedback">Por favor, seleccione un archivo.</div>
                         </div>
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm mb-1">
                             <h6 class="font-weight-bold">Fecha Conciliación</h6>
-                            <div class="input-group">
-                                <div class="input-group">
-                                    <input type="date" id="period" th:name="period" th:value="${period}" class="form-control" style="width: 100%; box-sizing: border-box;" required>
+                            <div class="input-group input-group-sm">
+                                <div class="input-group input-group-sm">
+                                    <input type="date" id="period" th:name="period" th:value="${period}" class="form-control form-control-sm" style="width: 100%; box-sizing: border-box;" required>
                                     <div class="invalid-feedback">Por favor, seleccione una fecha.</div>
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm mb-1">
                             <h6 class="font-weight-bold">Tipo Evento</h6>
-                            <select style="width: 100%; box-sizing: border-box;" class="form-control" required id="evento" name="evento">
+                            <select style="width: 100%; box-sizing: border-box;" class="form-control form-control-sm" required id="evento" name="evento">
                                 <option disabled value="" selected hidden>Seleccione un archivo</option>
                                 <option th:each="item : ${listTypeEvent}" th:value="${item.id}" th:text="${item.nombre}"
                                         th:selected="${evento != null and evento.id == item.id }"></option>
@@ -58,33 +58,35 @@
                         <input type="hidden" id="ultLog" name="ultLog" th:value="${ultLog != null ? ultLog[4] : 0}">
 
                         <div class="d-grid gap-2 col-3 mt-1" style="padding-left:0px">
-                            <button type="submit" class="btn btn-primary">Buscar</button>
+                            <button type="submit" class="btn btn-primary btn-sm">Buscar</button>
                         </div>
                     </form>
                 </div>
 
                 <div class="contend">
                     <h2>Opciones</h2>
-                    <div>
-                        <div class="d-grid gap-2 col-3 mt-1" style="padding-left:0px">
-                            <button class="btn btn-primary"
+                    <div class="d-flex">
+                        <div class="mt-1" style="padding-left:0px">
+                            <button class="btn btn-primary btn-sm"
                                     th:disabled="${!p_modificar or (ultLog != null and ultLog[3] == true)}"
                                     th:onclick="|generarCuentas()|" type="button">Generar Cuentas</button>
                         </div>
-                        <div class="d-grid gap-2 col-3 mt-1" style="padding-left:0px">
+                        <div class="mt-1 mx-1" style="padding-left:0px">
                             <button type="button" class="btn btn-sm btn-primary" th:onclick="|validarYexportar()|" th:if="${allRCs.size()!=0}">Exportar Consolidado</button>
                             <button type="button" class="btn btn-sm btn-primary" th:if="${allRCs.size()==0}" disabled>Exportar Consolidado</button>
                         </div>
-                        <div class="d-grid gap-2 col-3 mt-1" style="padding-left:0px">
+                        <div class="mt-1" style="padding-left:0px">
                             <button type="button" class="btn btn-sm btn-primary" th:onclick="|validarYexportarD()|" th:if="${allRCs.size()!=0}">Exportar Detallado</button>
                             <button type="button" class="btn btn-sm btn-primary" th:if="${allRCs.size()==0}" disabled>Exportar Detallado</button>
                         </div>
-                        <div class="d-grid gap-2 col-3 mt-1" style="padding-left:0px">
-                            <button th:disabled="${!p_modificar}" class="btn btn-primary"
+                    </div>
+                    <div class="d-flex">
+                        <div class="mt-1" style="padding-left:0px">
+                            <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm"
                                     th:onclick="|validarYSubir()|" type="button">Exportar Novedades</button>
                         </div>
-                        <div class="d-grid gap-2 col-3 mt-1" style="padding-left:0px">
-                            <button class="btn btn-primary"
+                        <div class="mt-1 mx-1" style="padding-left:0px">
+                            <button class="btn btn-primary btn-sm"
                                     th:disabled="${!p_modificar or (ultLog != null and ultLog[3] == true) or ultLog==null}"
                                     data-toggle="modal"
                                     data-target="#confirmarModal"
@@ -130,7 +132,7 @@
                     <div class="row mt-2" th:if="${last != 0}">
                         <div class="col-md-4 text-left">
                             <nav arial-label="Pagination">
-                                <ul class="pagination">
+                                <ul class="pagination pagination-sm">
                                     <li class="page-item" th:classappend="${prev == 0 ? 'disabled' : ''}">
                                         <a class="page-link"
                                            th:href="@{/parametric/{dir}/?page={page}&period={period}&arhcont={arhcont}&evento={evento}(arhcont=${arhcont.id},page=${prev},dir=${directory},period=${period},evento=${evento.id})}">Anterior</a>
@@ -174,7 +176,7 @@
                     <div class="row mt-2" th:if="${lastData != 0}">
                         <div class="col-md-4 text-left">
                             <nav arial-label="Pagination">
-                                <ul class="pagination">
+                                <ul class="pagination pagination-sm">
                                     <li class="page-item" th:classappend="${prevData == 0 ? 'disabled' : ''}">
                                         <a class="page-link"
                                            th:href="@{/parametric/{dir}/?pageData={pageData}&arhcont={arhcont}&period={period}&evento={evento}(period=${period},pageData=${prevData},dir=${directory},arhcont=${arhcont.id},evento=${evento.id})}">Anterior</a>
