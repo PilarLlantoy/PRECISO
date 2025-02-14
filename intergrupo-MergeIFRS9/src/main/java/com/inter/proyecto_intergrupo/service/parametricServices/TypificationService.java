@@ -2,10 +2,14 @@ package com.inter.proyecto_intergrupo.service.parametricServices;
 
 import com.inter.proyecto_intergrupo.model.admin.Audit;
 import com.inter.proyecto_intergrupo.model.admin.User;
+import com.inter.proyecto_intergrupo.model.parametric.Conciliation;
 import com.inter.proyecto_intergrupo.model.parametric.Country;
 import com.inter.proyecto_intergrupo.model.parametric.Typification;
+import com.inter.proyecto_intergrupo.model.parametric.TypificationConcil;
 import com.inter.proyecto_intergrupo.repository.admin.AuditRepository;
+import com.inter.proyecto_intergrupo.repository.parametric.ConciliationRepository;
 import com.inter.proyecto_intergrupo.repository.parametric.CountryRepository;
+import com.inter.proyecto_intergrupo.repository.parametric.TypificationConcilRepository;
 import com.inter.proyecto_intergrupo.repository.parametric.TypificationRepository;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.DataFormatter;
@@ -26,6 +30,7 @@ import javax.persistence.Query;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -33,6 +38,15 @@ public class TypificationService {
 
     @Autowired
     private TypificationRepository typificationRepository;
+
+    @Autowired
+    private ConciliationRepository conciliationRepository;
+
+    @Autowired
+    private ConciliationService conciliationService;
+
+    @Autowired
+    private TypificationConcilRepository typificationConcilRepository;
 
     @PersistenceContext
     EntityManager entityManager;
@@ -203,5 +217,32 @@ public class TypificationService {
         }
         toInsert.clear();
         return lista;
+    }
+
+    public List<Integer> obtenerSeleccionadasPorTipificacion(Long idTipificacion) {
+        Query query = entityManager.createNativeQuery("SELECT em.id_conciliacion FROM preciso_tipificacion_concil as em " +
+                "WHERE em.id_tipificaciones = ?");
+        query.setParameter(1, idTipificacion);
+        return query.getResultList();
+    }
+    public List<Map<String, Object>> obtenerConciliaciones(Long idTipificacion) {
+        List<Conciliation> todas = conciliationService.findAllActive();
+        List<Integer> seleccionadas = obtenerSeleccionadasPorTipificacion(idTipificacion);
+        return todas.stream().map(c -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", c.getId());
+            map.put("nombre", c.getNombre());
+            map.put("seleccionado", seleccionadas.contains(c.getId()));
+            return map;
+        }).collect(Collectors.toList());
+    }
+    public void guardarConciliaciones(Long idTipificacion, List<Integer> conciliaciones) {
+        typificationConcilRepository.deleteByTipificacion(typificationRepository.findAllById(idTipificacion));
+        for (Integer id:conciliaciones) {
+            TypificationConcil typificationConcil = new TypificationConcil();
+            typificationConcil.setTipificacion(typificationRepository.findAllById(idTipificacion));
+            typificationConcil.setConciliacion(conciliationRepository.findAllById(id));
+            typificationConcilRepository.save(typificationConcil);
+        }
     }
 }

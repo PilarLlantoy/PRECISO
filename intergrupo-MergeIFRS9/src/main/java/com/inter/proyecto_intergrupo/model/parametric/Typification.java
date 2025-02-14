@@ -32,6 +32,10 @@ public class Typification {
     @Column(name = "aplica_concil")
     private boolean aplicaConcil;
 
+    @OneToMany(mappedBy = "conciliacion", cascade = CascadeType.ALL)
+    private List<TypificationConcil> conciliacionesConcil;
 
+    @OneToMany(mappedBy = "tipificacion", cascade = CascadeType.ALL)
+    private List<TypificationConcil> tipificacionesConcil;
 
 }

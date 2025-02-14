@@ -6,15 +6,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
-import java.util.List;
 
-/*@Data
+@Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity*/
-
+@Entity
 @Table(name = "preciso_tipificacion_concil")
 public class TypificationConcil {
 
@@ -23,7 +20,12 @@ public class TypificationConcil {
     @Column(name = "id")
     private Long id;
 
-    private List<Conciliation> conciliaciones;
-    private Typification tipificaciones;
+    @ManyToOne
+    @JoinColumn(name = "id_conciliacion")
+    private Conciliation conciliacion;
+
+    @ManyToOne
+    @JoinColumn(name = "id_tipificaciones")
+    private Typification tipificacion;
 
 }

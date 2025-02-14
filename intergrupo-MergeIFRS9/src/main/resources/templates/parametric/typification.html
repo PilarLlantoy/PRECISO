@@ -74,11 +74,9 @@
                                 <button type="button" class="btn btn-danger btn-sm" th:if="${dataI.estado==false}" disabled>Inactivar</button>
                                 <button th:disabled="${!p_modificar}" type="button" class="btn btn-primary btn-sm"
                                         th:if="${dataI.aplicaConcil==true}"
-                                        data-toggle="modal"
-                                        th:attr="data-target='#modalConcil_' + ${dataI.id}">
+                                        th:onclick="abrirModalConcil([[${dataI.id}]])">
                                     Cargar Concil.
                                 </button>
-
                             </td>
                         </tr>
                         </tbody>
@@ -104,6 +102,37 @@
                                 Inactivar
                             </button>
                             <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal para cargar conciliaciones -->
+            <div class="modal fade" id="modalConcil" tabindex="-1" role="dialog" aria-labelledby="modalConcilLabel" aria-hidden="true">
+                <div class="modal-dialog modal-sm" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title">Seleccionar Conciliaciones</h5>
+                            <button type="button" class="close text-white" onclick="$('#modalConcil').modal('hide');" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="table-responsive">
+                                <table id="tablaConciliaciones" class="table table-sm table-bordered text-center">
+                                    <thead class="thead-light">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Nombre</th>
+                                        <th>Seleccionar</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="concilBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" onclick="$('#modalConcil').modal('hide');">Cerrar</button>
+                            <button type="button" class="btn btn-primary" onclick="guardarConciliaciones()">Guardar</button>
                         </div>
                     </div>
                 </div>
@@ -188,6 +217,80 @@
                 console.error("Ocurrió un error al enviar la solicitud POST: " + error);
             });
     }
+
+    function abrirModalConcil(idTipificacion) {
+        $("#modalConcil").modal("show");
+        let modal = document.getElementById("modalConcil");
+        modal.setAttribute("data-tipificacion", idTipificacion); // Asegurar que el atributo se asigna
+        cargarConciliaciones(idTipificacion);
+    }
+
+
+    function cargarConciliaciones(idTipificacion) {
+        let url = `/parametric/typification/getConciliaciones?id=${idTipificacion}`;
+
+        fetch(url)
+            .then(response => response.json())
+            .then(response => {
+                let concilBody = document.getElementById("concilBody");
+                concilBody.innerHTML = "";
+
+                response.forEach((concil, index) => {
+                    let checked = concil.seleccionado ? "checked" : "";
+                    let row = `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${concil.nombre}</td>
+                            <td><input type="checkbox" class="chkConcil" value="${concil.id}" ${checked}></td>
+                        </tr>`;
+                    concilBody.innerHTML += row;
+                });
+            })
+            .catch(() => {
+                alert("Error al cargar conciliaciones.");
+            });
+    }
+
+    function guardarConciliaciones() {
+        let modal = document.getElementById("modalConcil");
+
+        let idTipificacion = modal.dataset.tipificacion;
+        let conciliacionesSeleccionadas = Array.from(document.querySelectorAll(".chkConcil:checked"))
+            .map(checkbox => checkbox.value);
+
+        let url = "/parametric/typification/saveConciliaciones";
+
+        fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": csrfToken  // Incluir CSRF si es necesario
+            },
+            body: JSON.stringify({
+                idTipificacion: idTipificacion,
+                conciliaciones: conciliacionesSeleccionadas
+            })
+        })
+        .then(response => {
+            if (response.ok) {
+                document.getElementById("modalConcil").style.display = "none"; // Ocultar modal
+                Swal.fire({
+                  title: "Guardado exitoso",
+                  text: "Tu información ha sido guardada",
+                  icon: "success"
+                }).then(() => {
+                  Swal.close(); // Cierra manualmente por si acaso
+                  location.reload(); // O cualquier acción que hagas después
+                });
+            } else {
+                throw new Error("Error en la respuesta");
+            }
+        })
+        .catch(() => {
+            alert("Error al guardar.");
+        });
+    }
+
 </script>
 </body>
 

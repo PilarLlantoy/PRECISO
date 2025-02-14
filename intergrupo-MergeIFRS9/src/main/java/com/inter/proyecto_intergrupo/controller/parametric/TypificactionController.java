@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -27,10 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -261,4 +260,27 @@ public class TypificactionController {
         TypificationListReport listReport = new TypificationListReport(list);
         listReport.export(response);
     }
+
+    @GetMapping("/parametric/typification/getConciliaciones")
+    public ResponseEntity<?> getConciliaciones(@RequestParam Long id) {
+        try {
+            List<Map<String, Object>> conciliaciones = typificationService.obtenerConciliaciones(id);
+            return ResponseEntity.ok(conciliaciones); // Devuelve un JSON con código 200 OK
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Collections.singletonMap("error", "Error al obtener conciliaciones"));
+        }
+    }
+
+    @PostMapping("/parametric/typification/saveConciliaciones")
+    public ResponseEntity<?> saveConciliaciones(@RequestBody Map<String, Object> request) {
+        Long idTipificacion = Long.valueOf(request.get("idTipificacion").toString());
+        List<Integer> conciliaciones = ((List<?>) request.get("conciliaciones")).stream()
+                .map(obj -> Integer.valueOf(obj.toString()))
+                .collect(Collectors.toList());
+
+        typificationService.guardarConciliaciones(idTipificacion, conciliaciones);
+        return ResponseEntity.ok().build();
+    }
+
 }
