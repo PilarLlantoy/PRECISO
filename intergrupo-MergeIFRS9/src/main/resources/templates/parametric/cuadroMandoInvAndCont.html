@@ -25,7 +25,17 @@
             display: flex;
             align-items: baseline;
         }
-
+        .modal-body p {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            max-width: 100%;
+            white-space: pre-wrap;
+        }
+        .modal-body {
+            max-height: 70vh;
+            overflow-y: auto;
+            text-align: justify;
+        }
     </style>
     <div class="row m-0 bg-primary fixed-top myNav">
         <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
@@ -78,15 +88,17 @@
                                     <tr>
                                         <th>Conciliacion</th>
                                         <th>Inventario</th>
-                                        <th>Fecha Cargue</th>
+                                        <th>Fecha Inventario</th>
                                         <th>Cant. Registros</th>
                                         <th>Novedad Presentada</th>
                                         <th>Fecha Proceso</th>
+                                        <th>Hora Proceso</th>
                                         <th>Usuario</th>
                                         <th>Tipo Proceso</th>
                                         <th>Estado Proceso</th>
                                         <th>Cantidad Intentos</th>
                                         <th>Proceso Masivo</th>
+                                        <th></th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -95,14 +107,27 @@
                                         <td th:text="${@conciliationRouteService.findById(rc[8])?.detalle ?: ''}"></td>
                                         <td th:text="${#dates.format(rc[3],'yyyy-MM-dd')}"></td>
                                         <td th:text="${#numbers.formatDecimal(rc[1], 0, 'COMMA', -1, 'POINT')}"></td>
-                                        <td th:text="${rc[5]}"></td>
-                                        <td th:text="${#dates.format(rc[4],'yyyy-MM-dd HH:mm:ss')}"></td>
+                                        <td>
+                                            <button th:if="${rc[5] != null and rc[5] != ''}"
+                                                    class="btn btn-primary btn-sm"
+                                                    th:attr="data-novedad=${rc[5]}"
+                                                    onclick="mostrarNovedad(this)">
+                                                Ver
+                                            </button>
+                                            <span th:if="${rc[5] == null or rc[5] == ''}">No hay novedad</span>
+                                        </td>
+                                        <td th:text="${#dates.format(rc[4],'yyyy-MM-dd')}"></td>
+                                        <td th:text="${#dates.format(rc[4],'HH:mm:ss')}"></td>
                                         <td th:text="${rc[7]}"></td>
                                         <td th:text="${rc[6]}"></td>
                                         <td th:if="${rc[2] == 'Exitoso'}"><i class="fa fa-check-circle fa-2x text-success"></i></td>
                                         <td th:if="${rc[2] == 'Fallido'}"><i class="fa fa-times-circle fa-2x text-danger"></i></td>
                                         <td th:text="${rc[9]}"></td>
                                         <td><input type="checkbox" class="process-checkbox" th:if="${rc[2] == 'Fallido'}"></td>
+                                        <td>
+                                            <a th:href="@{'https://localhost:8448/parametric/inventoryLoad?selectedConciliacion=' + ${@conciliationRouteService.findById(rc[8]).conciliacion.id} + '&arhcont=' + ${rc[8]} + '&period=' + ${period}}"
+                                               class="btn btn-primary btn-sm">Seleccionar</a>
+                                        </td>
                                     </tr>
                                     </tbody>
                                 </table>
@@ -148,41 +173,29 @@
                     </div>
 
                 </div>
-
+                <!--TAB DE CONTABLES-->
                 <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
-
                     <div class="row mt-1 mx-1">
-                        <div class="text-left pr-3 col-md-12">
-                            <div class="px-3 py-1 row border rounded">
-                                <form method="get" th:action="@{/parametric/searchEventMatrix}">
-                                    <div class="mb-1 row alineacionHorizontal">
-                                        <div class="col-md-2">
-                                            <h6 class="font-weight-bold">Fecha Información</h6>
-                                            <div class="input-group input-group-sm">
-                                                <input type="date" id="period" th:name="period" class="form-control form-control-sm" style="width: 100%; box-sizing: border-box;" required>
-                                            </div>
+                        <div class="col-md-12 px-1">
+                            <div class="px-2 row">
+                                <form  th:action="@{/parametric/cuadroMandoInvAndCont}" method="GET">
+                                    <div class="mb-1 row">
+                                        <div class="col-md-10 d-flex align-items-center justify-content-start">
+                                            <h6 class="font-weight-bold">Seleccionar todos Inv:</h6>
+                                            <input type="checkbox" id="select-all-failed">
                                         </div>
-                                        <div class="col-md-2 d-flex align-items-center">
-                                            <button class="btn btn-sm btn-secondary mr-1" type="submit"><i class="fa fa-search"></i></button>
-                                            <a class="btn btn-sm btn-secondary" th:href="@{/parametric/cuadroMandoInvAndCont}"><i class="fas fa-window-close"></i></a>
+                                        <div class="col-md-2 d-flex align-items-end justify-content-end">
+                                            <input type="date" id="period" th:name="period" th:value="${period}" class="form-control form-control-sm" style="width: 100%; box-sizing: border-box;" required>
+                                            <button class="btn btn-sm btn-secondary" type="submit"><i class="fa fa-search"></i></button>
+                                            <a class="btn btn-sm btn-secondary" th:href="@{/parametric/cuadroMandoInvAndCont(period=${#dates.format(#dates.createNow(), 'yyyy-MM-dd')})}"><i class="fas fa-window-close"></i></a>
                                         </div>
-                                        <!-- Campo oculto para el token CSRF -->
-                                        <input type="hidden" id="csrfToken" th:value="${_csrf.token}" />
                                     </div>
                                 </form>
                             </div>
                         </div>
                         <div class="col-md-12 p-0">
-                            <div>
-                                <div class="form-group mb-1 checkHorizontal">
-                                    <h6 class="font-weight-bold">Seleccionar todos:</h6>
-                                    <input type="checkbox">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-12 p-0">
                             <div class="table-responsive rounded border-primary">
-                                <table id="example" class="table table-striped table-hover text-center table-bordered table-sm" width="100%">
+                                <table id="example2" class="table table-striped table-hover text-center table-bordered table-sm" width="100%">
                                     <thead class="bg-primary">
                                     <tr>
                                         <th>Código</th>
@@ -248,12 +261,38 @@
                     </div>
 
                 </div>
+                <!-- Modal -->
+                <div class="modal fade" id="novedadModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Detalle de la Novedad</h5>
+                                <button type="button" class="close" onclick="$('#novedadModal').modal('hide');" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <p id="modalNovedadTexto"></p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" onclick="$('#novedadModal').modal('hide');">Cerrar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-
-
         </div>
     </div>
 </div>
+
+<script>
+    function mostrarNovedad(btn) {
+        let novedadTexto = btn.getAttribute("data-novedad");
+        document.getElementById("modalNovedadTexto").textContent = novedadTexto;
+        $('#novedadModal').modal('show'); // Abre el modal
+    }
+</script>
+
 
 <script>
 
