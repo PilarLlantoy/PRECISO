@@ -114,7 +114,9 @@
                                                     onclick="mostrarNovedad(this)">
                                                 Ver
                                             </button>
-                                            <span th:if="${rc[5] == null or rc[5] == ''}">No hay novedad</span>
+                                            <button th:if="${rc[5] == null or rc[5] == ''}" disabled
+                                                    class="btn btn-primary btn-sm">Ver
+                                            </button>
                                         </td>
                                         <td th:text="${#dates.format(rc[4],'yyyy-MM-dd')}"></td>
                                         <td th:text="${#dates.format(rc[4],'HH:mm:ss')}"></td>
@@ -125,7 +127,7 @@
                                         <td th:text="${rc[9]}"></td>
                                         <td><input type="checkbox" class="process-checkbox" th:if="${rc[2] == 'Fallido'}"></td>
                                         <td>
-                                            <a th:href="@{'https://localhost:8448/parametric/inventoryLoad?selectedConciliacion=' + ${@conciliationRouteService.findById(rc[8]).conciliacion.id} + '&arhcont=' + ${rc[8]} + '&period=' + ${period}}"
+                                            <a th:href="@{'/parametric/inventoryLoad?selectedConciliacion=' + ${@conciliationRouteService.findById(rc[8]).conciliacion.id} + '&arhcont=' + ${rc[8]} + '&period=' + ${period}}"
                                                class="btn btn-primary btn-sm">Seleccionar</a>
                                         </td>
                                     </tr>

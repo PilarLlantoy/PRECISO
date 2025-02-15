@@ -77,6 +77,10 @@
                             <button type="button" class="btn btn-sm btn-primary" th:onclick="|validarYexportar()|" th:if="${allRCs.size()!=0}">Exportar Excel</button>
                             <button type="button" class="btn btn-sm btn-primary" th:if="${allRCs.size()==0}" disabled>Exportar Excel</button>
                         </div>
+                        <div class="mt-1 mx-1" style="padding-left:0px">
+                            <a type="button" class="btn btn-primary btn-sm" th:if="${period != null }" th:href="@{'/parametric/cuadroMandoInvAndCont?period=' + ${period}}">Ir a Cuadro</a>
+                            <button type="button" class="btn btn-primary btn-sm" th:if="${period == null }" disabled >Ir a Cuadro</button>
+                        </div>
                     </div>
                 </div>
                 <div class="contend">
