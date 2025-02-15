@@ -176,15 +176,15 @@ public class InventoryLoadController {
             conciliationRouteService.copyData(cr,fecha);
 
             if(conciliationRouteService.findAllDataValidationA(cr,fecha)) {
-                conciliationRouteService.loadLogCargue(user, cr, fecha, "Trasladar Servidor", "Exitoso", "");
+                conciliationRouteService.loadLogCargue(user, cr, fecha, "Cargar Manual", "Exitoso", "");
                 return ResponseEntity.ok("Bulk2");
             }
             else if(conciliationRouteService.findAllDataTemporalA(cr,fecha)) {
-                conciliationRouteService.loadLogCargue(user, cr, fecha, "Trasladar Servidor", "Fallido", "La ruta "+cr.getRuta()+" es inaccesible. (El sistema no puede encontrar el archivo especificado)");
+                conciliationRouteService.loadLogCargue(user, cr, fecha, "Cargar Manual", "Fallido", "La ruta "+cr.getRuta()+" es inaccesible. (El sistema no puede encontrar el archivo especificado)");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk-2");
             }
             else {
-                conciliationRouteService.loadLogCargue(user, cr, fecha, "Trasladar Servidor", "Fallido", "Valide el formato de los campos de tipo Float y Bigint");
+                conciliationRouteService.loadLogCargue(user, cr, fecha, "Cargar Manual", "Fallido", "Valide el formato de los campos de tipo Float y Bigint");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk-2");
             }
         }
@@ -194,7 +194,7 @@ public class InventoryLoadController {
             while (rootCause.getCause() != null) {
                 rootCause = rootCause.getCause(); // Navega a la causa raíz
             }
-            conciliationRouteService.loadLogCargue(user,cr,fecha,"Trasladar Servidor","Fallido",rootCause.getMessage());
+            conciliationRouteService.loadLogCargue(user,cr,fecha,"Cargar Manual","Fallido",rootCause.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk-2");
         }
     }
@@ -217,18 +217,18 @@ public class InventoryLoadController {
                 conciliationRouteService.bulkImport(cr,rutaArchivoFormato,fecha,rutaArchivo);
             conciliationRouteService.validationData(cr);
             conciliationRouteService.copyData(cr,fecha);
-            conciliationRouteService.loadLogCargue(user,cr,fecha,"Trasladar Local","Exitoso","");
+            conciliationRouteService.loadLogCargue(user,cr,fecha,"Cargar Archivo","Exitoso","");
 
             if(conciliationRouteService.findAllDataValidationA(cr,fecha)) {
-                conciliationRouteService.loadLogCargue(user, cr, fecha, "Trasladar Local", "Exitoso", "");
+                conciliationRouteService.loadLogCargue(user, cr, fecha, "Cargar Archivo", "Exitoso", "");
                 return ResponseEntity.ok("Bulk2");
             }
             else if(conciliationRouteService.findAllDataTemporalA(cr,fecha)) {
-                conciliationRouteService.loadLogCargue(user, cr, fecha, "Trasladar Local", "Fallido", "La ruta "+cr.getRuta()+" es inaccesible. (El sistema no puede encontrar el archivo especificado)");
+                conciliationRouteService.loadLogCargue(user, cr, fecha, "Cargar Archivo", "Fallido", "La ruta "+cr.getRuta()+" es inaccesible. (El sistema no puede encontrar el archivo especificado)");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk-2");
             }
             else {
-                conciliationRouteService.loadLogCargue(user, cr, fecha, "Trasladar Local", "Fallido", "Valide el formato de los campos de tipo Float y Bigint");
+                conciliationRouteService.loadLogCargue(user, cr, fecha, "Cargar Archivo", "Fallido", "Valide el formato de los campos de tipo Float y Bigint");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk-2");
             }
         }
@@ -238,7 +238,7 @@ public class InventoryLoadController {
             while (rootCause.getCause() != null) {
                 rootCause = rootCause.getCause(); // Navega a la causa raíz
             }
-            conciliationRouteService.loadLogCargue(user,cr,fecha,"Trasladar Local","Fallido",rootCause.getMessage());
+            conciliationRouteService.loadLogCargue(user,cr,fecha,"Cargar Archivo","Fallido",rootCause.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk-2");
         }
     }

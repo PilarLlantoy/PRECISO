@@ -175,15 +175,15 @@ public class AccountingLoadController {
             accountingRouteService.copyData(ac,fecha);
             accountingRouteService.updateLoads(ac,fecha);
             if(accountingRouteService.findAllDataValidation(ac,fecha)) {
-                jobAutoService.loadLogCargue(user, ac, fecha, "Trasladar Servidor", "Exitoso", "");
+                jobAutoService.loadLogCargue(user, ac, fecha, "Cargar Manual", "Exitoso", "");
                 return ResponseEntity.ok("Bulk1");
             }
             else if(accountingRouteService.findAllDataTemporal(ac,fecha)) {
-                jobAutoService.loadLogCargue(user, ac, fecha, "Trasladar Servidor", "Fallido", "La ruta "+ac.getRuta()+" es inaccesible. (El sistema no puede encontrar el archivo especificado)");
+                jobAutoService.loadLogCargue(user, ac, fecha, "Cargar Manual", "Fallido", "La ruta "+ac.getRuta()+" es inaccesible. (El sistema no puede encontrar el archivo especificado)");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk-1");
             }
             else {
-                jobAutoService.loadLogCargue(user, ac, fecha, "Trasladar Servidor", "Fallido", "Valide el formato de los campos de tipo Float y Bigint");
+                jobAutoService.loadLogCargue(user, ac, fecha, "Cargar Manual", "Fallido", "Valide el formato de los campos de tipo Float y Bigint");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk-1");
             }
 
@@ -194,7 +194,7 @@ public class AccountingLoadController {
             while (rootCause.getCause() != null) {
                 rootCause = rootCause.getCause(); // Navega a la causa raíz
             }
-            jobAutoService.loadLogCargue(user,ac,fecha,"Trasladar Servidor","Fallido",rootCause.getMessage());
+            jobAutoService.loadLogCargue(user,ac,fecha,"Cargar Manual","Fallido",rootCause.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk-1");
         }
     }
@@ -222,11 +222,11 @@ public class AccountingLoadController {
             accountingRouteService.copyData(ac,fecha);
             accountingRouteService.updateLoads(ac,fecha);
             if(accountingRouteService.findAllDataValidation(ac,fecha)) {
-                jobAutoService.loadLogCargue(user, ac, fecha, "Trasladar Local", "Exitoso", "");
+                jobAutoService.loadLogCargue(user, ac, fecha, "Cargar Archivo", "Exitoso", "");
                 return ResponseEntity.ok("Bulk1");
             }
             else {
-                jobAutoService.loadLogCargue(user, ac, fecha, "Trasladar Local", "Fallido", "Valide el formato de los campos de tipo Float y Bigint");
+                jobAutoService.loadLogCargue(user, ac, fecha, "Cargar Archivo", "Fallido", "Valide el formato de los campos de tipo Float y Bigint");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk-1");
             }
         }
@@ -236,7 +236,7 @@ public class AccountingLoadController {
             while (rootCause.getCause() != null) {
                 rootCause = rootCause.getCause(); // Navega a la causa raíz
             }
-            jobAutoService.loadLogCargue(user,ac,fecha,"Trasladar Local","Fallido",rootCause.getMessage());
+            jobAutoService.loadLogCargue(user,ac,fecha,"Cargar Archivo","Fallido",rootCause.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk-1");
         }
     }
