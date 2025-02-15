@@ -335,6 +335,16 @@
             });
     }
 
+    document.addEventListener("DOMContentLoaded", function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const tab = urlParams.get("tab");
+
+        if (tab === "contables") {
+            // Suponiendo que las pestañas tienen un id específico o una clase
+            document.getElementById("nav-profile-tab")?.click();
+        }
+    });
+
 </script>
 </body>
 </html>
