@@ -8,6 +8,9 @@ import com.inter.proyecto_intergrupo.repository.parametric.CampoParametroReporte
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -63,6 +66,17 @@ public class CampoParametroReportesService {
                 "SELECT * FROM preciso_campos_param_reportes WHERE id_parametro = :idParametro AND detalle = :detalle ",CampoParamReportes.class);
         query.setParameter("idParametro", idParametro);
         query.setParameter("detalle", detalle);
+        return query.getResultList();
+    }
+
+    public List<Object[]> findCamposByFuente(int id) {
+        Query query = entityManager.createNativeQuery(
+                "SELECT pc.id_campo, " +
+                        "pc.detalle " +
+                        "FROM PRECISO.dbo.preciso_campos_param_reportes pc " +
+                        "WHERE pc.id_parametro = :id"
+        );
+        query.setParameter("id", id);
         return query.getResultList();
     }
 

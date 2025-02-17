@@ -6,15 +6,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "preciso_fuentes_parametros_reportes")
-public class SourceParametroReportes {
+@Table(name = "preciso_fuentes_adicionales_parametros_reportes")
+public class AdditionalSourceParametroReportes {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,7 +23,13 @@ public class SourceParametroReportes {
     @Column(name = "estado", columnDefinition = "BIT DEFAULT 1")
     private boolean estado = true;
 
-    // Relación con parametros
+    @Column(name = "obliga_relacion", columnDefinition = "BIT DEFAULT 0")
+    private boolean obligaRelacion = false;
+
+    @Column(name = "tipo_fuente")
+    private String tipoFuente;
+
+    // Relación con AccountingRoute
     @ManyToOne
     @JoinColumn(name = "id_parametro", nullable = false)
     private ParametrosReportes parametroReportes;
@@ -40,10 +45,5 @@ public class SourceParametroReportes {
     @ManyToOne
     @JoinColumn(name = "id_evento", nullable = false)
     private EventType evento;
-
-    // Relación OneToMany con StructureParametroReportes
-    @OneToMany(mappedBy = "fuente", cascade = CascadeType.ALL)
-    private List<StructureParametroReportes> estructuras;
-
 
 }

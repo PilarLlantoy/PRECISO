@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+
+<div class="main-container">
+    <div class="row m-0 bg-primary fixed-top myNav">
+        <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
+            <h2 class="fw-bold text-white mx-4 my-3">Cargue Fuentes Adicionales Parametros Reportes</h2>
+        </div>
+    </div>
+    <div class="row mt-5 pt-3 px-4">
+        <div class="text-left col-md-6">
+            <h2>Cargue de Fuentes Adicionales</h2>
+        </div>
+        <div class="text-right col-md-6">
+            <a class="btn btn-sm btn-danger mx-1" th:href="@{/parametric/parametrosReportes}"><i class="fa-solid fa-left-long"></i> Regresar</a>
+        </div>
+    </div>
+    <div class="row px-4">
+        <div class="text-left col-md-12">
+            <form id="miFormulario" th:object="${fuente}" th:action="@{/parametric/createAdditionalSourceParametroReportes}" method="POST">
+
+                <div class="px-3 pt-1 mb-1 row border rounded">
+                    <div hidden class="col-md-2">
+                        <div class="form-group form-group-sm">
+                            <h6 class="font-weight-bold">ID</h6>
+                            <input type="text" id="idInput" class="form-control form-control-sm" th:field="*{id}">
+                            <input type="hidden" id="page" name="page" class="form-control form-control-sm" th:value="${current}">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group form-group-sm">
+                            <h6 class="font-weight-bold">Tipo Fuente:<i class="bi bi-caret-down"></i></h6>
+                            <select class="form-control form-control-sm" name="selectedTipoInsumo" id="selectedTipoInsumo"
+                                    th:field="*{tipoFuente}">
+                                <option disabled value="" selected hidden>Seleccione</option>
+                                <option th:value="contable">Contable</option>
+                                <option th:value="conciliacion">Conciliacion</option>
+                                <option th:value="inventarios">Inventarios</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group form-group-sm">
+                            <h6 class="font-weight-bold">Fuente</h6>
+                            <select class="form-control form-control-sm" name="selectedConcil" id="selectedConcil" required
+                                    onchange="toggleConciliacion()">
+                                <option disabled value="" selected hidden>Seleccione Fuente</option>
+                                <option th:each="fuente : ${conciliaciones}" th:value="${fuente.id}" th:text="${fuente.detalle}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group form-group-sm">
+                            <h6 class="font-weight-bold">Ruta</h6>
+                            <select class="form-control form-control-sm" name="selectedInventario" id="selectedInventario"
+                                    required onchange="toggleInventario()">
+                                <option disabled value="" selected hidden>Seleccione Inventario</option>
+                                <option th:each="inventario : ${inventarios}" th:value="${inventario.id}"
+                                        th:text="${inventario.detalle}"></option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-2">
+                        <div class="form-group form-group-sm">
+                            <h6 class="font-weight-bold">Evento</h6>
+                            <select class="form-control form-control-sm" name="selectedEvento" id="selectedEvento" required>
+                                <option disabled value="" selected hidden>Seleccione Evento</option>
+                                <option th:each="evento : ${eventos}" th:value="${evento.id}"
+                                        th:text="${evento.detalle}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="col-12"><h6 class="font-weight-bold">Obliga relacion?</h6></div>
+                        <div class="form-group form-group-sm col-md-2">
+                            <div class="form-check form-check-inline">
+                                <input id="adicion" name="adicion" th:field="*{obligaRelacion}" th:id="${adicion}"
+                                       th:value="${adicion}" type="checkbox" class="styled-checkbox ms-2">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- miFormulario oculto para pasar el objeto croute -->
+                <input type="hidden" id="parametroId" name="parametroId" th:value="${parametro.id}" />
+
+                <div class="row">
+                    <div class="d-grid gap-2 col-1">
+                        <button th:disabled="${!p_modificar}" type="button" class="btn btn-sm btn-primary" onclick="descartar()">Eliminar</button>
+                    </div>
+                    <div class="d-grid gap-2 col-1">
+                        <button th:disabled="${!p_modificar}" id="actionButton" type="submit" class="btn btn-sm btn-primary">Agregar</button>
+                    </div>
+                    <div class="col-auto">
+                        <div class="border-start ms-3" style="height: 100%;"></div>
+                    </div>
+                    <div class="d-grid gap-2 col-1">
+                        <button type="button" class="btn btn-sm btn-primary" } onclick="Limpiar()">Deseleccionar Item</button>
+                    </div>
+                </div>
+            </form>
+
+
+        </div>
+        <div class="col-md-12 p-0">
+            <div class="table-responsive rounded border-primary">
+                <h2>Campos registrados</h2>
+                <table id="tablaDatos" class="table table-striped table-hover text-center table-bordered table-sm" width="100%">
+                    <thead class="bg-primary">
+                    <tr>
+                        <th>Item</th>
+                        <th>Tipo fuente</th>
+                        <th>Fuente adicion</th>
+                        <th>Conciliacion</th>
+                        <th>Evento</th>
+                        <th>Obliga relacion</th>
+                        <th COLSPAN="2"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="camp, iter : ${allCampos}">
+                        <td th:text="${iter.count + ((current-1)*12)}"></td>
+                        <td th:text="${camp.tipoFuente}"></td>
+                        <td th:text="${camp.inventario.detalle}"></td>
+                        <td th:text="${camp.fuente.detalle}"></td>
+                        <td th:text="${camp.evento.nombre}"></td>
+                        <td th:if="${camp.obligaRelacion == true}">Sí</td>
+                        <td th:if="${camp.obligaRelacion == false}">No</td>
+                        <td>
+                            <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
+                                    th:data-id="${camp.id}"
+                                    th:data-tipo="${camp.tipoFuente}"
+                                    th:data-inventario="${camp.inventario.id}"
+                                    th:data-fuente="${camp.fuente.id}"
+                                    th:data-evento="${camp.evento.id}"
+                                    th:data-obligaRelacion="${camp.obligaRelacion}"
+                                    onclick="cargarCampos(this)">Seleccionar</button>
+                        </td><td>
+                            <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
+                                    th:data-id="${camp.id}"
+                                    onclick="cargarCampos(this)">Ir Estructura</button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="row" th:if="${last != 0}">
+                <div class="col-md-4 text-left">
+                    <nav arial-label="Pagination">
+                        <ul class="pagination pagination-sm">
+                            <li class="page-item" th:classappend="${prev == 0 ? 'disabled' : ''}">
+                                <a class="page-link"
+                                   th:href="@{/parametric/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${prev},dir=${directory},vId=${vId})}">Anterior</a>
+                            </li>
+                            <li class="page-item" th:classappend="${current == last ? 'disabled' : ''}">
+                                <a class="page-link"
+                                   th:href="@{/parametric/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${next},dir=${directory},vId=${vId})}">Siguiente</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="col-md-4 text-center">
+                    <h6 th:utext="${registers} + ' Registros Encontrados'"></h6>
+                </div>
+                <div class="col-md-4 text-right">
+                    <h6 class="mx-1" th:utext="'Página ' + ${current} + ' de ' + ${last}"></h6>
+                </div>
+            </div>
+            <div class="d-flex align-items-center justify-content-center" th:if="${filterExport != 'Original'}">
+                <h5><span class="badge badge-pill text-light badge-info py-2 px-5">¡La Tabla se encuentra Filtrada!</span>
+                </h5>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+</div>
+
+<script>
+
+    async function toggleConciliacion() {
+       const concilID = document.getElementById('selectedConcil').value;
+       const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+       const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+       if (concilID) {
+           const response = await fetch(`/parametric/obtenerRutasConcilByConcil/${concilID}`, {
+               method: 'GET',
+               headers: {
+                   'Content-Type': 'application/json',
+                   [csrfHeader]: csrfToken
+               }
+           });
+
+           const data = await response.json();
+
+           const ruta = document.getElementById('selectedInventario');
+           ruta.innerHTML = '<option disabled value="" selected hidden>Seleccione Inventario</option>';
+
+           data.forEach(campo => {
+               const optionRC = document.createElement('option');
+               optionRC.value = campo[0];
+               optionRC.text = campo[1];
+               ruta.appendChild(optionRC);
+           });
+
+           //limpiarCampos();
+       }
+   }
+
+
+
+   async function toggleInventario() {
+        const concilID = document.getElementById('selectedConcil').value;
+        const invID = document.getElementById('selectedInventario').value;
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+        if (concilID) {
+            const response = await fetch(`/parametric/obtenerTiposEventoByConcilByInv/${concilID}/${invID}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                }
+            });
+
+            const data = await response.json();
+
+            const evento = document.getElementById('selectedEvento');
+            evento.innerHTML = '<option selected value="" >Seleccione Evento</option>';
+
+            data.forEach(campo => {
+                const option = document.createElement('option');
+                option.value = campo[0];
+                option.text = campo[1];
+                evento.appendChild(option);
+            });
+
+        }
+    }
+
+
+    async function cargarCampos(button) {
+        var id = button.getAttribute("data-id");
+        var tipo = button.getAttribute("data-tipo");
+        var fuente = button.getAttribute("data-fuente");
+        var inventario = button.getAttribute("data-inventario");
+        var evento = button.getAttribute("data-evento");
+        var obligaRelacion = button.getAttribute("data-obligaRelacion") === 'true';
+
+        console.log(id, tipo, fuente, inventario, evento, obligaRelacion);
+
+
+        // Asignar los valores a los campos del miFormulario
+        document.querySelector("input[name='id']").value = id;
+        document.querySelector("input[name='obligaRelacion']").checked = obligaRelacion;
+
+        var selectidfuente = document.querySelector("select[name='selectedConcil']");
+        if (fuente) {
+            selectidfuente.value = fuente; // Establece el valor directamente
+            if (!selectidfuente.value) {
+                console.warn("El valor asignado no corresponde a ninguna opción del select.");
+            }
+        }
+
+        await toggleConciliacion();
+
+        var selectidrutacontable = document.querySelector("select[name='selectedInventario']");
+        if (inventario) {
+            selectidrutacontable.value = inventario; // Establece el valor directamente
+            if (!selectidrutacontable.value) {
+                console.warn("El valor asignado no corresponde a ninguna opción del select.");
+            }
+        }
+
+        await toggleInventario();
+
+        var selectidevento = document.querySelector("select[name='selectedEvento']");
+        if (evento) {
+            selectidevento.value = evento; // Establece el valor directamente
+            if (!selectidevento.value) {
+                console.warn("El valor asignado no corresponde a ninguna opción del select.");
+            }
+        }
+
+    }
+
+    function descartar() {
+        const id = document.querySelector("input[name='id']").value;
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+        const parametroId = document.getElementById('paramId').value;
+
+        if (id) {
+            fetch(`/parametric/deleteCampoParamReportes/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                }
+            }).then(response => {
+                if (response.ok) {
+                    // Verifica que la URL de redirección se construya correctamente
+                    window.location.href = `/parametric/fieldLoadingParametrosReportes/${parametroId}`;
+                } else {
+                    // Manejo de errores
+                    console.error('Error al eliminar el registro:', response.statusText);
+                }
+            }).catch(error => {
+                // Manejo de errores
+                console.error('Error:', error);
+            });
+        }
+        updateButtonText();
+    }
+
+    function toggleFechaIdiomaFields() {
+       var tipoCampo = document.getElementById('selectedTipoCampo').value;
+       var formatoFechaContainer = document.getElementById('formatoFechaContainer');
+       var idiomaCampoContainer = document.getElementById('idiomaCampoContainer');
+       var separadorContainer = document.getElementById('separadorContainer');
+
+       if (tipoCampo === 'Date' || tipoCampo === 'Datetime') {
+           formatoFechaContainer.classList.remove('hidden');
+           idiomaCampoContainer.classList.remove('hidden');
+       } else {
+           formatoFechaContainer.classList.add('hidden');
+           idiomaCampoContainer.classList.add('hidden');
+       }
+
+       if (tipoCampo === 'Float' || (tipoCampo === 'Date' || tipoCampo === 'Datetime')) {
+           separadorContainer.classList.remove('hidden');
+       } else {
+           separadorContainer.classList.add('hidden');
+       }
+       updateButtonText();
+   }
+
+   function updateButtonText() {
+         const idInput = document.getElementById("idInput");
+        const actionButton = document.getElementById("actionButton");
+
+        // Elimina espacios antes de validar
+        const value = idInput.value.trim();
+        console.log(value);
+        // Cambia el texto según el estado del campo
+        if (value === "0") {
+            actionButton.textContent = "Agregar";
+        } else {
+            actionButton.textContent = "Modificar";
+        }
+    }
+
+   function Limpiar() {
+       document.getElementById('miFormulario').reset();
+       toggleFechaIdiomaFields();
+   }
+
+   window.onload = function() {
+       //toggleFechaIdiomaFields();
+   };
+</script>
+</body>
+</html>
