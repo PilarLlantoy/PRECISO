@@ -68,6 +68,20 @@
                                    th:value="${siglasFechas}" type="checkbox" class="styled-checkbox" onchange="toggleFields()">
                         </div>
                     </div>
+                    <div class="col-md-2">
+                        <div class="form-group form-group-sm">
+                            <h6 class="font-weight-bold">Aplica Como Contable</h6>
+                            <input id="contableInput" name="contable" th:field="*{contable}"
+                                   th:value="${contable}" type="checkbox" class="styled-checkbox">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group form-group-sm">
+                            <h6 class="font-weight-bold">Aplica Cargue Diario</h6>
+                            <input id="cargueDiarioInput" name="cargueDiario" th:field="*{cargueDiario}"
+                                   th:value="${cargueDiario}" type="checkbox" class="styled-checkbox">
+                        </div>
+                    </div>
                     <div class="col-md-4">
                         <div class="form-group mb-1">
                             <h6 class="font-weight-bold">Detalle:</h6>
