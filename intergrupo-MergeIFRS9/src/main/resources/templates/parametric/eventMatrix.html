@@ -119,18 +119,18 @@
                         <td th:if="${event.estado == false}">Inactivo</td>
                         <td>
                             <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
-                                    th:onclick="|window.location.href='@{/parametric/conditionsEventMatrix/{id}(id=${event.id})}'|">Condiciones</button>
+                                    th:onclick="|window.location.href='@{/parametric/conditionsEventMatrix/{id}(id=${event.id},selectedConcil=${selectedConcil1},selectedInv=${selectedInv1},selectedET=${selectedET1})}'|">Condiciones</button>
                         </td>
                         <td>
                             <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
-                                    th:onclick="|window.location.href='@{/parametric/cuentasEventMatrix/{id}(id=${event.id})}'|">Cuentas</button>
+                                    th:onclick="|window.location.href='@{/parametric/cuentasEventMatrix/{id}(id=${event.id},selectedConcil=${selectedConcil1},selectedInv=${selectedInv1},selectedET=${selectedET1})}'|">Cuentas</button>
                         </td>
                         <td>
                             <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
-                                    th:onclick="|window.location.href='@{/parametric/validationsEventMatrix/{id}(id=${event.id})}'|">Validaciones</button>
+                                    th:onclick="|window.location.href='@{/parametric/validationsEventMatrix/{id}(id=${event.id},selectedConcil=${selectedConcil1},selectedInv=${selectedInv1},selectedET=${selectedET1})}'|">Validaciones</button>
                         <td>
                             <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
-                                    th:onclick="|window.location.href='@{/parametric/modifyEventMatrix/{id}(id=${event.id})}'|">Editar</button>
+                                    th:onclick="|window.location.href='@{/parametric/modifyEventMatrix/{id}(id=${event.id},selectedConcil=${selectedConcil1},selectedInv=${selectedInv1},selectedET=${selectedET1})}'|">Editar</button>
                         </td>
                     </tr>
                     </tbody>

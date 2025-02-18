@@ -123,7 +123,7 @@ public class EventMatrixController {
     }
 
     @GetMapping(value = "/parametric/modifyEventMatrix/{id}")
-    public ModelAndView modifyEventMatrix(@PathVariable int id){
+    public ModelAndView modifyEventMatrix(@PathVariable int id,@RequestParam Map<String, Object> params){
         ModelAndView modelAndView = new ModelAndView();
         EventMatrix eventMatrix = eventMatrixService.findById(id);
         List<EventType> allETs = eventTypeService.findAll();
@@ -136,6 +136,14 @@ public class EventMatrixController {
         modelAndView.addObject("rutascs", allConciliationRoutes);
         modelAndView.addObject("campos", campos);
         modelAndView.addObject("eventMatrix",eventMatrix);
+
+        if(params.get("selectedConcil")!= null && !params.get("selectedConcil").toString().equalsIgnoreCase(""))
+            modelAndView.addObject("selectedConcil1", params.get("selectedConcil").toString());
+        if(params.get("selectedInv")!= null && !params.get("selectedInv").toString().equalsIgnoreCase(""))
+            modelAndView.addObject("selectedInv1", params.get("selectedInv").toString());
+        if(params.get("selectedET")!= null && !params.get("selectedET").toString().equalsIgnoreCase(""))
+            modelAndView.addObject("selectedET1", params.get("selectedET").toString());
+
         modelAndView.setViewName("/parametric/modifyEventMatrix");
         return modelAndView;
     }
@@ -198,8 +206,8 @@ public class EventMatrixController {
             @RequestParam(defaultValue = "N" ,name = "selectedTipoEvento") String idTipoEvento,
             @RequestParam(defaultValue = "N" ,name = "campoOperacion") String idCampoOperacion,
             @RequestParam(defaultValue = "N" ,name = "campocontable") String idCampoContable,
-            BindingResult bindingResult){
-        ModelAndView modelAndView = new ModelAndView("redirect:/parametric/eventMatrix");
+            BindingResult bindingResult,@RequestParam Map<String, Object> params){
+        ModelAndView modelAndView = new ModelAndView("redirect:/parametric/searchEventMatrix");
 
 
         if(bindingResult.hasErrors()){
@@ -222,6 +230,13 @@ public class EventMatrixController {
                 CampoRConcil campoContable= campoRConcilService.findById(Integer.valueOf(idCampoContable));
                 eventMatrix.setCampoCC(campoContable);
             }
+
+            if(!idconcil.equalsIgnoreCase("N"))
+                modelAndView.addObject("selectedConcil", idconcil);
+            if(!idrutaconcil.equalsIgnoreCase("N"))
+                modelAndView.addObject("selectedInv", idrutaconcil);
+            if(!idTipoEvento.equalsIgnoreCase("N"))
+                modelAndView.addObject("selectedET", idTipoEvento);
 
             eventMatrixService.modificar(eventMatrix);
         }

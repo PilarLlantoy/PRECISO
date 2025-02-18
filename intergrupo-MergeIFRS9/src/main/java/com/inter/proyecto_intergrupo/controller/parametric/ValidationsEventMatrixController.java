@@ -107,6 +107,13 @@ public class ValidationsEventMatrixController {
             List<Object[]> campos = campoRConcilService.findCamposByRutaConcil(matriz.getInventarioConciliacion().getId());
             modelAndView.addObject("campos", campos);
 
+            if(params.get("selectedConcil")!= null && !params.get("selectedConcil").toString().equalsIgnoreCase(""))
+                modelAndView.addObject("selectedConcil1", params.get("selectedConcil").toString());
+            if(params.get("selectedInv")!= null && !params.get("selectedInv").toString().equalsIgnoreCase(""))
+                modelAndView.addObject("selectedInv1", params.get("selectedInv").toString());
+            if(params.get("selectedET")!= null && !params.get("selectedET").toString().equalsIgnoreCase(""))
+                modelAndView.addObject("selectedET1", params.get("selectedET").toString());
+
             modelAndView.setViewName("parametric/validationsEventMatrix");
         }
         else
