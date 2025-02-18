@@ -144,11 +144,11 @@
                                         <ul class="pagination pagination-sm">
                                             <li class="page-item" th:classappend="${prev2 == 0 ? 'disabled' : ''}">
                                                 <a class="page-link"
-                                                   th:href="@{/parametric/{dir}/?page={page}&vId={vId}&vFilter={vFilter}&period={period}(period=${period},vFilter=${vFilter},page=${prev},dir=${directory},vId=${vId})}">Anterior</a>
+                                                   th:href="@{/parametric/{dir}/?page2={page2}&vId={vId}&vFilter={vFilter}&period={period}(period=${period},vFilter=${vFilter},page2=${prev2},dir=${directory},vId=${vId})}">Anterior</a>
                                             </li>
                                             <li class="page-item" th:classappend="${current2 == last2 ? 'disabled' : ''}">
                                                 <a class="page-link"
-                                                   th:href="@{/parametric/{dir}/?page={page}&vId={vId}&vFilter={vFilter}&period={period}(period=${period},vFilter=${vFilter},page=${next},dir=${directory},vId=${vId})}">Siguiente</a>
+                                                   th:href="@{/parametric/{dir}/?page2={page2}&vId={vId}&vFilter={vFilter}&period={period}(period=${period},vFilter=${vFilter},page2=${next2},dir=${directory},vId=${vId})}">Siguiente</a>
                                             </li>
                                         </ul>
                                     </nav>
@@ -192,7 +192,7 @@
                                             <input type="date" id="period2" th:name="period2" th:value="${period2}" class="form-control form-control-sm" style="width: 100%; box-sizing: border-box;" required>
                                             <input type="hidden" id="period" th:name="period" th:value="${period}">
                                             <button class="btn btn-sm btn-secondary" type="submit"><i class="fa fa-search"></i></button>
-                                            <a class="btn btn-sm btn-secondary" th:href="@{/parametric/cuadroMandoInvAndCont(period2=${#dates.format(#dates.createNow(), 'yyyy-MM-dd')})}"><i class="fas fa-window-close"></i></a>
+                                            <a class="btn btn-sm btn-secondary" th:href="@{/parametric/cuadroMandoInvAndCont(period2=${#dates.format(#dates.createNow(), 'yyyy-MM-dd')},tab='contables')}"><i class="fas fa-window-close"></i></a>
                                         </div>
                                     </div>
                                 </form>
