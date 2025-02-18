@@ -809,4 +809,39 @@ public class ConciliationRouteService {
         }
     }
 
+    public void leerArchivosMasivo(String[] ids,String fecha) {
+
+        for (String id :ids)
+        {
+            ConciliationRoute cr = findById(Integer.parseInt(id));
+            try {;
+                createTableTemporal(cr);
+                generarArchivoFormato(getCamposRcon(cr), rutaArchivoFormato);
+                if(cr.getTipoArchivo().equalsIgnoreCase("XLS") || cr.getTipoArchivo().equalsIgnoreCase("XLSX"))
+                    importXlsx(cr,rutaArchivoFormato,fecha,null);
+                else
+                    bulkImport(cr,rutaArchivoFormato,fecha,null);
+                validationData(cr);
+                copyData(cr,fecha);
+
+                if(findAllDataValidationA(cr,fecha)) {
+                    loadLogCargue(null, cr, fecha, "Cargue Masivo", "Exitoso", "");
+                }
+                else if(findAllDataTemporalA(cr,fecha)) {
+                    loadLogCargue(null, cr, fecha, "Cargue Masivo", "Fallido", "La ruta "+cr.getRuta()+" es inaccesible. (El sistema no puede encontrar el archivo especificado)");
+                }
+                else {
+                    loadLogCargue(null, cr, fecha, "Cargue Masivo", "Fallido", "Valide el formato de los campos de tipo Float y Bigint");
+                }
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+                Throwable rootCause = e;
+                while (rootCause.getCause() != null) {
+                    rootCause = rootCause.getCause(); // Navega a la causa raíz
+                }
+                loadLogCargue(null,cr,fecha,"Cargue Masivo","Fallido",rootCause.getMessage());
+            }
+        }
+    }
 }

@@ -70,6 +70,26 @@ function validateAlerts(operacion,data)
             showConfirmButton: true
         })
     }
+    else if(operacion=='CM1')
+    {
+        Swal.fire({
+            position: 'center',
+            icon: 'success',
+            title: '¡Carga Masiva Ejecutada!',
+            text: 'Se ha finalizado el proceso de carga masiva de los inventarios.',
+            showConfirmButton: true
+        })
+    }
+    else if(operacion=='CM-1')
+    {
+        Swal.fire({
+            position: 'center',
+            icon: 'warning',
+            title: '¡Inventario No Seleccionado!',
+            text: 'Debe seleccionar al menos un inventario para ejecutar.',
+            showConfirmButton: true
+        })
+    }
     else if(operacion=='Date-1')
     {
         Swal.fire({
