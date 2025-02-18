@@ -170,11 +170,41 @@ public class AccountingRouteService {
         return logAccountingLoadRepository.findAllByIdRcAndFechaCargueOrderByIdDesc(ac,fechaDate);
     }
 
-    public List<LogAccountingLoad> findAllLogByDate() {
-        //LocalDate localDate = LocalDate.parse(fecha);
-        //Date fechaDate = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-        //return logInventoryLoadRepository.findAllByFechaCargueOrderByIdDesc(fechaDate);
-        return logAccountingLoadRepository.findAllByOrderByFechaCargueAsc();
+    public List<Object[]> findAllLogByDate(String fecha) {
+        Query query = entityManager.createNativeQuery(
+                "WITH CTE AS (\n" +
+                        "    SELECT \n" +
+                        "        [id_lcc],\n" +
+                        "        [cantidad_registros],\n" +
+                        "        [estado_proceso],\n" +
+                        "        [fecha_cargue],\n" +
+                        "        [fecha_preciso],\n" +
+                        "        [novedad],\n" +
+                        "        [tipo_proceso],\n" +
+                        "        [usuario],\n" +
+                        "        [id_rc],\n" +
+                        "        COUNT(*) OVER (PARTITION BY [fecha_cargue], [id_rc]) AS total_intentos,\n" +
+                        "        ROW_NUMBER() OVER (PARTITION BY [fecha_cargue], [id_rc] ORDER BY [fecha_preciso] DESC) AS row_num\n" +
+                        "    FROM \n" +
+                        "        [PRECISO].[dbo].[preciso_log_cargues_contables]\n" +
+                        "    WHERE fecha_cargue like ? \n" +
+                        ")\n" +
+                        "SELECT [id_lcc],              \n" +
+                        "    [cantidad_registros],     \n" +
+                        "    [estado_proceso],         \n" +
+                        "    [fecha_cargue],           \n" +
+                        "    [fecha_preciso],          \n" +
+                        "    [novedad],                \n" +
+                        "    [tipo_proceso],           \n" +
+                        "    [usuario],                \n" +
+                        "    [id_rc],                   \n" +
+                        "    total_intentos           \n" +
+                        "FROM CTE\n" +
+                        "WHERE row_num = 1\n" +
+                        "ORDER BY \n" +
+                        "[fecha_cargue], [id_rc];");
+        query.setParameter(1, fecha+"%");
+        return query.getResultList();
     }
 
     public List<Object[]> findAllData(AccountingRoute data, String fecha, String cadena, String campo,List<CampoRC> camposAux) {

@@ -76,108 +76,112 @@ public class CuadroMandoInvAndContController {
             List<Object[]> croutes = new ArrayList<>();
             List<CampoRC> colAroutes = new ArrayList<>();
             List<CampoRC> colCroutes = new ArrayList<>();
-            List<LogAccountingLoad> logAroutes = new ArrayList<>();
+            List<Object[]> logAroutes = new ArrayList<>();
             List<Object[]> logCroutes = new ArrayList<>();
 
-            if(params.get("period") != null && params.get("period").toString() != null){
-                logAroutes = accountingRouteService.findAllLogByDate();
-                System.out.println(logAroutes.size()+ " RA");
+            if (params.get("tab") != null && params.get("tab").toString() != null)
+                modelAndView.addObject("tab", params.get("tab").toString());
 
+            if (params.get("period2") != null && params.get("period2").toString() != null) {
+                logAroutes = accountingRouteService.findAllLogByDate(params.get("period2").toString());
+            }
+            if (params.get("period") != null && params.get("period").toString() != null) {
                 logCroutes = conciliationRouteService.findAllLogByDate(params.get("period").toString());
-                System.out.println(logAroutes.size()+ " RA");
             }
 
             //CONTABLES
             //*-------------------------------------------------
-            int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
-            PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
+            int page = params.get("page") != null ? (Integer.valueOf(params.get("page").toString()) - 1) : 0;
+            PageRequest pageRequest = PageRequest.of(page, PAGINATIONCOUNT);
             int start = (int) pageRequest.getOffset();
             int end = Math.min((start + pageRequest.getPageSize()), logAroutes.size());
-            Page<LogAccountingLoad> pageLog= new PageImpl<>(logAroutes.subList(start, end), pageRequest, logAroutes.size());
+            Page<Object[]> pageLog = new PageImpl<>(logAroutes.subList(start, end), pageRequest, logAroutes.size());
 
-            int totalPage=pageLog.getTotalPages();
-            if(totalPage>0){
+            int totalPage = pageLog.getTotalPages();
+            if (totalPage > 0) {
                 List<Integer> pages = IntStream.rangeClosed(1, totalPage).boxed().collect(Collectors.toList());
-                modelAndView.addObject("pages",pages);
+                modelAndView.addObject("pages", pages);
             }
 
-            int pageData=params.get("pageData")!=null?(Integer.valueOf(params.get("pageData").toString())-1):0;
-            PageRequest pageRequestData=PageRequest.of(pageData,PAGINATIONCOUNTDATA);
+            int pageData = params.get("pageData") != null ? (Integer.valueOf(params.get("pageData").toString()) - 1) : 0;
+            PageRequest pageRequestData = PageRequest.of(pageData, PAGINATIONCOUNTDATA);
             int startData = (int) pageRequestData.getOffset();
             int endData = Math.min((startData + pageRequestData.getPageSize()), aroutes.size());
-            Page<Object[]> pageLogData= new PageImpl<>(aroutes.subList(startData, endData), pageRequestData, aroutes.size());
+            Page<Object[]> pageLogData = new PageImpl<>(aroutes.subList(startData, endData), pageRequestData, aroutes.size());
 
-            int totalPageData=pageLogData.getTotalPages();
-            if(totalPageData>0){
+            int totalPageData = pageLogData.getTotalPages();
+            if (totalPageData > 0) {
                 List<Integer> pagesData = IntStream.rangeClosed(1, totalPageData).boxed().collect(Collectors.toList());
-                modelAndView.addObject("pagesData",pagesData);
+                modelAndView.addObject("pagesData", pagesData);
             }
 
             //INVENTARIOS
             //*-------------------------------------------------
-            int page2=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
-            PageRequest pageRequest2=PageRequest.of(page,PAGINATIONCOUNT);
+            int page2 = params.get("page") != null ? (Integer.valueOf(params.get("page").toString()) - 1) : 0;
+            PageRequest pageRequest2 = PageRequest.of(page, PAGINATIONCOUNT);
             int start2 = (int) pageRequest2.getOffset();
             int end2 = Math.min((start2 + pageRequest2.getPageSize()), logCroutes.size());
-            Page<Object[]> pageLog2= new PageImpl<>(logCroutes.subList(start2, end2), pageRequest2, logCroutes.size());
+            Page<Object[]> pageLog2 = new PageImpl<>(logCroutes.subList(start2, end2), pageRequest2, logCroutes.size());
 
-            int totalPage2=pageLog2.getTotalPages();
-            if(totalPage2>0){
+            int totalPage2 = pageLog2.getTotalPages();
+            if (totalPage2 > 0) {
                 List<Integer> pages2 = IntStream.rangeClosed(1, totalPage2).boxed().collect(Collectors.toList());
-                modelAndView.addObject("pages2",pages2);
+                modelAndView.addObject("pages2", pages2);
             }
 
-            int pageData2=params.get("pageData")!=null?(Integer.valueOf(params.get("pageData").toString())-1):0;
-            PageRequest pageRequestData2=PageRequest.of(pageData2,PAGINATIONCOUNTDATA);
+            int pageData2 = params.get("pageData") != null ? (Integer.valueOf(params.get("pageData").toString()) - 1) : 0;
+            PageRequest pageRequestData2 = PageRequest.of(pageData2, PAGINATIONCOUNTDATA);
             int startData2 = (int) pageRequestData2.getOffset();
             int endData2 = Math.min((startData2 + pageRequestData2.getPageSize()), croutes.size());
-            Page<Object[]> pageLogData2= new PageImpl<>(croutes.subList(startData2, endData2), pageRequestData2, croutes.size());
+            Page<Object[]> pageLogData2 = new PageImpl<>(croutes.subList(startData2, endData2), pageRequestData2, croutes.size());
 
-            int totalPageData2=pageLogData2.getTotalPages();
-            if(totalPageData2>0){
+            int totalPageData2 = pageLogData2.getTotalPages();
+            if (totalPageData2 > 0) {
                 List<Integer> pagesData2 = IntStream.rangeClosed(1, totalPageData2).boxed().collect(Collectors.toList());
-                modelAndView.addObject("pagesData2",pagesData2);
+                modelAndView.addObject("pagesData2", pagesData2);
             }
 
-            modelAndView.addObject("allLog",pageLog.getContent());
-            modelAndView.addObject("allRCs",pageLogData.getContent());
-            modelAndView.addObject("allColRCs",colAroutes);
-            modelAndView.addObject("current",page+1);
-            modelAndView.addObject("next",page+2);
-            modelAndView.addObject("prev",page);
-            modelAndView.addObject("last",totalPage);
-            modelAndView.addObject("currentData",pageData+1);
-            modelAndView.addObject("nextData",pageData+2);
-            modelAndView.addObject("prevData",pageData);
-            modelAndView.addObject("lastData",totalPageData);
-            modelAndView.addObject("filterExport","Original");
-            modelAndView.addObject("listRouteCont",listAroutes);
-            modelAndView.addObject("directory","cuadroMandoInvAndCont");
-            modelAndView.addObject("registers",logAroutes.size());
-            modelAndView.addObject("registersInventarios",logCroutes.size());
-            modelAndView.addObject("registersData",aroutes.size());
+            modelAndView.addObject("allLog", pageLog.getContent());
+            modelAndView.addObject("allRCs", pageLogData.getContent());
+            modelAndView.addObject("allColRCs", colAroutes);
+            modelAndView.addObject("current", page + 1);
+            modelAndView.addObject("next", page + 2);
+            modelAndView.addObject("prev", page);
+            modelAndView.addObject("last", totalPage);
+            modelAndView.addObject("currentData", pageData + 1);
+            modelAndView.addObject("nextData", pageData + 2);
+            modelAndView.addObject("prevData", pageData);
+            modelAndView.addObject("lastData", totalPageData);
+            modelAndView.addObject("filterExport", "Original");
+            modelAndView.addObject("listRouteCont", listAroutes);
+            modelAndView.addObject("directory", "cuadroMandoInvAndCont");
+            modelAndView.addObject("registers", logAroutes.size());
+            modelAndView.addObject("registersInventarios", logCroutes.size());
+            modelAndView.addObject("registersData", aroutes.size());
             modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.addObject("p_modificar", p_modificar);
             modelAndView.setViewName("parametric/cuadroMandoInvAndCont");
 
-            modelAndView.addObject("allLog2",pageLog2.getContent());
-            modelAndView.addObject("allRCs2",pageLogData2.getContent());
-            modelAndView.addObject("allColRCs",colAroutes);
-            modelAndView.addObject("current2",page2+1);
-            modelAndView.addObject("next2",page2+2);
-            modelAndView.addObject("prev2",page2);
-            modelAndView.addObject("last2",totalPage2);
-            modelAndView.addObject("currentData2",pageData2+1);
-            modelAndView.addObject("nextData2",pageData2+2);
-            modelAndView.addObject("prevData2",pageData2);
-            modelAndView.addObject("lastData2",totalPageData2);
-            modelAndView.addObject("listRouteCont",listAroutes);
-            modelAndView.addObject("registers2",logCroutes.size());
-            modelAndView.addObject("registersInventarios",logCroutes.size());
-            modelAndView.addObject("registersData2",croutes.size());
-            if(params.get("period")!=null)
-                modelAndView.addObject("period",params.get("period").toString());
+            modelAndView.addObject("allLog2", pageLog2.getContent());
+            modelAndView.addObject("allRCs2", pageLogData2.getContent());
+            modelAndView.addObject("allColRCs", colAroutes);
+            modelAndView.addObject("current2", page2 + 1);
+            modelAndView.addObject("next2", page2 + 2);
+            modelAndView.addObject("prev2", page2);
+            modelAndView.addObject("last2", totalPage2);
+            modelAndView.addObject("currentData2", pageData2 + 1);
+            modelAndView.addObject("nextData2", pageData2 + 2);
+            modelAndView.addObject("prevData2", pageData2);
+            modelAndView.addObject("lastData2", totalPageData2);
+            modelAndView.addObject("listRouteCont", listAroutes);
+            modelAndView.addObject("registers2", logCroutes.size());
+            modelAndView.addObject("registersInventarios", logCroutes.size());
+            modelAndView.addObject("registersData2", croutes.size());
+            if (params.get("period") != null)
+                modelAndView.addObject("period", params.get("period").toString());
+            if(params.get("period2")!=null)
+                modelAndView.addObject("period2",params.get("period2").toString());
         }
         else
         {

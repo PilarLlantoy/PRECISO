@@ -1336,7 +1336,7 @@
         </div>
         <ul class="nav_links">
             <li>
-                <a th:href="@{/parametric/cuadroMandoInvAndCont(period=${#dates.format(#dates.createNow(), 'yyyy-MM-dd')})}">
+                <a th:href="@{/parametric/cuadroMandoInvAndCont(period=${#dates.format(#dates.createNow(), 'yyyy-MM-dd')},period2=${#dates.format(#dates.createNow(), 'yyyy-MM-dd')})}">
                     <span class="links_name">Cuadro Mando Inventarios</span>
                 </a>
             </li>
