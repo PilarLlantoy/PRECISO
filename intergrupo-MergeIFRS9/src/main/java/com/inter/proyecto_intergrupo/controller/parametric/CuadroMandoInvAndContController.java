@@ -169,4 +169,25 @@ public class CuadroMandoInvAndContController {
         }
         return modelAndView;
     }
+    @PostMapping("/parametric/cuadroMandoInvAndCont/conMasive")
+    public ModelAndView manejarSeleccionados2(@RequestParam("idsSeleccionados2") String idsSeleccionados2,
+                                             @RequestParam("period2") String period2,
+                                             @RequestParam("period") String period) {
+        ModelAndView modelAndView = new ModelAndView("redirect:/parametric/cuadroMandoInvAndCont");
+        String[] ids = idsSeleccionados2.split(",");
+        modelAndView.addObject("period", period);
+        modelAndView.addObject("period2", period2);
+        modelAndView.addObject("tab", "contables");
+        System.out.println(idsSeleccionados2);
+        if(idsSeleccionados2.trim().length()!=0)
+        {
+            accountingRouteService.leerArchivosMasivo(ids,period2);
+            modelAndView.addObject("resp", "CM1");
+        }
+        else
+        {
+            modelAndView.addObject("resp", "CM-1");
+        }
+        return modelAndView;
+    }
 }

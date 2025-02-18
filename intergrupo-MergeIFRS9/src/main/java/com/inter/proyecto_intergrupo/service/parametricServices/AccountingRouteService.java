@@ -895,8 +895,48 @@ public class AccountingRouteService {
 
         return querySelect.getResultList();
     }
-
-
-
+    public void leerArchivosMasivo(String[] ids, String fecha)  {
+        for (String id :ids)
+        {
+            AccountingRoute ac = findById(Integer.parseInt(id));
+            try {
+                List<CondicionRC> crc = findCondicionesRc(ac.getId());
+                List<ValidationRC> vrc = findValidacionesRc(ac.getId());
+                createTableTemporal(ac);
+                generarArchivoFormato(ac.getCampos(), rutaArchivoFormato);
+                if (ac.getTipoArchivo().equalsIgnoreCase("XLS") || ac.getTipoArchivo().equalsIgnoreCase("XLSX"))
+                    importXlsx(ac, rutaArchivoFormato, fecha, null);
+                else
+                    bulkImport(ac, rutaArchivoFormato, fecha, null);
+                if (!crc.isEmpty())
+                    conditionData(ac);
+                if (vrc.size() != 0)
+                    validationData(ac);
+                copyData(ac, fecha);
+                updateLoads(ac,fecha);
+                if(findAllDataValidation(ac,fecha)) {
+                    jobAutoService.loadLogCargue(null, ac, fecha, "Cargue Masivo", "Exitoso", "");
+                }
+                else if(findAllDataTemporal(ac,fecha)) {
+                    jobAutoService.loadLogCargue(null, ac, fecha, "Cargue Masivo", "Fallido", "La ruta "+ac.getRuta()+" es inaccesible. (El sistema no puede encontrar el archivo especificado)");
+                }
+                else {
+                    jobAutoService.loadLogCargue(null, ac, fecha, "Cargue Masivo", "Fallido", "Valide el formato de los campos de tipo Float y Bigint");
+                }
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+                Throwable rootCause = e;
+                while (rootCause.getCause() != null) {
+                    rootCause = rootCause.getCause();
+                }
+                try {
+                    jobAutoService.loadLogCargue(null, ac, fecha, "Cargue Masivo", "Fallido", rootCause.getMessage());
+                } catch (Exception logException) {
+                    logException.printStackTrace(); // Log adicional si guardar el log también falla
+                }
+            }
+        }
+    }
 
 }
