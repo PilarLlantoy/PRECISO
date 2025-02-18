@@ -99,6 +99,7 @@ public class CampoRCController {
     public ModelAndView createCampoRC(@ModelAttribute CampoRC campoNuevo,
                                       @RequestParam(name = "arouteId") String arouteId,
                                       @RequestParam(name = "longitud") String longitud,
+                                      @RequestParam(name = "page", defaultValue = "0") String page,
                                       BindingResult bindingResult){
         ModelAndView modelAndView = new ModelAndView("redirect:/parametric/fieldLoadingAccountingRoute/" + arouteId);
         if(longitud!=null && longitud.length()>0 ){
@@ -128,6 +129,10 @@ public class CampoRCController {
             campoRCService.modificar(campoNuevo);
             campoRCService.recreateTable(aroute);
         }
+        System.out.println("Pagina -----------------------> "+page);
+        if(!page.equalsIgnoreCase("0"))
+            modelAndView.addObject("page",page);
+
         return modelAndView;
 
     }
