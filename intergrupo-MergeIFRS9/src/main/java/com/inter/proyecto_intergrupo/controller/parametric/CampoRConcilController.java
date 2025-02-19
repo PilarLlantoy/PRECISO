@@ -70,6 +70,9 @@ public class CampoRConcilController {
             campoRConcilService.modificar(campoNuevo);
             campoRConcilService.recreateTable(route);
         }
+        else {
+            modelAndView.addObject("resp","Maes-2");
+        }
         return modelAndView;
     }
 

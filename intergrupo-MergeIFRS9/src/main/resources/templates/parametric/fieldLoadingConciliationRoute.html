@@ -229,6 +229,12 @@
 </div>
 
 <script>
+    var queryString = window.location.search;
+    var urlParams = new URLSearchParams(queryString);
+    var respuesta = urlParams.get('resp');
+    var row = urlParams.get('row');
+    var column = urlParams.get('colum');
+    validateAlerts(respuesta, row, column);
 
     function cargarCampos(button) {
         var id = button.getAttribute("data-id");

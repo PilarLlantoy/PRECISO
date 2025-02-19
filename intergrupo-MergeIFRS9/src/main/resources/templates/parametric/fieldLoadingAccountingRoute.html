@@ -141,6 +141,7 @@
                 </div>
                 <!-- Formulario oculto para pasar el objeto aroute -->
                 <input type="hidden" id="arouteId" name="arouteId" th:value="${aroute.id}" />
+                <input type="hidden" id="funcion" name="funcion" th:value="agregar" />
                 <div class="row">
                     <div class="d-grid gap-2 col-1">
                         <button th:disabled="${!p_modificar}" type="button" class="btn btn-primary btn-sm" onclick="descartar()">Eliminar</button>
@@ -242,6 +243,12 @@
 </div>
 </div>
 <script>
+    var queryString = window.location.search;
+    var urlParams = new URLSearchParams(queryString);
+    var respuesta = urlParams.get('resp');
+    var row = urlParams.get('row');
+    var column = urlParams.get('colum');
+    validateAlerts(respuesta, row, column);
 
     function cargarCampos(button) {
         var id = button.getAttribute("data-id");
@@ -372,8 +379,9 @@
     }
 
      function updateButtonText() {
-         const idInput = document.getElementById("idInput");
+        const idInput = document.getElementById("idInput");
         const actionButton = document.getElementById("actionButton");
+        const funcionInput = document.getElementById("funcion");
 
         // Elimina espacios antes de validar
         const value = idInput.value.trim();
@@ -381,8 +389,10 @@
         // Cambia el texto según el estado del campo
         if (value === "0") {
             actionButton.textContent = "Agregar";
+            funcionInput.value = "agregar";
         } else {
             actionButton.textContent = "Modificar";
+            funcionInput.value = "modificar";
         }
     }
 
