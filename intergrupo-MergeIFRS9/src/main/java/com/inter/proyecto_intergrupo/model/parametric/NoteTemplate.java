@@ -35,7 +35,7 @@ public class NoteTemplate {
 
     @ManyToOne
     @JoinColumn(name = "id_tipificacion")
-    private Conciliation tipificacion;
+    private Typification tipificacion;
 
     @ManyToOne
     @JoinColumn(name = "id_referencia_tercero")

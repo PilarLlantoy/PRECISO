@@ -23,10 +23,10 @@
         <div class="col-md-12 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
             <h2 class="fw-bold text-white ml-4 my-3">Cuentas (</h2>
             <div class="d-flex " style="align-items">
-                <h3 th:if="${matriz.conciliacion!=null}" class=" fw-bold text-white  my-3">Plantilla: <span th:text="${matriz.conciliacion.nombre}"></span></h3>
-                <h3 th:if="${matriz.conciliacion==null}" class=" fw-bold text-white  my-3">Plantilla: Libre</span></h3>
-                <h3 th:if="${matriz.inventarioConciliacion!=null}" class=" fw-bold text-white  my-3">, Inventario: <span th:text="${matriz.inventarioConciliacion.detalle}"></span>)</h3>
-                <h3 th:if="${matriz.inventarioConciliacion==null}" class=" fw-bold text-white  my-3">, Inventario: Libre></span>)</h3>
+                <h3 th:if="${matriz!=null and matriz.conciliacion!=null}" class=" fw-bold text-white  my-3">Plantilla: <span th:text="${matriz.conciliacion.nombre}"></span></h3>
+                <h3 th:if="${matriz!=null and matriz.conciliacion==null}" class=" fw-bold text-white  my-3">Plantilla: Libre</span></h3>
+                <h3 th:if="${matriz!=null and matriz.inventarioConciliacion!=null}" class=" fw-bold text-white  my-3">, Inventario: <span th:text="${matriz.inventarioConciliacion.detalle}"></span>)</h3>
+                <h3 th:if="${matriz!=null and matriz.inventarioConciliacion==null}" class=" fw-bold text-white  my-3">, Inventario: Libre></span>)</h3>
             </div>
         </div>
     </div>
@@ -35,7 +35,7 @@
             <h2>Cargue de Cuentas a Parametrizar</h2>
         </div>
         <div class="text-right col-md-6">
-            <a class="btn btn-sm btn-danger" th:href="@{/parametric/noteTemplates}"><i class="fa-solid fa-left-long"></i> Regresar</a>
+            <a class="btn btn-sm btn-danger" th:href="@{/parametric/searchNoteTemplate(selectedConcil=${selectedConcil},selectedInv=${selectedInv},page=${page2})}"><i class="fa-solid fa-left-long"></i> Regresar</a>
         </div>
     </div>
     <div class="row px-4">

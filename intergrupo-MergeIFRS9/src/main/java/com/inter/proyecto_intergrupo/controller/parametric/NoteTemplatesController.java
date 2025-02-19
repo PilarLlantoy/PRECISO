@@ -42,6 +42,9 @@ public class NoteTemplatesController {
     private ConciliationService conciliationService;
 
     @Autowired
+    private TypificationService typificationService;
+
+    @Autowired
     private ConciliationRouteService conciliationRouteService;
 
     @Autowired
@@ -115,9 +118,11 @@ public class NoteTemplatesController {
         List<EventType> allETs = eventTypeService.findAll();
 
         List<Conciliation> allConciliations = conciliationService.findAllActive();
+        List<Typification> allTipifications = null;
         List<ConciliationRoute> allConciliationRoutes = null;
         List<CampoRConcil> campos = null;
         modelAndView.addObject("conciliaciones", allConciliations);
+        modelAndView.addObject("tipificaciones", allTipifications);
         modelAndView.addObject("rutascs", allConciliationRoutes);
         modelAndView.addObject("campos", campos);
         modelAndView.addObject("noteTemplate",noteTemplate);
@@ -126,8 +131,22 @@ public class NoteTemplatesController {
         return modelAndView;
     }
 
+    @GetMapping("/parametric/obtenerRutasByNote/{concilID}")
+    @ResponseBody
+    public List<Object[]> obtenerRutasConcilByConcil(@PathVariable("concilID") Long concilID) {
+        List<Object[]> campos = typificationService.findAllActiveConcil(concilID);
+        return campos;
+    }
+
+    @GetMapping("/parametric/obtenerAllRutas")
+    @ResponseBody
+    public List<Object[]> obtenerRutasConcilByConcil2() {
+        List<Object[]> campos = typificationService.findAllActiveObject();
+        return campos;
+    }
+
     @GetMapping(value = "/parametric/modifyNoteTemplate/{id}")
-    public ModelAndView showModifyNoteTemplate(@PathVariable int id){
+    public ModelAndView showModifyNoteTemplate(@PathVariable int id,@RequestParam Map<String, Object> params){
         ModelAndView modelAndView = new ModelAndView();
         NoteTemplate noteTemplate = noteTemplateService.findById(id);
         List<EventType> allETs = eventTypeService.findAll();
@@ -140,16 +159,31 @@ public class NoteTemplatesController {
         if(noteTemplate.getInventarioConciliacion()!=null)
             campos = campoRConcilService.findCamposByRutaConcil(noteTemplate.getInventarioConciliacion().getId());
 
-
         List<Integer> matrices = null;
         if(noteTemplate.getInventarioConciliacion()!=null && noteTemplate.getConciliacion()!=null)
             matrices=eventMatrixService.findMatrices(noteTemplate.getConciliacion().getId(), noteTemplate.getInventarioConciliacion().getId());
 
+        List<Typification> allTipifications = null;
+        if(noteTemplate.getTipificacion()!=null && noteTemplate.getConciliacion()!=null && !noteTemplate.isPlantillaLibre())
+            allTipifications=typificationService.findAllActiveConcilObj((long) noteTemplate.getConciliacion().getId());
+        else if(noteTemplate.getTipificacion()!=null && noteTemplate.isPlantillaLibre())
+            allTipifications=typificationService.findAllActiveObject2();
+
         modelAndView.addObject("conciliaciones", allConciliations);
+        modelAndView.addObject("tipificaciones", allTipifications);
         modelAndView.addObject("rutascs", allConciliationRoutes);
         modelAndView.addObject("matrices", matrices);
         modelAndView.addObject("campos", campos);
         modelAndView.addObject("noteTemplate",noteTemplate);
+
+        if(params.get("selectedConcil")!=null)
+            modelAndView.addObject("selectedConcil1",params.get("selectedConcil").toString());
+        if(params.get("selectedInv")!=null)
+            modelAndView.addObject("selectedInv1",params.get("selectedInv").toString());
+        if(params.get("page")!=null)
+            modelAndView.addObject("page",params.get("page").toString());
+        else
+            modelAndView.addObject("page",1);
 
         modelAndView.setViewName("/parametric/modifyNoteTemplate");
         return modelAndView;
@@ -185,7 +219,7 @@ public class NoteTemplatesController {
                 noteTemplate.setMatriz(matriz);
             }
             if(!idTipificacion.equals("N")) {
-            Conciliation tipificacion = conciliationService.findById(Integer.valueOf(idTipificacion));
+            Typification tipificacion = typificationService.findById(Long.parseLong(idTipificacion));
             noteTemplate.setTipificacion(tipificacion);
             }
             if(!idrutaconcil.equals("N")) {
@@ -214,9 +248,10 @@ public class NoteTemplatesController {
             @RequestParam(defaultValue = "N" ,name = "selectedRutaConcil") String idrutaconcil,
             @RequestParam(defaultValue = "" ,name = "selectedTipoEvento") String TipoEvento,
             @RequestParam(defaultValue = "N" ,name = "campoRefTercero") String campoRefTercero,
+            @RequestParam Map<String, Object> params,
             BindingResult bindingResult){
 
-        ModelAndView modelAndView = new ModelAndView("redirect:/parametric/noteTemplates");
+        ModelAndView modelAndView = new ModelAndView("redirect:/parametric/searchNoteTemplate");
 
         if(bindingResult.hasErrors()){
             modelAndView.setViewName("parametric/modifyNoteTemplate");
@@ -232,7 +267,7 @@ public class NoteTemplatesController {
             }
             else noteTemplate.setMatriz(null);
             if(!idTipificacion.equals("N")) {
-                Conciliation tipificacion = conciliationService.findById(Integer.valueOf(idTipificacion));
+                Typification tipificacion = typificationService.findById(Long.parseLong(idTipificacion));
                 noteTemplate.setTipificacion(tipificacion);
             }
             else noteTemplate.setTipificacion(null);
@@ -252,6 +287,12 @@ public class NoteTemplatesController {
 
             noteTemplateService.modificar(noteTemplate);
         }
+        if(params.get("selectedConcil1")!=null)
+            modelAndView.addObject("selectedConcil",params.get("selectedConcil1").toString());
+        if(params.get("selectedInv1")!=null)
+            modelAndView.addObject("selectedInv",params.get("selectedInv1").toString());
+        if(params.get("page")!=null)
+            modelAndView.addObject("page",params.get("page").toString());
         return modelAndView;
     }
 

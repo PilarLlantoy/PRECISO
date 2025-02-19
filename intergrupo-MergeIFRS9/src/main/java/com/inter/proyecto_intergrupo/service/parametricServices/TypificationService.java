@@ -59,8 +59,36 @@ public class TypificationService {
     }
 
     public List <Typification> findAll(){return typificationRepository.findAll();}
-    public List<Typification> findAllActiveCountries() {
+    public List<Typification> findAllActive() {
         return typificationRepository.findByEstado(true);
+    }
+
+    public List<Object[]> findAllActiveConcil(Long id) {
+        Query query = entityManager.createNativeQuery("SELECT distinct em.id_tipificacion, em.detalle_tipificacion FROM preciso_tipificacion as em \n" +
+                "INNER JOIN preciso_tipificacion_concil as se ON em.id_tipificacion=se.id_tipificaciones\n" +
+                "WHERE se.id_conciliacion = ? and em.estado_tipificacion = 1 and em.aplica_concil = 1 ");
+        query.setParameter(1, id );
+        return query.getResultList();
+    }
+
+    public List<Typification> findAllActiveConcilObj(Long id) {
+        Query query = entityManager.createNativeQuery("SELECT distinct em.* FROM preciso_tipificacion as em \n" +
+                "INNER JOIN preciso_tipificacion_concil as se ON em.id_tipificacion=se.id_tipificaciones\n" +
+                "WHERE se.id_conciliacion = ? and em.estado_tipificacion = 1 and em.aplica_concil = 1 ",Typification.class);
+        query.setParameter(1, id );
+        return query.getResultList();
+    }
+
+    public List<Object[]> findAllActiveObject() {
+        Query query = entityManager.createNativeQuery("SELECT distinct em.id_tipificacion, em.detalle_tipificacion FROM preciso_tipificacion as em \n" +
+                "WHERE  em.estado_tipificacion = 1 and em.aplica_concil = 0 ");
+        return query.getResultList();
+    }
+
+    public List<Typification> findAllActiveObject2() {
+        Query query = entityManager.createNativeQuery("SELECT distinct em.* FROM preciso_tipificacion as em \n" +
+                "WHERE  em.estado_tipificacion = 1 and em.aplica_concil = 0 ",Typification.class);
+        return query.getResultList();
     }
 
     public Typification findById(Long id){

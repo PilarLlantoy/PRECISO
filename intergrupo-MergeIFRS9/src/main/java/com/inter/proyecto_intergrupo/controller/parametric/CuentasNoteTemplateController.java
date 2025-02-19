@@ -45,6 +45,9 @@ public class CuentasNoteTemplateController {
     private AccountingRouteService accountingRouteService;
 
     @Autowired
+    private NoteTemplateService noteTemplateService;
+
+    @Autowired
     private CampoRCService campoRCService;
 
     @Autowired
@@ -89,20 +92,29 @@ public class CuentasNoteTemplateController {
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.addObject("p_modificar", p_modificar);
 
-            EventMatrix matriz = eventMatrixService.findById(id);
-            modelAndView.addObject("matriz", matriz);
+            NoteTemplate note = noteTemplateService.findById(id);
+            modelAndView.addObject("matriz", note);
 
             modelAndView.addObject("plantillaId", id);
 
             modelAndView.setViewName("parametric/cuentasNoteTemplate");
 
-            if(matriz!=null) {
-                List<Object[]> camposConcil = campoRConcilService.findCamposByRutaConcil(matriz.getInventarioConciliacion().getId());
+            if(note!=null) {
+                List<Object[]> camposConcil = campoRConcilService.findCamposByRutaConcil(note.getInventarioConciliacion().getId());
                 modelAndView.addObject("camposConcil", camposConcil);
             }
 
             AccountNoteTemplate cuentaParam = new AccountNoteTemplate();
             modelAndView.addObject("cuentaParam", cuentaParam);
+
+            if(params.get("selectedConcil")!=null)
+                modelAndView.addObject("selectedConcil",params.get("selectedConcil").toString());
+            if(params.get("selectedInv")!=null)
+                modelAndView.addObject("selectedInv",params.get("selectedInv").toString());
+            if(params.get("page2")!=null)
+                modelAndView.addObject("page2",params.get("page2").toString());
+            else
+                modelAndView.addObject("page2",1);
 
         }
         else

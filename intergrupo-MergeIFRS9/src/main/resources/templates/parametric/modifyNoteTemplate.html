@@ -20,7 +20,7 @@
                     <h2 class="font-weight-bold">Información de Registro</h2>
                 </div>
                 <div class="text-right col-md-6">
-                    <a class="btn btn-sm btn-danger" th:href="@{/parametric/noteTemplates}"><i class="fa-solid fa-left-long"></i> Regresar</a>
+                    <a class="btn btn-sm btn-danger" th:href="@{/parametric/searchNoteTemplate(selectedConcil=${selectedConcil1},selectedInv=${selectedInv1},page=${page})}"><i class="fa-solid fa-left-long"></i> Regresar</a>
                     <button type="submit" class="btn btn-sm btn-primary ml-1">Modificar Plantilla</button>
                 </div>
             </div>
@@ -30,6 +30,9 @@
                         <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">ID</h6>
                             <input type="text" class="form-control form-control-sm" th:field="*{id}" id="id" name="id">
+                            <input type="hidden" class="form-control form-control-sm" th:value="${selectedConcil1}" name="selectedConcil1">
+                            <input type="hidden" class="form-control form-control-sm" th:value="${selectedInv1}" name="selectedInv1">
+                            <input type="hidden" class="form-control form-control-sm" th:value="${page}" name="page">
                         </div>
                     </div>
                     <div class="col-md-1">
@@ -49,7 +52,7 @@
                     <div class="col-md-9">
                         <div class="form-group">
                             <h6 class="font-weight-bold">Detalle:</h6>
-                            <input type="text" class="form-control form-control-sm" name="detalle" id="detalle" th:field="*{detalle}" >
+                            <input type="text" class="form-control form-control-sm" name="detalle" id="detalle" th:field="*{detalle}" required>
                         </div>
                     </div>
                     <div class="col-md-3">
@@ -96,8 +99,8 @@
                         <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Tipificación:<i class="bi bi-caret-down"></i></h6>
                             <select class="form-control form-control-sm" name="selectedTip" id="selectedTip">
-                                <option disabled value="" selected hidden>Seleccione una Conciliación</option>
-                                <option th:each="concil : ${conciliaciones}" th:value="${concil.id}" th:text="${concil.nombre}"
+                                <option disabled value="" selected hidden>Seleccione una Tipificación</option>
+                                <option th:each="concil : ${tipificaciones}" th:value="${concil.id}" th:text="${concil.detalle}"
                                         th:selected="${noteTemplate.tipificacion != null and concil.id == noteTemplate.tipificacion.id}"></option>
                             </select>
                         </div>
@@ -142,7 +145,7 @@
     // Inicializar el estado de los campos cuando la página se carga
     window.onload = function() {
         const isChecked = document.getElementById('manejaCC').checked;
-        if(isChecked) toggleFields();
+        if(isChecked) toggleFields2();
     };
 
     async function actualizarTodo() {
@@ -191,7 +194,28 @@
                 ruta.appendChild(optionRC);
             });
 
-            limpiarCampos();
+            const responseT = await fetch(`/parametric/obtenerRutasByNote/${concilID}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                }
+            });
+
+            const dataT = await responseT.json();
+
+            const rutaTip = document.getElementById('selectedTip');
+            rutaTip.innerHTML = '<option disabled value="" selected hidden>Seleccione una Tipificación</option>';
+
+            dataT.forEach(campo => {
+                const optionRCT = document.createElement('option');
+                optionRCT.value = campo[0];
+                optionRCT.text = campo[1];
+                rutaTip.appendChild(optionRCT);
+            });
+
+            const isChecked = document.getElementById('manejaCC').checked;
+            if(isChecked) limpiarCampos();
         }
     }
 
@@ -225,26 +249,62 @@
         }
     }
 
-    function toggleFields() {
+    async function toggleFields() {
+        const isChecked = document.getElementById('manejaCC').checked;
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+        // Obtener los campos a deshabilitar y limpiar su selección
+        const selects = [
+            document.getElementById('selectedConcil'),
+            document.getElementById('selectedRutaConcil'),
+            document.getElementById('campoRefTercero'),
+            document.getElementById('selectedMatriz'),
+        ];
+
+        selects.forEach(select => {
+            select.disabled = isChecked;
+            select.value = ""; // Restablece la selección
+        });
+
+        const responseT2 = await fetch(`/parametric/obtenerAllRutas`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                [csrfHeader]: csrfToken
+            }
+        });
+
+        const dataT2 = await responseT2.json();
+
+        const rutaTip2 = document.getElementById('selectedTip');
+        rutaTip2.innerHTML = '<option disabled value="" selected hidden>Seleccione una Tipificación</option>';
+
+        dataT2.forEach(campo => {
+            const optionRCT2 = document.createElement('option');
+            optionRCT2.value = campo[0];
+            optionRCT2.text = campo[1];
+            rutaTip2.appendChild(optionRCT2);
+        });
+
+    }
+
+    function toggleFields2() {
         const isChecked = document.getElementById('manejaCC').checked;
 
-        // Obtener los campos a deshabilitar
-        const concilSelect = document.getElementById('selectedConcil');
-        const rutaConcilSelect = document.getElementById('selectedRutaConcil');
-        const campoOperacionSelect = document.getElementById('campoRefTercero');
-        const matrizSelect = document.getElementById('selectedMatriz');
+        // Obtener los campos a deshabilitar y limpiar su selección
+        const selects = [
+            document.getElementById('selectedConcil'),
+            document.getElementById('selectedRutaConcil'),
+            document.getElementById('campoRefTercero'),
+            document.getElementById('selectedMatriz'),
+        ];
 
-        // Alternar el estado disabled de los campos
-        concilSelect.disabled = isChecked;
-        rutaConcilSelect.disabled = isChecked;
-        campoOperacionSelect.disabled = isChecked;
-        matrizSelect.disabled = isChecked;
+        selects.forEach(select => {
+            select.disabled = isChecked;
+            select.value = ""; // Restablece la selección
+        });
 
-        // Setear el valor por defecto ("Seleccione")
-        concilSelect.selectedIndex = 0;
-        rutaConcilSelect.selectedIndex = 0;
-        campoOperacionSelect.selectedIndex = 0;
-        matrizSelect.selectedIndex = 0;
     }
 
     async function actualizarMatriz() {

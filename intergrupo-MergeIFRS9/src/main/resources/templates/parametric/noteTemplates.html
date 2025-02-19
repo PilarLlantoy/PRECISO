@@ -77,8 +77,8 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="register : ${allRegisters}">
-                        <td th:text="${register.id}"></td>
+                    <tr th:each="register,iter : ${allRegisters}">
+                        <td th:text="${iter.count + ((current-1)*12)}"></td>
                         <td th:text="${register.detalle}"></td>
                         <td th:if="${register.plantillaLibre == true}">Sí</td>
                         <td th:if="${register.plantillaLibre == false}">No</td>
@@ -92,11 +92,11 @@
                         <td th:if="${register.estado == false}"><i class="fa fa-times-circle fa-2x text-danger"></i></td>
                         <td>
                             <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
-                                    th:onclick="|window.location.href='@{/parametric/cuentasNoteTemplate/{id}(id=${register.id})}'|">Cuentas</button>
+                                    th:onclick="|window.location.href='@{/parametric/cuentasNoteTemplate/{id}(id=${register.id},selectedConcil=${selectedConcil},selectedInv=${selectedInv},page2=${current})}'|">Cuentas</button>
                         </td>
                         <td>
                             <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
-                                    th:onclick="|window.location.href='@{/parametric/modifyNoteTemplate/{id}(id=${register.id})}'|">Editar</button>
+                                    th:onclick="|window.location.href='@{/parametric/modifyNoteTemplate/{id}(id=${register.id},selectedConcil=${selectedConcil},selectedInv=${selectedInv},page=${current})}'|">Editar</button>
                         </td>
                     </tr>
                     </tbody>
@@ -108,11 +108,11 @@
                         <ul class="pagination pagination-sm">
                             <li class="page-item" th:classappend="${prev == 0 ? 'disabled' : ''}">
                                 <a class="page-link"
-                                   th:href="@{/admin/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${prev},dir=${directory},vId=${vId})}">Anterior</a>
+                                   th:href="@{/parametric/searchNoteTemplate/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${prev},dir=${directory},vId=${vId},selectedConcil=${selectedConcil},selectedInv=${selectedInv})}">Anterior</a>
                             </li>
                             <li class="page-item" th:classappend="${current == last ? 'disabled' : ''}">
                                 <a class="page-link"
-                                   th:href="@{/admin/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${next},dir=${directory},vId=${vId})}">Siguiente</a>
+                                   th:href="@{/parametric/searchNoteTemplate/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${next},dir=${directory},vId=${vId},selectedConcil=${selectedConcil},selectedInv=${selectedInv})}">Siguiente</a>
                             </li>
                         </ul>
                     </nav>
