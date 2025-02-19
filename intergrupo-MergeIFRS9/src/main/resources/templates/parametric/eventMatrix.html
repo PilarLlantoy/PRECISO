@@ -142,11 +142,11 @@
                         <ul class="pagination pagination-sm">
                             <li class="page-item" th:classappend="${prev == 0 ? 'disabled' : ''}">
                                 <a class="page-link"
-                                   th:href="@{/parametric/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${prev},dir=${directory},vId=${vId},selectedConcil=${selectedConcil1},selectedInv=${selectedInv1},selectedET=${selectedET1})}">Anterior</a>
+                                   th:href="@{/parametric/searchEventMatrix/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${prev},dir=${directory},vId=${vId},selectedConcil=${selectedConcil1},selectedInv=${selectedInv1},selectedET=${selectedET1})}">Anterior</a>
                             </li>
                             <li class="page-item" th:classappend="${current == last ? 'disabled' : ''}">
                                 <a class="page-link"
-                                   th:href="@{/parametric/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${next},dir=${directory},vId=${vId},selectedConcil=${selectedConcil1},selectedInv=${selectedInv1},selectedET=${selectedET1})}">Siguiente</a>
+                                   th:href="@{/parametric/searchEventMatrix/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${next},dir=${directory},vId=${vId},selectedConcil=${selectedConcil1},selectedInv=${selectedInv1},selectedET=${selectedET1})}">Siguiente</a>
                             </li>
                         </ul>
                     </nav>
