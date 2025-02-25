@@ -30,6 +30,7 @@
                             <h6 class="font-weight-bold">ID</h6>
                             <input type="text" id="idInput" class="form-control form-control-sm" th:field="*{id}">
                             <input type="hidden" th:name="page" class="form-control form-control-sm" th:value="${current}">
+                            <input type="hidden" th:name="page1" class="form-control form-control-sm" th:value="${page1}">
                         </div>
                     </div>
                     <div class="col-md-2">
@@ -309,6 +310,7 @@
     function descartar() {
         const id = document.querySelector("input[name='id']").value;
         const nombre = document.querySelector("input[name='nombre']").value;
+        const page1 = document.querySelector("input[name='page1']").value;
         const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
         const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
         const arouteId = document.getElementById('arouteId').value;
@@ -323,7 +325,7 @@
             }).then(response => {
                 if (response.ok) {
                     // Verifica que la URL de redirección se construya correctamente
-                    window.location.href = `/parametric/fieldLoadingAccountingRoute/${arouteId}`;
+                    window.location.href = `/parametric/fieldLoadingAccountingRoute/${arouteId}?page1=${page1}`;
                 } else {
                     // Manejo de errores
                     console.error('Error al eliminar el registro:', response.statusText);

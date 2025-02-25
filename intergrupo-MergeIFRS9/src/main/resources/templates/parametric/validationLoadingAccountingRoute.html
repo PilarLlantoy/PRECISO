@@ -228,6 +228,7 @@
 
     function descartar() {
         const id = document.querySelector("input[name='id']").value;
+        const page1 = document.querySelector("input[name='page1']").value;
         const selectCampo = document.querySelector("select[name='selectedCampoRef']");
         const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
         const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
@@ -242,7 +243,7 @@
                 }
             }).then(response => {
                 if (response.ok) {
-                    window.location.href = `/parametric/validationLoadingAccountingRoute/${arouteId}`;
+                    window.location.href = `/parametric/validationLoadingAccountingRoute/${arouteId}?page1=${page1}`;
                 }
             }).catch(error => {
                 // Manejo de errores
