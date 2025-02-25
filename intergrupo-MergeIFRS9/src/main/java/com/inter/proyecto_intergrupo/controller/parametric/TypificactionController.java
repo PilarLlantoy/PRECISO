@@ -137,7 +137,7 @@ public class TypificactionController {
         User user = userService.findUserByUserName(auth.getName());
         modelAndView.addObject("userName",user.getPrimerNombre());
         modelAndView.addObject("userEmail",user.getCorreo());
-        Typification toModify = typificationService.findById(Long.parseLong(id));
+        Typification toModify = typificationService.findById(Integer.parseInt(id));
         modelAndView.addObject("dataModify",toModify);
         modelAndView.addObject("dataId",toModify.getId());
         modelAndView.setViewName("parametric/modifyTypification");
@@ -156,7 +156,7 @@ public class TypificactionController {
     public ModelAndView deleteTypification(@PathVariable String id){
         ModelAndView modelAndView = new ModelAndView("redirect:/parametric/typification");
         try {
-            Typification typification = typificationService.findById(Long.parseLong(id));
+            Typification typification = typificationService.findById(Integer.parseInt(id));
             typification.setEstado(false);
             typificationService.modificarTypification(typification);
         }
@@ -274,7 +274,7 @@ public class TypificactionController {
 
     @PostMapping("/parametric/typification/saveConciliaciones")
     public ResponseEntity<?> saveConciliaciones(@RequestBody Map<String, Object> request) {
-        Long idTipificacion = Long.valueOf(request.get("idTipificacion").toString());
+        int idTipificacion = Integer.valueOf(request.get("idTipificacion").toString());
         List<Integer> conciliaciones = ((List<?>) request.get("conciliaciones")).stream()
                 .map(obj -> Integer.valueOf(obj.toString()))
                 .collect(Collectors.toList());

@@ -45,7 +45,9 @@ public class EventMatrixService {
     }
 
     public List<EventMatrix> findAllOrdered() {
-        return eventMatrixRepository.findByOrderByConciliacionIdAscInventarioConciliacionIdAsc();
+        Query query = entityManager.createNativeQuery(
+                "SELECT * FROM preciso_matriz_eventos ORDER BY id_conciliacion,id_inventario_conciliacion,consecutivo", EventMatrix.class);
+        return query.getResultList();
     }
     public List<EventMatrix> findAllByEstadoAndConciliacionAndInventarioConciliacion(Conciliation concil, ConciliationRoute inv) {
         return eventMatrixRepository.findAllByEstadoAndConciliacionAndInventarioConciliacion(true, concil, inv);

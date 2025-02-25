@@ -91,7 +91,7 @@ public class TypificationService {
         return query.getResultList();
     }
 
-    public Typification findById(Long id){
+    public Typification findById(int id){
         return typificationRepository.findAllById(id);
     }
 
@@ -104,7 +104,7 @@ public class TypificationService {
        return tipificacion;
     }
 
-    public void removeTypification(Long id, User user){
+    public void removeTypification(int id, User user){
         typificationRepository.deleteById(id);
         loadAudit(user,"Remover registro Tipificación "+id);
     }
@@ -264,7 +264,7 @@ public class TypificationService {
             return map;
         }).collect(Collectors.toList());
     }
-    public void guardarConciliaciones(Long idTipificacion, List<Integer> conciliaciones) {
+    public void guardarConciliaciones(int idTipificacion, List<Integer> conciliaciones) {
         typificationConcilRepository.deleteByTipificacion(typificationRepository.findAllById(idTipificacion));
         for (Integer id:conciliaciones) {
             TypificationConcil typificationConcil = new TypificationConcil();

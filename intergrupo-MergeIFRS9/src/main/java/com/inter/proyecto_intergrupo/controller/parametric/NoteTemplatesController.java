@@ -219,7 +219,7 @@ public class NoteTemplatesController {
                 noteTemplate.setMatriz(matriz);
             }
             if(!idTipificacion.equals("N")) {
-            Typification tipificacion = typificationService.findById(Long.parseLong(idTipificacion));
+            Typification tipificacion = typificationService.findById(Integer.parseInt(idTipificacion));
             noteTemplate.setTipificacion(tipificacion);
             }
             if(!idrutaconcil.equals("N")) {
@@ -267,7 +267,7 @@ public class NoteTemplatesController {
             }
             else noteTemplate.setMatriz(null);
             if(!idTipificacion.equals("N")) {
-                Typification tipificacion = typificationService.findById(Long.parseLong(idTipificacion));
+                Typification tipificacion = typificationService.findById(Integer.parseInt(idTipificacion));
                 noteTemplate.setTipificacion(tipificacion);
             }
             else noteTemplate.setTipificacion(null);

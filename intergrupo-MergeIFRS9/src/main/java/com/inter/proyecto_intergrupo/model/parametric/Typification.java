@@ -20,7 +20,7 @@ public class Typification {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_tipificacion")
-    private Long id;
+    private int id;
 
     @Column(name = "detalle_tipificacion")
     private String detalle;
@@ -32,10 +32,6 @@ public class Typification {
     @Column(name = "aplica_concil")
     private boolean aplicaConcil;
 
-    @OneToMany(mappedBy = "conciliacion", cascade = CascadeType.ALL)
-    private List<TypificationConcil> conciliacionesConcil;
 
-    @OneToMany(mappedBy = "tipificacion", cascade = CascadeType.ALL)
-    private List<TypificationConcil> tipificacionesConcil;
 
 }

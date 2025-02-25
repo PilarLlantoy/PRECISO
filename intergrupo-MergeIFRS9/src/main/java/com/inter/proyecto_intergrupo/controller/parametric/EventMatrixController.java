@@ -91,7 +91,7 @@ public class EventMatrixController {
             List<Conciliation> allConcils = conciliationService.findAll();
             modelAndView.addObject("allConcils", allConcils);
 
-            List<AccountEventMatrix> cuentas = accountEventMatrixService.findAllActive();
+            //List<AccountEventMatrix> cuentas = accountEventMatrixService.findAllActive();
 
 
             modelAndView.setViewName("parametric/eventMatrix");
@@ -268,9 +268,9 @@ public class EventMatrixController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByUserName(auth.getName());
-        Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Países");
+        Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Matriz de Eventos");
 
-        if(userService.validateEndpoint(user.getId(),"Ver Países")) { //CAMBIAR A VER Matriz de Eventos
+        if(userService.validateEndpoint(user.getId(),"Ver Matriz de Eventos")) { //CAMBIAR A VER Matriz de Eventos
             int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
             PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
 
@@ -309,7 +309,7 @@ public class EventMatrixController {
             List<Conciliation> allConcils = conciliationService.findAll();
             modelAndView.addObject("allConcils", allConcils);
 
-            List<AccountEventMatrix> cuentas = accountEventMatrixService.findAllActive();
+            //List<AccountEventMatrix> cuentas = accountEventMatrixService.findAllActive();
 
 
             modelAndView.setViewName("parametric/eventMatrix");
