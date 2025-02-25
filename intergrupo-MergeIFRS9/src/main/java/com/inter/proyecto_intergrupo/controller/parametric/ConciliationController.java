@@ -145,7 +145,7 @@ public class ConciliationController {
     }
 
     @GetMapping(value = "/parametric/modifyConciliation/{id}")
-    public ModelAndView showModifyConciliation(@PathVariable int id){
+    public ModelAndView showModifyConciliation(@PathVariable int id,@RequestParam Map<String, Object> params){
         ModelAndView modelAndView = new ModelAndView();
         Conciliation concil = conciliationService.findById(id);
 
@@ -172,6 +172,8 @@ public class ConciliationController {
         modelAndView.addObject("divisas", allDivisas);
         modelAndView.addObject("rutasContables", rutasContables);
         modelAndView.addObject("concil",concil);
+        if(params.get("page1")!=null && !params.get("page1").toString().equalsIgnoreCase(""))
+            modelAndView.addObject("page1",params.get("page1").toString());
         modelAndView.setViewName("/parametric/modifyConciliation");
         return modelAndView;
     }
@@ -280,6 +282,9 @@ public class ConciliationController {
         modelAndView.addObject("cuenta",cuenta);
         modelAndView.addObject("conciliacion",conciliacion);
 
+        if(params.get("page1")!=null && !params.get("page1").toString().equalsIgnoreCase(""))
+            modelAndView.addObject("page1", params.get("page1").toString());
+
         modelAndView.setViewName("parametric/accountsConciliation");
         return modelAndView;
     }
@@ -306,7 +311,7 @@ public class ConciliationController {
                                      @RequestParam(name = "selectedCuenta") String divisa,
                                      @RequestParam(name = "selectedDivisa") String cuenta,
                                      @RequestParam(name = "selectedSaldo") String saldo,
-                                     BindingResult bindingResult){
+                                     BindingResult bindingResult,@RequestParam Map<String, Object> params){
 
         ModelAndView modelAndView = new ModelAndView("redirect:/parametric/conciliation/");
         if(bindingResult.hasErrors()){
@@ -333,6 +338,8 @@ public class ConciliationController {
 
         modelAndView.addObject("resp", "Modify1");
         modelAndView.addObject("data", concil.getNombre());
+        if(params.get("page1")!=null && !params.get("page1").toString().equalsIgnoreCase(""))
+            modelAndView.addObject("page", params.get("page1").toString());
         return modelAndView;
     }
 

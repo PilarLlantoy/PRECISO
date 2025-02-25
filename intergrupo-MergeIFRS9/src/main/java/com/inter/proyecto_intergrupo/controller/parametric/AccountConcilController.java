@@ -52,11 +52,14 @@ public class AccountConcilController {
     @PostMapping(value = "/parametric/createAccountConcil")
     public ModelAndView createCuenta(@ModelAttribute AccountConcil cuenta,
                                            @RequestParam(name = "concilId") String concilId,
-                                           BindingResult bindingResult){
+                                           BindingResult bindingResult,
+                                     @RequestParam Map<String, Object> params){
         ModelAndView modelAndView = new ModelAndView("redirect:/parametric/accountsConciliation/" + concilId);
         Conciliation conciliacion= conciliationService.findById(Integer.valueOf(concilId));
         cuenta.setConciliacion(conciliacion);
         accountConcilService.modificar(cuenta);
+        if(params.get("page1")!=null && !params.get("page1").toString().equalsIgnoreCase(""))
+            modelAndView.addObject("page1", params.get("page1").toString());
         return modelAndView;
 
     }

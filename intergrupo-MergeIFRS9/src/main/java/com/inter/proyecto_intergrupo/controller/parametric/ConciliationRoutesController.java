@@ -59,7 +59,7 @@ public class ConciliationRoutesController {
             int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
             PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
 
-            List<ConciliationRoute> conciliations = conciliationRouteService.findAllActive();
+            List<ConciliationRoute> conciliations = conciliationRouteService.findAllActiveOrder();
             int start = (int) pageRequest.getOffset();
             int end = Math.min((start + pageRequest.getPageSize()), conciliations.size());
             Page<ConciliationRoute> pageConciliation = new PageImpl<>(conciliations.subList(start, end), pageRequest, conciliations.size());
@@ -69,6 +69,7 @@ public class ConciliationRoutesController {
                 List<Integer> pages = IntStream.rangeClosed(1, totalPage).boxed().collect(Collectors.toList());
                 modelAndView.addObject("pages",pages);
             }
+
             modelAndView.addObject("allCRoutes",pageConciliation.getContent());
             modelAndView.addObject("current",page+1);
             modelAndView.addObject("next",page+2);
@@ -186,13 +187,17 @@ public class ConciliationRoutesController {
     }
 
     @GetMapping(value = "/parametric/modifyConciliationRoute/{id}")
-    public ModelAndView modifyAccountingRoute(@PathVariable int id){
+    public ModelAndView modifyAccountingRoute(@PathVariable int id,@RequestParam Map<String, Object> params){
         ModelAndView modelAndView = new ModelAndView();
         Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
         ConciliationRoute croute = conciliationRouteService.findById(id);
         List<Conciliation> conciliations = conciliationService.findAllActive();
         modelAndView.addObject("croute",croute);
         modelAndView.addObject("conciliations",conciliations);
+        if(params.get("page1")!=null && !params.get("page1").toString().equalsIgnoreCase(""))
+            modelAndView.addObject("page1",params.get("page1").toString());
+        else
+            modelAndView.addObject("page1","1");
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
         try {
             String selecthoraCargue = croute.getHoraCargue().format(formatter);
@@ -221,6 +226,10 @@ public class ConciliationRoutesController {
         }
         modelAndView.addObject("resp", "Modify1");
         modelAndView.addObject("data", croute.getDetalle());
+        if(params.get("page")!=null && !params.get("page").toString().equalsIgnoreCase(""))
+            modelAndView.addObject("page",params.get("page").toString());
+        else
+            modelAndView.addObject("page","1");
         return modelAndView;
     }
 
@@ -244,6 +253,10 @@ public class ConciliationRoutesController {
             List<Integer> pages = IntStream.rangeClosed(1, totalPage).boxed().collect(Collectors.toList());
             modelAndView.addObject("pages",pages);
         }
+        if(params.get("page1")!=null && !params.get("page1").toString().equalsIgnoreCase(""))
+            modelAndView.addObject("page1",params.get("page1").toString());
+        else
+            modelAndView.addObject("page1","1");
         modelAndView.addObject("current",page+1);
         modelAndView.addObject("next",page+2);
         modelAndView.addObject("prev",page);
@@ -308,6 +321,10 @@ public class ConciliationRoutesController {
         ValidationRConcil validationRC = new ValidationRConcil();
         modelAndView.addObject("validationRC",validationRC);
 
+        if(params.get("page1")!=null && !params.get("page1").toString().equalsIgnoreCase(""))
+            modelAndView.addObject("page1",params.get("page1").toString());
+        else
+            modelAndView.addObject("page1","1");
 
         modelAndView.setViewName("parametric/validationLoadingConciliationRoute");
         return modelAndView;
@@ -367,6 +384,10 @@ public class ConciliationRoutesController {
         ValidationRConcil validationRC = new ValidationRConcil();
         modelAndView.addObject("validationRC",validationRC);
 
+        if(params.get("page1")!=null && !params.get("page1").toString().equalsIgnoreCase(""))
+            modelAndView.addObject("page1",params.get("page1").toString());
+        else
+            modelAndView.addObject("page1","1");
 
         modelAndView.setViewName("parametric/informationCrossingConciliationRoute");
         return modelAndView;

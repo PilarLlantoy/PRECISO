@@ -106,7 +106,7 @@ public class ValidationRCController {
                                            @RequestParam(name = "selectedCampoRef") String campoRefid,
                                            @RequestParam(name = "selectedOperacion",defaultValue = "") String operacion,
                                            @RequestParam(name = "arouteId") String arouteId,
-                                           BindingResult bindingResult){
+                                           BindingResult bindingResult, @RequestParam Map<String, Object> params){
         ModelAndView modelAndView = new ModelAndView("redirect:/parametric/validationLoadingAccountingRoute/" + arouteId);
         try{
             AccountingRoute aroute = accountingRouteService.findById(Integer.parseInt(arouteId));
@@ -115,6 +115,9 @@ public class ValidationRCController {
             validationRC.setCampoRef(referencia);
             validationRC.setOperacion(operacion);
             validationRCService.modificar(validationRC);
+
+            if(params.get("page1")!=null && !params.get("page1").toString().equalsIgnoreCase(""))
+                modelAndView.addObject("page1", params.get("page1").toString());
         }
         catch (Exception e)
         {

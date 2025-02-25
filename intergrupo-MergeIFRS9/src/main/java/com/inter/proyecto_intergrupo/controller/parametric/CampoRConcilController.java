@@ -73,6 +73,11 @@ public class CampoRConcilController {
         else {
             modelAndView.addObject("resp","Maes-2");
         }
+        if(params.get("page1")!=null && !params.get("page1").toString().equalsIgnoreCase(""))
+            modelAndView.addObject("page1",params.get("page1").toString());
+        else
+            modelAndView.addObject("page1","1");
+
         return modelAndView;
     }
 

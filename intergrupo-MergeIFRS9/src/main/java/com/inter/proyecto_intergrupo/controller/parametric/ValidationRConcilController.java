@@ -13,6 +13,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.Map;
+
 @Controller
 public class ValidationRConcilController {
     private static final int PAGINATIONCOUNT=12;
@@ -37,7 +39,7 @@ public class ValidationRConcilController {
                                            @RequestParam(name = "selectedCampoRef") String campoRefid,
                                            @RequestParam(name = "selectedOperacion", defaultValue= "") String operacion,
                                            @RequestParam(name = "crouteId") String crouteId,
-                                           BindingResult bindingResult){
+                                           BindingResult bindingResult,@RequestParam Map<String, Object> params){
         ModelAndView modelAndView = new ModelAndView("redirect:/parametric/validationLoadingConciliationRoute/" + crouteId);
         try{
             ConciliationRoute croute = conciliationRouteService.findById(Integer.parseInt(crouteId));
@@ -46,6 +48,10 @@ public class ValidationRConcilController {
             validationRC.setCampoRef(referencia);
             validationRC.setOperacion(operacion);
             validationRCService.modificar(validationRC);
+            if(params.get("page1")!=null && !params.get("page1").toString().equalsIgnoreCase(""))
+                modelAndView.addObject("page1",params.get("page1").toString());
+            else
+                modelAndView.addObject("page1","1");
         }
         catch (Exception e)
         {

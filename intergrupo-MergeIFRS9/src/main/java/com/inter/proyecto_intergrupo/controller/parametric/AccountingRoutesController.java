@@ -81,7 +81,7 @@ public class AccountingRoutesController {
         Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Rutas Contables");
         if(userService.validateEndpoint(user.getId(),"Ver Rutas Contables")) {
 
-            int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
+            int page=(params.get("page")!=null && !params.get("page").toString().equalsIgnoreCase(""))?(Integer.valueOf(params.get("page").toString())-1):0;
             PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
 
             List<AccountingRoute> aroutes = conciliationService.findAll();
@@ -101,7 +101,7 @@ public class AccountingRoutesController {
             modelAndView.addObject("last",totalPage);
             modelAndView.addObject("columns",listColumns);
             modelAndView.addObject("filterExport","Original");
-            modelAndView.addObject("directory","country");
+            modelAndView.addObject("directory","accountingRoutes");
             modelAndView.addObject("registers",aroutes.size());
             modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
@@ -335,7 +335,7 @@ public class AccountingRoutesController {
     }
 
     @GetMapping(value = "/parametric/modifyAccountingRoute/{id}")
-    public ModelAndView modifyAccountingRoute(@PathVariable int id){
+    public ModelAndView modifyAccountingRoute(@PathVariable int id, @RequestParam Map<String, Object> params){
         ModelAndView modelAndView = new ModelAndView();
         Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
         AccountingRoute aroute = accountingRouteService.findById(id);
@@ -351,6 +351,8 @@ public class AccountingRoutesController {
         }
         modelAndView.addObject("allSFs", allSFs);
         modelAndView.addObject("aroute",aroute);
+        if(params.get("page1")!=null && !params.get("page1").toString().equalsIgnoreCase(""))
+            modelAndView.addObject("page1", params.get("page1").toString());
         modelAndView.setViewName("parametric/modifyAccountingRoute");
         return modelAndView;
     }
@@ -370,6 +372,8 @@ public class AccountingRoutesController {
         }
         modelAndView.addObject("resp", "Modify1");
         modelAndView.addObject("data", aroute.getNombre());
+        if(params.get("page1")!=null && !params.get("page1").toString().equalsIgnoreCase(""))
+            modelAndView.addObject("page", params.get("page1").toString());
         return modelAndView;
     }
 
@@ -412,6 +416,9 @@ public class AccountingRoutesController {
         modelAndView.addObject("p_modificar", p_modificar);
         CampoRC campoRC = new CampoRC();
         modelAndView.addObject("campoRC",campoRC);
+
+        if(params.get("page1")!=null && !params.get("page1").toString().equalsIgnoreCase(""))
+            modelAndView.addObject("page1", params.get("page1").toString());
 
         modelAndView.setViewName("parametric/fieldLoadingAccountingRoute");
         return modelAndView;
@@ -457,6 +464,8 @@ public class AccountingRoutesController {
         CondicionRC condicionRC = new CondicionRC();
         modelAndView.addObject("condicionRC",condicionRC);
 
+        if(params.get("page1")!=null && !params.get("page1").toString().equalsIgnoreCase(""))
+            modelAndView.addObject("page1", params.get("page1").toString());
 
         modelAndView.setViewName("parametric/conditionLoadingAccountingRoute");
         return modelAndView;
@@ -505,6 +514,8 @@ public class AccountingRoutesController {
         ValidationRC validationRC = new ValidationRC();
         modelAndView.addObject("validationRC",validationRC);
 
+        if(params.get("page1")!=null && !params.get("page1").toString().equalsIgnoreCase(""))
+            modelAndView.addObject("page1", params.get("page1").toString());
 
         modelAndView.setViewName("parametric/validationLoadingAccountingRoute");
         return modelAndView;

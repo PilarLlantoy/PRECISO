@@ -68,6 +68,11 @@ public class ConciliationRouteService {
         return conciliationRouteRepository.findByEstado(true);
     }
 
+    public List<ConciliationRoute> findAllActiveOrder() {
+        Query querySelect = entityManager.createNativeQuery("select * from preciso_rutas_conciliaciones where estado = 1 order by id_conciliacion,id",ConciliationRoute.class);
+        return querySelect.getResultList();
+    }
+
     public ConciliationRoute findById(int id){
         return conciliationRouteRepository.findAllById(id);
     }

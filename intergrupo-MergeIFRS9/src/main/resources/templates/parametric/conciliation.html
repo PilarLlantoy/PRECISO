@@ -31,7 +31,7 @@
         </div>
     </div>
     <div class="row m-0 px-4 mt-5">
-        <div class="text-right col-md-12 mt-1">
+        <div class="text-right col-md-12 my-1">
             <a class="btn btn-sm btn-primary mx-1" th:href="@{/parametric/conciliation}"><i class="fas fa-redo-alt"></i></a>
             <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1" th:onclick="|window.location.href='@{/parametric/createConciliation}'|">Crear Conciliacion</button>
         </div>
@@ -63,11 +63,11 @@
                         <td th:text="${concil.sfc.nombre}"></td>
                         <td>
                             <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
-                                    th:onclick="|window.location.href='@{/parametric/modifyConciliation/{id}(id=${concil.id})}'|">Editar</button>
+                                    th:onclick="|window.location.href='@{/parametric/modifyConciliation/{id}(id=${concil.id},page1=${current})}'|">Editar</button>
                         </td>
                         <td>
                             <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
-                                    th:onclick="|window.location.href='@{/parametric/accountsConciliation/{id}(id=${concil.id})}'|">Cuentas</button>
+                                    th:onclick="|window.location.href='@{/parametric/accountsConciliation/{id}(id=${concil.id},page1=${current})}'|">Cuentas</button>
                         </td>
                     </tr>
                     </tbody>

@@ -102,7 +102,7 @@ public class CondicionRCController {
     public ModelAndView createCondicionRC(@ModelAttribute CondicionRC condicionRC,
                                       @RequestParam(name = "selectedCampo") String idcampo,
                                       @RequestParam(name = "arouteId") String arouteId,
-                                      BindingResult bindingResult){
+                                      BindingResult bindingResult, @RequestParam Map<String, Object> params){
         ModelAndView modelAndView = new ModelAndView("redirect:/parametric/conditionLoadingAccountingRoute/" + arouteId);
 
         AccountingRoute aroute = accountingRouteService.findById(Integer.parseInt(arouteId));
@@ -110,6 +110,9 @@ public class CondicionRCController {
         CampoRC camposele = campoRCService.findById(Integer.valueOf(idcampo));
         condicionRC.setCampo(camposele);
         condicionRCService.modificar(condicionRC);
+
+        if(params.get("page1")!=null && !params.get("page1").toString().equalsIgnoreCase(""))
+            modelAndView.addObject("page1", params.get("page1").toString());
 
         return modelAndView;
 
