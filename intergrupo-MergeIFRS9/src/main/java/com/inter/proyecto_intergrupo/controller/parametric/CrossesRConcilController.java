@@ -33,6 +33,7 @@ public class CrossesRConcilController {
                                               @RequestParam(name = "selectedCampoFicVald") String campoFicValdId,
                                               @RequestParam(name = "selectedCampoFicResl") String campoFicReslId,
                                               @RequestParam(name = "crouteId") String crouteId,
+                                              @RequestParam(name = "page1", defaultValue = "0") String page1,
                                            BindingResult bindingResult){
         ModelAndView modelAndView = new ModelAndView("redirect:/parametric/informationCrossingConciliationRoute/" + crouteId);
         try{
@@ -52,6 +53,9 @@ public class CrossesRConcilController {
             cruce.setCampoFicResul(ficReslId);
 
             crossesConcilRouteService.modificar(cruce);
+
+            if(!page1.equalsIgnoreCase("0"))
+                modelAndView.addObject("page1",page1);
         }
         catch (Exception e)
         {

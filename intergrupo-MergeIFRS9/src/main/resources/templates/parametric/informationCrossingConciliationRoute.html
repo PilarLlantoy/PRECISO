@@ -29,6 +29,7 @@
                         <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">ID</h6>
                             <input type="text" class="form-control form-control-sm" th:field="*{id}" id="id">
+                            <input type="hidden" class="form-control form-control-sm" th:value="${page1}" th:name="page1" id="page1">
                         </div>
                     </div>
                     <div class="col-md-2">
@@ -264,6 +265,7 @@
 
     function descartar() {
         const id = document.getElementById('id').value;
+        const page1 = document.getElementById('page1').value;
         const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
         const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
         const crouteId = document.getElementById('crouteId').value;
@@ -278,7 +280,7 @@
             }).then(response => {
                 if (response.ok) {
                     // Verifica que la URL de redirección se construya correctamente
-                    window.location.href = `/parametric/informationCrossingConciliationRoute/${crouteId}`;
+                    window.location.href = `/parametric/informationCrossingConciliationRoute/${crouteId}?page1=${page1}`;
                 } else {
                     // Manejo de errores
                     console.error('Error al eliminar el registro:', response.statusText);

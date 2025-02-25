@@ -282,6 +282,7 @@
 
     function descartar() {
         const id = document.querySelector("input[name='id']").value;
+        const page1 = document.querySelector("input[name='page1']").value;
         const nombre = document.querySelector("input[name='nombre']").value;
         const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
         const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
@@ -297,7 +298,7 @@
             }).then(response => {
                 if (response.ok) {
                     // Verifica que la URL de redirección se construya correctamente
-                    window.location.href = `/parametric/fieldLoadingConciliationRoute/${crouteId}`;
+                    window.location.href = `/parametric/fieldLoadingConciliationRoute/${crouteId}?page1=${page1}`;
                 } else {
                     // Manejo de errores
                     console.error('Error al eliminar el registro:', response.statusText);
