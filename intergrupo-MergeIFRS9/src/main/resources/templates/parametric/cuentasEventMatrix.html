@@ -16,12 +16,12 @@
     </style>
     <div class="row m-0 bg-primary fixed-top myNav">
         <div class="col-md-12 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
-            <h3 class="fw-bold text-white ml-4 my-3">Cuentas (</h3>
+            <h2 class="fw-bold text-white ml-4 my-3">Cuentas (</h2>
             <div class="d-flex " style="align-items">
-                <h3 class=" fw-bold text-white  my-3">Conciliacion: <span th:text="${matriz.conciliacion.nombre}"></span></h3>
-                <h3 class=" fw-bold text-white  my-3">, Inventario: <span th:text="${matriz.inventarioConciliacion.detalle}"></span></h3>
-                <h3 class=" fw-bold text-white  my-3">, Matriz: <span th:text="${matriz.id}"></span></h3>
-                <h3 class=" fw-bold text-white  my-3">, Tipo Evento: <span th:text="${matriz.tipoEvento.nombre}"></span>)</h3>
+                <h2 class=" fw-bold text-white  my-3">Conciliacion: <span th:text="${matriz.conciliacion.nombre}"></span></h2>
+                <h2 class=" fw-bold text-white  my-3">, Inventario: <span th:text="${matriz.inventarioConciliacion.detalle}"></span></h2>
+                <h2 class=" fw-bold text-white  my-3">, Matriz: <span th:text="${matriz.id}"></span></h2>
+                <h2 class=" fw-bold text-white  my-3">, Tipo Evento: <span th:text="${matriz.tipoEvento.nombre}"></span>)</h2>
             </div>
         </div>
     </div>
@@ -33,7 +33,7 @@
 
                 <div class="row mt-5 ">
                     <div class="row text-left col-md-6">
-                        <h5 class="font-weight-bold">Cargue Cuenta N°1</h5>
+                        <h6 class="font-weight-bold">Cargue Cuenta N°1</h6>
                     </div>
                     <div class="text-right col-md-6">
                         <a class="btn btn-sm btn-primary mx-1" th:href="@{/parametric/searchEventMatrix(selectedConcil=${selectedConcil1},selectedInv=${selectedInv1},selectedET=${selectedET1},selectedEstado=${selectedEstado1})}">
@@ -233,7 +233,7 @@
 
             <form id="miFormularioCuenta2" th:object="${cuenta2}" th:action="@{/parametric/createCuenta2}" method="POST" class="mt-2">
 
-                <h5 class="font-weight-bold">Cargue Cuenta N°2</h5>
+                <h6 class="font-weight-bold">Cargue Cuenta N°2</h6>
                 <div class="row p-2 mt-1 mb-2 border rounded">
 
                     <div hidden class="col-md-2">
