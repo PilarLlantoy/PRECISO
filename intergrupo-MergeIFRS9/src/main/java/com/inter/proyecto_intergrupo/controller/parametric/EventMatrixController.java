@@ -143,6 +143,8 @@ public class EventMatrixController {
             modelAndView.addObject("selectedInv1", params.get("selectedInv").toString());
         if(params.get("selectedET")!= null && !params.get("selectedET").toString().equalsIgnoreCase(""))
             modelAndView.addObject("selectedET1", params.get("selectedET").toString());
+        if(params.get("selectedEstado")!= null && !params.get("selectedEstado").toString().equalsIgnoreCase(""))
+            modelAndView.addObject("selectedEstado1", params.get("selectedEstado").toString());
 
         modelAndView.setViewName("/parametric/modifyEventMatrix");
         return modelAndView;
@@ -231,12 +233,14 @@ public class EventMatrixController {
                 eventMatrix.setCampoCC(campoContable);
             }
 
-            if(!idconcil.equalsIgnoreCase("N"))
-                modelAndView.addObject("selectedConcil", idconcil);
-            if(!idrutaconcil.equalsIgnoreCase("N"))
-                modelAndView.addObject("selectedInv", idrutaconcil);
-            if(!idTipoEvento.equalsIgnoreCase("N"))
-                modelAndView.addObject("selectedET", idTipoEvento);
+            if(params.get("selectedConcil2")!=null && !params.get("selectedConcil2").toString().equalsIgnoreCase(""))
+                modelAndView.addObject("selectedConcil", params.get("selectedConcil2").toString());
+            if(params.get("selectedInv2")!=null && !params.get("selectedInv2").toString().equalsIgnoreCase(""))
+                modelAndView.addObject("selectedInv", params.get("selectedInv2").toString());
+            if(params.get("selectedET2")!=null && !params.get("selectedET2").toString().equalsIgnoreCase(""))
+                modelAndView.addObject("selectedET", params.get("selectedET2").toString());
+            if(params.get("selectedEstado2")!=null && !params.get("selectedEstado2").toString().equalsIgnoreCase(""))
+                modelAndView.addObject("selectedEstado", params.get("selectedEstado2").toString());
 
             eventMatrixService.modificar(eventMatrix);
         }
@@ -262,6 +266,7 @@ public class EventMatrixController {
             @RequestParam(name = "selectedConcil", defaultValue= "0") Integer  concil,
             @RequestParam(name = "selectedInv", defaultValue= "0") Integer  inventario,
             @RequestParam(name = "selectedCuenta", defaultValue= "0") String cuenta,
+            @RequestParam(name = "selectedEstado", defaultValue= "-1") String estado,
             @RequestParam Map<String, Object> params
            ) {
 
@@ -274,7 +279,7 @@ public class EventMatrixController {
             int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
             PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
 
-            List<EventMatrix> eventMatrixes = eventMatrixService.findByParams(tipoEvento, concil, inventario, cuenta);
+            List<EventMatrix> eventMatrixes = eventMatrixService.findByParams(tipoEvento, concil, inventario, cuenta,estado);
             //List<EventMatrix> eventMatrixes = eventMatrixService.findByParams(1, 1, 1, "0");
 
             int start = (int) pageRequest.getOffset();
@@ -302,6 +307,7 @@ public class EventMatrixController {
             modelAndView.addObject("selectedInv1", inventario);
             modelAndView.addObject("selectedET1", tipoEvento);
             modelAndView.addObject("selectedCuenta1", cuenta);
+            modelAndView.addObject("selectedEstado1", estado);
 
             List<EventType> allTEs = eventTypeService.findAll();
             modelAndView.addObject("allTEs", allTEs);

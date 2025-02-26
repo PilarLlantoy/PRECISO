@@ -98,13 +98,19 @@ public class ConciliationRoutesController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-        int page=params.get("page")==null?0:(Integer.valueOf(params.get("page").toString())-1);
+        int page=(params.get("page")==null || params.get("page").toString().equalsIgnoreCase(""))?0:(Integer.valueOf(params.get("page").toString())-1);
         PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
         List<ConciliationRoute> list;
         if(params==null)
             list=conciliationRouteService.findByFilter("inactivo", "Estado");
         else
             list=conciliationRouteService.findByFilter(params.get("vId").toString(),params.get("vFilter").toString());
+
+        if(params.get("vId")!=null && params.get("vFilter")!=null)
+        {
+            modelAndView.addObject("vId",params.get("vId").toString());
+            modelAndView.addObject("vFilter",params.get("vFilter").toString());
+        }
 
         int start = (int)pageRequest.getOffset();
         int end = Math.min((start + pageRequest.getPageSize()), list.size());

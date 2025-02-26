@@ -150,6 +150,8 @@ public class CuentasEventMatrixController {
                 modelAndView.addObject("selectedInv1", params.get("selectedInv").toString());
             if(params.get("selectedET")!= null && !params.get("selectedET").toString().equalsIgnoreCase(""))
                 modelAndView.addObject("selectedET1", params.get("selectedET").toString());
+            if(params.get("selectedEstado")!= null && !params.get("selectedEstado").toString().equalsIgnoreCase(""))
+                modelAndView.addObject("selectedEstado1", params.get("selectedEstado").toString());
 
         }
         else

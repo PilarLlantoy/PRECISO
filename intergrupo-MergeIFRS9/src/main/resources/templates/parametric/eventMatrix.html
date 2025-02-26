@@ -68,19 +68,29 @@
                             </select>
                         </div>
                     </div>
-
-                    <div class="col-md-2 d-flex align-items-center">
+                    <div class="col-md-2">
+                        <div class="form-group form-group-sm">
+                            <label>Estado</label>
+                            <select class="form-control form-control-sm" name="selectedEstado" id="selectedEstado">
+                                <option value="-1" th:selected="${selectedEstado1 == '-1'}">Seleccione un Estado</option>
+                                <option value="1" th:selected="${selectedEstado1 == '1'}">Activo</option>
+                                <option value="0" th:selected="${selectedEstado1 == '0'}">Inactivo</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2 d-flex align-items-center justify-content-end">
                         <button class="btn btn-sm btn-secondary mr-1" type="submit"><i class="fa fa-search"></i></button>
                         <a class="btn btn-sm btn-secondary" th:href="@{/parametric/eventMatrix}"><i class="fas fa-window-close"></i></a>
+                        <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1" type="button" th:onclick="|window.location.href='@{/parametric/createEventMatrix}'|">Crear Matriz</button>
                     </div>
 
                     <!-- Campo oculto para el token CSRF -->
                     <input type="hidden" id="csrfToken" th:value="${_csrf.token}" />
 
-                    <div class="col-md-2" style="text-align: right;">
+                    <!--<div class="col-md-2" style="text-align: right;">
                         <a class="btn btn-sm btn-primary mx-1" th:href="@{/parametric/eventMatrix}"><i class="fas fa-redo-alt"></i></a>
                         <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1" type="button" th:onclick="|window.location.href='@{/parametric/createEventMatrix}'|">Crear Matriz</button>
-                    </div>
+                    </div>-->
 
                 </div>
             </form>
@@ -119,18 +129,18 @@
                         <td th:if="${event.estado == false}">Inactivo</td>
                         <td>
                             <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
-                                    th:onclick="|window.location.href='@{/parametric/conditionsEventMatrix/{id}(id=${event.id},selectedConcil=${selectedConcil1},selectedInv=${selectedInv1},selectedET=${selectedET1})}'|">Condiciones</button>
+                                    th:onclick="|window.location.href='@{/parametric/conditionsEventMatrix/{id}(id=${event.id},selectedConcil=${selectedConcil1},selectedInv=${selectedInv1},selectedET=${selectedET1},selectedEstado=${selectedEstado1})}'|">Condiciones</button>
                         </td>
                         <td>
                             <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
-                                    th:onclick="|window.location.href='@{/parametric/cuentasEventMatrix/{id}(id=${event.id},selectedConcil=${selectedConcil1},selectedInv=${selectedInv1},selectedET=${selectedET1})}'|">Cuentas</button>
+                                    th:onclick="|window.location.href='@{/parametric/cuentasEventMatrix/{id}(id=${event.id},selectedConcil=${selectedConcil1},selectedInv=${selectedInv1},selectedET=${selectedET1},selectedEstado=${selectedEstado1})}'|">Cuentas</button>
                         </td>
                         <td>
                             <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
-                                    th:onclick="|window.location.href='@{/parametric/validationsEventMatrix/{id}(id=${event.id},selectedConcil=${selectedConcil1},selectedInv=${selectedInv1},selectedET=${selectedET1})}'|">Validaciones</button>
+                                    th:onclick="|window.location.href='@{/parametric/validationsEventMatrix/{id}(id=${event.id},selectedConcil=${selectedConcil1},selectedInv=${selectedInv1},selectedET=${selectedET1},selectedEstado=${selectedEstado1})}'|">Validaciones</button>
                         <td>
                             <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
-                                    th:onclick="|window.location.href='@{/parametric/modifyEventMatrix/{id}(id=${event.id},selectedConcil=${selectedConcil1},selectedInv=${selectedInv1},selectedET=${selectedET1})}'|">Editar</button>
+                                    th:onclick="|window.location.href='@{/parametric/modifyEventMatrix/{id}(id=${event.id},selectedConcil=${selectedConcil1},selectedInv=${selectedInv1},selectedET=${selectedET1},selectedEstado=${selectedEstado1})}'|">Editar</button>
                         </td>
                     </tr>
                     </tbody>
@@ -212,7 +222,6 @@
         var valueInvFin = 0;
         const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
         const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
-
 
         if(inventarioID != 0)
             valueInvFin= inventarioID;

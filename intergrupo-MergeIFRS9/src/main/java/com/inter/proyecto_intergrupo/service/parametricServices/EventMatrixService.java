@@ -104,7 +104,7 @@ public class EventMatrixService {
         return query.getResultList();
     }
 
-    public List<EventMatrix> findByParams(Integer idTipoEvento, Integer idConciliacion, Integer idInventarioConciliacion, String cuentaGanancia) {
+    public List<EventMatrix> findByParams(Integer idTipoEvento, Integer idConciliacion, Integer idInventarioConciliacion, String cuentaGanancia, String estado) {
         // Primer query con LEFT JOIN
         StringBuilder queryBuilder1 = new StringBuilder("SELECT distinct pme.* FROM preciso_matriz_eventos pme " +
                 "LEFT JOIN preciso_cuentas_matriz_eventos pcm ON pcm.id_matriz_evento = pme.id WHERE 1=1 ");
@@ -120,6 +120,9 @@ public class EventMatrixService {
         }
         if (cuentaGanancia != null && !cuentaGanancia.equalsIgnoreCase("0")) {
             queryBuilder1.append(" AND pcm.cuenta_ganancia = '").append(cuentaGanancia).append("'");
+        }
+        if (estado != null && !estado.equalsIgnoreCase("-1")) {
+            queryBuilder1.append(" AND pme.estado = ").append(estado).append(" ");
         }
 
         // Ejecutar la consulta combinada y devolver resultados
