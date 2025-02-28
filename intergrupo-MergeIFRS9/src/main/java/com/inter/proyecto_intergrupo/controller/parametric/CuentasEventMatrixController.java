@@ -171,7 +171,7 @@ public class CuentasEventMatrixController {
 
         //CampoRC campo = campoRCService.findById(Integer.valueOf(campoRutaContable));
         // Asegúrate de que el cuentaContable no sea nulo o vacío
-        if (cuentaContable == null || cuentaContable.isEmpty()) {
+        if (cadenaBusqueda == null || cadenaBusqueda.isEmpty()) {
             return "<tr><td colspan='100%'>Por favor ingrese una cuenta contable válida.</td></tr>";
         }
 
@@ -179,22 +179,22 @@ public class CuentasEventMatrixController {
         //ConciliationRoute ruta = conciliationRouteService.findById(Integer.valueOf(cuentaContable));
         GeneralParam generalParam = generalParamService.findAllById(3L);
         String campo = generalParamService.findAllById(4L).getValorUnidad();
-        ConciliationRoute ruta = conciliationRouteService.findByName(generalParam.getValorUnidad());
+        AccountingRoute ruta = accountingRouteService.findByName(generalParam.getValorUnidad());
         if (ruta == null) {
-            return "<tr><td colspan='100%'>Cuenta contable no encontrada.</td></tr>"; // Mensaje de error en HTML
+            return "<tr><td colspan='100%'>Tabla No Encontrada</td></tr>"; // Mensaje de error en HTML
         }
 
         String ultimaFecha = conciliationRouteService.encontrarUltimaFechaSubida(ruta);
 
-        List<Object[]> aroutes = conciliationRouteService.findAllData(ruta, ultimaFecha, cadenaBusqueda, campo);
+        List<Object[]> aroutes = accountingRouteService.findAllData(ruta, ultimaFecha, cadenaBusqueda, campo);
 
-        CampoRConcil crc = new CampoRConcil();
+        CampoRC crc = new CampoRC();
         crc.setNombre("periodo_preciso");
         ruta.getCampos().add(crc);
-        List<CampoRConcil> colAroutes = ruta.getCampos();
+        List<CampoRC> colAroutes = ruta.getCampos();
 
         int indice = 0; //para saber el indice del campo
-        for(CampoRConcil c:colAroutes){
+        for(CampoRC c:colAroutes){
             if(c.getNombre().equalsIgnoreCase(campo)) break;
             indice=indice+1;
         }
@@ -208,10 +208,13 @@ public class CuentasEventMatrixController {
         tablaHtml.append("<thead class='bg-primary'><tr><td></td>");
 
         // Crear encabezados
-        for (CampoRConcil col : colAroutes) {
+        for (CampoRC col : colAroutes) {
             tablaHtml.append("<td>").append(col.getNombre()).append("</td>");
         }
         tablaHtml.append("</tr></thead><tbody>");
+
+        System.out.println("INDICE---------------------------->"+indice);
+        System.out.println("TAMAÑO---------------------------->"+aroutes.size()+" - "+cadenaBusqueda);
 
         // Crear filas
         for (Object[] row : aroutes) {
@@ -229,6 +232,8 @@ public class CuentasEventMatrixController {
         tablaHtml.append("</tbody></table>");
 
         model.addAttribute("tablaHtml", tablaHtml.toString());
+
+        System.out.println(tablaHtml);
 
         // Retorna la vista
         return tablaHtml.toString(); // Ajusta esto según la vista que deseas retornar

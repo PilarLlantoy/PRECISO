@@ -90,9 +90,9 @@ public class ConciliationRouteService {
        return croute;
     }
 
-    public String encontrarUltimaFechaSubida(ConciliationRoute data) {
+    public String encontrarUltimaFechaSubida(AccountingRoute data) {
         Query querySelect = entityManager.createNativeQuery(
-                "SELECT MAX(periodo_preciso) AS ultimo_periodo_preciso FROM preciso_rconcil_" + data.getId()
+                "SELECT MAX(periodo_preciso) AS ultimo_periodo_preciso FROM preciso_rc_" + data.getId()
         );
         Object result = querySelect.getSingleResult();
         return result != null ? result.toString() : null;
@@ -101,32 +101,6 @@ public class ConciliationRouteService {
     public List<CampoRConcil> getCamposRcon(ConciliationRoute data) {
         Query querySelect = entityManager.createNativeQuery(
                 "select b.* from preciso_rutas_conciliaciones a, preciso_campos_rconcil b where a.id = b.id_rconcil and a.id = " + data.getId(),CampoRConcil.class);
-        return querySelect.getResultList();
-    }
-
-    public List<Object[]> findAllData(ConciliationRoute data, String fecha, String cadena, String campo) {
-        String campos = data.getCampos().stream()
-                .map(CampoRConcil::getNombre)
-                .collect(Collectors.joining(","));
-
-        // Construir la consulta básica
-        StringBuilder queryBuilder = new StringBuilder("SELECT " + campos + ", periodo_preciso " +
-                "FROM preciso_rconcil_" + data.getId() + " WHERE periodo_preciso = :fecha");
-
-        // Verificar si cadena no es nula o vacía
-        if (cadena != null && !cadena.isEmpty()) {
-            queryBuilder.append(" AND " + campo + " LIKE :cadena");
-        }
-
-        // Crear la consulta
-        Query querySelect = entityManager.createNativeQuery(queryBuilder.toString());
-        querySelect.setParameter("fecha", fecha);
-
-        // Si cadena no es nula, añadir el parámetro para LIKE
-        if (cadena != null && !cadena.isEmpty()) {
-            querySelect.setParameter("cadena", cadena + "%");
-        }
-
         return querySelect.getResultList();
     }
 

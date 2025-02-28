@@ -76,8 +76,8 @@
                     <div class="col-md-2">
                         <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Construye Cuenta?</h6>
-                            <input id="constCuentaInput" name="constCuentaInput" th:id="${constCuentaInput}" type="checkbox" class="styled-checkbox"
-                                   th:field="*{construyeCuenta}" th:value="${construyeCuenta}">
+                            <input id="constCuentaInput" name="constCuentaInput" type="checkbox" class="styled-checkbox"
+                                   th:field="*{construyeCuenta}" th:value="${construyeCuenta}" onchange="toggleButtonVisibility()">
                         </div>
                     </div>
                     <div class="col-md-2">
@@ -110,11 +110,11 @@
                     </div>
 
                     <div class="col-md-2">
-                        <a id="paramConsButon"
+                        <a th:id="paramConsButon"
                            class="btn btn-sm btn-primary mx-1"
                            data-toggle="modal"
                            data-target="#parametrosModal"
-                           style="color:#fff"
+                           style="color:#fff; display: none;"
                            data-idCuenta="cuenta1">
                                 Param Construcción
                         </a>
@@ -135,7 +135,7 @@
                                 th:field="*{manejaDivisa}" th:value="${manejaDivisa}" onchange="toggleCampoDivisa1()">
                         </div>
                     </div>
-                    <div class="col-md-2">
+                    <div id="mDivisaDiv1" class="col-md-2">
                         <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Campo Divisa:<i class="bi bi-caret-down"></i></h6>
                             <select class="form-control form-control-sm" name="selectedCD1" id="selectedCD1">
@@ -186,7 +186,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-2">
+                    <div id="div11" class="col-md-2">
                         <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Campo Valor Operación 1:<i class="bi bi-caret-down"></i></h6>
                             <select class="form-control form-control-sm" name="selectedCVOU1" id="selectedCVOU1">
@@ -196,7 +196,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-2">
+                    <div id="div12" class="col-md-2">
                         <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Operación:<i class="bi bi-caret-down"></i></h6>
                             <select class="form-control form-control-sm" name="selectedOperacion1" id="selectedOperacion1">
@@ -209,7 +209,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-2">
+                    <div id="div13" class="col-md-2">
                         <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Campo Valor Operación 2:<i class="bi bi-caret-down"></i></h6>
                             <input th:field="*{valorOp2}" th:value="${valorOp2}" id="inputCVOD1" type="text" class="form-control form-control-sm">
@@ -222,7 +222,7 @@
                     </div>
 
                     <div>
-                        <button class="btn btn-sm btn-primary mx-1" th:onclick="|window.location.href='@{/parametric/createEventMatrix}'|">Descartar</button>
+                        <!--<button class="btn btn-sm btn-primary mx-1" th:onclick="|window.location.href='@{/parametric/createEventMatrix}'|">Descartar</button>-->
                         <button class="btn btn-sm btn-primary mx-1" type="submit">Agregar</button>
                     </div>
 
@@ -270,8 +270,8 @@
                     <div class="col-md-2">
                         <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Construye Cuenta?</h6>
-                            <input id="constCuentaInput2" name="constCuentaInput" th:id="${constCuentaInput2}" type="checkbox" class="styled-checkbox"
-                                   th:field="*{construyeCuenta}" th:value="${construyeCuenta}">
+                            <input id="constCuentaInput2" name="constCuentaInput" type="checkbox" class="styled-checkbox"
+                                   th:field="*{construyeCuenta}" th:value="${construyeCuenta}" onchange="toggleButtonVisibility2()">
                         </div>
                     </div>
                     <div class="col-md-2">
@@ -303,7 +303,7 @@
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <a id="paramConsButon2"
+                        <a th:id="paramConsButon2"
                            class="btn btn-sm btn-primary mx-1"
                            data-toggle="modal"
                            data-target="#parametrosModal"
@@ -328,7 +328,7 @@
                                    th:field="*{manejaDivisa}" th:value="${manejaDivisa}" onchange="toggleCampoDivisa2()">
                         </div>
                     </div>
-                    <div class="col-md-2" >
+                    <div id="mDivisaDiv2" class="col-md-2" >
                         <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Campo Divisa:<i class="bi bi-caret-down"></i></h6>
                             <select class="form-control form-control-sm" name="selectedCD2" id="selectedCD2">
@@ -379,7 +379,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-2">
+                    <div id="div21" class="col-md-2">
                         <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Campo Valor Operación 1:<i class="bi bi-caret-down"></i></h6>
                             <select class="form-control form-control-sm" name="selectedCVOU2" id="selectedCVOU2">
@@ -389,7 +389,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-2">
+                    <div id="div22" class="col-md-2">
                         <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Operación:<i class="bi bi-caret-down"></i></h6>
                             <select class="form-control form-control-sm" name="selectedOperacion2" id="selectedOperacion2">
@@ -401,7 +401,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-2">
+                    <div id="div23" class="col-md-2">
                         <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Campo Valor Operación 2:<i class="bi bi-caret-down"></i></h6>
                             <input th:field="*{valorOp2}" th:value="${valorOp2}" id="inputCVOD2" type="text" class="form-control form-control-sm">
@@ -414,7 +414,7 @@
                     </div>
 
                     <div>
-                        <button class="btn btn-sm btn-primary mx-1" th:onclick="|window.location.href='@{/parametric/createEventMatrix}'|">Descartar</button>
+                        <!--<button class="btn btn-sm btn-primary mx-1" th:onclick="|window.location.href='@{/parametric/createEventMatrix}'|">Descartar</button>-->
                         <button class="btn btn-sm btn-primary mx-1" type="submit">Agregar</button>
                     </div>
 
@@ -446,7 +446,7 @@
                     <div class="mt-1 mb-2">
                         <div class="form-group form-group-sm d-flex align-items-center">
                             <h6 class="font-weight-bold mb-0">Cuenta Contable a buscar:</h6>
-                            <input type="text" class="form-control form-control-sm col-md-4 ml-2" id="selectedCuentaBusqueda">
+                            <input type="text" class="form-control form-control-sm col-md-4 ml-2" id="selectedCuentaBusqueda" required>
                             <button class="btn btn-sm btn-primary mx-1" id="btnConsultar" onclick="consultarCuenta()">Consultar</button>
                         </div>
                     </div>
@@ -1006,19 +1006,22 @@
     function toggleCampoDivisa1() {
         let checkbox = document.getElementById("manejaDivisa1");
         let select = document.getElementById("selectedCD1");
+        let div = document.getElementById("mDivisaDiv1");
 
         select.disabled = !checkbox.checked;
+        div.style.display = checkbox.checked ? "block" : "none";
     }
     function toggleCampoDivisa2() {
         let checkbox = document.getElementById("manejaDivisa2");
         let select = document.getElementById("selectedCD2");
+        let div = document.getElementById("mDivisaDiv2");
 
         select.disabled = !checkbox.checked;
+        div.style.display = checkbox.checked ? "block" : "none";
     }
 
     //FUNCION PARA HABILITAR LOS CAMPOS DE LA FORMULA
     function toggleManejaFormula1() {
-    console.log("AYUDA");
         let checkbox = document.getElementById("manejaFormula1");
         let selectedCVOU1 = document.getElementById("selectedCVOU1");
         let selectedOperacion1 = document.getElementById("selectedOperacion1");
@@ -1027,11 +1030,19 @@
         //se deshabilita
         let selectedCVC1 = document.getElementById("selectedCVC1");
 
+        let div1 = document.getElementById("div11");
+        let div2 = document.getElementById("div12");
+        let div3 = document.getElementById("div13");
+
         selectedCVOU1.disabled = !checkbox.checked;
         selectedOperacion1.disabled = !checkbox.checked;
         selectedCVOD1.disabled = !checkbox.checked;
         inputCVOD1.disabled = !checkbox.checked;
         selectedCVC1.disabled = checkbox.checked;
+
+        div1.style.display = checkbox.checked ? "block" : "none";
+        div2.style.display = checkbox.checked ? "block" : "none";
+        div3.style.display = checkbox.checked ? "block" : "none";
     }
     function toggleManejaFormula2() {
         let checkbox = document.getElementById("manejaFormula2");
@@ -1042,11 +1053,19 @@
         //se deshabilita
         let selectedCVC2 = document.getElementById("selectedCVC2");
 
+        let div1 = document.getElementById("div21");
+        let div2 = document.getElementById("div22");
+        let div3 = document.getElementById("div23");
+
         selectedCVOU2.disabled = !checkbox.checked;
         selectedOperacion2.disabled = !checkbox.checked;
         selectedCVOD2.disabled = !checkbox.checked;
         inputCVOD2.disabled = !checkbox.checked;
         selectedCVC2.disabled = checkbox.checked;
+
+        div1.style.display = checkbox.checked ? "block" : "none";
+        div2.style.display = checkbox.checked ? "block" : "none";
+        div3.style.display = checkbox.checked ? "block" : "none";
     }
 
     window.onload = function() {
@@ -1054,8 +1073,27 @@
         toggleCampoDivisa2();
         toggleManejaFormula1();
         toggleManejaFormula2();
+        toggleButtonVisibility();
+        toggleButtonVisibility2();
     };
 
+    function toggleButtonVisibility() {
+        const checkbox = document.getElementById("constCuentaInput");
+        const button = document.getElementById("paramConsButon");
+
+        if (!checkbox || !button) return; // Previene errores si los elementos no existen
+
+        button.style.display = checkbox.checked ? "inline-block" : "none";
+    }
+
+    function toggleButtonVisibility2() {
+        const checkbox = document.getElementById("constCuentaInput2");
+        const button = document.getElementById("paramConsButon2");
+
+        if (!checkbox || !button) return; // Previene errores si los elementos no existen
+
+        button.style.display = checkbox.checked ? "inline-block" : "none";
+    }
 
 
 </script>

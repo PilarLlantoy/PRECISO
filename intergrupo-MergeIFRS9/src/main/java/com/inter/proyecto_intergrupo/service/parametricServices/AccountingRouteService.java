@@ -939,4 +939,31 @@ public class AccountingRouteService {
         }
     }
 
+    public List<Object[]> findAllData(AccountingRoute data, String fecha, String cadena, String campo) {
+        String campos = data.getCampos().stream()
+                .map(CampoRC::getNombre)
+                //.limit(10)
+                .collect(Collectors.joining(","));
+
+        // Construir la consulta básica
+        StringBuilder queryBuilder = new StringBuilder("SELECT " + campos + ", periodo_preciso " +
+                "FROM preciso_rc_" + data.getId() + " WHERE periodo_preciso = :fecha");
+
+        // Verificar si cadena no es nula o vacía
+        if (cadena != null && !cadena.isEmpty()) {
+            queryBuilder.append(" AND " + campo + " LIKE '"+cadena+"'");
+        }
+
+        // Crear la consulta
+        Query querySelect = entityManager.createNativeQuery(queryBuilder.toString());
+        querySelect.setParameter("fecha", fecha);
+
+        // Si cadena no es nula, añadir el parámetro para LIKE
+        //if (cadena != null && !cadena.isEmpty()) {
+          //  querySelect.setParameter("cadena", cadena );
+        //}
+
+        return querySelect.getResultList();
+    }
+
 }
