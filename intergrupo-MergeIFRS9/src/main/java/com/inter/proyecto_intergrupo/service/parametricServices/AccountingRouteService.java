@@ -946,7 +946,7 @@ public class AccountingRouteService {
                 .collect(Collectors.joining(","));
 
         // Construir la consulta básica
-        StringBuilder queryBuilder = new StringBuilder("SELECT TOP 10 " + campos + ", periodo_preciso " +
+        StringBuilder queryBuilder = new StringBuilder("SELECT TOP 10  " + campos + ", periodo_preciso " +
                 "FROM preciso_rc_" + data.getId() + " WHERE periodo_preciso = :fecha");
 
         // Verificar si cadena no es nula o vacía
