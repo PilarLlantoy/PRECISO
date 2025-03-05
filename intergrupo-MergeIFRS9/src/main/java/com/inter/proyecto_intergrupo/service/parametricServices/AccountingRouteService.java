@@ -611,10 +611,10 @@ public class AccountingRouteService {
                 String queryUpdate;
                 if (!operacion.isEmpty()) {
                     queryUpdate = "UPDATE " + nombreTabla + " SET " +
-                            obj[0].toString() + " = CAST(TRY_CAST(" + obj[0].toString() + " AS DECIMAL(38, 0)) * 0.01 " +
-                            operacion + obj[3].toString() + " AS VARCHAR) ";
-                            if(obj[1]!=null && !obj[1].toString().equalsIgnoreCase("") && obj[2]!=null)
-                                queryUpdate = queryUpdate+"WHERE " + obj[1].toString() + " = '" + obj[2].toString() + "';";
+                            obj[0].toString() + " = CAST(CASE WHEN "+obj[0].toString()+" LIKE '%.%' THEN TRY_CAST("+obj[0].toString()+" AS DECIMAL(38, 2)) " +
+                            "ELSE TRY_CAST("+obj[0].toString()+" AS DECIMAL(38, 2)) /100.0 END "+ operacion + obj[3].toString() +" AS DECIMAL(38, 2)) ";
+                    if(obj[1]!=null && !obj[1].toString().equalsIgnoreCase("") && obj[2]!=null)
+                        queryUpdate = queryUpdate+"WHERE " + obj[1].toString() + " = '" + obj[2].toString() + "';";
                 } else {
                     queryUpdate = "UPDATE " + nombreTabla + " SET " +
                             obj[0].toString() + " = '" + obj[3].toString() + "' " ;
