@@ -70,9 +70,13 @@
                     <div class="col-md-2 hidden" id="afectaAContainer">
                         <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Afecta a:</h6>
-                            <select class="form-control form-control-sm"  th:name="selectedCampoAf" id="selectedCampoAf">
-                                <option selected value="">Seleccione un campo</option>
-                                <option th:each="campo : ${campos}" th:value="${campo[0]}" th:text="${campo[1]}"></option>
+                            <select class="form-control form-control-sm" th:field="*{campoAfectaCruce}" th:name="selectedCampoAf" id="selectedCampoAf">
+                                <option value="" selected >Seleccione operación</option>
+                                <option th:value="CENTRO_CONTABLE" >Centro_Contable</option>
+                                <option th:value="VALOR_CUENTA_1" >Valor_Cuenta_1</option>
+                                <option th:value="DIVISA_CUENTA_1" >Divisa Cuenta 1</option>
+                                <option th:value="VALOR_CUENTA_2" >Valor_Cuenta_2</option>
+                                <option th:value="DIVISA_CUENTA_2" >Divisa_Cuenta_2</option>
                             </select>
                         </div>
                     </div>

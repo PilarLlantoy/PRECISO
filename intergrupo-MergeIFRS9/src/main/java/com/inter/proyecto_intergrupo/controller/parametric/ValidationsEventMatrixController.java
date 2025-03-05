@@ -129,7 +129,7 @@ public class ValidationsEventMatrixController {
     @PostMapping(value = "/parametric/createValidacionME")
     public ModelAndView createValidacionME(@ModelAttribute ValidationME validationME,
             @RequestParam(name = "selectedCampoVal", defaultValue = "0") Integer campoValidacion,
-            @RequestParam(name = "selectedCampoAf", defaultValue = "0") Integer campoAfecta,
+            @RequestParam(name = "selectedCampoAf", defaultValue = "0") String campoAfecta,
             @RequestParam(name = "selectedCampo", defaultValue = "0") Integer campo,
             @RequestParam(name = "selectedOperacion", defaultValue = "0") String operacion,
             @RequestParam(name = "matrizId", defaultValue = "0") String matrizId,
@@ -145,9 +145,8 @@ public class ValidationsEventMatrixController {
                 validationME.setCampoVal(campoVal);
             }
 
-            if(campoAfecta!=0){
-                CampoRConcil campoAf = campoRConcilService.findById(campoAfecta);
-                validationME.setCampoAfecta(campoAf);
+            if(!campoAfecta.equalsIgnoreCase("0")){
+                validationME.setCampoAfectaCruce(campoAfecta);
             }
 
             if(campo!=0){
@@ -155,7 +154,7 @@ public class ValidationsEventMatrixController {
                 validationME.setCampoRef(camp);
             }
 
-            if(operacion!="0"){
+            if(!operacion.equalsIgnoreCase("0")){
                 validationME.setOperacion(operacion);
             }
 

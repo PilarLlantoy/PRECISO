@@ -467,13 +467,12 @@ public class InformationCrossingService {
                 "SELECT \n" +
                         "\t\tb.nombre as campo_validacion, \n" +
                         "\t\ta.valor_validacion, \n" +
-                        "\t\tc.nombre as campo_afecta, \n" +
+                        "\t\ta.campo_afecta_cruce as campo_afecta, \n" +
                         "\t\td.nombre as campo,\n" +
                         "\t\ta.valor_operacion,\n" +
                         "\t\tCASE a.operacion WHEN 'Suma' THEN '+' WHEN 'Resta' THEN '-' WHEN 'Multiplica' THEN '*' WHEN 'Divida' THEN '/' ELSE '' END as Operacion \n" +
                         "\t\t\t FROM PRECISO.dbo.preciso_validaciones_matriz_evento a \n" +
                         "\t\t\t\tLEFT JOIN PRECISO.dbo.preciso_campos_rconcil b ON a.id_campo_validacion = b.id_campo \n" +
-                        "\t\t\t\tLEFT JOIN PRECISO.dbo.preciso_campos_rconcil c ON a.id_campo_afecta = c.id_campo\n" +
                         "\t\t\t\tLEFT JOIN PRECISO.dbo.preciso_campos_rconcil d ON a.id_campo_referencia = d.id_campo\n" +
                         "WHERE a.id_me=? AND a.estado = 1");
         querySelect.setParameter(1, matriz.getId());
