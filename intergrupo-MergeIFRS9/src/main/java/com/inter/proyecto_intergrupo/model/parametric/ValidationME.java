@@ -37,6 +37,9 @@ public class ValidationME {
     @Column(name = "operacion")
     private String operacion;
 
+    @Column(name = "campo_afecta_cruce")
+    private String campoAfectaCruce;
+
     @Column(name = "valor_operacion")
     private String valorOperacion;
 
