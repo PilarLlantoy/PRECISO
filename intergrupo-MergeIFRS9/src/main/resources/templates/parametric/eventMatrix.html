@@ -115,32 +115,34 @@
                     </thead>
                     <tbody>
                     <tr th:each="event : ${allEvents}">
-                        <td th:text="${event.conciliacion.nombre}"></td>
-                        <td th:text="${event.inventarioConciliacion.detalle}"></td>
-                        <td th:text="${event.consecutivo}"></td>
-                        <td th:text="${event.tipoEvento.nombre}"></td>
-                        <td th:text="${@accountEventMatrixService.findByMatrizEventoTipo1(event)?.cuentaGanancia ?: ''}"></td>
-                        <td th:text="${@accountEventMatrixService.findByMatrizEventoTipo2(event)?.cuentaGanancia ?: ''}"></td>
-                        <td th:if="${event.homCntros == true}">Activo</td>
-                        <td th:if="${event.homCntros == false}">Inactivo</td>
-                        <td th:if="${event.PYG == true}">Activo</td>
-                        <td th:if="${event.PYG == false}">Inactivo</td>
-                        <td th:if="${event.estado == true}">Activo</td>
-                        <td th:if="${event.estado == false}">Inactivo</td>
+                        <td th:text="${event[0]}"></td>
+                        <td th:text="${event[1]}"></td>
+                        <td th:text="${event[2]}"></td>
+                        <td th:text="${event[3]}"></td>
+                        <td th:text="${event[4]}"></td>
+                        <td th:text="${event[5]}"></td>
+                        <!--<td th:text="${@accountEventMatrixService.findByMatrizEventoTipo1(event)?.cuentaGanancia ?: ''}"></td>
+                        <td th:text="${@accountEventMatrixService.findByMatrizEventoTipo2(event)?.cuentaGanancia ?: ''}"></td>-->
+                        <td th:if="${event[6] == true}">Activo</td>
+                        <td th:if="${event[6] == false}">Inactivo</td>
+                        <td th:if="${event[7] == true}">Activo</td>
+                        <td th:if="${event[7] == false}">Inactivo</td>
+                        <td th:if="${event[8] == true}">Activo</td>
+                        <td th:if="${event[8] == false}">Inactivo</td>
                         <td>
                             <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
-                                    th:onclick="|window.location.href='@{/parametric/conditionsEventMatrix/{id}(id=${event.id},selectedConcil=${selectedConcil1},selectedInv=${selectedInv1},selectedET=${selectedET1},selectedEstado=${selectedEstado1})}'|">Condiciones</button>
+                                    th:onclick="|window.location.href='@{/parametric/conditionsEventMatrix/{id}(id=${event[9]},selectedConcil=${selectedConcil1},selectedInv=${selectedInv1},selectedET=${selectedET1},selectedEstado=${selectedEstado1})}'|">Condiciones</button>
                         </td>
                         <td>
                             <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
-                                    th:onclick="|window.location.href='@{/parametric/cuentasEventMatrix/{id}(id=${event.id},selectedConcil=${selectedConcil1},selectedInv=${selectedInv1},selectedET=${selectedET1},selectedEstado=${selectedEstado1})}'|">Cuentas</button>
+                                    th:onclick="|window.location.href='@{/parametric/cuentasEventMatrix/{id}(id=${event[9]},selectedConcil=${selectedConcil1},selectedInv=${selectedInv1},selectedET=${selectedET1},selectedEstado=${selectedEstado1})}'|">Cuentas</button>
                         </td>
                         <td>
                             <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
-                                    th:onclick="|window.location.href='@{/parametric/validationsEventMatrix/{id}(id=${event.id},selectedConcil=${selectedConcil1},selectedInv=${selectedInv1},selectedET=${selectedET1},selectedEstado=${selectedEstado1})}'|">Validaciones</button>
+                                    th:onclick="|window.location.href='@{/parametric/validationsEventMatrix/{id}(id=${event[9]},selectedConcil=${selectedConcil1},selectedInv=${selectedInv1},selectedET=${selectedET1},selectedEstado=${selectedEstado1})}'|">Validaciones</button>
                         <td>
                             <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
-                                    th:onclick="|window.location.href='@{/parametric/modifyEventMatrix/{id}(id=${event.id},selectedConcil=${selectedConcil1},selectedInv=${selectedInv1},selectedET=${selectedET1},selectedEstado=${selectedEstado1})}'|">Editar</button>
+                                    th:onclick="|window.location.href='@{/parametric/modifyEventMatrix/{id}(id=${event[9]},selectedConcil=${selectedConcil1},selectedInv=${selectedInv1},selectedET=${selectedET1},selectedEstado=${selectedEstado1})}'|">Editar</button>
                         </td>
                     </tr>
                     </tbody>

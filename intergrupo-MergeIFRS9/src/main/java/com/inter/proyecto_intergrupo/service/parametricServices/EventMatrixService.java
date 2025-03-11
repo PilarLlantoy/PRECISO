@@ -44,9 +44,15 @@ public class EventMatrixService {
         return eventMatrixRepository.findByEstadoOrderByConciliacionIdAscInventarioConciliacionIdAsc(true);
     }
 
-    public List<EventMatrix> findAllOrdered() {
+    public List<Object[]> findAllOrdered() {
         Query query = entityManager.createNativeQuery(
-                "SELECT * FROM preciso_matriz_eventos ORDER BY id_conciliacion,id_inventario_conciliacion,consecutivo", EventMatrix.class);
+                "SELECT b.nombre,c.detalle,a.consecutivo,d.nombre_tipo_evento,e.cuenta_ganancia as c1,f.cuenta_ganancia as c2,a.hom_centros,a.aplica_pyg,a.estado,a.id FROM preciso_matriz_eventos a\n" +
+                        "left join (select id,nombre from preciso_conciliaciones) b on a.id_conciliacion = b.id\n" +
+                        "left join (select id,detalle from preciso_rutas_conciliaciones) c on a.id_inventario_conciliacion=c.id\n" +
+                        "left join preciso_tipo_evento d on a.id_tipo_evento=d.id_tipo_evento\n" +
+                        "left join (select id_matriz_evento,cuenta_ganancia from preciso_cuentas_matriz_eventos where tipo='1') e on a.id=e.id_matriz_evento\n" +
+                        "left join (select id_matriz_evento,cuenta_ganancia from preciso_cuentas_matriz_eventos where tipo='2') f on a.id=f.id_matriz_evento\n" +
+                        "ORDER BY b.nombre,c.detalle,a.consecutivo");
         return query.getResultList();
     }
     public List<EventMatrix> findAllByEstadoAndConciliacionAndInventarioConciliacion(Conciliation concil, ConciliationRoute inv) {
@@ -106,27 +112,33 @@ public class EventMatrixService {
 
     public List<EventMatrix> findByParams(Integer idTipoEvento, Integer idConciliacion, Integer idInventarioConciliacion, String cuentaGanancia, String estado) {
         // Primer query con LEFT JOIN
-        StringBuilder queryBuilder1 = new StringBuilder("SELECT distinct pme.* FROM preciso_matriz_eventos pme " +
-                "LEFT JOIN preciso_cuentas_matriz_eventos pcm ON pcm.id_matriz_evento = pme.id WHERE 1=1 ");
+        StringBuilder queryBuilder1 = new StringBuilder("SELECT b.nombre,c.detalle,a.consecutivo,d.nombre_tipo_evento,e.cuenta_ganancia as c1,f.cuenta_ganancia as c2,a.hom_centros,a.aplica_pyg,a.estado,a.id  FROM preciso_matriz_eventos a\n" +
+                "left join (select id,nombre from preciso_conciliaciones) b on a.id_conciliacion = b.id\n" +
+                "left join (select id,detalle from preciso_rutas_conciliaciones) c on a.id_inventario_conciliacion=c.id\n" +
+                "left join preciso_tipo_evento d on a.id_tipo_evento=d.id_tipo_evento\n" +
+                "left join (select id_matriz_evento,cuenta_ganancia from preciso_cuentas_matriz_eventos where tipo='1') e on a.id=e.id_matriz_evento\n" +
+                "left join (select id_matriz_evento,cuenta_ganancia from preciso_cuentas_matriz_eventos where tipo='2') f on a.id=f.id_matriz_evento\n" +
+                "WHERE 1=1 ");
 
         if (idConciliacion != 0) {
-            queryBuilder1.append(" AND pme.id_conciliacion = ").append(idConciliacion);
+            queryBuilder1.append(" AND a.id_conciliacion = ").append(idConciliacion);
         }
         if (idInventarioConciliacion != 0) {
-            queryBuilder1.append(" AND pme.id_inventario_conciliacion = ").append(idInventarioConciliacion);
+            queryBuilder1.append(" AND a.id_inventario_conciliacion = ").append(idInventarioConciliacion);
         }
         if (idTipoEvento != 0) {
-            queryBuilder1.append(" AND pme.id_tipo_evento = ").append(idTipoEvento);
+            queryBuilder1.append(" AND a.id_tipo_evento = ").append(idTipoEvento);
         }
         if (cuentaGanancia != null && !cuentaGanancia.equalsIgnoreCase("0")) {
-            queryBuilder1.append(" AND pcm.cuenta_ganancia = '").append(cuentaGanancia).append("'");
+            queryBuilder1.append(" AND (e.cuenta_ganancia = '").append(cuentaGanancia).append("' OR f.cuenta_ganancia = '").append(cuentaGanancia).append("')");
         }
         if (estado != null && !estado.equalsIgnoreCase("-1")) {
-            queryBuilder1.append(" AND pme.estado = ").append(estado).append(" ");
+            queryBuilder1.append(" AND a.estado = ").append(estado).append(" ");
         }
+        queryBuilder1.append(" ORDER BY b.nombre,c.detalle,a.consecutivo").append(estado).append(" ");
 
         // Ejecutar la consulta combinada y devolver resultados
-        Query query = entityManager.createNativeQuery(queryBuilder1.toString(), EventMatrix.class);
+        Query query = entityManager.createNativeQuery(queryBuilder1.toString());
         return query.getResultList();
     }
 
