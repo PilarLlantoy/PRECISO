@@ -24,7 +24,7 @@
             <h2>Cargue de filtros segun campos</h2>
         </div>
         <div class="text-right col-md-6">
-            <a class="btn btn-sm btn-danger" th:href="@{/parametric/searchEventMatrix(selectedConcil=${selectedConcil1},selectedInv=${selectedInv1},selectedET=${selectedET1},selectedEstado=${selectedEstado1})}"><i class="fa-solid fa-left-long"></i> Regresar</a>
+            <a class="btn btn-sm btn-danger" th:href="@{/parametric/searchEventMatrix(selectedConcil=${selectedConcil1},selectedInv=${selectedInv1},selectedET=${selectedET1},selectedEstado=${selectedEstado1},page=${page1})}"><i class="fa-solid fa-left-long"></i> Regresar</a>
         </div>
     </div>
     <div class="row px-4">
@@ -35,6 +35,11 @@
                         <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">ID</h6>
                             <input id="idInput" type="text" class="form-control form-control-sm" th:field="*{id}">
+                            <input type="hidden" class="form-control form-control-sm" th:value="${selectedEstado1}" th:name="selectedEstado1">
+                            <input type="hidden" class="form-control form-control-sm" th:value="${selectedConcil1}" th:name="selectedConcil1">
+                            <input type="hidden" class="form-control form-control-sm" th:value="${selectedInv1}" th:name="selectedInv1">
+                            <input type="hidden" class="form-control form-control-sm" th:value="${selectedET1}" th:name="selectedET1">
+                            <input type="hidden" class="form-control form-control-sm" th:value="${page1}" th:name="page1">
                         </div>
                     </div>
                     <div class="col-md-2">
@@ -212,7 +217,7 @@
                 }
             }).then(response => {
                 if (response.ok) {
-                    window.location.href = `/parametric/conditionsEventMatrix/${matrizId}`;
+                    window.location.reload(true);
                 }
             }).catch(error => {
                 // Manejo de errores

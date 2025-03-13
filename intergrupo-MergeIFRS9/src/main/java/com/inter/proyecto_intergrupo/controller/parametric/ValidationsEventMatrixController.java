@@ -115,6 +115,8 @@ public class ValidationsEventMatrixController {
                 modelAndView.addObject("selectedET1", params.get("selectedET").toString());
             if(params.get("selectedEstado")!= null && !params.get("selectedEstado").toString().equalsIgnoreCase(""))
                 modelAndView.addObject("selectedEstado1", params.get("selectedEstado").toString());
+            if(params.get("page1")!= null && !params.get("page1").toString().equalsIgnoreCase(""))
+                modelAndView.addObject("page1", params.get("page1").toString());
 
             modelAndView.setViewName("parametric/validationsEventMatrix");
         }
@@ -133,13 +135,10 @@ public class ValidationsEventMatrixController {
             @RequestParam(name = "selectedCampo", defaultValue = "0") Integer campo,
             @RequestParam(name = "selectedOperacion", defaultValue = "0") String operacion,
             @RequestParam(name = "matrizId", defaultValue = "0") String matrizId,
-            BindingResult bindingResult){
+            BindingResult bindingResult,@RequestParam Map<String, Object> params){
 
         ModelAndView modelAndView = new ModelAndView("redirect:/parametric/validationsEventMatrix/" + matrizId);
         try{
-
-            System.out.println(campoValidacion+" "+ campoAfecta+" "+campo+" "+operacion+" "+matrizId);
-
             if(campoValidacion!=0){
                 CampoRConcil campoVal = campoRConcilService.findById(campoValidacion);
                 validationME.setCampoVal(campoVal);
@@ -164,6 +163,17 @@ public class ValidationsEventMatrixController {
             }
 
             validationMEService.modificar(validationME);
+
+            if(params.get("selectedConcil1")!= null && !params.get("selectedConcil1").toString().equalsIgnoreCase(""))
+                modelAndView.addObject("selectedConcil", params.get("selectedConcil1").toString());
+            if(params.get("selectedInv1")!= null && !params.get("selectedInv1").toString().equalsIgnoreCase(""))
+                modelAndView.addObject("selectedInv", params.get("selectedInv1").toString());
+            if(params.get("selectedET1")!= null && !params.get("selectedET1").toString().equalsIgnoreCase(""))
+                modelAndView.addObject("selectedET", params.get("selectedET1").toString());
+            if(params.get("selectedEstado1")!= null && !params.get("selectedEstado1").toString().equalsIgnoreCase(""))
+                modelAndView.addObject("selectedEstado", params.get("selectedEstado1").toString());
+            if(params.get("page1")!= null && !params.get("page1").toString().equalsIgnoreCase(""))
+                modelAndView.addObject("page1", params.get("page1").toString());
 
         }
         catch (Exception e)

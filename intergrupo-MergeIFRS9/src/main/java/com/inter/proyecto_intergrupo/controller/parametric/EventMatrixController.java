@@ -145,6 +145,8 @@ public class EventMatrixController {
             modelAndView.addObject("selectedET1", params.get("selectedET").toString());
         if(params.get("selectedEstado")!= null && !params.get("selectedEstado").toString().equalsIgnoreCase(""))
             modelAndView.addObject("selectedEstado1", params.get("selectedEstado").toString());
+        if(params.get("page")!= null && !params.get("page").toString().equalsIgnoreCase(""))
+            modelAndView.addObject("page1", params.get("page").toString());
 
         modelAndView.setViewName("/parametric/modifyEventMatrix");
         return modelAndView;
@@ -241,6 +243,8 @@ public class EventMatrixController {
                 modelAndView.addObject("selectedET", params.get("selectedET2").toString());
             if(params.get("selectedEstado2")!=null && !params.get("selectedEstado2").toString().equalsIgnoreCase(""))
                 modelAndView.addObject("selectedEstado", params.get("selectedEstado2").toString());
+            if(params.get("page2")!=null && !params.get("page2").toString().equalsIgnoreCase(""))
+                modelAndView.addObject("page", params.get("page2").toString());
 
             eventMatrixService.modificar(eventMatrix);
         }
@@ -308,6 +312,11 @@ public class EventMatrixController {
             modelAndView.addObject("selectedET1", tipoEvento);
             modelAndView.addObject("selectedCuenta1", cuenta);
             modelAndView.addObject("selectedEstado1", estado);
+
+            if(params.get("page")!=null && !params.get("page").toString().equalsIgnoreCase(""))
+                modelAndView.addObject("page", params.get("page").toString());
+            else
+                modelAndView.addObject("page", "1");
 
             List<EventType> allTEs = eventTypeService.findAll();
             modelAndView.addObject("allTEs", allTEs);

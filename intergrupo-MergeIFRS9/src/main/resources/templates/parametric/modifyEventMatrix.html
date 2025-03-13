@@ -20,7 +20,7 @@
                     <h2 class="font-weight-bold">Información de Registro</h2>
                 </div>
                 <div class="text-right col-md-6">
-                    <a class="btn btn-sm btn-danger" th:href="@{/parametric/searchEventMatrix(selectedConcil=${selectedConcil1},selectedInv=${selectedInv1},selectedET=${selectedET1},selectedEstado=${selectedEstado1})}"><i class="fa-solid fa-left-long"></i> Regresar</a>
+                    <a class="btn btn-sm btn-danger" th:href="@{/parametric/searchEventMatrix(selectedConcil=${selectedConcil1},selectedInv=${selectedInv1},selectedET=${selectedET1},selectedEstado=${selectedEstado1},page=${page1})}"><i class="fa-solid fa-left-long"></i> Regresar</a>
                     <button type="submit" class="btn btn-sm btn-primary ml-1">Modificar Matriz</button>
                 </div>
             </div>
@@ -35,6 +35,7 @@
                             <input type="hidden" class="form-control form-control-sm" th:value="${selectedConcil1}" th:name="selectedConcil2">
                             <input type="hidden" class="form-control form-control-sm" th:value="${selectedInv1}" th:name="selectedInv2">
                             <input type="hidden" class="form-control form-control-sm" th:value="${selectedET1}" th:name="selectedET2">
+                            <input type="hidden" class="form-control form-control-sm" th:value="${page1}" th:name="page2">
                         </div>
                     </div>
                     <div class="col-md-1">

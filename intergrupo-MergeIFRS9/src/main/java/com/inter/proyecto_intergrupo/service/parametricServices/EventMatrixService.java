@@ -135,7 +135,7 @@ public class EventMatrixService {
         if (estado != null && !estado.equalsIgnoreCase("-1")) {
             queryBuilder1.append(" AND a.estado = ").append(estado).append(" ");
         }
-        queryBuilder1.append(" ORDER BY b.nombre,c.detalle,a.consecutivo").append(estado).append(" ");
+        queryBuilder1.append(" ORDER BY b.nombre,c.detalle,a.consecutivo").append(" ");
 
         // Ejecutar la consulta combinada y devolver resultados
         Query query = entityManager.createNativeQuery(queryBuilder1.toString());

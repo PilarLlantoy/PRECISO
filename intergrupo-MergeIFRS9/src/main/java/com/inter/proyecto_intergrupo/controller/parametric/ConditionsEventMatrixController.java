@@ -99,14 +99,16 @@ public class ConditionsEventMatrixController {
 
             modelAndView.addObject("matriz", eventMatrix);
 
-            if(params.get("selectedConcil")!= null && !params.get("selectedConcil").toString().equalsIgnoreCase(""))
-                modelAndView.addObject("selectedConcil1", params.get("selectedConcil").toString());
-            if(params.get("selectedInv")!= null && !params.get("selectedInv").toString().equalsIgnoreCase(""))
-                modelAndView.addObject("selectedInv1", params.get("selectedInv").toString());
-            if(params.get("selectedET")!= null && !params.get("selectedET").toString().equalsIgnoreCase(""))
-                modelAndView.addObject("selectedET1", params.get("selectedET").toString());
-            if(params.get("selectedEstado")!= null && !params.get("selectedEstado").toString().equalsIgnoreCase(""))
-                modelAndView.addObject("selectedEstado1", params.get("selectedEstado").toString());
+            if(params.get("selectedConcil1")!= null && !params.get("selectedConcil1").toString().equalsIgnoreCase(""))
+                modelAndView.addObject("selectedConcil1", params.get("selectedConcil1").toString());
+            if(params.get("selectedInv1")!= null && !params.get("selectedInv1").toString().equalsIgnoreCase(""))
+                modelAndView.addObject("selectedInv1", params.get("selectedInv1").toString());
+            if(params.get("selectedET1")!= null && !params.get("selectedET1").toString().equalsIgnoreCase(""))
+                modelAndView.addObject("selectedET1", params.get("selectedET1").toString());
+            if(params.get("selectedEstado1")!= null && !params.get("selectedEstado1").toString().equalsIgnoreCase(""))
+                modelAndView.addObject("selectedEstado1", params.get("selectedEstado1").toString());
+            if(params.get("page1")!= null && !params.get("page1").toString().equalsIgnoreCase(""))
+                modelAndView.addObject("page1", params.get("page1").toString());
 
             modelAndView.setViewName("parametric/conditionsEventMatrix");
         }
@@ -135,7 +137,7 @@ public class ConditionsEventMatrixController {
                                                    @RequestParam(name = "matrizId") String matrixId,
                                                    @RequestParam(name = "selectedOperacion", defaultValue= "") String operacion,
                                                    @RequestParam(name = "selectedCampo") String idcampo,
-                                                   BindingResult bindingResult) {
+                                                   BindingResult bindingResult,@RequestParam Map<String, Object> params) {
 
         ModelAndView modelAndView = new ModelAndView("redirect:/parametric/conditionsEventMatrix/" + matrixId);
 
@@ -145,6 +147,17 @@ public class ConditionsEventMatrixController {
         condicion.setCondicion(operacion);
         condicion.setMatrizEvento(matriz);
         condicionMEService.modificar(condicion);
+
+        if(params.get("selectedConcil1")!= null && !params.get("selectedConcil1").toString().equalsIgnoreCase(""))
+            modelAndView.addObject("selectedConcil1", params.get("selectedConcil1").toString());
+        if(params.get("selectedInv1")!= null && !params.get("selectedInv1").toString().equalsIgnoreCase(""))
+            modelAndView.addObject("selectedInv1", params.get("selectedInv1").toString());
+        if(params.get("selectedET1")!= null && !params.get("selectedET1").toString().equalsIgnoreCase(""))
+            modelAndView.addObject("selectedET1", params.get("selectedET1").toString());
+        if(params.get("selectedEstado1")!= null && !params.get("selectedEstado1").toString().equalsIgnoreCase(""))
+            modelAndView.addObject("selectedEstado1", params.get("selectedEstado1").toString());
+        if(params.get("page1")!= null && !params.get("page1").toString().equalsIgnoreCase(""))
+            modelAndView.addObject("page1", params.get("page1").toString());
 
         return modelAndView;
     }
