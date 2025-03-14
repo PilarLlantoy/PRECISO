@@ -19,7 +19,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -283,12 +290,12 @@ public class EventMatrixController {
             int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
             PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
 
-            List<EventMatrix> eventMatrixes = eventMatrixService.findByParams(tipoEvento, concil, inventario, cuenta,estado);
+            List<Object[]> eventMatrixes = eventMatrixService.findByParams(tipoEvento, concil, inventario, cuenta,estado);
             //List<EventMatrix> eventMatrixes = eventMatrixService.findByParams(1, 1, 1, "0");
 
             int start = (int) pageRequest.getOffset();
             int end = Math.min((start + pageRequest.getPageSize()), eventMatrixes.size());
-            Page<EventMatrix> pageEventMatrix = new PageImpl<>(eventMatrixes.subList(start, end), pageRequest, eventMatrixes.size());
+            Page<Object[]> pageEventMatrix = new PageImpl<>(eventMatrixes.subList(start, end), pageRequest, eventMatrixes.size());
 
             int totalPage=pageEventMatrix.getTotalPages();
             if(totalPage>0){
@@ -354,7 +361,26 @@ public class EventMatrixController {
         return matrices; // Asegúrate de que esto devuelva lo que esperas
     }
 
+    @GetMapping(value = "/parametric/eventMatrix/download")
+    @ResponseBody
+    public void exportToExcel(HttpServletResponse response, RedirectAttributes redirectAttrs,
+                            @RequestParam(name = "selectedET", defaultValue= "0") Integer  tipoEvento,
+                            @RequestParam(name = "selectedConcil", defaultValue= "0") Integer  concil,
+                            @RequestParam(name = "selectedInv", defaultValue= "0") Integer  inventario,
+                            @RequestParam(name = "selectedCuenta", defaultValue= "0") String cuenta,
+                            @RequestParam(name = "selectedEstado", defaultValue= "-1") String estado,
+                            @RequestParam Map<String, Object> params) throws IOException {
+        response.setContentType("application/octet-stream");
+        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+        String currentDateTime = dateFormatter.format(new Date());
 
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=Matrices_Eventos_" + currentDateTime + ".xlsx";
+        response.setHeader(headerKey, headerValue);
+        List<Object[]> eventMatrixes = eventMatrixService.findByParams(tipoEvento, concil, inventario, cuenta,estado);
+        MatrixEventListReport listReport = new MatrixEventListReport(eventMatrixes);
+        listReport.export(response);
+    }
 
 
 }

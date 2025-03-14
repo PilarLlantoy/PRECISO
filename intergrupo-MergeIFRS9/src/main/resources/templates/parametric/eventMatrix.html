@@ -154,11 +154,11 @@
                         <ul class="pagination pagination-sm">
                             <li class="page-item" th:classappend="${prev == 0 ? 'disabled' : ''}">
                                 <a class="page-link"
-                                   th:href="@{/parametric/searchEventMatrix/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${prev},dir=${directory},vId=${vId},selectedConcil=${selectedConcil1},selectedInv=${selectedInv1},selectedET=${selectedET1},selectedEstado=${selectedEstado1})}">Anterior</a>
+                                   th:href="@{/parametric/searchEventMatrix/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${prev},dir=${directory},vId=${vId},selectedConcil=${selectedConcil1},selectedInv=${selectedInv1},selectedET=${selectedET1},selectedEstado=${selectedEstado1},selectedCuenta=${selectedCuenta1})}">Anterior</a>
                             </li>
                             <li class="page-item" th:classappend="${current == last ? 'disabled' : ''}">
                                 <a class="page-link"
-                                   th:href="@{/parametric/searchEventMatrix/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${next},dir=${directory},vId=${vId},selectedConcil=${selectedConcil1},selectedInv=${selectedInv1},selectedET=${selectedET1},selectedEstado=${selectedEstado1})}">Siguiente</a>
+                                   th:href="@{/parametric/searchEventMatrix/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${next},dir=${directory},vId=${vId},selectedConcil=${selectedConcil1},selectedInv=${selectedInv1},selectedET=${selectedET1},selectedEstado=${selectedEstado1},selectedCuenta=${selectedCuenta1})}">Siguiente</a>
                             </li>
                         </ul>
                     </nav>
@@ -175,7 +175,7 @@
                 </h5>
             </div>
             <div class="d-flex align-items-center justify-content-center">
-                <!--<a class="btn btn-primary" th:href="@{/parametric/eventMatrix/download?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${next},dir=${directory},vId=${vId},selectedConcil=${selectedConcil1},selectedInv=${selectedInv1},selectedET=${selectedET1},selectedEstado=${selectedEstado1})}">Exportar Excel</a>-->
+                <a class="btn btn-primary" th:href="@{/parametric/eventMatrix/download(selectedConcil=${selectedConcil1},selectedInv=${selectedInv1},selectedET=${selectedET1},selectedEstado=${selectedEstado1},selectedCuenta=${selectedCuenta1})}">Exportar Excel</a>
             </div>
         </div>
 

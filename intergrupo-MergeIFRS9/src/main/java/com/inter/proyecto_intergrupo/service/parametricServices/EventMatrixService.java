@@ -110,7 +110,7 @@ public class EventMatrixService {
         return query.getResultList();
     }
 
-    public List<EventMatrix> findByParams(Integer idTipoEvento, Integer idConciliacion, Integer idInventarioConciliacion, String cuentaGanancia, String estado) {
+    public List<Object[]> findByParams(Integer idTipoEvento, Integer idConciliacion, Integer idInventarioConciliacion, String cuentaGanancia, String estado) {
         // Primer query con LEFT JOIN
         StringBuilder queryBuilder1 = new StringBuilder("SELECT b.nombre,c.detalle,a.consecutivo,d.nombre_tipo_evento,e.cuenta_ganancia as c1,f.cuenta_ganancia as c2,a.hom_centros,a.aplica_pyg,a.estado,a.id  FROM preciso_matriz_eventos a\n" +
                 "left join (select id,nombre from preciso_conciliaciones) b on a.id_conciliacion = b.id\n" +
