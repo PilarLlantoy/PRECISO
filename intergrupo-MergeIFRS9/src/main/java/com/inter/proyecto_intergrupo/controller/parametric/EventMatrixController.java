@@ -377,8 +377,10 @@ public class EventMatrixController {
         String headerKey = "Content-Disposition";
         String headerValue = "attachment; filename=Matrices_Eventos_" + currentDateTime + ".xlsx";
         response.setHeader(headerKey, headerValue);
-        List<Object[]> eventMatrixes = eventMatrixService.findByParams(tipoEvento, concil, inventario, cuenta,estado);
-        MatrixEventListReport listReport = new MatrixEventListReport(eventMatrixes);
+        List<Object[]> eventMatrixes = eventMatrixService.findByEncabezados(tipoEvento, concil, inventario, cuenta,estado);
+        List<Object[]> eventMatrixesCon = eventMatrixService.findByCondiciones(tipoEvento, concil, inventario, cuenta,estado);
+        List<Object[]> eventMatrixeVal = eventMatrixService.findByValidaciones(tipoEvento, concil, inventario, cuenta,estado);
+        MatrixEventListReport listReport = new MatrixEventListReport(eventMatrixes,eventMatrixeVal,eventMatrixesCon);
         listReport.export(response);
     }
 

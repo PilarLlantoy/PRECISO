@@ -142,5 +142,99 @@ public class EventMatrixService {
         return query.getResultList();
     }
 
+    public List<Object[]> findByEncabezados(Integer idTipoEvento, Integer idConciliacion, Integer idInventarioConciliacion, String cuentaGanancia, String estado) {
+        // Primer query con LEFT JOIN
+        StringBuilder queryBuilder1 = new StringBuilder("SELECT a.id_conciliacion,b.nombre,a.id_inventario_conciliacion,c.detalle,a.consecutivo,a.estado,e.cuenta_ganancia as c1,e.cuenta_perdida as c1p,f.cuenta_ganancia as c2,f.cuenta_perdida as c2p,d.nombre_tipo_evento  FROM preciso_matriz_eventos a\n" +
+                "left join (select id,nombre from preciso_conciliaciones) b on a.id_conciliacion = b.id\n" +
+                "left join (select id,detalle from preciso_rutas_conciliaciones) c on a.id_inventario_conciliacion=c.id\n" +
+                "left join preciso_tipo_evento d on a.id_tipo_evento=d.id_tipo_evento\n" +
+                "left join (select id_matriz_evento,cuenta_ganancia,cuenta_perdida from preciso_cuentas_matriz_eventos where tipo='1') e on a.id=e.id_matriz_evento\n" +
+                "left join (select id_matriz_evento,cuenta_ganancia,cuenta_perdida from preciso_cuentas_matriz_eventos where tipo='2') f on a.id=f.id_matriz_evento\n" +
+                "WHERE 1=1\n");
+
+        if (idConciliacion != 0) {
+            queryBuilder1.append(" AND a.id_conciliacion = ").append(idConciliacion);
+        }
+        if (idInventarioConciliacion != 0) {
+            queryBuilder1.append(" AND a.id_inventario_conciliacion = ").append(idInventarioConciliacion);
+        }
+        if (idTipoEvento != 0) {
+            queryBuilder1.append(" AND a.id_tipo_evento = ").append(idTipoEvento);
+        }
+        if (cuentaGanancia != null && !cuentaGanancia.equalsIgnoreCase("0")) {
+            queryBuilder1.append(" AND (e.cuenta_ganancia = '").append(cuentaGanancia).append("' OR f.cuenta_ganancia = '").append(cuentaGanancia).append("')");
+        }
+        if (estado != null && !estado.equalsIgnoreCase("-1")) {
+            queryBuilder1.append(" AND a.estado = ").append(estado).append(" ");
+        }
+        queryBuilder1.append(" ORDER BY a.id_conciliacion,a.id_inventario_conciliacion,a.consecutivo").append(" ");
+
+        // Ejecutar la consulta combinada y devolver resultados
+        Query query = entityManager.createNativeQuery(queryBuilder1.toString());
+        return query.getResultList();
+    }
+    public List<Object[]> findByCondiciones(Integer idTipoEvento, Integer idConciliacion, Integer idInventarioConciliacion, String cuentaGanancia, String estado) {
+        // Primer query con LEFT JOIN
+        StringBuilder queryBuilder1 = new StringBuilder("SELECT a.id_conciliacion,b.nombre,a.id_inventario_conciliacion,c.detalle,a.consecutivo,a.estado,d.id_campo,e.nombre as n2,UPPER(d.condicion) AS con,d.valor_condicion FROM preciso_condiciones_matriz_evento d\n" +
+                "left join preciso_matriz_eventos a on a.id = d.id_matriz\n" +
+                "left join (select id,nombre from preciso_conciliaciones) b on a.id_conciliacion = b.id\n" +
+                "left join (select id,detalle from preciso_rutas_conciliaciones) c on a.id_inventario_conciliacion=c.id\n" +
+                "left join (select id_campo,nombre from preciso_campos_rconcil) e on d.id_campo=e.id_campo\n" +
+                "WHERE 1=1\n");
+
+        if (idConciliacion != 0) {
+            queryBuilder1.append(" AND a.id_conciliacion = ").append(idConciliacion);
+        }
+        if (idInventarioConciliacion != 0) {
+            queryBuilder1.append(" AND a.id_inventario_conciliacion = ").append(idInventarioConciliacion);
+        }
+        if (idTipoEvento != 0) {
+            queryBuilder1.append(" AND a.id_tipo_evento = ").append(idTipoEvento);
+        }
+        if (cuentaGanancia != null && !cuentaGanancia.equalsIgnoreCase("0")) {
+            queryBuilder1.append(" AND (e.cuenta_ganancia = '").append(cuentaGanancia).append("' OR f.cuenta_ganancia = '").append(cuentaGanancia).append("')");
+        }
+        if (estado != null && !estado.equalsIgnoreCase("-1")) {
+            queryBuilder1.append(" AND a.estado = ").append(estado).append(" ");
+        }
+        queryBuilder1.append(" ORDER BY a.id_conciliacion,a.id_inventario_conciliacion,a.consecutivo,d.id_campo").append(" ");
+
+        // Ejecutar la consulta combinada y devolver resultados
+        Query query = entityManager.createNativeQuery(queryBuilder1.toString());
+        return query.getResultList();
+    }
+
+    public List<Object[]> findByValidaciones(Integer idTipoEvento, Integer idConciliacion, Integer idInventarioConciliacion, String cuentaGanancia, String estado) {
+        // Primer query con LEFT JOIN
+        StringBuilder queryBuilder1 = new StringBuilder("SELECT a.id_conciliacion,b.nombre,a.id_inventario_conciliacion,c.detalle,a.consecutivo,a.estado,e.nombre as n2,d.aplica_formula,d.id_campo_validacion,f.nombre as n3,d.valor_validacion,UPPER(ISNULL(d.operacion,'ASIGNA')) AS con,d.valor_operacion FROM (select * from preciso_validaciones_matriz_evento) d\n" +
+                "left join preciso_matriz_eventos a on a.id = d.id_me\n" +
+                "left join (select id,nombre from preciso_conciliaciones) b on a.id_conciliacion = b.id\n" +
+                "left join (select id,detalle from preciso_rutas_conciliaciones) c on a.id_inventario_conciliacion=c.id\n" +
+                "left join (select id_campo,nombre from preciso_campos_rconcil) e on d.id_campo_referencia=e.id_campo\n" +
+                "left join (select id_campo,nombre from preciso_campos_rconcil) f on d.id_campo_validacion=f.id_campo\n" +
+                "WHERE 1=1");
+
+        if (idConciliacion != 0) {
+            queryBuilder1.append(" AND a.id_conciliacion = ").append(idConciliacion);
+        }
+        if (idInventarioConciliacion != 0) {
+            queryBuilder1.append(" AND a.id_inventario_conciliacion = ").append(idInventarioConciliacion);
+        }
+        if (idTipoEvento != 0) {
+            queryBuilder1.append(" AND a.id_tipo_evento = ").append(idTipoEvento);
+        }
+        if (cuentaGanancia != null && !cuentaGanancia.equalsIgnoreCase("0")) {
+            queryBuilder1.append(" AND (e.cuenta_ganancia = '").append(cuentaGanancia).append("' OR f.cuenta_ganancia = '").append(cuentaGanancia).append("')");
+        }
+        if (estado != null && !estado.equalsIgnoreCase("-1")) {
+            queryBuilder1.append(" AND a.estado = ").append(estado).append(" ");
+        }
+        queryBuilder1.append(" ORDER BY a.id_conciliacion,a.id_inventario_conciliacion,a.consecutivo,e.nombre,d.id_campo_validacion").append(" ");
+
+        // Ejecutar la consulta combinada y devolver resultados
+        Query query = entityManager.createNativeQuery(queryBuilder1.toString());
+        return query.getResultList();
+    }
+
 
 }
