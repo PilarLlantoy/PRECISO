@@ -68,11 +68,13 @@ public class CampoRConcilController {
         (campoAntiguo!=null && campoAntiguo.getId() == campoNuevo.getId() && !campoAntiguo.getNombre().equalsIgnoreCase(campoNuevo.getNombre()) && campoBusqueda.isEmpty() && campoNuevo.getId()!=0))
         {
             campoRConcilService.modificar(campoNuevo);
-            campoRConcilService.recreateTable(route);
         }
         else {
             modelAndView.addObject("resp","Maes-2");
         }
+
+        campoRConcilService.recreateTable(route);
+
         if(params.get("page1")!=null && !params.get("page1").toString().equalsIgnoreCase(""))
             modelAndView.addObject("page1",params.get("page1").toString());
         else

@@ -16,6 +16,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -53,7 +54,7 @@ public class CampoRCService {
        return campo;
     }
 
-    public void recreateTable(AccountingRoute data){
+    /*public void recreateTable(AccountingRoute data){
         StringBuilder createTableQuery = new StringBuilder("CREATE TABLE ");
         createTableQuery.append("preciso_rc_"+data.getId()).append(" (");
 
@@ -83,9 +84,87 @@ public class CampoRCService {
         queryTable.executeUpdate();
     }
 
-    /*public void deleteById(int id){
+    public void deleteById(int id){
         campoRCRepository.deleteById(id);
     }*/
+
+    public void recreateTable(AccountingRoute data) {
+        String tableName = "preciso_rc_" + data.getId();
+
+        // Verificar si la tabla existe
+        Query tableCheckQuery = entityManager.createNativeQuery(
+                "SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = ? AND TABLE_SCHEMA = 'dbo'"
+        );
+        tableCheckQuery.setParameter(1, tableName);
+
+        List<Integer> tableExists =  tableCheckQuery.getResultList();
+
+        if (tableExists.get(0) == 0) {
+            // La tabla no existe, se debe crear
+            createTable(data, tableName);
+        } else {
+            //La tabla existe, verificar y modificar columnas
+            updateTable(data, tableName);
+        }
+    }
+
+    private void createTable(AccountingRoute data, String tableName) {
+        StringBuilder createTableQuery = new StringBuilder("CREATE TABLE " + tableName + " (");
+
+        for (CampoRC column : data.getCampos()) {
+            createTableQuery.append(column.getNombre()).append(" ").append(getSqlType(column)).append(", ");
+        }
+
+        createTableQuery.append("periodo_preciso DATE, id_preciso BIGINT IDENTITY(1,1) PRIMARY KEY);");
+
+        entityManager.createNativeQuery(createTableQuery.toString()).executeUpdate();
+    }
+
+    private void updateTable(AccountingRoute data, String tableName) {
+        // Obtener las columnas actuales
+        Query columnQuery = entityManager.createNativeQuery(
+                "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = ? AND TABLE_SCHEMA = 'dbo'"
+        );
+        columnQuery.setParameter(1, tableName);
+
+        List<String> existingColumns = (List<String>) columnQuery.getResultList().stream()
+                .map(Object::toString)
+                .collect(Collectors.toList());
+
+        // Comparar y actualizar
+        for (CampoRC column : data.getCampos()) {
+            if (!existingColumns.contains(column.getNombre())) {
+                //Agregar columna si no existe
+                entityManager.createNativeQuery(
+                        "ALTER TABLE " + tableName + " ADD " + column.getNombre() + " " + getSqlType(column)
+                ).executeUpdate();
+            }
+        }
+
+        // Opcional: Eliminar columnas que ya no deberían estar
+        for (String existingColumn : existingColumns) {
+            boolean stillExists = data.getCampos().stream()
+                    .anyMatch(c -> c.getNombre().equalsIgnoreCase(existingColumn));
+
+            if (!stillExists && !existingColumn.equals("periodo_preciso") && !existingColumn.equals("id_preciso")) {
+                entityManager.createNativeQuery(
+                        "ALTER TABLE " + tableName + " DROP COLUMN " + existingColumn
+                ).executeUpdate();
+            }
+        }
+    }
+
+    private String getSqlType(CampoRC column) {
+        /*if (column.getTipo().equalsIgnoreCase("Date") || column.getTipo().equalsIgnoreCase("DateTime") || column.getTipo().equalsIgnoreCase("Time")) {
+            return "VARCHAR(MAX)";
+        } else if (column.getTipo().equalsIgnoreCase("VARCHAR")) {
+            return "VARCHAR(MAX)";
+        } else {
+            return column.getTipo();
+        }*/
+        return "VARCHAR(MAX)";
+    }
+
 
     public void deleteById(int principal)
     {

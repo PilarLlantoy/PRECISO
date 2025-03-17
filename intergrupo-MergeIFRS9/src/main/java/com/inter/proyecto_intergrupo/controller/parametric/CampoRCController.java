@@ -129,12 +129,13 @@ public class CampoRCController {
         (campoAntiguo!=null && campoAntiguo.getId() == campoNuevo.getId() && !campoAntiguo.getNombre().equalsIgnoreCase(campoNuevo.getNombre()) && campoBusqueda.isEmpty() && campoNuevo.getId()!=0))
         {
             campoRCService.modificar(campoNuevo);
-            campoRCService.recreateTable(aroute);
         }
         else
         {
             modelAndView.addObject("resp","Maes-2");
         }
+
+        campoRCService.recreateTable(aroute);
 
         if(!page.equalsIgnoreCase("0"))
             modelAndView.addObject("page",page);

@@ -4,7 +4,10 @@ import com.inter.proyecto_intergrupo.model.parametric.CampoRConcil;
 import com.inter.proyecto_intergrupo.model.parametric.ConciliationRoute;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -16,8 +19,8 @@ import java.util.Date;
 import java.util.List;
 
 public class InventoryLoadListReport {
-    private XSSFWorkbook workbook;
-    private XSSFSheet sheet;
+    private SXSSFWorkbook workbook;
+    private SXSSFSheet sheet;
     private List<CampoRConcil> colCroutes;
     private List<Object[]> aroutes;
     private ConciliationRoute cr;
@@ -26,7 +29,7 @@ public class InventoryLoadListReport {
         this.aroutes = aroutes;
         this.colCroutes = colCroutes;
         this.cr = cr;
-        this.workbook = new XSSFWorkbook();
+        this.workbook = new SXSSFWorkbook();
     }
 
     private void writeHeaderLine(){
@@ -35,9 +38,9 @@ public class InventoryLoadListReport {
         int count = 0;
 
         CellStyle style = workbook.createCellStyle();
-        XSSFFont font = workbook.createFont();
+        Font font = workbook.createFont();
         font.setBold(true);
-        font.setFontHeight(11);
+        font.setFontHeightInPoints((short) 11);
         style.setFont(font);
 
         for (CampoRConcil campo :colCroutes) {
@@ -70,8 +73,8 @@ public class InventoryLoadListReport {
         int rowCount = 1;
 
         CellStyle style = workbook.createCellStyle();
-        XSSFFont font = workbook.createFont();
-        font.setFontHeight(10);
+        Font font = workbook.createFont();
+        font.setFontHeightInPoints((short) 10);
         style.setFont(font);
 
 
@@ -117,6 +120,7 @@ public class InventoryLoadListReport {
         ServletOutputStream outputStream = response.getOutputStream();
         workbook.write(outputStream);
         workbook.close();
+        workbook.dispose();
         outputStream.flush(); // Asegúrate de que todos los datos se envíen
         outputStream.close();
     }

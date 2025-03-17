@@ -3,7 +3,10 @@ package com.inter.proyecto_intergrupo.service.parametricServices;
 import com.inter.proyecto_intergrupo.model.parametric.*;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -16,8 +19,8 @@ import java.util.Date;
 import java.util.List;
 
 public class AccountingLoadListReport {
-    private XSSFWorkbook workbook;
-    private XSSFSheet sheet;
+    private SXSSFWorkbook workbook;
+    private SXSSFSheet sheet;
     private List<CampoRC> colAroutes;
     private List<Object[]> aroutes;
     private AccountingRoute ac;
@@ -26,7 +29,7 @@ public class AccountingLoadListReport {
         this.aroutes = aroutes;
         this.colAroutes = colAroutes;
         this.ac = ac;
-        this.workbook = new XSSFWorkbook();
+        this.workbook = new SXSSFWorkbook ();
     }
 
     private void writeHeaderLine(){
@@ -35,9 +38,9 @@ public class AccountingLoadListReport {
         int count = 0;
 
         CellStyle style = workbook.createCellStyle();
-        XSSFFont font = workbook.createFont();
+        Font font = workbook.createFont();
         font.setBold(true);
-        font.setFontHeight(11);
+        font.setFontHeightInPoints((short) 11);
         style.setFont(font);
 
         List<String> camposVal = new ArrayList<>();
@@ -75,8 +78,8 @@ public class AccountingLoadListReport {
         int rowCount = 1;
 
         CellStyle style = workbook.createCellStyle();
-        XSSFFont font = workbook.createFont();
-        font.setFontHeight(10);
+        Font font = workbook.createFont();
+        font.setFontHeightInPoints((short) 10);
         style.setFont(font);
 
         CellStyle style1 = workbook.createCellStyle();
@@ -128,6 +131,7 @@ public class AccountingLoadListReport {
         ServletOutputStream outputStream = response.getOutputStream();
         workbook.write(outputStream);
         workbook.close();
+        workbook.dispose();
         outputStream.flush(); // Asegúrate de que todos los datos se envíen
         outputStream.close();
     }

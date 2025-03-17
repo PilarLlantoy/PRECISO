@@ -353,7 +353,7 @@
                 const a = document.createElement('a');
                 a.style.display = 'none';
                 a.href = url;
-                a.download = document.getElementById("nomb").value+'.xlsx'; // Asigna un nombre al archivo descargado
+                a.download = document.getElementById("nomb").value+'_'+encodedFecha+'.xlsx'; // Asigna un nombre al archivo descargado
                 document.body.appendChild(a);
                 a.click();
                 window.URL.revokeObjectURL(url);
@@ -361,7 +361,7 @@
             })
             .catch(error => {
                 console.error("Error:", error);
-                alert("Error al descargar el archivo: " + error.message);
+                alert("Error en la conexión con VPN, intente nuevamente.");
             });
     }
     document.addEventListener('DOMContentLoaded', function () {
