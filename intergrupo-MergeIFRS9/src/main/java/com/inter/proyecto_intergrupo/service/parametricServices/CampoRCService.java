@@ -131,8 +131,12 @@ public class CampoRCService {
                 .map(Object::toString)
                 .collect(Collectors.toList());
 
+        Query columnQueryVs = entityManager.createNativeQuery("SELECT * FROM preciso_campos_rc where id_rc = ? ",CampoRC.class);
+        columnQueryVs.setParameter(1, data.getId());
+        List<CampoRC> listadoCampos = columnQueryVs.getResultList();
+
         // Comparar y actualizar
-        for (CampoRC column : data.getCampos()) {
+        for (CampoRC column : listadoCampos) {
             if (!existingColumns.contains(column.getNombre())) {
                 //Agregar columna si no existe
                 entityManager.createNativeQuery(
@@ -143,7 +147,7 @@ public class CampoRCService {
 
         // Opcional: Eliminar columnas que ya no deberían estar
         for (String existingColumn : existingColumns) {
-            boolean stillExists = data.getCampos().stream()
+            boolean stillExists = listadoCampos.stream()
                     .anyMatch(c -> c.getNombre().equalsIgnoreCase(existingColumn));
 
             if (!stillExists && !existingColumn.equals("periodo_preciso") && !existingColumn.equals("id_preciso")) {

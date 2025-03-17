@@ -300,8 +300,15 @@
                     // Verifica que la URL de redirección se construya correctamente
                     window.location.href = `/parametric/fieldLoadingConciliationRoute/${crouteId}?page1=${page1}`;
                 } else {
-                    // Manejo de errores
-                    console.error('Error al eliminar el registro:', response.statusText);
+                    return response.text().then(errorMessage => {
+                        Swal.fire({
+                            icon: 'error',
+                            title: '¡Eliminación Invalida!',
+                            text: 'La columna tiene dependencias en validaciones y/o condiciones.',
+                            confirmButtonColor: '#d33',
+                            confirmButtonText: 'Entendido'
+                        });
+                    });
                 }
             }).catch(error => {
                 // Manejo de errores
