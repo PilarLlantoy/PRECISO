@@ -79,11 +79,11 @@ public class MatrixEventListReport {
         createCell(row3, 5,"Estado", style);
         createCell(row3, 6,"Campo Inv. Apl.", style);
         createCell(row3, 7,"Apl. Formula", style);
-        createCell(row2, 8,"Cod. Campo Val.", style);
-        createCell(row2, 9,"Nom. Campo Val.", style);
-        createCell(row2, 10,"Val. Inv. Val.", style);
+        createCell(row3, 8,"Cod. Campo Val.", style);
+        createCell(row3, 9,"Nom. Campo Val.", style);
+        createCell(row3, 10,"Val. Inv. Val.", style);
         createCell(row3, 11,"Tipo Operación", style);
-        createCell(row2, 12,"Val. Ope. Res.", style);
+        createCell(row3, 12,"Val. Ope. Res.", style);
 
     }
 
