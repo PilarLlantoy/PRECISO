@@ -779,6 +779,39 @@ public class AccountingRouteService {
         return query.getResultList();
     }
 
+    public List<Object[]> findByEncabezados() {
+        Query query = entityManager.createNativeQuery("SELECT a.id_rc,a.nombre,a.nombre_archivo,a.ruta,a.tipo_archivo, a.estado FROM preciso_rutas_contables a order by a.id_rc");
+        return query.getResultList();
+    }
+
+    public List<Object[]> findByCampos() {
+        Query query = entityManager.createNativeQuery("SELECT b.id_rc,b.nombre as n1,a.id_campo,a.nombre as n2, a.primario,a.tipo,a.longitud,a.visualizacion,a.separador,a.formato_fecha,a.idioma FROM preciso_campos_rc a\n" +
+                "LEFT JOIN  preciso_rutas_contables b ON a.id_rc =b.id_rc order by b.id_rc,a.id_campo");
+        return query.getResultList();
+    }
+
+    public List<Object[]> findByCamposSelect(int id) {
+        Query query = entityManager.createNativeQuery("SELECT b.id_rc,b.nombre as n1,a.id_campo,a.nombre as n2, a.primario,a.tipo,a.longitud,a.visualizacion,a.separador,a.formato_fecha,a.idioma FROM preciso_campos_rc a\n" +
+                "LEFT JOIN  preciso_rutas_contables b ON a.id_rc =b.id_rc where b.id_rc = ? order by b.id_rc,a.id_campo");
+        query.setParameter(1,id);
+        return query.getResultList();
+    }
+
+    public List<Object[]> findByCondiciones() {
+        Query query = entityManager.createNativeQuery("SELECT b.id_rc,b.nombre as n1,c.id_campo,c.nombre as n2,a.valor_condicion FROM preciso_condiciones_rc a\n" +
+                "LEFT JOIN  preciso_rutas_contables b ON a.id_rc =b.id_rc\n" +
+                "LEFT JOIN  preciso_campos_rc c ON a.id_rc =c.id_rc and a.id_campo = c.id_campo order by b.id_rc,a.id_campo");
+        return query.getResultList();
+    }
+
+    public List<Object[]> findByValidaciones() {
+        Query query = entityManager.createNativeQuery("SELECT b.id_rc,b.nombre as n1,a.id_campo_referencia,c.nombre as n2,a.id_campo_validacion,d.nombre as n3,a.valor_validacion,UPPER(a.operacion) AS OPE,a.valor_operacion FROM preciso_validaciones_rc a\n" +
+                "LEFT JOIN  preciso_rutas_contables b ON a.id_rc =b.id_rc\n" +
+                "LEFT JOIN  preciso_campos_rc c ON a.id_rc =c.id_rc and a.id_campo_referencia = c.id_campo\n" +
+                "LEFT JOIN  preciso_campos_rc d ON a.id_rc =d.id_rc and a.id_campo_validacion = d.id_campo order by b.id_rc,a.id_campo_referencia");
+        return query.getResultList();
+    }
+
     public void updateLoads(AccountingRoute ac,String fecha){
         masterInventService.updateLoads(ac,fecha);
     }

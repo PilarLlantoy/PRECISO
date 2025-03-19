@@ -1,0 +1,215 @@
+package com.inter.proyecto_intergrupo.service.parametricServices;
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Date;
+import java.util.List;
+
+public class AccountingRoutesListReport {
+    private XSSFWorkbook workbook;
+    private XSSFSheet sheet;
+    private XSSFSheet sheet2;
+    private XSSFSheet sheet3;
+    private XSSFSheet sheet4;
+    private List<Object[]> dataList;
+    private List<Object[]> dataListVal;
+    private List<Object[]> dataListCon;
+    private List<Object[]> dataListCam;
+
+    public AccountingRoutesListReport(List<Object[]> dataList, List<Object[]> dataListVal, List<Object[]> dataListCon, List<Object[]> dataListCam){
+        this.dataList = dataList;
+        this.dataListVal = dataListVal;
+        this.dataListCon = dataListCon;
+        this.dataListCam = dataListCam;
+        workbook = new XSSFWorkbook();
+    }
+
+    private void writeHeaderLine(){
+
+        CellStyle style = workbook.createCellStyle();
+        XSSFFont font = workbook.createFont();
+        font.setBold(true);
+        font.setFontHeight(11);
+        style.setFont(font);
+
+        if(dataList!=null)
+        {
+            sheet = workbook.createSheet("Encabezados");
+            Row row = sheet.createRow(0);
+
+            createCell(row, 0,"Cod. Contable", style);
+            createCell(row, 1,"Nom. Contable", style);
+            createCell(row, 2,"Nom. Archivo", style);
+            createCell(row, 3,"Ruta", style);
+            createCell(row, 4,"Tipo Archivo", style);
+            createCell(row, 5,"Estado", style);
+        }
+
+        if(dataListCam!=null)
+        {
+            sheet4 = workbook.createSheet("Campos");
+            Row row4 = sheet4.createRow(0);
+
+            createCell(row4, 0,"Cod. Contable", style);
+            createCell(row4, 1,"Nom. Contable", style);
+            createCell(row4, 2,"Cod. Campo", style);
+            createCell(row4, 3,"Nom. Campo", style);
+            createCell(row4, 4,"Primario", style);
+            createCell(row4, 5,"Tipo", style);
+            createCell(row4, 6,"Longitud", style);
+            createCell(row4, 7,"Visualizacion", style);
+            createCell(row4, 8,"Separador", style);
+            createCell(row4, 9,"Formato", style);
+            createCell(row4, 10,"Idioma", style);
+        }
+
+        if(dataListCon!=null)
+        {
+            sheet2 = workbook.createSheet("Condiciones");
+            Row row2 = sheet2.createRow(0);
+
+            createCell(row2, 0,"Cod. Contable", style);
+            createCell(row2, 1,"Nom. Contable", style);
+            createCell(row2, 2,"Cod. Campo", style);
+            createCell(row2, 3,"Nom. Campo", style);
+            createCell(row2, 4,"Val. Condicion", style);
+        }
+
+        if(dataListVal!=null)
+        {
+            sheet3 = workbook.createSheet("Validaciones");
+            Row row3 = sheet3.createRow(0);
+
+            createCell(row3, 0,"Cod. Contable", style);
+            createCell(row3, 1,"Nom. Contable", style);
+            createCell(row3, 2,"Cod. Campo Ref", style);
+            createCell(row3, 3,"Nom. Campo Ref", style);
+            createCell(row3, 4,"Cod. Campo Val", style);
+            createCell(row3, 5,"Nom. Campo Val", style);
+            createCell(row3, 6,"Val. Validacion", style);
+            createCell(row3, 7,"Operacion", style);
+            createCell(row3, 8,"Val. Operacion", style);
+        }
+    }
+
+    private void createCell(Row row, int columCount, Object value, CellStyle style){
+
+        Cell cell = row.createCell(columCount);
+
+        if(value instanceof Date) {
+            cell.setCellValue((Date) value);
+        } else if(value instanceof Integer){
+            cell.setCellValue((Integer) value);
+        } else if(value instanceof Boolean){
+            cell.setCellValue((Boolean) value);
+        } else if(value instanceof String){
+            cell.setCellValue((String) value);
+        }else if(value instanceof Long){
+            cell.setCellValue((Long) value);
+        }else if(value instanceof Double){
+            cell.setCellValue((Double) value);
+        }
+
+        cell.setCellStyle(style);
+    }
+
+    private void writeDataLines(){
+
+        CellStyle style = workbook.createCellStyle();
+        XSSFFont font = workbook.createFont();
+        font.setFontHeight(10);
+        style.setFont(font);
+
+        int rowCount = 1;
+
+        if(dataList!=null){
+            for(Object[] data: dataList){
+                Row row = sheet.createRow(rowCount++);
+                int columnCount = 0;
+
+                createCell(row,columnCount++,(data[0]!=null ? data[0].toString():""),style);
+                createCell(row,columnCount++,(data[1]!=null ? data[1].toString():""),style);
+                createCell(row,columnCount++,(data[2]!=null ? data[2].toString():""),style);
+                createCell(row,columnCount++,(data[3]!=null ? data[3].toString():""),style);
+                createCell(row,columnCount++,(data[4]!=null ? data[4].toString():""),style);
+                createCell(row,columnCount++,((boolean)data[5] ? "Activo":"Inactivo"),style);
+            }
+        }
+
+        if(dataListCam!=null){
+            rowCount = 1;
+
+            for(Object[] data: dataListCam){
+                Row row = sheet4.createRow(rowCount++);
+                int columnCount = 0;
+
+                createCell(row,columnCount++,(data[0]!=null ? data[0].toString():""),style);
+                createCell(row,columnCount++,(data[1]!=null ? data[1].toString():""),style);
+                createCell(row,columnCount++,(data[2]!=null ? data[2].toString():""),style);
+                createCell(row,columnCount++,(data[3]!=null ? data[3].toString():""),style);
+                createCell(row,columnCount++,((boolean)data[4] ? "Si":"No"),style);
+                createCell(row,columnCount++,(data[5]!=null ? data[5].toString():""),style);
+                createCell(row,columnCount++,(data[6]!=null ? data[6].toString():""),style);
+                createCell(row,columnCount++,((boolean)data[7] ? "Si":"No"),style);
+                createCell(row,columnCount++,(data[8]!=null && data[5]!=null && data[5].toString().equalsIgnoreCase("Date") ? data[8].toString():""),style);
+                createCell(row,columnCount++,(data[9]!=null && data[5]!=null && data[5].toString().equalsIgnoreCase("Date") ? data[9].toString():""),style);
+                createCell(row,columnCount++,(data[10]!=null && data[5]!=null && data[5].toString().equalsIgnoreCase("Date") ? data[10].toString():""),style);
+
+
+            }
+        }
+
+        if(dataListCon!=null){
+            rowCount = 1;
+
+            for(Object[] data: dataListCon){
+                Row row = sheet2.createRow(rowCount++);
+                int columnCount = 0;
+
+                createCell(row,columnCount++,(data[0]!=null ? data[0].toString():""),style);
+                createCell(row,columnCount++,(data[1]!=null ? data[1].toString():""),style);
+                createCell(row,columnCount++,(data[2]!=null ? data[2].toString():""),style);
+                createCell(row,columnCount++,(data[3]!=null ? data[3].toString():""),style);
+                createCell(row,columnCount++,(data[4]!=null ? data[4].toString():""),style);
+            }
+        }
+
+        if(dataListVal!=null){
+            rowCount = 1;
+
+            for(Object[] data: dataListVal){
+                Row row = sheet3.createRow(rowCount++);
+                int columnCount = 0;
+
+                createCell(row,columnCount++,(data[0]!=null ? data[0].toString():""),style);
+                createCell(row,columnCount++,(data[1]!=null ? data[1].toString():""),style);
+                createCell(row,columnCount++,(data[2]!=null ? data[2].toString():""),style);
+                createCell(row,columnCount++,(data[3]!=null ? data[3].toString():""),style);
+                createCell(row,columnCount++,(data[4]!=null ? data[4].toString():""),style);
+                createCell(row,columnCount++,(data[5]!=null ? data[5].toString():""),style);
+                createCell(row,columnCount++,(data[6]!=null ? data[6].toString():""),style);
+                createCell(row,columnCount++,(data[7]!=null ? data[7].toString():""),style);
+                createCell(row,columnCount++,(data[8]!=null ? data[8].toString():""),style);
+            }
+        }
+    }
+
+    public void export(HttpServletResponse response) throws IOException {
+        writeHeaderLine();
+        writeDataLines();
+
+        ServletOutputStream outputStream = response.getOutputStream();
+        workbook.write(outputStream);
+        workbook.close();
+
+        outputStream.close();
+    }
+}

@@ -1,17 +1,17 @@
 package com.inter.proyecto_intergrupo.controller.parametric;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.inter.proyecto_intergrupo.model.admin.User;
 import com.inter.proyecto_intergrupo.model.parametric.*;
 import com.inter.proyecto_intergrupo.service.adminServices.UserService;
-import com.inter.proyecto_intergrupo.service.parametricServices.AccountingRouteService;
-import com.inter.proyecto_intergrupo.service.parametricServices.CampoRCService;
-import com.inter.proyecto_intergrupo.service.parametricServices.SourceSystemService;
+import com.inter.proyecto_intergrupo.service.parametricServices.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +32,6 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
-import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -48,6 +46,9 @@ import java.io.ByteArrayOutputStream;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.servlet.http.HttpServletResponse;
 
 import static com.inter.proyecto_intergrupo.controller.parametric.AccountingLoadController.rutaArchivoFormato1;
 
@@ -569,6 +570,24 @@ public class AccountingRoutesController {
     public List<Object[]> obtenerRutasCont(@PathVariable("sfcID") Integer sfcID) {
         List<Object[]> campos = accountingRouteService.findRutasBySFC(sfcID);
         return campos;
+    }
+
+    @GetMapping(value = "/parametric/accountingRoutes/download")
+    @ResponseBody
+    public void exportToExcel(HttpServletResponse response, RedirectAttributes redirectAttrs,@RequestParam Map<String, Object> params) throws IOException {
+        response.setContentType("application/octet-stream");
+        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+        String currentDateTime = dateFormatter.format(new Date());
+
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=Rutas_Contables_" + currentDateTime + ".xlsx";
+        response.setHeader(headerKey, headerValue);
+        List<Object[]> accountRoute = accountingRouteService.findByEncabezados();
+        List<Object[]> accountRouteCam = accountingRouteService.findByCampos();
+        List<Object[]> accountRouteCon = accountingRouteService.findByCondiciones();
+        List<Object[]> accountRouteVal = accountingRouteService.findByValidaciones();
+        AccountingRoutesListReport listReport = new AccountingRoutesListReport(accountRoute,accountRouteVal,accountRouteCon,accountRouteCam);
+        listReport.export(response);
     }
 
 }

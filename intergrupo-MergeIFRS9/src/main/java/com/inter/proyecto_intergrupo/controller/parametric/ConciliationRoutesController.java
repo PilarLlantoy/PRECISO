@@ -5,9 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.inter.proyecto_intergrupo.model.admin.User;
 import com.inter.proyecto_intergrupo.model.parametric.*;
 import com.inter.proyecto_intergrupo.service.adminServices.UserService;
-import com.inter.proyecto_intergrupo.service.parametricServices.ConciliationRouteService;
-import com.inter.proyecto_intergrupo.service.parametricServices.ConciliationService;
-import com.inter.proyecto_intergrupo.service.parametricServices.InformationCrossingService;
+import com.inter.proyecto_intergrupo.service.parametricServices.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +18,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -418,6 +421,23 @@ public class ConciliationRoutesController {
     public List<Object[]> obtenerTiposEventoByConcilByInv(@PathVariable("concilID") Integer concilID, @PathVariable("invId") Integer invId) {
         List<Object[]> eventos = informationCrossingService.findEventosxConcilxInv(concilID, invId);
         return eventos;
+    }
+
+    @GetMapping(value = "/parametric/conciliationRoutes/download")
+    @ResponseBody
+    public void exportToExcel(HttpServletResponse response, RedirectAttributes redirectAttrs, @RequestParam Map<String, Object> params) throws IOException {
+        response.setContentType("application/octet-stream");
+        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+        String currentDateTime = dateFormatter.format(new Date());
+
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=Rutas_Conciliaciones_" + currentDateTime + ".xlsx";
+        response.setHeader(headerKey, headerValue);
+        List<Object[]> accountRoute = conciliationRouteService.findByEncabezados();
+        List<Object[]> accountRouteCam = conciliationRouteService.findByCampos();
+        List<Object[]> accountRouteVal = conciliationRouteService.findByValidaciones();
+        ConciliationRoutesListReport listReport = new ConciliationRoutesListReport(accountRoute,accountRouteVal,accountRouteCam);
+        listReport.export(response);
     }
 
 }

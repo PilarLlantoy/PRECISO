@@ -81,6 +81,37 @@ public class ConciliationRouteService {
         return conciliationRouteRepository.findByActivoAndConciliacionId(true, concil);
     }
 
+    public List<Object[]> findByEncabezados() {
+        Query query = entityManager.createNativeQuery("SELECT a.id_conciliacion,b.detalle,a.id,a.detalle as d1,a.nombre_archivo,a.ruta,a.tipo_archivo, a.estado FROM preciso_rutas_conciliaciones a\n" +
+                "LEFT JOIN preciso_conciliaciones b on a.id_conciliacion=b.id order by a.id_conciliacion, a.id");
+        return query.getResultList();
+    }
+
+    public List<Object[]> findByCampos() {
+        Query query = entityManager.createNativeQuery("SELECT c.id,c.detalle,b.id as id2,b.detalle as n1,a.id_campo,a.nombre as n2, a.primario,a.tipo,a.longitud,a.conciliacion,a.nulo_moneda,a.separador,a.formato_fecha,a.idioma FROM preciso_campos_rconcil a\n" +
+                "LEFT JOIN  preciso_rutas_conciliaciones b ON a.id_rconcil =b.id\n" +
+                "LEFT JOIN preciso_conciliaciones c on b.id_conciliacion=c.id order by c.id,b.id");
+        return query.getResultList();
+    }
+
+    public List<Object[]> findByCamposSelect(int id) {
+        Query query = entityManager.createNativeQuery("SELECT c.id,c.detalle,b.id as id2,b.detalle as n1,a.id_campo,a.nombre as n2, a.primario,a.tipo,a.longitud,a.conciliacion,a.nulo_moneda,a.separador,a.formato_fecha,a.idioma FROM preciso_campos_rconcil a\n" +
+                "LEFT JOIN  preciso_rutas_conciliaciones b ON a.id_rconcil =b.id\n" +
+                "LEFT JOIN preciso_conciliaciones c on b.id_conciliacion=c.id where b.id = ? order by c.id,b.id");
+        query.setParameter(1,id);
+        return query.getResultList();
+    }
+
+    public List<Object[]> findByValidaciones() {
+        Query query = entityManager.createNativeQuery("SELECT c.id,c.detalle,b.id as id2,b.detalle as n1,a.id_campo_referencia,d.nombre as n2,a.id_campo_validacion,e.nombre as n3,a.valor_validacion,UPPER(a.operacion) AS OPE,a.valor_operacion,a.formula FROM preciso_validaciones_rconcil a\n" +
+                "LEFT JOIN  preciso_rutas_conciliaciones b ON a.id_rc =b.id\n" +
+                "LEFT JOIN preciso_conciliaciones c on b.id_conciliacion=c.id \n" +
+                "LEFT JOIN preciso_campos_rconcil d on a.id_rc=d.id_rconcil and a.id_campo_referencia = d.id_campo\n" +
+                "LEFT JOIN preciso_campos_rconcil e on a.id_rc=e.id_rconcil and a.id_campo_validacion = e.id_campo\n" +
+                "order by c.id,b.id_conciliacion");
+        return query.getResultList();
+    }
+
     public ConciliationRoute findByName(String nombre){
         return conciliationRouteRepository.findAllByDetalle(nombre);
     }

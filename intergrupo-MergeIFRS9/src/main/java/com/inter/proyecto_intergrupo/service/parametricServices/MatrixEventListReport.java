@@ -65,7 +65,7 @@ public class MatrixEventListReport {
         createCell(row2, 5,"Estado", style);
         createCell(row2, 6,"Cod. Campo", style);
         createCell(row2, 7,"Nom. Campo", style);
-        createCell(row2, 8,"Condición", style);
+        createCell(row2, 8,"Condicion", style);
         createCell(row2, 9,"Val. Condic", style);
 
         sheet3 = workbook.createSheet("Validaciones");
@@ -82,7 +82,7 @@ public class MatrixEventListReport {
         createCell(row3, 8,"Cod. Campo Val.", style);
         createCell(row3, 9,"Nom. Campo Val.", style);
         createCell(row3, 10,"Val. Inv. Val.", style);
-        createCell(row3, 11,"Tipo Operación", style);
+        createCell(row3, 11,"Tipo Operacion", style);
         createCell(row3, 12,"Val. Ope. Res.", style);
 
     }

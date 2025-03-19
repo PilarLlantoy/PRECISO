@@ -14,6 +14,12 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.http.ResponseEntity;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Collections;
 import java.util.Map;
@@ -126,6 +132,21 @@ public class CampoRConcilController {
         List<Object[]> campos = campoRConcilService.findCamposByRutaConcil(ficheroId);
         System.out.println(campos.size());
         return campos;
+    }
+
+    @GetMapping(value = "/parametric/camposRConcil/download")
+    @ResponseBody
+    public void exportToExcel(HttpServletResponse response, @RequestParam int id) throws IOException {
+        response.setContentType("application/octet-stream");
+        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+        String currentDateTime = dateFormatter.format(new Date());
+
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=Campos_" + currentDateTime + ".xlsx";
+        response.setHeader(headerKey, headerValue);
+        List<Object[]> accountRouteCam = conciliationRouteService.findByCamposSelect(id);
+        ConciliationRoutesListReport listReport = new ConciliationRoutesListReport(null,null,accountRouteCam);
+        listReport.export(response);
     }
 
 
