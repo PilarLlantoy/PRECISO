@@ -111,7 +111,11 @@ public class CampoRCService {
     private void createTable(AccountingRoute data, String tableName) {
         StringBuilder createTableQuery = new StringBuilder("CREATE TABLE " + tableName + " (");
 
-        for (CampoRC column : data.getCampos()) {
+        Query columnQueryVs = entityManager.createNativeQuery("SELECT * FROM preciso_campos_rc where id_rc = ? ",CampoRC.class);
+        columnQueryVs.setParameter(1, data.getId());
+        List<CampoRC> listadoCampos = columnQueryVs.getResultList();
+
+        for (CampoRC column : listadoCampos) {
             createTableQuery.append(column.getNombre()).append(" ").append(getSqlType(column)).append(", ");
         }
 

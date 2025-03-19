@@ -5,8 +5,11 @@ import com.inter.proyecto_intergrupo.model.admin.User;
 import com.inter.proyecto_intergrupo.model.parametric.*;
 import com.inter.proyecto_intergrupo.repository.admin.AuditRepository;
 import com.inter.proyecto_intergrupo.repository.parametric.AccountingRouteRepository;
+import com.inter.proyecto_intergrupo.repository.parametric.CampoRCRepository;
 import com.inter.proyecto_intergrupo.repository.parametric.LogAccountingLoadRepository;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -51,10 +54,16 @@ public class AccountingRouteService {
     private final AccountingRouteRepository accountingRouteRepository;
 
     @Autowired
+    private CampoRCRepository campoRCRepository;
+
+    @Autowired
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
     private JobAutoService jobAutoService;
+
+    @Autowired
+    private CampoRCService campoRCService;
 
     @Autowired
     private MasterInventService masterInventService;
@@ -797,6 +806,14 @@ public class AccountingRouteService {
         return query.getResultList();
     }
 
+    public List<CampoRC> findByCamposSelectById(int id,String nombre) {
+        Query query = entityManager.createNativeQuery("SELECT a.* FROM preciso_campos_rc a\n" +
+                "LEFT JOIN  preciso_rutas_contables b ON a.id_rc =b.id_rc where b.id_rc = ? and a.nombre = ? ",CampoRC.class);
+        query.setParameter(1,id);
+        query.setParameter(2,nombre);
+        return query.getResultList();
+    }
+
     public List<Object[]> findByCondiciones() {
         Query query = entityManager.createNativeQuery("SELECT b.id_rc,b.nombre as n1,c.id_campo,c.nombre as n2,a.valor_condicion FROM preciso_condiciones_rc a\n" +
                 "LEFT JOIN  preciso_rutas_contables b ON a.id_rc =b.id_rc\n" +
@@ -997,6 +1014,162 @@ public class AccountingRouteService {
         //}
 
         return querySelect.getResultList();
+    }
+
+    public ArrayList<String[]> saveFileBD(InputStream file, User user,String id) throws IOException, InvalidFormatException {
+        ArrayList<String[]> list=new ArrayList<>();
+        if (file!=null)
+        {
+            XSSFWorkbook wb = new XSSFWorkbook(file);
+            XSSFSheet sheet = wb.getSheet("Campos");
+            Iterator<Row> rows = sheet.iterator();
+            list=validarPlantilla(rows,id);
+            if(list.get(0)[2].equals("SUCCESS"))
+                loadAudit(user,"Cargue exitoso plantilla campos");
+            else
+                loadAudit(user,"Cargue Fallido plantilla campos");
+        }
+        return list;
+    }
+
+    public ArrayList<String[]> validarPlantilla(Iterator<Row> rows, String id) {
+        ArrayList<String[]> lista = new ArrayList();
+        ArrayList<CampoRC> toInsert = new ArrayList<>();
+        String stateFinal = "SUCCESS";
+        XSSFRow row;
+        List<String> valoresTipo = new ArrayList<>(Arrays.asList("Varchar","Integer","Bigint","Float","Date","Time","DateTime","Bit"));
+        List<String> valoresFormato = new ArrayList<>(Arrays.asList("YYYYMMDD","YYMMDD","DDMMMMYYYY","DDMMYYYY","DDMMYY","MMDDYY"));
+        while (rows.hasNext()) {
+            row = (XSSFRow) rows.next();
+            if (row.getRowNum() > 0) {
+                {
+                    int consecutivo=0;
+                    DataFormatter formatter = new DataFormatter();
+                    String cellCodContable = formatter.formatCellValue(row.getCell(consecutivo++)).trim();
+                    String cellNomContable = formatter.formatCellValue(row.getCell(consecutivo++)).trim();
+                    String cellCodCampo = formatter.formatCellValue(row.getCell(consecutivo++)).trim();
+                    String cellNomCampo = formatter.formatCellValue(row.getCell(consecutivo++)).trim();
+                    String cellPrimario = formatter.formatCellValue(row.getCell(consecutivo++)).trim();
+                    String cellTipo = formatter.formatCellValue(row.getCell(consecutivo++)).trim();
+                    String cellLongitud = formatter.formatCellValue(row.getCell(consecutivo++)).trim();
+                    String cellVisualizacion = formatter.formatCellValue(row.getCell(consecutivo++)).trim();
+                    String cellSeparador = formatter.formatCellValue(row.getCell(consecutivo++)).trim();
+                    String cellFormato  = formatter.formatCellValue(row.getCell(consecutivo++)).trim();
+                    String cellIdioma = formatter.formatCellValue(row.getCell(consecutivo++)).trim();
+
+                    if (cellCodContable.length() == 0) {
+                        String[] log = new String[3];
+                        log[0] = String.valueOf(row.getRowNum() + 1);
+                        log[1] = CellReference.convertNumToColString(0);
+                        log[2] = "El campo Código Contable no puede estar vacio.";
+                        lista.add(log);
+                    } else if (!cellCodContable.equalsIgnoreCase(id)) {
+                        String[] log = new String[3];
+                        log[0] = String.valueOf(row.getRowNum() + 1);
+                        log[1] = CellReference.convertNumToColString(0);
+                        log[2] = "El campo Código Contable no corresponde a la ruta contable donde esta intentando realizar el cargue.";
+                        lista.add(log);
+                    }
+                    if (cellNomCampo.length() == 0) {
+                        String[] log = new String[3];
+                        log[0] = String.valueOf(row.getRowNum() + 1);
+                        log[1] = CellReference.convertNumToColString(3);
+                        log[2] = "El campo Nombre Campo no puede estar vacio.";
+                        lista.add(log);
+                    }
+                    if (!cellPrimario.equalsIgnoreCase("Si") && !cellPrimario.equalsIgnoreCase("No") ) {
+                        String[] log = new String[3];
+                        log[0] = String.valueOf(row.getRowNum() + 1);
+                        log[1] = CellReference.convertNumToColString(4);
+                        log[2] = "El campo Primario debe contener un Si o No.";
+                        lista.add(log);
+                    }
+                    if (!valoresTipo.contains(cellTipo)) {
+                        String[] log = new String[3];
+                        log[0] = String.valueOf(row.getRowNum() + 1);
+                        log[1] = CellReference.convertNumToColString(5);
+                        log[2] = "El campo Tipo no se encuentra dentro del listado permitido";
+                        lista.add(log);
+                    }
+                    if (cellLongitud.length() == 0) {
+                        String[] log = new String[3];
+                        log[0] = String.valueOf(row.getRowNum() + 1);
+                        log[1] = CellReference.convertNumToColString(6);
+                        log[2] = "El campo Longitud no puede estar vacio.";
+                        lista.add(log);
+                    }
+                    else {
+                        if(!cellLongitud.equalsIgnoreCase("MAX"))
+                        {
+                            try{
+                                Integer.parseInt(cellLongitud);
+                            }
+                            catch (Exception e){
+                                String[] log = new String[3];
+                                log[0] = String.valueOf(row.getRowNum() + 1);
+                                log[1] = CellReference.convertNumToColString(6);
+                                log[2] = "El campo Longitud debe ser númerico o contenter la palabra MAX.";
+                                lista.add(log);
+                            }
+                        }
+                    }
+                    if (!cellVisualizacion.equalsIgnoreCase("Si") && !cellVisualizacion.equalsIgnoreCase("No") ) {
+                        String[] log = new String[3];
+                        log[0] = String.valueOf(row.getRowNum() + 1);
+                        log[1] = CellReference.convertNumToColString(7);
+                        log[2] = "El campo Primario debe contener un Si o No.";
+                        lista.add(log);
+                    }
+                    if (cellTipo.equalsIgnoreCase("Date") || cellTipo.equalsIgnoreCase("DateTime")) {
+                        if (cellSeparador.length() == 0) {
+                            String[] log = new String[3];
+                            log[0] = String.valueOf(row.getRowNum() + 1);
+                            log[1] = CellReference.convertNumToColString(8);
+                            log[2] = "El campo Separador no puede estar vacio.";
+                            lista.add(log);
+                        }
+                        if (!valoresFormato.contains(cellFormato)) {
+                            String[] log = new String[3];
+                            log[0] = String.valueOf(row.getRowNum() + 1);
+                            log[1] = CellReference.convertNumToColString(9);
+                            log[2] = "El campo Formato no se encuentra dentro del listado permitido";
+                            lista.add(log);
+                        }
+                    }
+
+                    if (lista.isEmpty() && findByCamposSelectById(Integer.parseInt(id),cellNomCampo).isEmpty()) {
+                        CampoRC data = new CampoRC();
+                        data.setRutaContable(findById(Integer.parseInt(id)));
+                        data.setVisualizacion(cellVisualizacion.equalsIgnoreCase("Si"));
+                        data.setTipo(cellTipo);
+                        data.setSeparador(cellSeparador);
+                        data.setPrimario(cellPrimario.equalsIgnoreCase("Si"));
+                        data.setNombre(cellNomCampo);
+                        data.setLongitud(cellLongitud);
+                        data.setIdioma("EspañolColombia");
+                        data.setFormatoFecha(cellFormato);
+                        data.setFormula(false);
+                        data.setEstado(true);
+                        toInsert.add(data);
+                    }
+                }
+            }
+        }
+
+        if (lista.size() != 0)
+            stateFinal = "FAILED";
+        String[] log2 = new String[3];
+        log2[0] = String.valueOf((toInsert.size() * 11) - lista.size());
+        log2[1] = String.valueOf(lista.size());
+        log2[2] = stateFinal;
+        lista.add(log2);
+        String[] temp = lista.get(0);
+        if (temp[2].equals("SUCCESS")) {
+            campoRCRepository.saveAll(toInsert);
+            campoRCService.recreateTable(findById(Integer.parseInt(id)));
+        }
+        toInsert.clear();
+        return lista;
     }
 
 }
