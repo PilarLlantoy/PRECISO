@@ -794,13 +794,13 @@ public class AccountingRouteService {
     }
 
     public List<Object[]> findByCampos() {
-        Query query = entityManager.createNativeQuery("SELECT b.id_rc,b.nombre as n1,a.id_campo,a.nombre as n2, a.primario,a.tipo,a.longitud,a.visualizacion,a.separador,a.formato_fecha,a.idioma FROM preciso_campos_rc a\n" +
+        Query query = entityManager.createNativeQuery("SELECT b.id_rc,b.nombre as n1,a.id_campo,a.nombre as n2, a.primario,a.tipo,a.longitud,a.visualizacion,a.separador,a.formato_fecha,a.formula,a.operacion,a.valor_operacion FROM preciso_campos_rc a\n" +
                 "LEFT JOIN  preciso_rutas_contables b ON a.id_rc =b.id_rc order by b.id_rc,a.id_campo");
         return query.getResultList();
     }
 
     public List<Object[]> findByCamposSelect(int id) {
-        Query query = entityManager.createNativeQuery("SELECT b.id_rc,b.nombre as n1,a.id_campo,a.nombre as n2, a.primario,a.tipo,a.longitud,a.visualizacion,a.separador,a.formato_fecha,a.idioma FROM preciso_campos_rc a\n" +
+        Query query = entityManager.createNativeQuery("SELECT b.id_rc,b.nombre as n1,a.id_campo,a.nombre as n2, a.primario,a.tipo,a.longitud,a.visualizacion,a.separador,a.formato_fecha,a.formula,a.operacion,a.valor_operacion FROM preciso_campos_rc a\n" +
                 "LEFT JOIN  preciso_rutas_contables b ON a.id_rc =b.id_rc where b.id_rc = ? order by b.id_rc,a.id_campo");
         query.setParameter(1,id);
         return query.getResultList();
@@ -1039,6 +1039,7 @@ public class AccountingRouteService {
         XSSFRow row;
         List<String> valoresTipo = new ArrayList<>(Arrays.asList("Varchar","Integer","Bigint","Float","Date","Time","DateTime","Bit"));
         List<String> valoresFormato = new ArrayList<>(Arrays.asList("YYYYMMDD","YYMMDD","DDMMMMYYYY","DDMMYYYY","DDMMYY","MMDDYY"));
+        List<String> valoresOperacion = new ArrayList<>(Arrays.asList("Suma","Resta","Multiplica","Divida"));
         while (rows.hasNext()) {
             row = (XSSFRow) rows.next();
             if (row.getRowNum() > 0) {
@@ -1055,7 +1056,9 @@ public class AccountingRouteService {
                     String cellVisualizacion = formatter.formatCellValue(row.getCell(consecutivo++)).trim();
                     String cellSeparador = formatter.formatCellValue(row.getCell(consecutivo++)).trim();
                     String cellFormato  = formatter.formatCellValue(row.getCell(consecutivo++)).trim();
-                    String cellIdioma = formatter.formatCellValue(row.getCell(consecutivo++)).trim();
+                    String cellFormula  = formatter.formatCellValue(row.getCell(consecutivo++)).trim();
+                    String cellOperacion = formatter.formatCellValue(row.getCell(consecutivo++)).trim();
+                    String cellValorOperacion = formatter.formatCellValue(row.getCell(consecutivo++)).trim();
 
                     if (cellCodContable.length() == 0) {
                         String[] log = new String[3];
@@ -1136,6 +1139,29 @@ public class AccountingRouteService {
                             lista.add(log);
                         }
                     }
+                    if (!cellFormula.equalsIgnoreCase("Si") && !cellFormula.equalsIgnoreCase("No") ) {
+                        String[] log = new String[3];
+                        log[0] = String.valueOf(row.getRowNum() + 1);
+                        log[1] = CellReference.convertNumToColString(10);
+                        log[2] = "El campo Formula debe contener un Si o No.";
+                        lista.add(log);
+                    }
+
+                    if (cellFormula.equalsIgnoreCase("Si") && !valoresOperacion.contains(cellOperacion)) {
+                        String[] log = new String[3];
+                        log[0] = String.valueOf(row.getRowNum() + 1);
+                        log[1] = CellReference.convertNumToColString(11);
+                        log[2] = "El campo Operacion no se encuentra dentro del listado permitido.";
+                        lista.add(log);
+                    }
+                    if (cellFormula.equalsIgnoreCase("Si")&& cellValorOperacion.length() == 0) {
+                        String[] log = new String[3];
+                        log[0] = String.valueOf(row.getRowNum() + 1);
+                        log[1] = CellReference.convertNumToColString(12);
+                        log[2] = "El campo Valor Operacion no puede estar vacio.";
+                        lista.add(log);
+                    }
+
 
                     if (lista.isEmpty() && findByCamposSelectById(Integer.parseInt(id),cellNomCampo).isEmpty()) {
                         CampoRC data = new CampoRC();
@@ -1148,7 +1174,9 @@ public class AccountingRouteService {
                         data.setLongitud(cellLongitud);
                         data.setIdioma("EspañolColombia");
                         data.setFormatoFecha(cellFormato);
-                        data.setFormula(false);
+                        data.setFormula(cellFormula.equalsIgnoreCase("Si"));
+                        data.setOperacion(cellOperacion);
+                        data.setValorOperacion(cellValorOperacion);
                         data.setEstado(true);
                         toInsert.add(data);
                     }

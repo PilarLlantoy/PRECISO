@@ -68,7 +68,9 @@ public class AccountingRoutesListReport {
             createCell(row4, 7,"Visualizacion", style);
             createCell(row4, 8,"Separador", style);
             createCell(row4, 9,"Formato", style);
-            createCell(row4, 10,"Idioma", style);
+            createCell(row4, 10,"Formula", style);
+            createCell(row4, 11,"Operacion", style);
+            createCell(row4, 12,"Val. Operacion", style);
         }
 
         if(dataListCon!=null)
@@ -161,8 +163,9 @@ public class AccountingRoutesListReport {
                 createCell(row,columnCount++,((boolean)data[7] ? "Si":"No"),style);
                 createCell(row,columnCount++,(data[8]!=null && data[5]!=null && data[5].toString().equalsIgnoreCase("Date") ? data[8].toString():""),style);
                 createCell(row,columnCount++,(data[9]!=null && data[5]!=null && data[5].toString().equalsIgnoreCase("Date") ? data[9].toString():""),style);
-                createCell(row,columnCount++,(data[10]!=null && data[5]!=null && data[5].toString().equalsIgnoreCase("Date") ? data[10].toString():""),style);
-
+                createCell(row,columnCount++,((boolean)data[10] ? "Si":"No"),style);
+                createCell(row,columnCount++,(data[11]!=null && data[10]!=null && (boolean)data[10] ? data[11].toString():""),style);
+                createCell(row,columnCount++,(data[12]!=null && data[10]!=null && (boolean)data[10]? data[12].toString():""),style);
 
             }
         }
