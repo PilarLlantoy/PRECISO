@@ -1,11 +1,19 @@
 package com.inter.proyecto_intergrupo.service.parametricServices;
 
+import com.inter.proyecto_intergrupo.model.admin.Audit;
 import com.inter.proyecto_intergrupo.model.admin.User;
 import com.inter.proyecto_intergrupo.model.parametric.*;
 import com.inter.proyecto_intergrupo.repository.admin.AuditRepository;
+import com.inter.proyecto_intergrupo.repository.parametric.CampoRCRepository;
+import com.inter.proyecto_intergrupo.repository.parametric.CampoRConcilRepository;
 import com.inter.proyecto_intergrupo.repository.parametric.ConciliationRouteRepository;
 import com.inter.proyecto_intergrupo.repository.parametric.LogInventoryLoadRepository;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -18,10 +26,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
-import java.io.BufferedWriter;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -45,6 +50,12 @@ public class ConciliationRouteService {
 
     @PersistenceContext
     EntityManager entityManager;
+
+    @Autowired
+    private CampoRConcilRepository campoRConcilRepository;
+
+    @Autowired
+    private CampoRConcilService campoRConcilService;
 
     @Autowired
     private AuditRepository auditRepository;
@@ -99,6 +110,14 @@ public class ConciliationRouteService {
                 "LEFT JOIN  preciso_rutas_conciliaciones b ON a.id_rconcil =b.id\n" +
                 "LEFT JOIN preciso_conciliaciones c on b.id_conciliacion=c.id where b.id = ? order by c.id,b.id");
         query.setParameter(1,id);
+        return query.getResultList();
+    }
+
+    public List<CampoRConcil> findByCamposSelectById(int id,String nombre) {
+        Query query = entityManager.createNativeQuery("SELECT a.* FROM preciso_campos_rconcil a\n" +
+                "LEFT JOIN  preciso_rutas_conciliaciones b ON a.id_rconcil =b.id where b.id = ? and a.nombre = ? ",CampoRConcil.class);
+        query.setParameter(1,id);
+        query.setParameter(2,nombre);
         return query.getResultList();
     }
 
@@ -854,4 +873,183 @@ public class ConciliationRouteService {
             }
         }
     }
+
+    public void loadAudit(User user, String mensaje)
+    {
+        Date today=new Date();
+        Audit insert = new Audit();
+        insert.setAccion(mensaje);
+        insert.setCentro(user.getCentro());
+        insert.setComponente("Rutas Conciliaciones");
+        insert.setFecha(today);
+        insert.setInput("Campos Rutas");
+        insert.setNombre(user.getPrimerNombre());
+        insert.setUsuario(user.getUsuario());
+        auditRepository.save(insert);
+    }
+    public ArrayList<String[]> saveFileBD(InputStream file, User user, String id) throws IOException, InvalidFormatException {
+        ArrayList<String[]> list=new ArrayList<>();
+        if (file!=null)
+        {
+            XSSFWorkbook wb = new XSSFWorkbook(file);
+            XSSFSheet sheet = wb.getSheet("Campos");
+            Iterator<Row> rows = sheet.iterator();
+            list=validarPlantilla(rows,id);
+            if(list.get(0)[2].equals("SUCCESS"))
+                loadAudit(user,"Cargue exitoso plantilla campos");
+            else
+                loadAudit(user,"Cargue Fallido plantilla campos");
+        }
+        return list;
+    }
+
+    public ArrayList<String[]> validarPlantilla(Iterator<Row> rows, String id) {
+        ArrayList<String[]> lista = new ArrayList();
+        ArrayList<CampoRConcil> toInsert = new ArrayList<>();
+        String stateFinal = "SUCCESS";
+        XSSFRow row;
+        List<String> valoresTipo = new ArrayList<>(Arrays.asList("Varchar","Integer","Bigint","Float","Date","Time","DateTime","Bit"));
+        List<String> valoresFormato = new ArrayList<>(Arrays.asList("YYYYMMDD","YYMMDD","DDMMMMYYYY","DDMMYYYY","DDMMYY","MMDDYY"));
+        while (rows.hasNext()) {
+            row = (XSSFRow) rows.next();
+            if (row.getRowNum() > 0) {
+                {
+                    int consecutivo=0;
+                    DataFormatter formatter = new DataFormatter();
+                    String cellCodConciliacion = formatter.formatCellValue(row.getCell(consecutivo++)).trim();
+                    String cellNomConiliacion = formatter.formatCellValue(row.getCell(consecutivo++)).trim();
+                    String cellCodInventario= formatter.formatCellValue(row.getCell(consecutivo++)).trim();
+                    String cellNomInventario = formatter.formatCellValue(row.getCell(consecutivo++)).trim();
+                    String cellCodCampo = formatter.formatCellValue(row.getCell(consecutivo++)).trim();
+                    String cellNomCampo = formatter.formatCellValue(row.getCell(consecutivo++)).trim();
+                    String cellPrimario = formatter.formatCellValue(row.getCell(consecutivo++)).trim();
+                    String cellTipo = formatter.formatCellValue(row.getCell(consecutivo++)).trim();
+                    String cellLongitud = formatter.formatCellValue(row.getCell(consecutivo++)).trim();
+                    String cellVisualizacion = formatter.formatCellValue(row.getCell(consecutivo++)).trim();
+                    String cellNulo = formatter.formatCellValue(row.getCell(consecutivo++)).trim();
+                    String cellSeparador = formatter.formatCellValue(row.getCell(consecutivo++)).trim();
+                    String cellFormato  = formatter.formatCellValue(row.getCell(consecutivo++)).trim();
+
+                    if (cellCodInventario.length() == 0) {
+                        String[] log = new String[3];
+                        log[0] = String.valueOf(row.getRowNum() + 1);
+                        log[1] = CellReference.convertNumToColString(2);
+                        log[2] = "El campo Código Contable no puede estar vacio.";
+                        lista.add(log);
+                    } else if (!cellCodInventario.equalsIgnoreCase(id)) {
+                        String[] log = new String[3];
+                        log[0] = String.valueOf(row.getRowNum() + 1);
+                        log[1] = CellReference.convertNumToColString(2);
+                        log[2] = "El campo Código Contable no corresponde a la ruta contable donde esta intentando realizar el cargue.";
+                        lista.add(log);
+                    }
+                    if (cellNomCampo.length() == 0) {
+                        String[] log = new String[3];
+                        log[0] = String.valueOf(row.getRowNum() + 1);
+                        log[1] = CellReference.convertNumToColString(5);
+                        log[2] = "El campo Nombre Campo no puede estar vacio.";
+                        lista.add(log);
+                    }
+                    if (!cellPrimario.equalsIgnoreCase("Si") && !cellPrimario.equalsIgnoreCase("No") ) {
+                        String[] log = new String[3];
+                        log[0] = String.valueOf(row.getRowNum() + 1);
+                        log[1] = CellReference.convertNumToColString(6);
+                        log[2] = "El campo Primario debe contener un Si o No.";
+                        lista.add(log);
+                    }
+                    if (!valoresTipo.contains(cellTipo)) {
+                        String[] log = new String[3];
+                        log[0] = String.valueOf(row.getRowNum() + 1);
+                        log[1] = CellReference.convertNumToColString(7);
+                        log[2] = "El campo Tipo no se encuentra dentro del listado permitido";
+                        lista.add(log);
+                    }
+                    if (cellLongitud.length() == 0) {
+                        String[] log = new String[3];
+                        log[0] = String.valueOf(row.getRowNum() + 1);
+                        log[1] = CellReference.convertNumToColString(8);
+                        log[2] = "El campo Longitud no puede estar vacio.";
+                        lista.add(log);
+                    }
+                    else {
+                        if(!cellLongitud.equalsIgnoreCase("MAX"))
+                        {
+                            try{
+                                Integer.parseInt(cellLongitud);
+                            }
+                            catch (Exception e){
+                                String[] log = new String[3];
+                                log[0] = String.valueOf(row.getRowNum() + 1);
+                                log[1] = CellReference.convertNumToColString(8);
+                                log[2] = "El campo Longitud debe ser númerico o contenter la palabra MAX.";
+                                lista.add(log);
+                            }
+                        }
+                    }
+                    if (!cellVisualizacion.equalsIgnoreCase("Si") && !cellVisualizacion.equalsIgnoreCase("No") ) {
+                        String[] log = new String[3];
+                        log[0] = String.valueOf(row.getRowNum() + 1);
+                        log[1] = CellReference.convertNumToColString(9);
+                        log[2] = "El campo Primario debe contener un Si o No.";
+                        lista.add(log);
+                    }
+                    if (!cellNulo.equalsIgnoreCase("Si") && !cellNulo.equalsIgnoreCase("No") ) {
+                        String[] log = new String[3];
+                        log[0] = String.valueOf(row.getRowNum() + 1);
+                        log[1] = CellReference.convertNumToColString(10);
+                        log[2] = "El campo Primario debe contener un Si o No.";
+                        lista.add(log);
+                    }
+                    if (cellTipo.equalsIgnoreCase("Date") || cellTipo.equalsIgnoreCase("DateTime")) {
+                        if (cellSeparador.length() == 0) {
+                            String[] log = new String[3];
+                            log[0] = String.valueOf(row.getRowNum() + 1);
+                            log[1] = CellReference.convertNumToColString(11);
+                            log[2] = "El campo Separador no puede estar vacio.";
+                            lista.add(log);
+                        }
+                        if (!valoresFormato.contains(cellFormato)) {
+                            String[] log = new String[3];
+                            log[0] = String.valueOf(row.getRowNum() + 1);
+                            log[1] = CellReference.convertNumToColString(12);
+                            log[2] = "El campo Formato no se encuentra dentro del listado permitido";
+                            lista.add(log);
+                        }
+                    }
+
+
+                    if (lista.isEmpty() && findByCamposSelectById(Integer.parseInt(id),cellNomCampo).isEmpty()) {
+                        CampoRConcil data = new CampoRConcil();
+                        data.setRutaConciliacion(findById(Integer.parseInt(id)));
+                        data.setConciliacion(cellVisualizacion.equalsIgnoreCase("Si"));
+                        data.setTipo(cellTipo);
+                        data.setSeparador(cellSeparador);
+                        data.setPrimario(cellPrimario.equalsIgnoreCase("Si"));
+                        data.setNombre(cellNomCampo);
+                        data.setLongitud(cellLongitud);
+                        data.setIdioma("EspañolColombia");
+                        data.setFormatoFecha(cellFormato);
+                        data.setEstado(true);
+                        toInsert.add(data);
+                    }
+                }
+            }
+        }
+
+        if (lista.size() != 0)
+            stateFinal = "FAILED";
+        String[] log2 = new String[3];
+        log2[0] = String.valueOf((toInsert.size() * 12) - lista.size());
+        log2[1] = String.valueOf(lista.size());
+        log2[2] = stateFinal;
+        lista.add(log2);
+        String[] temp = lista.get(0);
+        if (temp[2].equals("SUCCESS")) {
+            campoRConcilRepository.saveAll(toInsert);
+            campoRConcilService.recreateTable(findById(Integer.parseInt(id)));
+        }
+        toInsert.clear();
+        return lista;
+    }
+
 }

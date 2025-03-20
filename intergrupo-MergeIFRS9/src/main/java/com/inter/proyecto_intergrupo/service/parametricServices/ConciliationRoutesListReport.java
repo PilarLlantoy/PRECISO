@@ -71,7 +71,6 @@ public class ConciliationRoutesListReport {
             createCell(row4, 10,"Nulo", style);
             createCell(row4, 11,"Separador", style);
             createCell(row4, 12,"Formato", style);
-            createCell(row4, 13,"Idioma", style);
         }
 
         if(dataListVal!=null)
@@ -159,7 +158,6 @@ public class ConciliationRoutesListReport {
                 createCell(row,columnCount++,((boolean)data[10] ? "Si":"No"),style);
                 createCell(row,columnCount++,(data[11]!=null && data[7]!=null && data[7].toString().equalsIgnoreCase("Date") ? data[11].toString():""),style);
                 createCell(row,columnCount++,(data[12]!=null && data[7]!=null && data[7].toString().equalsIgnoreCase("Date") ? data[12].toString():""),style);
-                createCell(row,columnCount++,(data[13]!=null && data[7]!=null && data[7].toString().equalsIgnoreCase("Date") ? data[13].toString():""),style);
 
             }
         }

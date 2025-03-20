@@ -888,9 +888,9 @@ public class AccountingRouteService {
         Audit insert = new Audit();
         insert.setAccion(mensaje);
         insert.setCentro(user.getCentro());
-        insert.setComponente("Data Quality");
+        insert.setComponente("Rutas Contables");
         insert.setFecha(today);
-        insert.setInput("Reglas DQ");
+        insert.setInput("Campos Rutas");
         insert.setNombre(user.getPrimerNombre());
         insert.setUsuario(user.getUsuario());
         auditRepository.save(insert);

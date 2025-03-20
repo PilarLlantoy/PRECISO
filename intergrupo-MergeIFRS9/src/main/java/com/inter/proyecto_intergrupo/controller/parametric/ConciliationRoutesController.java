@@ -20,8 +20,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
@@ -93,6 +96,44 @@ public class ConciliationRoutesController {
             modelAndView.setViewName("admin/errorMenu");
         }
         return modelAndView;
+    }
+
+    @PostMapping(value="/parametric/conciliationRoutes")
+    public ModelAndView uploadFile(HttpServletRequest request, HttpServletResponse response, @RequestParam Map<String, Object> params){
+        ModelAndView modelAndView = new ModelAndView("redirect:/parametric/fieldLoadingConciliationRoute/{id}");
+        response.setContentType("application/octet-stream");
+        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+        String currentDateTime = dateFormatter.format(new Date());
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findUserByUserName(auth.getName());
+
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=Log_Cargue_" + currentDateTime + ".xlsx";
+        response.setHeader(headerKey, headerValue);
+        try {
+            Part filePart = request.getPart("file");
+            InputStream fileContent = filePart.getInputStream();
+            ArrayList<String[]> list = conciliationRouteService.saveFileBD(fileContent,user,params.get("id").toString());
+            String[] part = list.get(0);
+
+            if(part[2].equals("SUCCESS")){
+                modelAndView.addObject("resp", "AddRep1");
+                modelAndView.addObject("row", part[0]);
+                modelAndView.addObject("colum", part[1]);
+            }
+            else{
+                GeneralListReport generalListReport = new GeneralListReport(list);
+                generalListReport.exportLog(response);
+            }
+
+        }catch(Exception e){
+            e.printStackTrace();
+            modelAndView.addObject("resp", "PC-1");
+        }
+        modelAndView.addObject("page1", params.get("page1").toString());
+        modelAndView.addObject("id", params.get("id").toString());
+        return  modelAndView;
     }
 
     @GetMapping(value = "/parametric/searchConciliationRoutes")
