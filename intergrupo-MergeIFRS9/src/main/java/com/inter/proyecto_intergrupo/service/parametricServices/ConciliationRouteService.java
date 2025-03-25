@@ -342,6 +342,14 @@ public class ConciliationRouteService {
         return querySelect.getResultList();
     }
 
+    public List<ConciliationRoute> findByJobNotLoad(String fecha) {
+        String sql = "SELECT a.* FROM (select * from preciso_rutas_conciliaciones WHERE activo = 1) a\n" +
+                "left join (select idcr,estado_proceso from preciso_log_cargues_inventarios where fecha_cargue like '"+fecha+"%' group by idcr,estado_proceso) b on a.id = b.idcr\n" +
+                "where b.idcr is null ";
+        Query querySelect = entityManager.createNativeQuery(sql, ConciliationRoute.class);
+        return querySelect.getResultList();
+    }
+
     public void importXlsx(ConciliationRoute data, String ruta,String fecha, String fuente) throws PersistenceException, IOException {
         String fichero=ensureTrailingSlash(data.getRuta()) + data.getNombreArchivo() +"."+ data.getTipoArchivo();
         if(data.isSiglasFechas()){
@@ -805,6 +813,47 @@ public class ConciliationRouteService {
         String fecha = fechaHoy.format(formato);
 
         List<ConciliationRoute> list = findByJob();
+        for (ConciliationRoute cr :list)
+        {
+            try {;
+                createTableTemporal(cr);
+                generarArchivoFormato(getCamposRcon(cr), rutaArchivoFormato);
+                if(cr.getTipoArchivo().equalsIgnoreCase("XLS") || cr.getTipoArchivo().equalsIgnoreCase("XLSX"))
+                    importXlsx(cr,rutaArchivoFormato,fecha,null);
+                else
+                    bulkImport(cr,rutaArchivoFormato,fecha,null);
+                validationData(cr);
+                copyData(cr,fecha);
+
+                if(findAllDataValidationA(cr,fecha)) {
+                    loadLogCargue(null, cr, fecha, "Automático", "Exitoso", "");
+                }
+                else if(findAllDataTemporalA(cr,fecha)) {
+                    loadLogCargue(null, cr, fecha, "Automático", "Fallido", "La ruta "+cr.getRuta()+" es inaccesible. (El sistema no puede encontrar el archivo especificado)");
+                }
+                else {
+                    loadLogCargue(null, cr, fecha, "Automático", "Fallido", "Valide el formato de los campos de tipo Float y Bigint");
+                }
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+                Throwable rootCause = e;
+                while (rootCause.getCause() != null) {
+                    rootCause = rootCause.getCause(); // Navega a la causa raíz
+                }
+                loadLogCargue(null,cr,fecha,"Automático","Fallido",rootCause.getMessage());
+            }
+        }
+    }
+
+    @Scheduled(cron = "0 45 23 * * ?")
+    public void jobEjectutarDiariosFaltantes() {
+        LocalDateTime fechaHoy = LocalDateTime.now();
+        fechaHoy = fechaHoy.minusDays(1);
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String fecha = fechaHoy.format(formato);
+
+        List<ConciliationRoute> list = findByJobNotLoad(fecha);
         for (ConciliationRoute cr :list)
         {
             try {;
