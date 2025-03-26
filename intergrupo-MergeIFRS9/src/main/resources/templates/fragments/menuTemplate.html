@@ -1336,8 +1336,18 @@
         </div>
         <ul class="nav_links">
             <li>
+                <a th:href="@{/parametric/cuadroMandoInvAndCont?tab=contables(period=${#dates.format(#dates.createNow(), 'yyyy-MM-dd')},period2=${#dates.format(#dates.createNow(), 'yyyy-MM-dd')})}">
+                    <span class="links_name">Cuadro Mando Contables</span>
+                </a>
+            </li>
+            <li>
                 <a th:href="@{/parametric/cuadroMandoInvAndCont(period=${#dates.format(#dates.createNow(), 'yyyy-MM-dd')},period2=${#dates.format(#dates.createNow(), 'yyyy-MM-dd')})}">
                     <span class="links_name">Cuadro Mando Inventarios</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/parametric/cuadroMandoCru(period=${#dates.format(#dates.createNow(), 'yyyy-MM-dd')})}">
+                    <span class="links_name">Cuadro Mando Cruces</span>
                 </a>
             </li>
             <li>

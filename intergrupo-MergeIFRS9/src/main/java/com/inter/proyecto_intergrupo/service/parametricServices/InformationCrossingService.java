@@ -633,5 +633,47 @@ public class InformationCrossingService {
         return query.getResultList();
     }
 
+    public List<Object[]> findAllLogByDate(String fecha) {
+        Query query = entityManager.createNativeQuery(
+                "WITH CTE AS (\n" +
+                        "SELECT \n" +
+                        "    id_lci,\n" +
+                        "    estado_proceso,\n" +
+                        "    fecha_proceso,\n" +
+                        "    fecha_preciso,\n" +
+                        "    novedad,\n" +
+                        "    tipo_proceso,\n" +
+                        "    usuario,\n" +
+                        "    id_conciliacion,\n" +
+                        "    id_evento,\n" +
+                        "    COUNT(*) OVER (PARTITION BY fecha_proceso, id_conciliacion,id_evento) AS total_intentos,\n" +
+                        "    ROW_NUMBER() OVER (PARTITION BY fecha_proceso, id_conciliacion,id_evento ORDER BY fecha_preciso DESC) AS row_num\n" +
+                        "FROM \n" +
+                        "    PRECISO.dbo.preciso_log_cruce_informacion\n" +
+                        "WHERE fecha_proceso like ? \n" +
+                        ")\n" +
+                        "SELECT a.id_lci,\n" +
+                        "b.nombre,\n" +
+                        "'' as nulo,\n" +
+                        "d.nombre_tipo_evento,\n" +
+                        "a.fecha_proceso,\n" +
+                        "a.novedad,\n" +
+                        "a.fecha_preciso,\n" +
+                        "a.usuario,\n" +
+                        "a.tipo_proceso,\n" +
+                        "a.estado_proceso,\n" +
+                        "a.total_intentos,\n" +
+                        "a.id_conciliacion,\n" +
+                        "a.id_evento     \n" +
+                        "FROM CTE a \n" +
+                        "left join preciso_conciliaciones b on a.id_conciliacion =b.id\n" +
+                        "left join preciso_tipo_evento d on a.id_evento =d.id_tipo_evento\n" +
+                        "WHERE row_num = 1\n" +
+                        "ORDER BY \n" +
+                        "a.fecha_proceso, a.id_conciliacion,a.id_evento;");
+        query.setParameter(1, fecha+"%");
+        return query.getResultList();
+    }
+
 
 }
