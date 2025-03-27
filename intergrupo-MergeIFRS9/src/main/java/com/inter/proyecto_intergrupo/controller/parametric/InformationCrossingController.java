@@ -193,7 +193,6 @@ public class InformationCrossingController {
 
         //VALIDAR QUE LOS INVENTARIOS ESTEN SUBIDOS
         List<ConciliationRoute> listRoutes = conciliationRouteService.getRoutesByConciliation(id); //RUTAS CONCILIACIONES
-        System.out.println(listRoutes.size());
         List<Object[]> croutes = new ArrayList<>();
         List<String> faltaCarga = new ArrayList<>();
 

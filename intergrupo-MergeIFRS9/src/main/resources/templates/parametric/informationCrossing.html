@@ -239,6 +239,7 @@
 
     async function toggleConciliacion() {
         const concilID = document.getElementById('arhcont').value;
+        const event = document.getElementById('evento').value;
         const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
         const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
 
@@ -261,6 +262,8 @@
                 const option = document.createElement('option');
                 option.value = campo[0];
                 option.text = campo[1];
+                if (campo[0] == event)
+                    option.selected = true;
                 evento.appendChild(option);
             });
 
@@ -531,6 +534,10 @@
                 alert("Error al descargar el archivo: " + error.message);
             });
     }
+    window.onload = function() {
+        toggleConciliacion();
+    };
+
 
 </script>
 </body>

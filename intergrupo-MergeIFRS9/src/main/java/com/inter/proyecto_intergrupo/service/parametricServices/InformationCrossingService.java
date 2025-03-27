@@ -447,10 +447,10 @@ public class InformationCrossingService {
                 if (obj[2].equals("menorIgualQue")) operacion = " <= '" + obj[3].toString() + "'";
 
                 // Agrupa: se usará una expresión REGEXP para buscar múltiples valores
-                if (obj[2].equals("agrupa")) operacion = " REGEXP '" + obj[3].toString().replace(",", "|") + "'";
+                if (obj[2].equals("agrupa")) operacion = " LIKE '%" + obj[3].toString() + "%'";
 
                 // No Agrupa: Se niega la expresión REGEXP
-                if (obj[2].equals("noAgrupa")) operacion = " NOT REGEXP '" + obj[3].toString().replace(",", "|") + "'";
+                if (obj[2].equals("noAgrupa")) operacion = " NOT LIKE '%" + obj[3].toString() + "%'";
 
                 condicion = condicion + obj[1] + operacion;
             }
