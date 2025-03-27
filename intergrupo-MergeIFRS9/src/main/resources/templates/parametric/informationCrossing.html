@@ -94,6 +94,10 @@
                                     data-target="#confirmarModal"
                                     th:onclick="|validarYSubir()|" type="button">Confirmar Cruce</button>
                         </div>
+                        <div class="mt-1 mx-1" style="padding-left:0px">
+                            <a type="button" class="btn btn-primary btn-sm" th:if="${period != null }" th:href="@{'/parametric/cuadroMandoCru?period=' + ${period}}">Ir a Cuadro</a>
+                            <button type="button" class="btn btn-primary btn-sm" th:if="${period == null }" disabled >Ir a Cuadro</button>
+                        </div>
                     </div>
                 </div>
 

@@ -356,6 +356,12 @@ public class ConciliationService {
         queryInsert.executeUpdate();  // Esto inserta los registros en la tabla
     }
 
+    public List<Object[]> generarTablaNovedades(int concilId, String fecha, int tipoEventoId) {
+
+        return null;
+
+    }
+
     public List<Object[]> generarTablaCruceCompleto_x_Conciliacion(int concilId, String fecha, int tipoEventoId) {
         System.out.println("ESTAMOS RECREANDO LA TABLA PARA LA COMBINACION EN EL CRUCE");
         Conciliation conciliacion = findById(concilId);

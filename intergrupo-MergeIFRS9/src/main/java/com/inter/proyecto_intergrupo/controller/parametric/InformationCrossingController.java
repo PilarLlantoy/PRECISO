@@ -272,6 +272,7 @@ public class InformationCrossingController {
 
             //SE LOGRO EL CRUCE
             conciliationService.generarTablaCruceCompleto_x_Conciliacion(id, fecha, evento);
+            conciliationService.generarTablaNovedades(id, fecha, evento);
             informationCrossingService.loadLogInformationCrossing(user, id, evento, fecha, "Generar Cuentas", "Exitoso", "");
             return ResponseEntity.ok("Bulk->1");
         }
