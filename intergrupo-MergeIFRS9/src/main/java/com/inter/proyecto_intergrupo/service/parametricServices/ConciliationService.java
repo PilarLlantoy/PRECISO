@@ -417,14 +417,14 @@ public class ConciliationService {
                     .append("SELECT INVENTARIO, ID_INVENTARIO, FECHA_CONCILIACION, CENTRO_CONTABLE, TIPO_EVENTO, CDGO_MATRIZ_EVENTO, CUENTA_CONTABLE_1 AS CUENTA_CONTABLE, ")
                     .append("DIVISA_CUENTA_1 AS DIVISA_CUENTA, SUM(VALOR_CUENTA_1) AS TOTAL_VALOR_CUENTA ")
                     .append("FROM ").append(nombreTablaRuta).append(" ")
-                    .append("WHERE FECHA_CONCILIACION = '").append(fecha).append("' ")
+                    .append("WHERE FECHA_CONCILIACION = '").append(fecha).append("' AND CUENTA_CONTABLE_1 IS NOT NULL ")
                     .append("GROUP BY INVENTARIO, ID_INVENTARIO, FECHA_CONCILIACION, CENTRO_CONTABLE, TIPO_EVENTO, CDGO_MATRIZ_EVENTO, CUENTA_CONTABLE_1, DIVISA_CUENTA_1; ");
 
             queryBuilder.append("INSERT INTO ").append(nombreTabla).append(" (INVENTARIO, ID_INVENTARIO, FECHA_CONCILIACION, CENTRO_CONTABLE, TIPO_EVENTO, CDGO_MATRIZ_EVENTO, CUENTA_CONTABLE, DIVISA_CUENTA, TOTAL_VALOR_CUENTA) ")
                     .append("SELECT INVENTARIO, ID_INVENTARIO, FECHA_CONCILIACION, CENTRO_CONTABLE, TIPO_EVENTO, CDGO_MATRIZ_EVENTO, CUENTA_CONTABLE_2 AS CUENTA_CONTABLE, ")
                     .append("DIVISA_CUENTA_2 AS DIVISA_CUENTA, SUM(VALOR_CUENTA_2) AS TOTAL_VALOR_CUENTA ")
                     .append("FROM ").append(nombreTablaRuta).append(" ")
-                    .append("WHERE FECHA_CONCILIACION = '").append(fecha).append("' ")
+                    .append("WHERE FECHA_CONCILIACION = '").append(fecha).append("' AND CUENTA_CONTABLE_2 IS NOT NULL ")
                     .append("GROUP BY INVENTARIO, ID_INVENTARIO, FECHA_CONCILIACION, CENTRO_CONTABLE, TIPO_EVENTO, CDGO_MATRIZ_EVENTO, CUENTA_CONTABLE_2, DIVISA_CUENTA_2; ");
 
             // Ejecutar la consulta de inserción
