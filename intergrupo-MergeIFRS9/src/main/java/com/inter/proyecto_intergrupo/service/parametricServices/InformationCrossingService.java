@@ -321,7 +321,7 @@ public class InformationCrossingService {
             valorCuenta1 = cuenta1.getCampoValorCuenta().getNombre();
         else if (cuenta1 != null)
             valorCuenta1 = cuenta1.getCampoValorOp1().getNombre() + " " + operacionSimbolo(cuenta1.getOperacion()) + " " +
-                    (cuenta1.getCampoValorOp2() != null ? cuenta1.getCampoValorOp2() : cuenta1.getValorOp2());
+                    (cuenta1.getCampoValorOp2() != null ? cuenta1.getCampoValorOp2().getNombre() : cuenta1.getValorOp2());
 
         // Aplicar ABS si cuenta1.isValorAbsoluto() es true
         if (cuenta1 != null && cuenta1.isValorAbsoluto()) {
@@ -333,7 +333,7 @@ public class InformationCrossingService {
             valorCuenta2 = cuenta2.getCampoValorCuenta().getNombre();
         else if (cuenta2 != null)
             valorCuenta2 = cuenta2.getCampoValorOp1().getNombre() + " " + operacionSimbolo(cuenta2.getOperacion()) + " " +
-                    (cuenta2.getCampoValorOp2() != null ? cuenta2.getCampoValorOp2() : cuenta2.getValorOp2());
+                    (cuenta2.getCampoValorOp2() != null ? cuenta2.getCampoValorOp2().getNombre() : cuenta2.getValorOp2());
 
         // Aplicar ABS si cuenta2.isValorAbsoluto() es true
         if (cuenta2 != null && cuenta2.isValorAbsoluto()) {

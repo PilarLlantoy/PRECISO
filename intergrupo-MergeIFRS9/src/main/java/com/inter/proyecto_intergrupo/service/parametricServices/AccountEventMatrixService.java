@@ -51,6 +51,7 @@ public class AccountEventMatrixService {
     }
 
     public AccountEventMatrix findByMatrizEventoTipo2(EventMatrix matriz){
+        System.out.println("Es esta ----------------------------------------------------------");
         return accountEventMatrixRepository.findByMatrizEventoAndTipo(matriz, "2");
     }
 
