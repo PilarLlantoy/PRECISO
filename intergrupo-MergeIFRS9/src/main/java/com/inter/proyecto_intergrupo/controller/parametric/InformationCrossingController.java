@@ -311,12 +311,13 @@ public class InformationCrossingController {
     public void exportToExcel(HttpServletResponse response, @RequestParam(defaultValue = "0") String id, @RequestParam(defaultValue = "0") String fecha, @RequestParam(defaultValue = "0") String evento) throws IOException {
         response.setContentType("application/octet-stream");
         Conciliation cr = conciliationService.findById(Integer.parseInt(id));
-        EventType eventType = eventTypeService.findAllById(Integer.parseInt(id));
+        EventType eventType = eventTypeService.findAllById(Integer.parseInt(evento));
         DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
         String currentDateTime = dateFormatter.format(new Date());
         String headerKey = "Content-Disposition";
         String headerValue = "attachment; filename="+cr.getNombre().replace(" ","_") + currentDateTime + ".xlsx";
         response.setHeader(headerKey, headerValue);
+        System.out.println(eventType);
         List<Object[]> croutes = informationCrossingService.findAllData(cr,fecha,eventType);
         List<String> colConcil = Arrays.asList("FECHA_CONCILIACIÓN","CENTRO_CONTABLE","CUENTA_CONTABLE","DIVISA","TOTAL");
         InformationCrossingListReport listReport = new InformationCrossingListReport(croutes,colConcil,cr,null);
