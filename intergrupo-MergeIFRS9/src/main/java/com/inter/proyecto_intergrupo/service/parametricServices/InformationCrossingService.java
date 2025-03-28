@@ -21,7 +21,9 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -97,6 +99,14 @@ public class InformationCrossingService {
             e.printStackTrace();
         }
         return listTemp;
+    }
+
+    public List<Object[]> findByJob(String fecha) {
+        String sql = "select a.fecha_conciliacion, a.codigo_conciliacion,b.id_tipo_evento\n" +
+                "from (select fecha_conciliacion,codigo_conciliacion from preciso_maestro_inventarios where fecha_conciliacion like '"+fecha+"%') a\n" +
+                "inner join (select id_conciliacion,id_tipo_evento from preciso_matriz_eventos) b on a.codigo_conciliacion = b.id_conciliacion";
+        Query querySelect = entityManager.createNativeQuery(sql);
+        return querySelect.getResultList();
     }
 
     public void loadLogCargue(User user, int idConcil, String fecha, String tipo, String estado, String mensaje) {

@@ -1,5 +1,6 @@
 package com.inter.proyecto_intergrupo.controller.parametric;
 import com.inter.proyecto_intergrupo.model.admin.Cargo;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.inter.proyecto_intergrupo.model.admin.User;
@@ -36,6 +37,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import static com.inter.proyecto_intergrupo.controller.parametric.AccountingLoadController.rutaArchivoFormato;
 
 @Controller
 @EnableScheduling
@@ -286,6 +289,79 @@ public class InformationCrossingController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk->2");
         }
 
+    }
+
+    @Scheduled(cron = "0 25 15 * * ?")
+    public void processJob()  {
+
+        LocalDateTime fechaHoy = LocalDateTime.now();
+        fechaHoy = fechaHoy.minusDays(1);
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String fecha = fechaHoy.format(formato);
+        List<Object[]> list = informationCrossingService.findByJob(fecha);
+        for (Object[] valor :list) {
+            int id = (int)valor[1];
+            int evento = (int)valor[2];
+            EventType tipoEvento = eventTypeService.findAllById(evento);
+
+            //VALIDAR QUE LOS INVENTARIOS ESTEN SUBIDOS
+            List<ConciliationRoute> listRoutes = conciliationRouteService.getRoutesByConciliation(id); //RUTAS CONCILIACIONES
+            List<Object[]> croutes = new ArrayList<>();
+            List<String> faltaCarga = new ArrayList<>();
+
+
+            List<LogInventoryLoad> logConcilroutes = new ArrayList<>();
+            try {
+                //GENERAR CRUCE DE INVENTARIO
+                //-----------------------------------------------------------------------------------
+                for (ConciliationRoute ruta : listRoutes) {
+
+                    List<EventMatrix> matrices = eventMatrixService.findByConciliationxInventarioxTipoEvento(id, ruta.getId(), evento);
+                    //Creamos tablas temporales con la data total
+                    informationCrossingService.creatTablaTemporalCruce(ruta, fecha);
+
+                    for (EventMatrix matriz : matrices) {
+                        if(matriz.isEstado()){ //SOLO LAS MATRICES ACTIVAS
+                            //Primero veremos las condiciones
+                            List<CondicionEventMatrix> condiciones = condicionMEService.findByMatrizEvento(matriz);
+                            String condicion = null;
+                            if (condiciones.size() != 0)
+                                condicion = informationCrossingService.conditionData(ruta, matriz);
+
+                            //Completamos informacion de cruce
+                            AccountEventMatrix cuenta1 = accountEventMatrixService.findByMatrizEventoTipo1(matriz);
+                            AccountEventMatrix cuenta2 = accountEventMatrixService.findByMatrizEventoTipo2(matriz);
+                            informationCrossingService.completarTablaCruce(ruta, fecha, tipoEvento, matriz, cuenta1, cuenta2, condicion);
+
+                            //Realizamos las validaciones
+                            List<ValidationME> validaciones = validationMEService.findByEventMatrix(matriz);
+                            if (validaciones.size() != 0)
+                                informationCrossingService.validationData(ruta, matriz, condicion);
+                        }
+
+                    }
+
+                    //Agregamos estos registros a la tabla final
+                    //Creamos las tablas finales vacias de cada inventario con los campos agregados
+                    informationCrossingService.recreateTable(ruta, id, fecha,tipoEvento);
+                    System.out.println("RUTA CONCILIACION "+ruta.getDetalle());
+
+                }
+
+                //SE LOGRO EL CRUCE
+                conciliationService.generarTablaCruceCompleto_x_Conciliacion(id, fecha, evento);
+                conciliationService.generarTablaNovedades(listRoutes, fecha, tipoEvento);
+                informationCrossingService.loadLogInformationCrossing(null, id, evento, fecha, "Generar Cuentas", "Exitoso", "");
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+                Throwable rootCause = e;
+                while (rootCause.getCause() != null) {
+                    rootCause = rootCause.getCause(); // Navega a la causa raíz
+                }
+                informationCrossingService.loadLogInformationCrossing(null, id, evento, fecha, "Generar Cuentas", "Fallido",rootCause.getMessage());
+            }
+        }
     }
 
     @PostMapping(value = "/parametric/confirmarParaConciliacion/{id}")
