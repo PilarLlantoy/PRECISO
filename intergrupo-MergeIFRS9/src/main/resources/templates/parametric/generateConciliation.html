@@ -54,44 +54,52 @@
                         <input type="hidden" id="period2Hidden" name="period2" />
 
                         <div class="d-grid gap-2 col-3 mt-1" style="padding-left:0px">
-                            <button type="submit" class="btn btn-primary">Buscar</button>
+                            <button type="submit" class="btn btn-primary btn-sm">Buscar</button>
                         </div>
                     </form>
                 </div>
                 <div class="contend">
                     <h2>Opciones</h2>
                     <div>
-                        <div class="d-grid gap-2 col-3 mt-1" style="padding-left:0px">
-                            <button th:disabled="${!p_modificar}" class="btn btn-primary"
-                                    th:onclick="|generarConciliacion()|" type="button">Generar Conciliacion</button>
+                        <div class="d-flex">
+                            <div class="mt-1" style="padding-left:0px">
+                                <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm"
+                                        th:onclick="|generarConciliacion()|" type="button">Generar Conciliacion</button>
+                            </div>
+                            <div class="mt-1 mx-1" style="padding-left:0px">
+                                <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm"
+                                        th:onclick="|exportarConsolidado()|" type="button">Exportar Agrupado</button>
+                            </div>
                         </div>
-                        <div class="d-grid gap-2 col-3 mt-1" style="padding-left:0px">
-                            <button th:disabled="${!p_modificar}" class="btn btn-primary"
-                                    th:onclick="|exportarConsolidado()|" type="button">Exportar Agrupado</button>
+                        <div class="d-flex">
+                            <div class="mt-1" style="padding-left:0px">
+                                <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm"
+                                        th:onclick="|exportarDetallado()|" type="button">Exportar Conciliacion</button>
+                            </div>
+                            <div class="mt-1 mx-1" style="padding-left:0px">
+                                <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm"
+                                        th:onclick="|exportarDetallado()|" type="button">Confirmar Conciliacion</button>
+                            </div>
                         </div>
-                        <div class="d-grid gap-2 col-3 mt-1" style="padding-left:0px">
-                            <button th:disabled="${!p_modificar}" class="btn btn-primary"
-                                    th:onclick="|exportarDetallado()|" type="button">Exportar Conciliacion</button>
+                        <div class="d-flex">
+                            <div class="mt-1" style="padding-left:0px">
+                                <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm"
+                                        th:onclick="|exportarNovedades()|" type="button">Reanudar Proceso</button>
+                            </div>
+                            <div class="mt-1 mx-1" style="padding-left:0px">
+                                <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm"
+                                        th:onclick="|confirmarConciliacion()|" type="button">Confirmar Ajuste</button>
+                            </div>
                         </div>
-                        <div class="d-grid gap-2 col-3 mt-1" style="padding-left:0px">
-                            <button th:disabled="${!p_modificar}" class="btn btn-primary"
-                                    th:onclick="|exportarDetallado()|" type="button">Confirmar Conciliacion</button>
-                        </div>
-                        <div class="d-grid gap-2 col-3 mt-1" style="padding-left:0px">
-                            <button th:disabled="${!p_modificar}" class="btn btn-primary"
-                                    th:onclick="|exportarNovedades()|" type="button">Reanudar Proceso</button>
-                        </div>
-                        <div class="d-grid gap-2 col-3 mt-1" style="padding-left:0px">
-                            <button th:disabled="${!p_modificar}" class="btn btn-primary"
-                                    th:onclick="|confirmarConciliacion()|" type="button">Confirmar Ajuste</button>
-                        </div>
-                        <div class="d-grid gap-2 col-3 mt-1" style="padding-left:0px">
-                            <button th:disabled="${!p_modificar}" class="btn btn-primary"
-                                    th:onclick="|reanudarProceso()|" type="button">Reabrir Ajuste</button>
-                        </div>
-                        <div class="d-grid gap-2 col-3 mt-1" style="padding-left:0px">
-                            <button th:disabled="${!p_modificar}" class="btn btn-primary"
-                                    th:onclick="|reanudarProceso()|" type="button">Volver a Cuadro</button>
+                        <div class="d-flex">
+                            <div class="mt-1" style="padding-left:0px">
+                                <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm"
+                                        th:onclick="|reanudarProceso()|" type="button">Reabrir Ajuste</button>
+                            </div>
+                            <div class="mt-1 mx-1" style="padding-left:0px">
+                                <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm"
+                                        th:onclick="|reanudarProceso()|" type="button">Volver a Cuadro</button>
+                            </div>
                         </div>
                         <!--
                         <div class="d-grid gap-2 col-3 mt-1" style="padding-left:0px">
