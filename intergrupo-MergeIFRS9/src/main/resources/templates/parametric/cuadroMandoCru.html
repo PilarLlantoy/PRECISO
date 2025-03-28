@@ -111,7 +111,7 @@
                                     <td th:if="${rc[9] == 'Exitoso'}"><i class="fa fa-check-circle fa-2x text-success"></i></td>
                                     <td th:if="${rc[9] == 'Fallido'}"><i class="fa fa-times-circle fa-2x text-danger"></i></td>
                                     <td th:text="${rc[10]}"></td>
-                                    <td><input type="checkbox" class="process-checkbox" th:if="${rc[9] == 'Fallido'}" th:value="${rc[11]+'|'+rc[12]}"></td>
+                                    <td><input type="checkbox" class="process-checkbox" th:value="${rc[11]+'|'+rc[12]}"></td>
                                     <td>
                                         <a th:href="@{'/parametric/informationCrossing?evento=' + ${rc[12]} + '&arhcont=' + ${rc[11]} + '&period=' + ${period}}"
                                            class="btn btn-primary btn-sm">Seleccionar</a>

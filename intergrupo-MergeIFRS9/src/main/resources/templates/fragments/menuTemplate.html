@@ -1307,7 +1307,7 @@
         <ul class="nav_links">
             <li>
                 <a id="btnCruceInformacion">
-                    <span class="links_name">Cruce Información</span>
+                    <span class="links_name">Cuadro Mandos</span>
                     <i class='bx bxs-right-arrow'></i>
                 </a>
             </li>
@@ -1332,27 +1332,23 @@
 
     <div class="submenu" id="infoCruceInformacion">
         <div class="name">
-            <h3>Cruce Información</h3>
+            <h3>Cuadro Mandos</h3>
         </div>
         <ul class="nav_links">
             <li>
-                <a th:href="@{/parametric/cuadroMandoInvAndCont?tab=contables(period=${#dates.format(#dates.createNow(), 'yyyy-MM-dd')},period2=${#dates.format(#dates.createNow(), 'yyyy-MM-dd')})}">
-                    <span class="links_name">Cuadro Mando Contables</span>
-                </a>
-            </li>
-            <li>
                 <a th:href="@{/parametric/cuadroMandoInvAndCont(period=${#dates.format(#dates.createNow(), 'yyyy-MM-dd')},period2=${#dates.format(#dates.createNow(), 'yyyy-MM-dd')})}">
-                    <span class="links_name">Cuadro Mando Inventarios</span>
+                    <span class="links_name">Cuadro Inventarios</span>
                 </a>
             </li>
             <li>
                 <a th:href="@{/parametric/cuadroMandoCru(period=${#dates.format(#dates.createNow(), 'yyyy-MM-dd')})}">
-                    <span class="links_name">Cuadro Mando Cruces</span>
+                    <span class="links_name">Cuadro Cruces Información</span>
                 </a>
             </li>
             <li>
-                <a th:href="@{/parametric/informationCrossing}">
-                    <span class="links_name">Cruce Información</span>
+                <!--<a th:href="@{/parametric/cuadroMandoCru(period=${#dates.format(#dates.createNow(), 'yyyy-MM-dd')})}">-->
+                <a>
+                    <span class="links_name">Cuadro Conciliaciones</span>
                 </a>
             </li>
         </ul>
@@ -1363,6 +1359,11 @@
             <h3>Proceso Conciliaciones</h3>
         </div>
         <ul class="nav_links">
+            <li>
+                <a th:href="@{/parametric/informationCrossing}">
+                    <span class="links_name">Cruce Información</span>
+                </a>
+            </li>
             <li>
                 <a th:href="@{/parametric/generateConciliation}">
                     <span class="links_name">Generar Conciliación</span>

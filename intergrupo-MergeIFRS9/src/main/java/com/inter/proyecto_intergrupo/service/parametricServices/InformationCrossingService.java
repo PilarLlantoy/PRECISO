@@ -80,10 +80,6 @@ public class InformationCrossingService {
         insert.setTipoProceso(tipo);
         insert.setNovedad(mensaje);
         insert.setEstadoProceso(estado);
-        if(user!=null)
-            insert.setUsuario(user.getUsuario());
-        else
-            insert.setUsuario("Automático");
         Conciliation conciliation = conciliationService.findById(concil);
         insert.setIdConciliacion(conciliation);
         EventType evento = eventTypeService.findAllById(event);
@@ -126,7 +122,7 @@ public class InformationCrossingService {
         logInformationCrossingRepository.save(insert);
     }
 
-    public void recreateTable(ConciliationRoute data, int idConcil,String fecha) {
+    public void recreateTable(ConciliationRoute data, int idConcil,String fecha,EventType tipoEvento) {
         //System.out.println("CREANDO LA TABLA FINAL DE ESE INVENTARIO");
         //System.out.println("#############################");
 
@@ -151,23 +147,23 @@ public class InformationCrossingService {
         }
         if (!data.getCampos().isEmpty())
             createTableQuery+=(", ");
-        createTableQuery+=("INVENTARIO VARCHAR(MAX), ")
-                +("ID_INVENTARIO INT, ")
-                +("FECHA_CONCILIACION DATE, ")
-                +("TIPO_EVENTO VARCHAR(MAX), ")
-                +("CDGO_MATRIZ_EVENTO INT, ")
-                +("CENTRO_CONTABLE VARCHAR(MAX), ")
-                +("CUENTA_CONTABLE_1 VARCHAR(MAX), ")
-                +("DIVISA_CUENTA_1 VARCHAR(MAX), ")
-                +("VALOR_CUENTA_1 FLOAT, ")
-                +("CUENTA_CONTABLE_2 VARCHAR(MAX), ")
-                +("DIVISA_CUENTA_2 VARCHAR(MAX), ")
-                +("VALOR_CUENTA_2 FLOAT");
+        createTableQuery+=("INVENTARIO_PRECISOKEY VARCHAR(MAX), ")
+                +("ID_INVENTARIO_PRECISOKEY INT, ")
+                +("FECHA_CONCILIACION_PRECISOKEY DATE, ")
+                +("TIPO_EVENTO_PRECISOKEY VARCHAR(MAX), ")
+                +("CDGO_MATRIZ_EVENTO_PRECISOKEY INT, ")
+                +("CENTRO_CONTABLE_PRECISOKEY VARCHAR(MAX), ")
+                +("CUENTA_CONTABLE_1_PRECISOKEY VARCHAR(MAX), ")
+                +("DIVISA_CUENTA_1_PRECISOKEY VARCHAR(MAX), ")
+                +("VALOR_CUENTA_1_PRECISOKEY FLOAT, ")
+                +("CUENTA_CONTABLE_2_PRECISOKEY VARCHAR(MAX), ")
+                +("DIVISA_CUENTA_2_PRECISOKEY VARCHAR(MAX), ")
+                +("VALOR_CUENTA_2_PRECISOKEY FLOAT");
         createTableQuery+=("); END;");
 
         // PASO 2.
         // Eliminar los registros de la fecha del cruce
-        String deleteQuery = "DELETE FROM " + tableName + " WHERE FECHA_CONCILIACION = :fechaConciliacion";
+        String deleteQuery = "DELETE FROM " + tableName + " WHERE FECHA_CONCILIACION_PRECISOKEY = :fechaConciliacion";
 
         // PASO 3.
         // Insertar registros desde "preciso_rc_<data.getId()>" a la nueva tabla de esa fecha
@@ -178,18 +174,18 @@ public class InformationCrossingService {
             if (i < data.getCampos().size() - 1)
                 insertDataQuery+=", ";
         }
-        insertDataQuery+=(", INVENTARIO, ")
-                +("ID_INVENTARIO, ")
-                +("FECHA_CONCILIACION, ")
-                +("TIPO_EVENTO, ")
-                +("CDGO_MATRIZ_EVENTO, ")
-                +("CENTRO_CONTABLE, ")
-                +("CUENTA_CONTABLE_1, ")
-                +("DIVISA_CUENTA_1, ")
-                +("VALOR_CUENTA_1, ")
-                +("CUENTA_CONTABLE_2, ")
-                +("DIVISA_CUENTA_2, ")
-                +("VALOR_CUENTA_2");
+        insertDataQuery+=(", INVENTARIO_PRECISOKEY, ")
+                +("ID_INVENTARIO_PRECISOKEY, ")
+                +("FECHA_CONCILIACION_PRECISOKEY, ")
+                +("TIPO_EVENTO_PRECISOKEY, ")
+                +("CDGO_MATRIZ_EVENTO_PRECISOKEY, ")
+                +("CENTRO_CONTABLE_PRECISOKEY, ")
+                +("CUENTA_CONTABLE_1_PRECISOKEY, ")
+                +("DIVISA_CUENTA_1_PRECISOKEY, ")
+                +("VALOR_CUENTA_1_PRECISOKEY, ")
+                +("CUENTA_CONTABLE_2_PRECISOKEY, ")
+                +("DIVISA_CUENTA_2_PRECISOKEY, ")
+                +("VALOR_CUENTA_2_PRECISOKEY");
         insertDataQuery+=(") SELECT ");
 
         // Agregar los campos correspondientes en el SELECT
@@ -200,18 +196,18 @@ public class InformationCrossingService {
                 insertDataQuery+=(", ");
         }
 
-        insertDataQuery+=(", INVENTARIO, ")
-                +("ID_INVENTARIO, ")
-                +("FECHA_CONCILIACION, ")
-                +("TIPO_EVENTO, ")
-                +("CDGO_MATRIZ_EVENTO, ")
-                +("CENTRO_CONTABLE, ")
-                +("CUENTA_CONTABLE_1, ")
-                +("DIVISA_CUENTA_1, ")
-                +("VALOR_CUENTA_1, ")
-                +("CUENTA_CONTABLE_2, ")
-                +("DIVISA_CUENTA_2, ")
-                +("VALOR_CUENTA_2");
+        insertDataQuery+=(", ISNULL(INVENTARIO_PRECISOKEY,'"+data.getDetalle()+"')AS INVENTARIO_PRECISOKEY, ")
+                +("ID_INVENTARIO_PRECISOKEY, ")
+                +("ISNULL(FECHA_CONCILIACION_PRECISOKEY,'"+fecha+"') AS FECHA_CONCILIACION_PRECISOKEY, ")
+                +("ISNULL(TIPO_EVENTO_PRECISOKEY,'"+tipoEvento.getNombre()+"') AS TIPO_EVENTO_PRECISOKEY, ")
+                +("CDGO_MATRIZ_EVENTO_PRECISOKEY, ")
+                +("CENTRO_CONTABLE_PRECISOKEY, ")
+                +("CUENTA_CONTABLE_1_PRECISOKEY, ")
+                +("DIVISA_CUENTA_1_PRECISOKEY, ")
+                +("VALOR_CUENTA_1_PRECISOKEY, ")
+                +("CUENTA_CONTABLE_2_PRECISOKEY, ")
+                +("DIVISA_CUENTA_2_PRECISOKEY, ")
+                +("VALOR_CUENTA_2_PRECISOKEY");
         insertDataQuery+=(" FROM TEMPORAL_ci;");
 
         // PASO 4.
@@ -251,18 +247,18 @@ public class InformationCrossingService {
         if (!data.getCampos().isEmpty()) {
             createTableQuery.append(", ");
         }
-        createTableQuery.append("INVENTARIO VARCHAR(MAX), ")
-                .append("ID_INVENTARIO INT IDENTITY(1,1), ")
-                .append("FECHA_CONCILIACION DATE, ")
-                .append("TIPO_EVENTO VARCHAR(MAX), ")
-                .append("CDGO_MATRIZ_EVENTO INT, ")
-                .append("CENTRO_CONTABLE VARCHAR(MAX), ")
-                .append("CUENTA_CONTABLE_1 VARCHAR(MAX), ")
-                .append("DIVISA_CUENTA_1 VARCHAR(MAX), ")
-                .append("VALOR_CUENTA_1 FLOAT, ")
-                .append("CUENTA_CONTABLE_2 VARCHAR(MAX), ")
-                .append("DIVISA_CUENTA_2 VARCHAR(MAX), ")
-                .append("VALOR_CUENTA_2 FLOAT");
+        createTableQuery.append("INVENTARIO_PRECISOKEY VARCHAR(MAX), ")
+                .append("ID_INVENTARIO_PRECISOKEY INT IDENTITY(1,1), ")
+                .append("FECHA_CONCILIACION_PRECISOKEY DATE, ")
+                .append("TIPO_EVENTO_PRECISOKEY VARCHAR(MAX), ")
+                .append("CDGO_MATRIZ_EVENTO_PRECISOKEY INT, ")
+                .append("CENTRO_CONTABLE_PRECISOKEY VARCHAR(MAX), ")
+                .append("CUENTA_CONTABLE_1_PRECISOKEY VARCHAR(MAX), ")
+                .append("DIVISA_CUENTA_1_PRECISOKEY VARCHAR(MAX), ")
+                .append("VALOR_CUENTA_1_PRECISOKEY FLOAT, ")
+                .append("CUENTA_CONTABLE_2_PRECISOKEY VARCHAR(MAX), ")
+                .append("DIVISA_CUENTA_2_PRECISOKEY VARCHAR(MAX), ")
+                .append("VALOR_CUENTA_2_PRECISOKEY FLOAT");
         createTableQuery.append(");");
 
         // Validar si la tabla ya existe y eliminarla
@@ -342,48 +338,48 @@ public class InformationCrossingService {
 
         // Construcción de la consulta SQL
         StringBuilder queryBuilder = new StringBuilder("UPDATE TEMPORAL_ci SET ");
-        queryBuilder.append("INVENTARIO = ?, ");
-        queryBuilder.append("FECHA_CONCILIACION = ?, ");
-        queryBuilder.append("TIPO_EVENTO = ?, ");
-        queryBuilder.append("CDGO_MATRIZ_EVENTO = ?, ");
-        queryBuilder.append("CENTRO_CONTABLE = ? ");
+        queryBuilder.append("INVENTARIO_PRECISOKEY = ?, ");
+        queryBuilder.append("FECHA_CONCILIACION_PRECISOKEY = ?, ");
+        queryBuilder.append("TIPO_EVENTO_PRECISOKEY = ?, ");
+        queryBuilder.append("CDGO_MATRIZ_EVENTO_PRECISOKEY = ?, ");
+        queryBuilder.append("CENTRO_CONTABLE_PRECISOKEY = ? ");
 
         if (cuenta1 != null) {
-            queryBuilder.append(", CUENTA_CONTABLE_1 = ?, ");
+            queryBuilder.append(", CUENTA_CONTABLE_1_PRECISOKEY = ?, ");
             // Aplicar conversión de UVR a COP en DIVISA_CUENTA_1
             if (cuenta1.isConvierteUVRaCOP())
-                queryBuilder.append("DIVISA_CUENTA_1 = CASE WHEN ").append(cuenta1.getCampoDivisa().getNombre())
+                queryBuilder.append("DIVISA_CUENTA_1_PRECISOKEY = CASE WHEN ").append(cuenta1.getCampoDivisa().getNombre())
                         .append(" = 'UVR' THEN 'COP' ELSE ").append(cuenta1.getCampoDivisa().getNombre()).append(" END, ");
             else if (cuenta1.isConvierteDivisa())
-                queryBuilder.append("DIVISA_CUENTA_1 = CASE ")
+                queryBuilder.append("DIVISA_CUENTA_1_PRECISOKEY = CASE ")
                         .append("WHEN ").append(cuenta1.getCampoDivisa().getNombre()).append(" IN ('USD', 'EUR', 'COP') THEN ")
                         .append(cuenta1.getCampoDivisa().getNombre()).append(" ")
                         .append("WHEN ").append(cuenta1.getCampoDivisa().getNombre()).append(" = 'COD' THEN 'COP' ")
                         .append("ELSE 'RST' END, ");
             else
-                queryBuilder.append("DIVISA_CUENTA_1 = ").append(cuenta1.getCampoDivisa().getNombre()).append(", ");
+                queryBuilder.append("DIVISA_CUENTA_1_PRECISOKEY = ").append(cuenta1.getCampoDivisa().getNombre()).append(", ");
 
-            queryBuilder.append("VALOR_CUENTA_1 = ").append(valorCuenta1).append(" ");
+            queryBuilder.append("VALOR_CUENTA_1_PRECISOKEY = ").append(valorCuenta1).append(" ");
         }
 
         // Si cuenta2 no es nula, agregar los valores relacionados a cuenta2
         if (cuenta2 != null) {
-            queryBuilder.append(", CUENTA_CONTABLE_2 = ?, ");
+            queryBuilder.append(", CUENTA_CONTABLE_2_PRECISOKEY = ?, ");
 
             // Aplicar conversión de UVR a COP en DIVISA_CUENTA_2
             if (cuenta2.isConvierteUVRaCOP())
-                queryBuilder.append("DIVISA_CUENTA_2 = CASE WHEN ").append(cuenta2.getCampoDivisa().getNombre())
+                queryBuilder.append("DIVISA_CUENTA_2_PRECISOKEY = CASE WHEN ").append(cuenta2.getCampoDivisa().getNombre())
                         .append(" = 'UVR' THEN 'COP' ELSE ").append(cuenta2.getCampoDivisa().getNombre()).append(" END, ");
             else if (cuenta2.isConvierteDivisa())
-                queryBuilder.append("DIVISA_CUENTA_2 = CASE ")
+                queryBuilder.append("DIVISA_CUENTA_2_PRECISOKEY = CASE ")
                         .append("WHEN ").append(cuenta2.getCampoDivisa().getNombre()).append(" IN ('USD', 'EUR', 'COP') THEN ")
                         .append(cuenta2.getCampoDivisa().getNombre()).append(" ")
                         .append("WHEN ").append(cuenta2.getCampoDivisa().getNombre()).append(" = 'COD' THEN 'COP' ")
                         .append("ELSE 'RST' END, ");
             else
-                queryBuilder.append("DIVISA_CUENTA_2 = ").append(cuenta2.getCampoDivisa().getNombre()).append(", ");
+                queryBuilder.append("DIVISA_CUENTA_2_PRECISOKEY = ").append(cuenta2.getCampoDivisa().getNombre()).append(", ");
 
-            queryBuilder.append("VALOR_CUENTA_2 = ").append(valorCuenta2).append(" ");
+            queryBuilder.append("VALOR_CUENTA_2_PRECISOKEY = ").append(valorCuenta2).append(" ");
         }
 
         if (condicion != null)
@@ -517,16 +513,16 @@ public class InformationCrossingService {
                     "           FROM INFORMATION_SCHEMA.TABLES \n" +
                     "           WHERE TABLE_NAME = '"+nombreTabla+"')\n" +
                     "BEGIN " +
-                    "SELECT FECHA_CONCILIACION, CENTRO_CONTABLE, CUENTA_CONTABLE, DIVISA_CUENTA, sum([TOTAL_VALOR_CUENTA]) AS TOTAL_VALOR_CUENTA " +
+                    "SELECT FECHA_CONCILIACION_PRECISOKEY, CENTRO_CONTABLE_PRECISOKEY, CUENTA_CONTABLE_PRECISOKEY, DIVISA_CUENTA_PRECISOKEY, sum([TOTAL_VALOR_CUENTA_PRECISOKEY]) AS TOTAL_VALOR_CUENTA_PRECISOKEY " +
                     "FROM " + nombreTabla + " " +
-                    "WHERE FECHA_CONCILIACION = :fecha AND TIPO_EVENTO = :tipoEvento " +  // Corregido el espacio
-                    "GROUP BY [FECHA_CONCILIACION], [CENTRO_CONTABLE], [CUENTA_CONTABLE], [DIVISA_CUENTA], TIPO_EVENTO");
+                    "WHERE FECHA_CONCILIACION_PRECISOKEY = :fecha AND TIPO_EVENTO_PRECISOKEY = :tipoEvento " +  // Corregido el espacio
+                    "GROUP BY [FECHA_CONCILIACION_PRECISOKEY], [CENTRO_CONTABLE_PRECISOKEY], [CUENTA_CONTABLE_PRECISOKEY], [DIVISA_CUENTA_PRECISOKEY], TIPO_EVENTO_PRECISOKEY");
 
-            queryBuilder.append(" ORDER BY FECHA_CONCILIACION, CENTRO_CONTABLE, CUENTA_CONTABLE, DIVISA_CUENTA, TIPO_EVENTO; END " +
+            queryBuilder.append(" ORDER BY FECHA_CONCILIACION_PRECISOKEY, CENTRO_CONTABLE_PRECISOKEY, CUENTA_CONTABLE_PRECISOKEY, DIVISA_CUENTA_PRECISOKEY, TIPO_EVENTO_PRECISOKEY; END " +
                     "ELSE\n" +
                     "BEGIN\n" +
-                    "    SELECT NULL AS FECHA_CONCILIACION, NULL AS CENTRO_CONTABLE, NULL AS CUENTA_CONTABLE, \n" +
-                    "           NULL AS DIVISA_CUENTA, NULL AS TOTAL_VALOR_CUENTA\n" +
+                    "    SELECT NULL AS FECHA_CONCILIACION_PRECISOKEY, NULL AS CENTRO_CONTABLE_PRECISOKEY, NULL AS CUENTA_CONTABLE_PRECISOKEY, \n" +
+                    "           NULL AS DIVISA_CUENTA_PRECISOKEY, NULL AS TOTAL_VALOR_CUENTA_PRECISOKEY\n" +
                     "    WHERE 1 = 0;\n" +
                     "END");
 

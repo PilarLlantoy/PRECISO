@@ -264,21 +264,21 @@ public class ConciliationService {
         System.out.println("Patrones: " + resultado.get("patronesLike"));
 
         // Construcción de las condiciones dinámicas
-        String condicionCuentaConcil = construirCondicionSQL("CUENTA_CONTABLE", resultado);
+        String condicionCuentaConcil = construirCondicionSQL("CUENTA_CONTABLE_PRECISOKEY", resultado);
         String condicionCuentaContable = construirCondicionSQL(campoCuenta, resultado);
 
         // Construcción de la consulta
         StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append("SELECT \n")
-                .append("t1.FECHA, t1.CENTRO_CONTABLE, t1.CUENTA_CONTABLE, t1.DIVISA_CUENTA, " +
-                        "t1.TOTAL_VALOR_CUENTA AS total_valor_cuenta1, " +
-                        "COALESCE(t2.TOTAL_VALOR_CUENTA,0) AS total_valor_cuenta2, " +
-                        "t1.TOTAL_VALOR_CUENTA - COALESCE(t2.TOTAL_VALOR_CUENTA,0) AS TOTAL\n")
+                .append("t1.FECHA_PRECISOKEY, t1.CENTRO_CONTABLE_PRECISOKEY, t1.CUENTA_CONTABLE_PRECISOKEY, t1.DIVISA_CUENTA_PRECISOKEY, " +
+                        "t1.TOTAL_VALOR_CUENTA_PRECISOKEY AS TOTAL_VALOR_CUENTA1_PRECISOKEY, " +
+                        "COALESCE(t2.TOTAL_VALOR_CUENTA,0) AS TOTAL_VALOR_CUENTA2_PRECISOKEY, " +
+                        "t1.TOTAL_VALOR_CUENTA_PRECISOKEY - COALESCE(t2.TOTAL_VALOR_CUENTA,0) AS TOTAL_PRECISOKEY\n")
                 .append("FROM \n")
-                .append("(SELECT [FECHA_CONCILIACION] AS FECHA, [CENTRO_CONTABLE], [CUENTA_CONTABLE], DIVISA_CUENTA, SUM([TOTAL_VALOR_CUENTA]) AS TOTAL_VALOR_CUENTA\n")
+                .append("(SELECT [FECHA_CONCILIACION_PRECISOKEY] AS FECHA_PRECISOKEY, [CENTRO_CONTABLE_PRECISOKEY], [CUENTA_CONTABLE_PRECISOKEY], DIVISA_CUENTA_PRECISOKEY, SUM([TOTAL_VALOR_CUENTA_PRECISOKEY]) AS TOTAL_VALOR_CUENTA_PRECISOKEY\n")
                 .append("FROM [" + nombreTablaConciliacion + "]\n")
-                .append("WHERE [FECHA_CONCILIACION] = '" + fecha + "' AND (" + condicionCuentaConcil + ")\n")
-                .append("GROUP BY [FECHA_CONCILIACION], [CENTRO_CONTABLE], [CUENTA_CONTABLE], [DIVISA_CUENTA]\n")
+                .append("WHERE [FECHA_CONCILIACION_PRECISOKEY] = '" + fecha + "' AND (" + condicionCuentaConcil + ")\n")
+                .append("GROUP BY [FECHA_CONCILIACION_PRECISOKEY], [CENTRO_CONTABLE_PRECISOKEY], [CUENTA_CONTABLE_PRECISOKEY], [DIVISA_CUENTA_PRECISOKEY]\n")
                 .append(") t1\n")
                 .append("LEFT JOIN\n")
                 .append("(SELECT periodo_preciso AS FECHA, [" + campoCentro + "] AS CENTRO_CONTABLE, [" + campoCuenta + "] AS CUENTA_CONTABLE, [" +
@@ -287,7 +287,7 @@ public class ConciliationService {
                 .append("WHERE periodo_preciso = '" + fechaCont + "' AND (" + condicionCuentaContable + ")\n")
                 .append("GROUP BY periodo_preciso, [" + campoCentro + "], [" + campoCuenta + "], [" + campoDivisa + "]\n")
                 .append(") t2\n")
-                .append("ON  t1.FECHA = t2.FECHA AND t1.CENTRO_CONTABLE = t2.CENTRO_CONTABLE AND CAST(t1.CUENTA_CONTABLE AS BIGINT) = CAST(t2.CUENTA_CONTABLE AS BIGINT)AND t1.DIVISA_CUENTA = t2.DIVISA_CUENTA");
+                .append("ON  t1.FECHA_PRECISOKEY = t2.FECHA AND t1.CENTRO_CONTABLE_PRECISOKEY = t2.CENTRO_CONTABLE AND CAST(t1.CUENTA_CONTABLE_PRECISOKEY AS BIGINT) = CAST(t2.CUENTA_CONTABLE AS BIGINT)AND t1.DIVISA_CUENTA_PRECISOKEY = t2.DIVISA_CUENTA");
 
         // HACER LA SELECCION
         Query querySelect = entityManager.createNativeQuery(queryBuilder.toString());
@@ -356,10 +356,14 @@ public class ConciliationService {
         queryInsert.executeUpdate();  // Esto inserta los registros en la tabla
     }
 
-    public List<Object[]> generarTablaNovedades(int concilId, String fecha, int tipoEventoId) {
-
-        return null;
-
+    public void generarTablaNovedades(List<ConciliationRoute> listRoutes, String fecha, EventType tipoEvento) {
+        /*for (ConciliationRoute route:listRoutes){
+            Query queryGenerateIncidents = entityManager.createNativeQuery("SELECT * FROM preciso_ci_1_1 WHERE FECHA_CONCILIACION_PRECISOKEY LIKE ? AND INVENTARIO_PRECISOKEY = ? AND TIPO_EVENTO_PRECISOKEY = ? AND CUENTA_CONTABLE_1_PRECISOKEY IS NULL AND CUENTA_CONTABLE_2_PRECISOKEY IS NULL;");
+            queryGenerateIncidents.setParameter(1,fecha+"%");
+            queryGenerateIncidents.setParameter(2,route.getDetalle());
+            queryGenerateIncidents.setParameter(3,tipoEvento.getNombre());
+            queryGenerateIncidents.executeUpdate();
+        }*/
     }
 
     public List<Object[]> generarTablaCruceCompleto_x_Conciliacion(int concilId, String fecha, int tipoEventoId) {
@@ -376,15 +380,15 @@ public class ConciliationService {
         queryBuilder.append("IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = '").append(nombreTabla).append("') ")
                 .append("BEGIN ")
                 .append("CREATE TABLE ").append(nombreTabla).append(" (")
-                .append("INVENTARIO VARCHAR(50), ")
-                .append("ID_INVENTARIO INT, ")
-                .append("FECHA_CONCILIACION DATE, ")
-                .append("TIPO_EVENTO VARCHAR(50), ")
-                .append("CDGO_MATRIZ_EVENTO VARCHAR(50), ")
-                .append("CENTRO_CONTABLE VARCHAR(50), ")
-                .append("CUENTA_CONTABLE VARCHAR(50), ")
-                .append("DIVISA_CUENTA VARCHAR(50), ")
-                .append("TOTAL_VALOR_CUENTA DECIMAL(18,2)); ")
+                .append("INVENTARIO_PRECISOKEY VARCHAR(50), ")
+                .append("ID_INVENTARIO_PRECISOKEY INT, ")
+                .append("FECHA_CONCILIACION_PRECISOKEY DATE, ")
+                .append("TIPO_EVENTO_PRECISOKEY VARCHAR(50), ")
+                .append("CDGO_MATRIZ_EVENTO_PRECISOKEY VARCHAR(50), ")
+                .append("CENTRO_CONTABLE_PRECISOKEY VARCHAR(50), ")
+                .append("CUENTA_CONTABLE_PRECISOKEY VARCHAR(50), ")
+                .append("DIVISA_CUENTA_PRECISOKEY VARCHAR(50), ")
+                .append("TOTAL_VALOR_CUENTA_PRECISOKEY DECIMAL(18,2)); ")
                 .append("END;");
 
         // Ejecutar la consulta para crear la tabla si no existe
@@ -396,9 +400,9 @@ public class ConciliationService {
 
         // Eliminar los registros que tienen la misma FECHA_CONCILIACION y el mismo INVENTARIO
         queryBuilder.append("DELETE FROM ").append(nombreTabla)
-                .append(" WHERE FECHA_CONCILIACION = '").append(fecha).append("' ")
+                .append(" WHERE FECHA_CONCILIACION_PRECISOKEY = '").append(fecha).append("' ")
                 //.append("AND INVENTARIO = '").append(conciliacion.getNombre()).append("' ")
-                .append("AND TIPO_EVENTO = '").append(tipoEvento.getNombre()).append("';");
+                .append("AND TIPO_EVENTO_PRECISOKEY = '").append(tipoEvento.getNombre()).append("';");
 
         // Ejecutar la consulta de eliminación
         Query queryDelete = entityManager.createNativeQuery(queryBuilder.toString());
@@ -413,19 +417,19 @@ public class ConciliationService {
             String nombreTablaRuta = "preciso_ci_" + concilId + "_" + ruta.getId();
 
             // Construir la consulta de inserción para la ruta actual (para CUENTA_CONTABLE_1 y CUENTA_CONTABLE_2)
-            queryBuilder.append("INSERT INTO ").append(nombreTabla).append(" (INVENTARIO, ID_INVENTARIO, FECHA_CONCILIACION, CENTRO_CONTABLE, TIPO_EVENTO, CDGO_MATRIZ_EVENTO, CUENTA_CONTABLE, DIVISA_CUENTA, TOTAL_VALOR_CUENTA) ")
-                    .append("SELECT INVENTARIO, ID_INVENTARIO, FECHA_CONCILIACION, CENTRO_CONTABLE, TIPO_EVENTO, CDGO_MATRIZ_EVENTO, CUENTA_CONTABLE_1 AS CUENTA_CONTABLE, ")
-                    .append("DIVISA_CUENTA_1 AS DIVISA_CUENTA, SUM(VALOR_CUENTA_1) AS TOTAL_VALOR_CUENTA ")
+            queryBuilder.append("INSERT INTO ").append(nombreTabla).append(" (INVENTARIO_PRECISOKEY, ID_INVENTARIO_PRECISOKEY, FECHA_CONCILIACION_PRECISOKEY, CENTRO_CONTABLE_PRECISOKEY, TIPO_EVENTO_PRECISOKEY, CDGO_MATRIZ_EVENTO_PRECISOKEY, CUENTA_CONTABLE_PRECISOKEY, DIVISA_CUENTA_PRECISOKEY, TOTAL_VALOR_CUENTA_PRECISOKEY) ")
+                    .append("SELECT INVENTARIO_PRECISOKEY, ID_INVENTARIO_PRECISOKEY, FECHA_CONCILIACION_PRECISOKEY, CENTRO_CONTABLE_PRECISOKEY, TIPO_EVENTO_PRECISOKEY, CDGO_MATRIZ_EVENTO_PRECISOKEY, CUENTA_CONTABLE_1_PRECISOKEY AS CUENTA_CONTABLE_PRECISOKEY, ")
+                    .append("DIVISA_CUENTA_1_PRECISOKEY AS DIVISA_CUENTA_PRECISOKEY, SUM(VALOR_CUENTA_1_PRECISOKEY) AS TOTAL_VALOR_CUENTA_PRECISOKEY ")
                     .append("FROM ").append(nombreTablaRuta).append(" ")
-                    .append("WHERE FECHA_CONCILIACION = '").append(fecha).append("' AND CUENTA_CONTABLE_1 IS NOT NULL ")
-                    .append("GROUP BY INVENTARIO, ID_INVENTARIO, FECHA_CONCILIACION, CENTRO_CONTABLE, TIPO_EVENTO, CDGO_MATRIZ_EVENTO, CUENTA_CONTABLE_1, DIVISA_CUENTA_1; ");
+                    .append("WHERE FECHA_CONCILIACION_PRECISOKEY = '").append(fecha).append("' AND CUENTA_CONTABLE_1_PRECISOKEY IS NOT NULL ")
+                    .append("GROUP BY INVENTARIO_PRECISOKEY, ID_INVENTARIO_PRECISOKEY, FECHA_CONCILIACION_PRECISOKEY, CENTRO_CONTABLE_PRECISOKEY, TIPO_EVENTO_PRECISOKEY, CDGO_MATRIZ_EVENTO_PRECISOKEY, CUENTA_CONTABLE_1_PRECISOKEY, DIVISA_CUENTA_1_PRECISOKEY; ");
 
-            queryBuilder.append("INSERT INTO ").append(nombreTabla).append(" (INVENTARIO, ID_INVENTARIO, FECHA_CONCILIACION, CENTRO_CONTABLE, TIPO_EVENTO, CDGO_MATRIZ_EVENTO, CUENTA_CONTABLE, DIVISA_CUENTA, TOTAL_VALOR_CUENTA) ")
-                    .append("SELECT INVENTARIO, ID_INVENTARIO, FECHA_CONCILIACION, CENTRO_CONTABLE, TIPO_EVENTO, CDGO_MATRIZ_EVENTO, CUENTA_CONTABLE_2 AS CUENTA_CONTABLE, ")
-                    .append("DIVISA_CUENTA_2 AS DIVISA_CUENTA, SUM(VALOR_CUENTA_2) AS TOTAL_VALOR_CUENTA ")
+            queryBuilder.append("INSERT INTO ").append(nombreTabla).append(" (INVENTARIO_PRECISOKEY, ID_INVENTARIO_PRECISOKEY, FECHA_CONCILIACION_PRECISOKEY, CENTRO_CONTABLE_PRECISOKEY, TIPO_EVENTO_PRECISOKEY, CDGO_MATRIZ_EVENTO_PRECISOKEY, CUENTA_CONTABLE_PRECISOKEY, DIVISA_CUENTA_PRECISOKEY, TOTAL_VALOR_CUENTA_PRECISOKEY) ")
+                    .append("SELECT INVENTARIO_PRECISOKEY, ID_INVENTARIO_PRECISOKEY, FECHA_CONCILIACION_PRECISOKEY, CENTRO_CONTABLE_PRECISOKEY, TIPO_EVENTO_PRECISOKEY, CDGO_MATRIZ_EVENTO_PRECISOKEY, CUENTA_CONTABLE_2_PRECISOKEY AS CUENTA_CONTABLE_PRECISOKEY, ")
+                    .append("DIVISA_CUENTA_2_PRECISOKEY AS DIVISA_CUENTA_PRECISOKEY, SUM(VALOR_CUENTA_2_PRECISOKEY) AS TOTAL_VALOR_CUENTA_PRECISOKEY ")
                     .append("FROM ").append(nombreTablaRuta).append(" ")
-                    .append("WHERE FECHA_CONCILIACION = '").append(fecha).append("' AND CUENTA_CONTABLE_2 IS NOT NULL ")
-                    .append("GROUP BY INVENTARIO, ID_INVENTARIO, FECHA_CONCILIACION, CENTRO_CONTABLE, TIPO_EVENTO, CDGO_MATRIZ_EVENTO, CUENTA_CONTABLE_2, DIVISA_CUENTA_2; ");
+                    .append("WHERE FECHA_CONCILIACION_PRECISOKEY = '").append(fecha).append("' AND CUENTA_CONTABLE_2_PRECISOKEY IS NOT NULL ")
+                    .append("GROUP BY INVENTARIO_PRECISOKEY, ID_INVENTARIO_PRECISOKEY, FECHA_CONCILIACION_PRECISOKEY, CENTRO_CONTABLE_PRECISOKEY, TIPO_EVENTO_PRECISOKEY, CDGO_MATRIZ_EVENTO_PRECISOKEY, CUENTA_CONTABLE_2_PRECISOKEY, DIVISA_CUENTA_2_PRECISOKEY; ");
 
             // Ejecutar la consulta de inserción
             Query queryInsert = entityManager.createNativeQuery(queryBuilder.toString());
@@ -436,7 +440,7 @@ public class ConciliationService {
         }
 
         // Consultar los datos finales ordenados
-        String finalQuery = "SELECT * FROM " + nombreTabla + " ORDER BY INVENTARIO, ID_INVENTARIO, FECHA_CONCILIACION, CENTRO_CONTABLE, TIPO_EVENTO, CDGO_MATRIZ_EVENTO, CUENTA_CONTABLE, DIVISA_CUENTA;";
+        String finalQuery = "SELECT * FROM " + nombreTabla + " ORDER BY INVENTARIO_PRECISOKEY, ID_INVENTARIO_PRECISOKEY, FECHA_CONCILIACION_PRECISOKEY, CENTRO_CONTABLE_PRECISOKEY, TIPO_EVENTO_PRECISOKEY, CDGO_MATRIZ_EVENTO_PRECISOKEY, CUENTA_CONTABLE_PRECISOKEY, DIVISA_CUENTA_PRECISOKEY;";
         Query querySelect = entityManager.createNativeQuery(finalQuery);
 
         // Devolver los resultados (deberías ajustar según tu necesidad)

@@ -167,7 +167,7 @@ public class InformationCrossingListReport {
                 createCell(row0,columCount++,campo[0].toString(),style);
             }
 
-            Query query1 = entityManager.createNativeQuery("SELECT * FROM preciso_ci_"+cr.getId()+"_"+ruta.getId()+" WHERE FECHA_CONCILIACION = ? ");
+            Query query1 = entityManager.createNativeQuery("SELECT * FROM preciso_ci_"+cr.getId()+"_"+ruta.getId()+" WHERE FECHA_CONCILIACION_PRECISOKEY = ? ");
             query1.setParameter(1,fecha);
             List<Object[]> datas =  query1.getResultList();
             int rowCount = 1;

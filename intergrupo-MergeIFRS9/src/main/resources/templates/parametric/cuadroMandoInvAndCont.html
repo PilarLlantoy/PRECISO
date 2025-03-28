@@ -131,7 +131,7 @@
                                             <td th:if="${rc[2] == 'Exitoso'}"><i class="fa fa-check-circle fa-2x text-success"></i></td>
                                             <td th:if="${rc[2] == 'Fallido'}"><i class="fa fa-times-circle fa-2x text-danger"></i></td>
                                             <td th:text="${rc[9]}"></td>
-                                            <td><input type="checkbox" class="process-checkbox" th:if="${rc[2] == 'Fallido'}" th:value="${rc[8]}"></td>
+                                            <td><input type="checkbox" class="process-checkbox" th:value="${rc[8]}"></td>
                                             <td>
                                                 <a th:href="@{'/parametric/inventoryLoad?selectedConciliacion=' + ${@conciliationRouteService.findById(rc[8]).conciliacion.id} + '&arhcont=' + ${rc[8]} + '&period=' + ${period}}"
                                                    class="btn btn-primary btn-sm">Seleccionar</a>
@@ -250,7 +250,7 @@
                                             <td th:if="${rc[2] == 'Exitoso'}"><i class="fa fa-check-circle fa-2x text-success"></i></td>
                                             <td th:if="${rc[2] == 'Fallido'}"><i class="fa fa-times-circle fa-2x text-danger"></i></td>
                                             <td th:text="${rc[9]}"></td>
-                                            <td><input type="checkbox" class="process-checkbox2" th:if="${rc[2] == 'Fallido'}" th:value="${rc[8]}"></td>
+                                            <td><input type="checkbox" class="process-checkbox2" th:value="${rc[8]}"></td>
                                             <td>
                                                 <a th:href="@{'/parametric/accountingLoad?arhcont=' + ${rc[8]} + '&period=' + ${period2}}"
                                                    class="btn btn-primary btn-sm">Seleccionar</a>

@@ -265,14 +265,14 @@ public class InformationCrossingController {
 
                 //Agregamos estos registros a la tabla final
                 //Creamos las tablas finales vacias de cada inventario con los campos agregados
-                informationCrossingService.recreateTable(ruta, id, fecha);
+                informationCrossingService.recreateTable(ruta, id, fecha,tipoEvento);
                 System.out.println("RUTA CONCILIACION "+ruta.getDetalle());
 
             }
 
             //SE LOGRO EL CRUCE
             conciliationService.generarTablaCruceCompleto_x_Conciliacion(id, fecha, evento);
-            conciliationService.generarTablaNovedades(id, fecha, evento);
+            conciliationService.generarTablaNovedades(listRoutes, fecha, tipoEvento);
             informationCrossingService.loadLogInformationCrossing(user, id, evento, fecha, "Generar Cuentas", "Exitoso", "");
             return ResponseEntity.ok("Bulk->1");
         }
