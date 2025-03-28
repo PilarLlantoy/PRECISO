@@ -60,53 +60,39 @@
                 </div>
                 <div class="contend">
                     <h2>Opciones</h2>
-                    <div>
-                        <div class="d-flex">
-                            <div class="mt-1" style="padding-left:0px">
-                                <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm"
-                                        th:onclick="|generarConciliacion()|" type="button">Generar Conciliacion</button>
-                            </div>
-                            <div class="mt-1 mx-1" style="padding-left:0px">
-                                <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm"
-                                        th:onclick="|exportarConsolidado()|" type="button">Exportar Agrupado</button>
-                            </div>
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm w-100"
+                                    th:onclick="|generarConciliacion()|" type="button">Generar Conciliacion</button>
                         </div>
-                        <div class="d-flex">
-                            <div class="mt-1" style="padding-left:0px">
-                                <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm"
-                                        th:onclick="|exportarDetallado()|" type="button">Exportar Conciliacion</button>
-                            </div>
-                            <div class="mt-1 mx-1" style="padding-left:0px">
-                                <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm"
-                                        th:onclick="|exportarDetallado()|" type="button">Confirmar Conciliacion</button>
-                            </div>
+                        <div class="col-6">
+                            <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm w-100"
+                                    th:onclick="|exportarConsolidado()|" type="button">Exportar Agrupado</button>
                         </div>
-                        <div class="d-flex">
-                            <div class="mt-1" style="padding-left:0px">
-                                <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm"
-                                        th:onclick="|exportarNovedades()|" type="button">Reanudar Proceso</button>
-                            </div>
-                            <div class="mt-1 mx-1" style="padding-left:0px">
-                                <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm"
-                                        th:onclick="|confirmarConciliacion()|" type="button">Confirmar Ajuste</button>
-                            </div>
+                        <div class="col-6">
+                            <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm w-100"
+                                    th:onclick="|exportarDetallado()|" type="button">Exportar Detallado</button>
                         </div>
-                        <div class="d-flex">
-                            <div class="mt-1" style="padding-left:0px">
-                                <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm"
-                                        th:onclick="|reanudarProceso()|" type="button">Reabrir Ajuste</button>
-                            </div>
-                            <div class="mt-1 mx-1" style="padding-left:0px">
-                                <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm"
-                                        th:onclick="|reanudarProceso()|" type="button">Volver a Cuadro</button>
-                            </div>
+                        <div class="col-6">
+                            <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm w-100"
+                                    th:onclick="|exportarDetallado()|" type="button">Confirmar Concil.</button>
                         </div>
-                        <!--
-                        <div class="d-grid gap-2 col-3 mt-1" style="padding-left:0px">
-                            <button type="button" class="btn btn-primary" th:onclick="|validarYexportar()|" th:if="${allRCs.size()!=0}">Exportar Excel</button>
-                            <button type="button" class="btn btn-primary" th:if="${allRCs.size()==0}" disabled>Exportar Excel</button>
+                        <div class="col-6">
+                            <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm w-100"
+                                    th:onclick="|exportarNovedades()|" type="button">Reanudar Proceso</button>
                         </div>
-                       -->
+                        <div class="col-6">
+                            <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm w-100"
+                                    th:onclick="|confirmarConciliacion()|" type="button">Confirmar Ajuste</button>
+                        </div>
+                        <div class="col-6">
+                            <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm w-100"
+                                    th:onclick="|reanudarProceso()|" type="button">Reabrir Ajuste</button>
+                        </div>
+                        <div class="col-6">
+                            <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm w-100"
+                                    th:onclick="|reanudarProceso()|" type="button">Volver a Cuadro</button>
+                        </div>
                     </div>
                 </div>
             </div>
