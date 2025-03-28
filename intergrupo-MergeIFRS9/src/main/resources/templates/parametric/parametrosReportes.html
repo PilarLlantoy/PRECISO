@@ -73,11 +73,12 @@
                         </td>
                         <td>
                             <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
-                                    th:onclick="|window.location.href='@{/parametric/accountsConciliation/{id}(id=${parametro.id})}'|">Vald. Adicion</button>
+                                    th:onclick="|window.location.href='@{/parametric/validationsParametroReportes/{id}/{fuenteId}(id=${parametro.id}, fuenteId=0)}'|">Vald. Adicion</button>
+
                         </td>
                         <td>
                             <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
-                                    th:onclick="|window.location.href='@{/parametric/accountsConciliation/{id}(id=${parametro.id})}'|">Rsl. Adicion</button>
+                                    th:onclick="|window.location.href='@{/parametric/resultingfieldsParametroReportes/{id}/{fuenteId}(id=${parametro.id}, fuenteId=0)}'|">Rsl. Adicion</button>
                         </td>
                     </tr>
                     </tbody>

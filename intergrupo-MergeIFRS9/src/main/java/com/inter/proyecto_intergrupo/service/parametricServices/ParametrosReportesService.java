@@ -74,5 +74,17 @@ public class ParametrosReportesService {
        return parametro;
     }
 
+    public List<Object[]> findCampoReportexParamxFuentexCampoFuente(
+            int parametroId,int fuenteId,int campoFuenteId) {
+        Query query = entityManager.createNativeQuery(
+                "select id_campo, detalle from preciso_validaciones_parametros_reportes a\n" +
+                        "  left join preciso_campos_param_reportes b on campo_reporte_id=id_campo\n" +
+                        "  where a.id_fuente=:fuenteId and a.id_parametro=:parametroId and a.campo_fuente_id=:campoFuenteId");
+        query.setParameter("parametroId", parametroId);
+        query.setParameter("fuenteId", fuenteId);
+        query.setParameter("campoFuenteId", campoFuenteId);
+        return query.getResultList();
+    }
+
 
 }

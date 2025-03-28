@@ -45,5 +45,13 @@ public class SourceParametroReportes {
     @OneToMany(mappedBy = "fuente", cascade = CascadeType.ALL)
     private List<StructureParametroReportes> estructuras;
 
+    // Relación OneToMany con ValidationParametroReportes
+    @OneToMany(mappedBy = "fuente", cascade = CascadeType.ALL)
+    private List<ValidationParametroReportes> validaciones;
+
+    // Relación OneToMany con ResultingFieldParametroReportes
+    @OneToMany(mappedBy = "fuente", cascade = CascadeType.ALL)
+    private List<ResultingFieldParametroReportes> camposResultantes;
+
 
 }

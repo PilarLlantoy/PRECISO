@@ -1,6 +1,7 @@
 package com.inter.proyecto_intergrupo.service.parametricServices;
 
 import com.inter.proyecto_intergrupo.model.admin.Cargo;
+import com.inter.proyecto_intergrupo.model.admin.User;
 import com.inter.proyecto_intergrupo.model.parametric.*;
 import com.inter.proyecto_intergrupo.repository.admin.AuditRepository;
 import com.inter.proyecto_intergrupo.repository.parametric.CampoRCRepository;
@@ -203,6 +204,13 @@ public class CampoRConcilService {
                 "SELECT * FROM preciso_campos_rconcil WHERE id_rconcil = :idRConcil AND nombre = :nombre ",CampoRConcil.class);
         query.setParameter("idRConcil", idRConcil);
         query.setParameter("nombre", nombre);
+        return query.getResultList();
+    }
+
+    public List<CampoRConcil> findCamposByRutaConcil2(int idRConcil) {
+        Query query = entityManager.createNativeQuery(
+                "SELECT * FROM preciso_campos_rconcil WHERE id_rconcil = :idRConcil", CampoRConcil.class);
+        query.setParameter("idRConcil", idRConcil);
         return query.getResultList();
     }
 

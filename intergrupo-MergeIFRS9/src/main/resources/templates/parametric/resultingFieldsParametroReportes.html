@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+
+<div class="main-container">
+    <div class="row m-0 bg-primary fixed-top myNav">
+        <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
+            <h2 class="fw-bold text-white mx-4 my-3">Cargue de Campos Resultantes de Parametros Reportes</h2>
+        </div>
+    </div>
+    <div class="row mt-5 ml-1 px-2">
+        <div class="text-left col-md-6">
+            <h2>Cargue de Campos Resultantes</h2>
+        </div>
+        <div class="text-right col-md-6">
+            <a class="btn btn-sm btn-danger mx-1" th:href="@{/parametric/parametrosReportes}"><i class="fa-solid fa-left-long"></i> Regresar</a>
+        </div>
+    </div>
+    <div class="row px-4">
+
+        <form id="miFormulario" th:object="${fuente}"  th:action="@{/parametric/createStructureParametroReportes}" method="POST">
+
+            <div class="text-left col-md-12 mb-1">
+                <div class="px-3 pt-1 mb-1 row border rounded">
+                    <div hidden class="col-md-2">
+                        <div class="form-group form-group-sm ">
+                            <label>ID</label>
+                            <input id="idInput" type="text" class="form-control form-control-sm  " th:field="*{id}">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group form-group-sm">
+                            <h6 class="font-weight-bold">Fuente</h6>
+                            <select class="form-control form-control-sm" name="selectedFuente" id="selectedFuente" required onchange="toggleFuente()">
+                                <option disabled value="" selected hidden>Seleccione Fuente</option>
+                                <option th:each="fnt : ${fuentes}"
+                                        th:value="${fnt.inventario.id}"
+                                        th:data-id="${fnt.id}"
+                                        th:selected="${fuente != null and fuente.id == fnt.id}"
+                                        th:text="${fnt.fuente.detalle + ' - ' + fnt.inventario.detalle + ' - ' + fnt.evento.nombre}"></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12 p-0">
+                <div class="table-responsive rounded border-primary">
+
+                    <div class="row p-0 m-0">
+                        <div class="text-left col-md-6">
+                            <h2>Campos registrados</h2>
+                        </div>
+                        <div class="text-right col-md-6">
+                            <button class="btn btn-sm btn-primary mx-1" type="submit">Actualizar</button>
+                        </div>
+                    </div>
+
+                    <table id="tablaDatos" class="table table-striped table-hover text-center table-bordered table-sm" width="100%">
+                        <thead class="bg-primary">
+                        <tr>
+                            <th>Campo Fuente</th>
+                            <th>Selección</th>
+                            <th>Campo Asoc.</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="campo, iter : ${allCamposResultantes}" class="campo"
+                            th:data-campo-id="${campo.campoFuente.id}">
+                            <td hidden>
+                                <input type="text" class="form-control form-control-sm"
+                                       th:value="${campo.id}"
+                                       th:name="'estructuraId_'+${iter.count}"
+                                       th:id="'estructuraId_'+${iter.count}"
+                                       th:text="${campo.id}"
+                                       data-campo-id="${iter.count}">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control form-control-sm" hidden
+                                       th:value="${campo.campoFuente.id}"
+                                       th:name="'campoFuente'+${iter.count}"
+                                       th:id="'campoFuente'+${iter.count}"
+                                       th:text="${campo.campoFuente.nombre}"
+                                >
+                            </td>
+                            <td>
+                                <input type="checkbox"
+                                       th:name="'aplicaFormula_'+${iter.count}"
+                                       th:id="'aplicaFormula_'+${iter.count}"
+                                       th:value="${campo.seleccion}"
+                                       th:checked="${campo.seleccion}">
+                            </td>
+                            <td>
+                                <select class="form-control form-control-sm"
+                                        th:id="'campo2_'+${iter.count}"
+                                        th:name="'campo2_'+${iter.count}"
+                                        onchange="updateCampo2Select(${parametro.id}, *{id}, ${campo.campoReporte.id},${iter.count})">
+                                    <option value="0" selected>Seleccione Campo</option>
+                                </select>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row" th:if="${last != 0}">
+                    <div class="col-md-4 text-left">
+                        <nav arial-label="Pagination">
+                            <ul class="pagination">
+                                <li class="page-item" th:classappend="${prev == 0 ? 'disabled' : ''}">
+                                    <a class="page-link"
+                                       th:href="@{/parametric/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${prev},dir=${directory},vId=${vId})}">Anterior</a>
+                                </li>
+                                <li class="page-item" th:classappend="${current == last ? 'disabled' : ''}">
+                                    <a class="page-link"
+                                       th:href="@{/parametric/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${next},dir=${directory},vId=${vId})}">Siguiente</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <h6 th:utext="${registers} + ' Registros Encontrados'"></h6>
+                    </div>
+                    <div class="col-md-4 text-right">
+                        <h6 class="mx-1" th:utext="'Página ' + ${current} + ' de ' + ${last}"></h6>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center justify-content-center" th:if="${filterExport != 'Original'}">
+                    <h5><span class="badge badge-pill text-light badge-info py-2 px-5">¡La Tabla se encuentra Filtrada!</span>
+                    </h5>
+                </div>
+            </div>
+
+            <!-- Formulario oculto para pasar el objeto aroute -->
+            <input type="hidden" id="parametroId" name="parametroId" th:value="${parametro.id}" />
+            <input type="hidden" id="fuenteId" name="fuenteId" th:value="*{id}" />
+            <input type="hidden" id="numCampos" name="numCampos" th:value="${registers}" />
+        </form>
+
+    </div>
+</div>
+</div>
+<script>
+
+    async function toggleFuente() {
+        const id = document.querySelector("input[name='parametroId']").value;
+        var select = document.getElementById('selectedFuente');
+        var selectedOption = select.options[select.selectedIndex];
+        var fuenteId = selectedOption.getAttribute('data-id');
+       window.location.href = `/parametric/resultingfieldsParametroReportes/${id}/${fuenteId}`;
+   }
+
+    function updateCampo2Select(parametroId, fuenteId, campoFuenteId, i) {
+        var select = document.querySelector(`#campo2_${i}`);
+        if(campoFuenteId){
+            // Hacer la llamada AJAX
+            fetch(`/parametric/campo2Options?parametroId=${parametroId}&fuenteId=${fuenteId}&campoFuenteId=${campoFuenteId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if(data.length>0){
+                        // Limpiar las opciones existentes
+                        select.innerHTML = '';
+
+                        // Agregar una opción por defecto
+                        var defaultOption = document.createElement('option');
+                        defaultOption.value = '0';
+                        defaultOption.textContent = 'Seleccione Campo';
+                        select.appendChild(defaultOption);
+
+                        // Llenar el select con los datos recibidos
+                        data.forEach(option => {
+                            var optionElement = document.createElement('option');
+                            optionElement.value = option.id;
+                            optionElement.textContent = option.nombre;
+                            select.appendChild(optionElement);
+                        });
+                    }
+
+                })
+                .catch(error => console.error('Error al cargar las opciones:', error));
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var parametroId = document.querySelector("input[name='parametroId']").value;
+        var fuenteId = document.querySelector("input[name='fuenteId']").value;
+        var numCampos = document.querySelector("input[name='numCampos']").value;
+
+        var campos = document.querySelectorAll('.campo');
+        for(var i=0; i<numCampos;i++){
+            var campoFuenteId = campos[i].getAttribute('data-campo-id'); // Aquí obtenemos el valor del atributo
+            if (campoFuenteId) {
+                updateCampo2Select(parametroId, fuenteId, campoFuenteId, i+1);
+            }
+        }
+    });
+
+
+</script>
+</body>
+</html>

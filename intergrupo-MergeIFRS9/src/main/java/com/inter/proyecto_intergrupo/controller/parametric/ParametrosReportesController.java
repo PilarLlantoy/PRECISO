@@ -67,6 +67,12 @@ public class ParametrosReportesController {
     @Autowired
     private StructureParametroReportesService structureParametroReportesService;
 
+    @Autowired
+    private ValidationParametroReportesService validationParametroReportesService;
+
+    @Autowired
+    private ResultingFieldsParametroReportesService resultingFieldsParametroReportesService;
+
     @GetMapping(value="/parametric/parametrosReportes")
     public ModelAndView parametrosReportes(@RequestParam Map<String, Object> params) {
         ModelAndView modelAndView = new ModelAndView();
@@ -175,256 +181,6 @@ public class ParametrosReportesController {
         modelAndView.addObject("resp", "Modify1");
         return modelAndView;
     }
-
-    @GetMapping(value = "/parametric/fieldLoadingParametrosReportes/{id}")
-    public ModelAndView cargueCampos(@PathVariable int id, @RequestParam Map<String, Object> params) {
-        ModelAndView modelAndView = new ModelAndView();
-
-        ParametrosReportes parametro = parametrosReportesService.findById(id);
-        modelAndView.addObject("parametro",parametro);
-
-        int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
-        PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
-        int start = (int) pageRequest.getOffset();
-        int end = Math.min((start + pageRequest.getPageSize()), parametro.getCampos().size());
-        List<CampoParamReportes> loscampos = parametro.getCampos();
-        Page<CampoParamReportes> pageConciliation = new PageImpl<>(loscampos.subList(start, end), pageRequest, loscampos.size());
-
-        int totalPage=pageConciliation.getTotalPages();
-        if(totalPage>0){
-            List<Integer> pages = IntStream.rangeClosed(1, totalPage).boxed().collect(Collectors.toList());
-            modelAndView.addObject("pages",pages);
-        }
-        modelAndView.addObject("current",page+1);
-        modelAndView.addObject("next",page+2);
-        modelAndView.addObject("prev",page);
-        modelAndView.addObject("last",totalPage);
-        modelAndView.addObject("directory","fieldLoadingParametrosReportes/"+id);
-        modelAndView.addObject("allCampos",pageConciliation.getContent());
-        modelAndView.addObject("registers",loscampos.size());
-        modelAndView.addObject("filterExport","Original");
-
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName", user.getPrimerNombre());
-        modelAndView.addObject("userEmail", user.getCorreo());
-        Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Conciliaciones");
-        modelAndView.addObject("p_modificar", p_modificar);
-
-        CampoParamReportes campoParamReportes = new CampoParamReportes();
-        modelAndView.addObject("campo", campoParamReportes);
-
-
-        modelAndView.setViewName("parametric/fieldLoadingParametrosReportes");
-        return modelAndView;
-    }
-
-    @PostMapping(value = "/parametric/createCampoParamReportes")
-    public ModelAndView createCampoParamReportes(@ModelAttribute CampoParamReportes campoNuevo,
-                                      @RequestParam(name = "paramId") String paramId,
-                                      @RequestParam(name = "longitud") String longitud,
-                                      BindingResult bindingResult){
-        ModelAndView modelAndView = new ModelAndView("redirect:/parametric/fieldLoadingParametrosReportes/" + paramId);
-        if(longitud!=null && longitud.length()>0 ){
-            campoNuevo.setLongitud(longitud);
-        }
-        else {
-            campoNuevo.setLongitud("MAX");
-        }
-
-        ParametrosReportes parametro = parametrosReportesService.findById(Integer.parseInt(paramId));
-        campoNuevo.setParametroReportes(parametro);
-
-        List<CampoParamReportes> campoBusqueda= campoParametroReportesService.findCamposByParametroVsDetalle(Integer.parseInt(paramId),campoNuevo.getDetalle());
-        CampoParamReportes campoAntiguo= campoParametroReportesService.findById(campoNuevo.getId());
-        System.out.println("Nuevo-> ID:"+campoNuevo.getId()+" - NOM:"+campoNuevo.getDetalle());
-        if(campoAntiguo!=null)
-            System.out.println("Antiguo-> ID:"+campoAntiguo.getId()+" - NOM:"+campoAntiguo.getDetalle());
-        else
-            System.out.println("Antiguo-> ID:Vacio - NOM:Vacio");
-        if(!campoBusqueda.isEmpty())
-            System.out.println("Busqueda-> ID:"+campoBusqueda.get(0).getId()+" - NOM:"+campoBusqueda.get(0).getDetalle());
-        else
-            System.out.println("Busqueda-> ID:Vacio - NOM:Vacio");
-        if((campoBusqueda.isEmpty() && campoNuevo.getId()==0) ||
-                (campoAntiguo!=null && campoAntiguo.getId() == campoNuevo.getId() && campoAntiguo.getDetalle().equalsIgnoreCase(campoNuevo.getDetalle()) && campoNuevo.getId()!=0) ||
-                (campoAntiguo!=null && campoAntiguo.getId() == campoNuevo.getId() && !campoAntiguo.getDetalle().equalsIgnoreCase(campoNuevo.getDetalle()) && campoBusqueda.isEmpty() && campoNuevo.getId()!=0))
-        {
-            campoParametroReportesService.modificar(campoNuevo);
-        }
-        return modelAndView;
-
-    }
-
-    @DeleteMapping("/parametric/deleteCampoParamReportes/{id}")
-    public ResponseEntity<?> deleteCampoParamReportes(@PathVariable int id) {
-        try {
-            ParametrosReportes param = campoParametroReportesService.findById(id).getParametroReportes();
-            System.out.println("ID->"+id);
-            campoParametroReportesService.deleteById(id);
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al eliminar el registro");
-        }
-    }
-
-    @GetMapping(value = "/parametric/filtersParametroReportes/{id}")
-    public ModelAndView filtersParametroReportes(@PathVariable int id, @RequestParam Map<String, Object> params){
-        ModelAndView modelAndView = new ModelAndView();
-        ParametrosReportes parametro = parametrosReportesService.findById(id);
-        modelAndView.addObject("parametro",parametro);
-
-        List<FilterParametroReportes> filtros = parametro.getFiltros();
-
-        int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
-        PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
-        int start = (int) pageRequest.getOffset();
-        int end = Math.min((start + pageRequest.getPageSize()), filtros.size());
-
-        Page<FilterParametroReportes> pageConciliation = new PageImpl<>(filtros.subList(start, end), pageRequest, filtros.size());
-        List<CampoParamReportes> campos = parametro.getCampos();
-        modelAndView.addObject("campos",campos);
-
-        int totalPage=pageConciliation.getTotalPages();
-        if(totalPage>0){
-            List<Integer> pages = IntStream.rangeClosed(1, totalPage).boxed().collect(Collectors.toList());
-            modelAndView.addObject("pages",pages);
-        }
-        modelAndView.addObject("current",page+1);
-        modelAndView.addObject("next",page+2);
-        modelAndView.addObject("prev",page);
-        modelAndView.addObject("last",totalPage);
-        modelAndView.addObject("directory","filtersParametroReportes/"+id);
-        modelAndView.addObject("allCondiciones",pageConciliation.getContent());
-        modelAndView.addObject("registers",filtros.size());
-        modelAndView.addObject("filterExport","Original");
-
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName", user.getPrimerNombre());
-        modelAndView.addObject("userEmail", user.getCorreo());
-        Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Rutas Contables");
-        modelAndView.addObject("p_modificar", p_modificar);
-
-
-        FilterParametroReportes filtro = new FilterParametroReportes();
-        modelAndView.addObject("filtro",filtro);
-
-
-        modelAndView.setViewName("parametric/filtersParametroReportes");
-        return modelAndView;
-    }
-
-    @GetMapping(value = "/parametric/sourcesParametroReportes/{id}")
-    public ModelAndView sourcesParametroReportes(@PathVariable int id, @RequestParam Map<String, Object> params){
-        ModelAndView modelAndView = new ModelAndView();
-        ParametrosReportes parametro = parametrosReportesService.findById(id);
-        modelAndView.addObject("parametro",parametro);
-
-        List<SourceParametroReportes> fuentes = parametro.getFuentes();
-
-        int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
-        PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
-        int start = (int) pageRequest.getOffset();
-        int end = Math.min((start + pageRequest.getPageSize()), fuentes.size());
-
-        Page<SourceParametroReportes> pageConciliation = new PageImpl<>(fuentes.subList(start, end), pageRequest, fuentes.size());
-
-
-        List<Conciliation> conciliaciones = conciliationService.findAllActive();
-        modelAndView.addObject("conciliaciones",conciliaciones);
-        List<ConciliationRoute> inventarios = new ArrayList<>();
-        modelAndView.addObject("inventarios",inventarios);
-        List<EventType> eventos = new ArrayList<>();
-        modelAndView.addObject("eventos",eventos);
-
-        int totalPage=pageConciliation.getTotalPages();
-        if(totalPage>0){
-            List<Integer> pages = IntStream.rangeClosed(1, totalPage).boxed().collect(Collectors.toList());
-            modelAndView.addObject("pages",pages);
-        }
-        modelAndView.addObject("current",page+1);
-        modelAndView.addObject("next",page+2);
-        modelAndView.addObject("prev",page);
-        modelAndView.addObject("last",totalPage);
-        modelAndView.addObject("directory","sourcesParametroReportes/"+id);
-        modelAndView.addObject("allFuentes",pageConciliation.getContent());
-        modelAndView.addObject("registers",fuentes.size());
-        modelAndView.addObject("filterExport","Original");
-
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User user = userService.findUserByUserName(auth.getName());
-        modelAndView.addObject("userName", user.getPrimerNombre());
-        modelAndView.addObject("userEmail", user.getCorreo());
-        Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Rutas Contables");
-        modelAndView.addObject("p_modificar", p_modificar);
-
-
-        SourceParametroReportes fuente = new SourceParametroReportes();
-        modelAndView.addObject("fuente",fuente);
-
-
-        modelAndView.setViewName("parametric/sourcesParametroReportes");
-        return modelAndView;
-    }
-
-    @PostMapping(value = "/parametric/createFilterParametroReportes")
-    public ModelAndView createFilterParametroReportes(@ModelAttribute FilterParametroReportes filtro,
-                                                 @RequestParam(name = "paramId") String paramId,
-                                                 @RequestParam(name = "selectedCampo") int campoId,
-                                                 BindingResult bindingResult){
-        ModelAndView modelAndView = new ModelAndView("redirect:/parametric/filtersParametroReportes/" + paramId);
-
-        ParametrosReportes parametro = parametrosReportesService.findById(Integer.parseInt(paramId));
-        filtro.setParametroReportes(parametro);
-
-        CampoParamReportes campoBusqueda = campoParametroReportesService.findById(campoId);
-        filtro.setCampo(campoBusqueda);
-
-        filterParametroReportesService.modificar(filtro);
-
-        return modelAndView;
-
-    }
-
-    @DeleteMapping("/parametric/deleteFilterParametroReportes/{id}")
-    public ResponseEntity<?> deleteFilterParametroReportes(@PathVariable int id) {
-        try {
-            filterParametroReportesService.deleteById(id);
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al eliminar el registro");
-        }
-    }
-
-
-    @PostMapping(value = "/parametric/createSourceParametroReportes")
-    public ModelAndView createSourceParametroReportes(@ModelAttribute SourceParametroReportes fuente,
-                                          @RequestParam(name = "selectedConcil") int idConcil,
-                                          @RequestParam(name = "selectedInventario") int idInv,
-                                          @RequestParam(name = "selectedEvento") int idEvento,
-                                          @RequestParam(name = "parametroId") String parametroId,
-                                          BindingResult bindingResult){
-        ModelAndView modelAndView = new ModelAndView("redirect:/parametric/sourcesParametroReportes/" + parametroId);
-
-        ParametrosReportes parametro = parametrosReportesService.findById(Integer.parseInt(parametroId));
-        fuente.setParametroReportes(parametro);
-
-        Conciliation concil = conciliationService.findById(idConcil);
-        fuente.setFuente(concil);
-        ConciliationRoute inventario = conciliationRouteService.findById(idInv);
-        fuente.setInventario(inventario);
-        EventType evento = eventTypeService.findAllById(idEvento);
-        fuente.setEvento(evento);
-
-        sourceParametroReportesService.modificar(fuente);
-
-        return modelAndView;
-
-    }
-
 
     @GetMapping(value = "/parametric/structuresParametroReportes/{id}/{fuenteId}")
     public ModelAndView structuresParametroReportes(@PathVariable int id,@PathVariable int fuenteId,
@@ -621,6 +377,198 @@ public class ParametrosReportesController {
 
         return modelAndView;
 
+    }
+
+
+    @GetMapping(value = "/parametric/validationsParametroReportes/{id}/{fuenteId}")
+    public ModelAndView validationsParametroReportes(@PathVariable int id,@PathVariable String fuenteId,
+                                                    @RequestParam Map<String, Object> params){
+
+        ModelAndView modelAndView = new ModelAndView();
+
+        SourceParametroReportes fuente = new SourceParametroReportes();
+        if(Integer.valueOf(fuenteId)!=0)
+            fuente = sourceParametroReportesService.findById(Integer.valueOf(fuenteId));
+        modelAndView.addObject("fuente",fuente);
+
+        ParametrosReportes parametro = parametrosReportesService.findById(id);
+        modelAndView.addObject("parametro",parametro);
+
+        List<SourceParametroReportes> fuentes = parametro.getFuentes();
+        modelAndView.addObject("fuentes",fuentes);
+
+        ValidationParametroReportes validacion = new ValidationParametroReportes();
+        modelAndView.addObject("validacion",validacion);
+
+        List<CampoParamReportes> loscampos = parametro.getCampos();
+        modelAndView.addObject("loscampos",loscampos);
+
+        List<Object[]> camposRc = new ArrayList<>();
+        if(Integer.valueOf(fuenteId)!=0) camposRc = campoRConcilService.findCamposByRutaConcil(fuente.getInventario().getId());
+        modelAndView.addObject("camposRc",camposRc);
+
+        List<ValidationParametroReportes> allValidations = validationParametroReportesService.findByParamByFuente(id, Integer.valueOf(fuenteId));
+        modelAndView.addObject("allValidations",allValidations);
+
+        int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
+        PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
+        int start = (int) pageRequest.getOffset();
+        int end = Math.min((start + pageRequest.getPageSize()), allValidations.size());
+
+        Page<ValidationParametroReportes> pageValidation = new PageImpl<>(allValidations.subList(start, end), pageRequest, allValidations.size());
+
+        int totalPage=pageValidation.getTotalPages();
+        if(totalPage>0){
+            List<Integer> pages = IntStream.rangeClosed(1, totalPage).boxed().collect(Collectors.toList());
+            modelAndView.addObject("pages",pages);
+        }
+        modelAndView.addObject("current",page+1);
+        modelAndView.addObject("next",page+2);
+        modelAndView.addObject("prev",page);
+        modelAndView.addObject("last",totalPage);
+        modelAndView.addObject("directory","validationsParametroReportes/"+id);
+        modelAndView.addObject("registers",allValidations.size());
+        modelAndView.addObject("filterExport","Original");
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findUserByUserName(auth.getName());
+        modelAndView.addObject("userName", user.getPrimerNombre());
+        modelAndView.addObject("userEmail", user.getCorreo());
+        Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Rutas Contables");
+        modelAndView.addObject("p_modificar", p_modificar);
+
+        modelAndView.setViewName("parametric/validationsParametroReportes");
+        return modelAndView;
+    }
+
+    @PostMapping(value = "/parametric/createValidationParametroReportes")
+    public ModelAndView createValidationParametroReportes(@ModelAttribute ValidationParametroReportes validacion,
+                                                        @RequestParam(name = "fuenteId") int fuenteId,
+                                                        @RequestParam(name = "parametroId") int parametroId,
+                                                        @RequestParam(name = "selectedCampoReporte") int idCampoReporte,
+                                                        @RequestParam(name = "selectedOperacion") String selectedOperacion,
+                                                        @RequestParam(name = "selectedCampoFuente") int idCampoFuente,
+                                                        BindingResult bindingResult){
+
+        ModelAndView modelAndView = new ModelAndView("redirect:/parametric/validationsParametroReportes/1/1");
+
+        ParametrosReportes parametrosReportes = parametrosReportesService.findById(parametroId);
+        validacion.setParametroReportes(parametrosReportes);
+
+        SourceParametroReportes fuente = sourceParametroReportesService.findById(fuenteId);
+        validacion.setFuente(fuente);
+
+        CampoParamReportes campoReporte = campoParametroReportesService.findById(idCampoReporte);
+        validacion.setCampoReporte(campoReporte);
+
+        validacion.setCondicion(selectedOperacion);
+
+        CampoRConcil campoFuente = campoRConcilService.findById(idCampoFuente);
+        validacion.setCampoFuente(campoFuente);
+
+        validationParametroReportesService.modificar(validacion);
+
+        return modelAndView;
+    }
+
+    @DeleteMapping("/parametric/3/{id}")
+    public ResponseEntity<?> deleteValidationParametroReportes(@PathVariable int id) {
+        try {
+            validationParametroReportesService.deleteById(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al eliminar el registro");
+        }
+    }
+
+
+    @GetMapping(value = "/parametric/resultingfieldsParametroReportes/{id}/{fuenteId}")
+    public ModelAndView resultingfieldsParametroReportes(@PathVariable int id,@PathVariable int fuenteId,
+                                                    @RequestParam Map<String, Object> params){
+
+        ModelAndView modelAndView = new ModelAndView();
+
+        SourceParametroReportes fuente = new SourceParametroReportes();
+        if(fuenteId!=0) fuente = sourceParametroReportesService.findById(fuenteId);
+        modelAndView.addObject("fuente",fuente);
+
+        ParametrosReportes parametro = parametrosReportesService.findById(id);
+        modelAndView.addObject("parametro",parametro);
+
+        List<SourceParametroReportes> fuentes = parametro.getFuentes();
+        modelAndView.addObject("fuentes",fuentes);
+
+        List<CampoParamReportes> campos =  new ArrayList<>();
+        if(fuenteId!=0) campos = parametro.getCampos();
+        modelAndView.addObject("campos",campos);
+
+        List<CampoRConcil> camposRc = new ArrayList<>();
+        if(fuenteId!=0) camposRc = campoRConcilService.findCamposByRutaConcil2(fuente.getInventario().getId());
+        modelAndView.addObject("camposRc",camposRc);
+
+        List<ResultingFieldParametroReportes> allCamposResultantes =new ArrayList<>();
+        if(fuenteId!=0) allCamposResultantes = resultingFieldsParametroReportesService.findByParamByFuente(id, fuenteId);
+        if(allCamposResultantes.size()==0){
+            for(int i=0; i<camposRc.size();i++){
+                ResultingFieldParametroReportes campo = new ResultingFieldParametroReportes();
+                campo.setParametroReportes(parametro);
+                campo.setFuente(fuente);
+                campo.setSeleccion(false);
+                campo.setCampoFuente(camposRc.get(i));
+                allCamposResultantes.add(campo);
+            }
+            fuente.setCamposResultantes(allCamposResultantes);
+        }
+
+        modelAndView.addObject("allCamposResultantes",allCamposResultantes);
+
+        int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
+        PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
+        int start = (int) pageRequest.getOffset();
+        int end = Math.min((start + pageRequest.getPageSize()), allCamposResultantes.size());
+
+        Page<ResultingFieldParametroReportes> pageConciliation = new PageImpl<>(allCamposResultantes.subList(start, end), pageRequest, allCamposResultantes.size());
+
+        int totalPage=pageConciliation.getTotalPages();
+        if(totalPage>0){
+            List<Integer> pages = IntStream.rangeClosed(1, totalPage).boxed().collect(Collectors.toList());
+            modelAndView.addObject("pages",pages);
+        }
+        modelAndView.addObject("current",page+1);
+        modelAndView.addObject("next",page+2);
+        modelAndView.addObject("prev",page);
+        modelAndView.addObject("last",totalPage);
+        modelAndView.addObject("directory","resultingfieldsParametroReportes/"+id);
+        modelAndView.addObject("campos",pageConciliation.getContent());
+        modelAndView.addObject("registers",allCamposResultantes.size());
+        modelAndView.addObject("filterExport","Original");
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findUserByUserName(auth.getName());
+        modelAndView.addObject("userName", user.getPrimerNombre());
+        modelAndView.addObject("userEmail", user.getCorreo());
+        Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Rutas Contables");
+        modelAndView.addObject("p_modificar", p_modificar);
+
+        modelAndView.setViewName("parametric/resultingfieldsParametroReportes");
+        return modelAndView;
+    }
+
+    @GetMapping("/parametric/campo2Options")
+    @ResponseBody
+    public List<Map<String, Object>> getCampo2Options(@RequestParam int parametroId,
+                                                      @RequestParam int fuenteId,
+                                                      @RequestParam int campoFuenteId) {
+        List<Object[]> result = parametrosReportesService.findCampoReportexParamxFuentexCampoFuente(parametroId, fuenteId, campoFuenteId);
+        List<Map<String, Object>> options = new ArrayList<>();
+        for (Object[] row : result) {
+            Map<String, Object> option = new HashMap<>();
+            option.put("id", row[0]);
+            option.put("nombre", row[1]);
+            options.add(option);
+        }
+        return options;
     }
 
 }

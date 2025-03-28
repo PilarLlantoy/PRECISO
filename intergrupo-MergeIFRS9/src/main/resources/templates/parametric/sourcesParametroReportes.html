@@ -183,8 +183,6 @@
                optionRC.text = campo[1];
                ruta.appendChild(optionRC);
            });
-
-           limpiarCampos();
        }
    }
 
@@ -209,7 +207,6 @@
             evento.innerHTML = '<option selected value="" >Seleccione Evento</option>';
 
             data.forEach(campo => {
-            console.log(campo[0], campo[1]);
                 const option = document.createElement('option');
                 option.value = campo[0];
                 option.text = campo[1];
@@ -221,31 +218,48 @@
 
 
 
-   function cargarCampos(button) {
+   async function cargarCampos(button) {
        var id = button.getAttribute("data-id");
-       var campo = button.getAttribute("data-campo");
-       var valorCondicion = button.getAttribute("data-valorCondicion");
+       var idconciliacion = button.getAttribute("data-concil");
+       var idinventario = button.getAttribute("data-inventario");
+       var evento = button.getAttribute("data-evento");
 
        // Asignar los valores a los campos del formulario
        document.querySelector("input[name='id']").value = id;
-       document.querySelector("input[name='valorCondicion']").value = valorCondicion;
 
-       var selectCampo = document.querySelector("select[name='selectedCampo']");
-       var options = selectCampo.options;
+        var selectConcil = document.querySelector("select[name='selectedConcil']");
+        if (idconciliacion) {
+            selectConcil.value = idconciliacion; // Establece el valor directamente
+            if (!selectConcil.value) {
+                console.warn("El valor asignado no corresponde a ninguna opción del select.");
+            }
+        }
+        await toggleConciliacion();
 
-       // Buscar la opción con el texto que coincide con 'campo'
-       for (var i = 0; i < options.length; i++) {
-           if (options[i].text.trim() === campo.trim()) {
-               selectCampo.value = options[i].value; // Establece el valor de la opción encontrada
-               break;
-           }
-       }
-       updateButtonText();
+        var selectInventario = document.querySelector("select[name='selectedInventario']");
+        if (idinventario) {
+            selectInventario.value = idinventario; // Establece el valor directamente
+            if (!selectInventario.value) {
+                console.warn("El valor asignado no corresponde a ninguna opción del select.");
+            }
+        }
+        await toggleInventario();
+
+        var selectEvento = document.querySelector("select[name='selectedEvento']");
+        if (evento) {
+            selectEvento.value = evento; // Establece el valor directamente
+            if (!selectInventario.value) {
+                console.warn("El valor asignado no corresponde a ninguna opción del select.");
+            }
+        }
+
    }
+
    function Limpiar() {
        document.getElementById('miFormulario').reset();
        updateButtonText();
    }
+
    function descartar() {
        const id = document.querySelector("input[name='id']").value;
        const selectCampo = document.querySelector("select[name='selectedCampo']").value;
