@@ -291,26 +291,21 @@ public class InformationCrossingController {
 
     }
 
-    @Scheduled(cron = "0 25 15 * * ?")
+    @Scheduled(cron = "0 56 20 * * ?")
     public void processJob()  {
 
         LocalDateTime fechaHoy = LocalDateTime.now();
-        fechaHoy = fechaHoy.minusDays(1);
+        fechaHoy = fechaHoy.minusDays(15);
         DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String fecha = fechaHoy.format(formato);
         List<Object[]> list = informationCrossingService.findByJob(fecha);
         for (Object[] valor :list) {
-            int id = (int)valor[1];
-            int evento = (int)valor[2];
+            int id = (int)valor[0];
+            int evento = (int)valor[1];
             EventType tipoEvento = eventTypeService.findAllById(evento);
 
             //VALIDAR QUE LOS INVENTARIOS ESTEN SUBIDOS
             List<ConciliationRoute> listRoutes = conciliationRouteService.getRoutesByConciliation(id); //RUTAS CONCILIACIONES
-            List<Object[]> croutes = new ArrayList<>();
-            List<String> faltaCarga = new ArrayList<>();
-
-
-            List<LogInventoryLoad> logConcilroutes = new ArrayList<>();
             try {
                 //GENERAR CRUCE DE INVENTARIO
                 //-----------------------------------------------------------------------------------
@@ -351,7 +346,10 @@ public class InformationCrossingController {
                 //SE LOGRO EL CRUCE
                 conciliationService.generarTablaCruceCompleto_x_Conciliacion(id, fecha, evento);
                 conciliationService.generarTablaNovedades(listRoutes, fecha, tipoEvento);
-                informationCrossingService.loadLogInformationCrossing(null, id, evento, fecha, "Generar Cuentas", "Exitoso", "");
+                if(!informationCrossingService.findDataTable(listRoutes,fecha).isEmpty())
+                    informationCrossingService.loadLogInformationCrossing(null, id, evento, fecha, "Automático", "Exitoso", "");
+                else
+                    informationCrossingService.loadLogInformationCrossing(null, id, evento, fecha, "Automático", "Fallido", "No se encontraron Inventarios para cruzar, valide las rutas de cargue.");
             }
             catch (Exception e) {
                 e.printStackTrace();
@@ -359,7 +357,7 @@ public class InformationCrossingController {
                 while (rootCause.getCause() != null) {
                     rootCause = rootCause.getCause(); // Navega a la causa raíz
                 }
-                informationCrossingService.loadLogInformationCrossing(null, id, evento, fecha, "Generar Cuentas", "Fallido",rootCause.getMessage());
+                informationCrossingService.loadLogInformationCrossing(null, id, evento, fecha, "Automático", "Fallido",rootCause.getMessage());
             }
         }
     }

@@ -71,17 +71,16 @@
                             </div>
                         </div>
                     </div>
-
-                    <div class="col-md-2 hidden" id="afectaAContainer">
+                    <div class="col-md-2 " id="afectaAContainer">
                         <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Afecta a:</h6>
-                            <select class="form-control form-control-sm" th:field="*{campoAfectaCruce}" th:name="selectedCampoAf" id="selectedCampoAf">
+                            <select class="form-control form-control-sm" th:name="selectedCampo2" id="selectedCampo2">
                                 <option value="" selected >Seleccione operación</option>
-                                <option th:value="CENTRO_CONTABLE" >Centro_Contable</option>
-                                <option th:value="VALOR_CUENTA_1" >Valor_Cuenta_1</option>
-                                <option th:value="DIVISA_CUENTA_1" >Divisa Cuenta 1</option>
-                                <option th:value="VALOR_CUENTA_2" >Valor_Cuenta_2</option>
-                                <option th:value="DIVISA_CUENTA_2" >Divisa_Cuenta_2</option>
+                                <option th:value="CENTRO_CONTABLE_PRECISOKEY" >Centro Contable</option>
+                                <option th:value="VALOR_CUENTA_1_PRECISOKEY" >Valor Cuenta 1</option>
+                                <option th:value="DIVISA_CUENTA_1_PRECISOKEY" >Divisa Cuenta 1</option>
+                                <option th:value="VALOR_CUENTA_2_PRECISOKEY" >Valor Cuenta 2</option>
+                                <option th:value="DIVISA_CUENTA_2_PRECISOKEY" >Divisa Cuenta 2</option>
                             </select>
                         </div>
                     </div>
@@ -173,7 +172,7 @@
                         <td>
                             <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
                                     th:data-id="${val.id}"
-                                    th:data-campoAfecta="${val.campoAfecta?.nombre?: ''}"
+                                    th:data-campoAfecta="${val.campoAfectaCruce?: ''}"
                                     th:data-campoVal="${val.campoVal?.nombre ?: ''}"
                                     th:data-campoRef="${val.campoRef?.nombre ?: ''}"
                                     th:data-operacion="${val.operacion != 0 ? val.operacion : ''}"
@@ -262,20 +261,21 @@
             selectCampoVal.value = "";
         }
 
-        /*var selectCampoAf = document.querySelector("select[name='selectedCampoAf']");
-        var optionsCampoAf = selectCampoAf.options;
-
-        if (campoAfecta != null && campoAfecta.trim().length > 0 && campoAfecta!=0) {
+        var selectCampo2= document.querySelector("select[name='selectedCampo2']");
+        var optionsCampoAf = selectCampo2.options;
+        console.log(adCampoAfecta);
+        if (adCampoAfecta != null && adCampoAfecta === true && campoAfecta!=null) {
             for (var i = 0; i < optionsCampoAf.length; i++) {
-                if (optionsCampoAf[i].text.trim() === campoAfecta.trim()) {
-                    selectCampoAf.value = optionsCampoAf[i].value;
+                if (optionsCampoAf[i].value.trim() == campoAfecta.trim()) {
+                    selectCampo2.value = optionsCampoAf[i].value; // Establece el valor de la opción encontrada
                     break;
                 }
             }
         }
         else{
-            selectCampoAf.value = "";
-        }*/
+            selectCampo2.value = "";
+        }
+
 
         var selectCampo = document.querySelector("select[name='selectedCampo']");
         var optionsCampo = selectCampo.options;
@@ -341,8 +341,6 @@
     function toggleFieldsFormula() {
         var formulaCheckbox = document.getElementById('aplicaFormula1');
         var operacionContainer = document.getElementById('operacionContainer');
-
-        console.log(formulaCheckbox);
 
         if (formulaCheckbox.checked) {
             operacionContainer.classList.remove('hidden');

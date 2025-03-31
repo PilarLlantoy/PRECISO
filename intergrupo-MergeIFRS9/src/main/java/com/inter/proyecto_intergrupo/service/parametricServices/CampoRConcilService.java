@@ -134,7 +134,7 @@ public class CampoRConcilService {
 
         // Comparar y actualizar
         for (CampoRConcil column : data.getCampos()) {
-            if (!existingColumns.contains(column.getNombre())) {
+            if (!existingColumns.isEmpty() && !existingColumns.contains(column.getNombre())) {
                 //Agregar columna si no existe
                 entityManager.createNativeQuery(
                         "ALTER TABLE " + tableName + " ADD [" + column.getNombre() + "] " + getSqlType(column)

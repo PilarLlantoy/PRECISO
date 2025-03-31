@@ -101,10 +101,24 @@ public class InformationCrossingService {
         return listTemp;
     }
 
+    public List<Object[]> findDataTable(List<ConciliationRoute> listRoutes, String fecha){
+        List<Object[]> listTemp = new ArrayList<>();
+        try {
+            Query querySelect = entityManager.createNativeQuery("SELECT TOP 1 * FROM preciso_ci_"+listRoutes.get(0).getConciliacion().getId()+" WHERE FECHA_CONCILIACION_PRECISOKEY LIKE '"+fecha+"%';");
+            listTemp = querySelect.getResultList();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        return listTemp;
+    }
+
     public List<Object[]> findByJob(String fecha) {
-        String sql = "select a.fecha_conciliacion, a.codigo_conciliacion,b.id_tipo_evento\n" +
-                "from (select fecha_conciliacion,codigo_conciliacion from preciso_maestro_inventarios where fecha_conciliacion like '"+fecha+"%') a\n" +
-                "inner join (select id_conciliacion,id_tipo_evento from preciso_matriz_eventos) b on a.codigo_conciliacion = b.id_conciliacion";
+        String sql = "select a.id,b.id_tipo_evento\n" +
+                "from (select * from preciso_conciliaciones where activo = 1) a \n" +
+                "inner join (select distinct id_conciliacion,id_tipo_evento from preciso_matriz_eventos) b on a.id = b.id_conciliacion\n" +
+                "left join (select distinct estado_proceso,id_conciliacion from preciso_log_cruce_informacion where fecha_preciso like '"+fecha+"%' and estado_proceso = 'Exitoso') c on a.id = c.id_conciliacion\n" +
+                "where c.estado_proceso is null";
         Query querySelect = entityManager.createNativeQuery(sql);
         return querySelect.getResultList();
     }
@@ -138,13 +152,15 @@ public class InformationCrossingService {
 
         String tableName = "preciso_ci_" + idConcil + "_" + data.getId();
 
+        List<CampoRConcil> listCampos = conciliationRouteService.getCamposRcon(data);
+
         // PASO 1.
         // Validar si la tabla no existe, hay que crearla copiando la estructura de TEMPORAL_ci
         String createTableQuery = "IF OBJECT_ID('" + tableName + "', 'U') IS NULL " +
                 "BEGIN CREATE TABLE ";
         createTableQuery+=(tableName)+(" (");
-        for (int i = 0; i < data.getCampos().size(); i++) {
-            CampoRConcil column = data.getCampos().get(i);
+        for (int i = 0; i < listCampos.size(); i++) {
+            CampoRConcil column = listCampos.get(i);
             createTableQuery+=(column.getNombre())+(" ");
             if(column.getTipo().equalsIgnoreCase("DATE"))
                 createTableQuery+=("VARCHAR");
@@ -152,10 +168,10 @@ public class InformationCrossingService {
                 createTableQuery+=(column.getTipo());
             if (column.getTipo().equalsIgnoreCase("VARCHAR") || column.getTipo().equalsIgnoreCase("DATE"))
                 createTableQuery+=("(MAX)");
-            if (i < data.getCampos().size() - 1)
+            if (i < listCampos.size() - 1)
                 createTableQuery+=(", ");
         }
-        if (!data.getCampos().isEmpty())
+        if (!listCampos.isEmpty())
             createTableQuery+=(", ");
         createTableQuery+=("INVENTARIO_PRECISOKEY VARCHAR(MAX), ")
                 +("ID_INVENTARIO_PRECISOKEY INT, ")
@@ -178,10 +194,10 @@ public class InformationCrossingService {
         // PASO 3.
         // Insertar registros desde "preciso_rc_<data.getId()>" a la nueva tabla de esa fecha
         String insertDataQuery = "INSERT INTO "+tableName+" (";
-        for (int i = 0; i < data.getCampos().size(); i++) {
-            CampoRConcil column = data.getCampos().get(i);
+        for (int i = 0; i < listCampos.size(); i++) {
+            CampoRConcil column = listCampos.get(i);
             insertDataQuery+=(column.getNombre());
-            if (i < data.getCampos().size() - 1)
+            if (i < listCampos.size() - 1)
                 insertDataQuery+=", ";
         }
         insertDataQuery+=(", INVENTARIO_PRECISOKEY, ")
@@ -199,10 +215,10 @@ public class InformationCrossingService {
         insertDataQuery+=(") SELECT ");
 
         // Agregar los campos correspondientes en el SELECT
-        for (int i = 0; i < data.getCampos().size(); i++) {
-            CampoRConcil column = data.getCampos().get(i);
+        for (int i = 0; i < listCampos.size(); i++) {
+            CampoRConcil column = listCampos.get(i);
             insertDataQuery+=(column.getNombre());
-            if (i < data.getCampos().size() - 1)
+            if (i < listCampos.size() - 1)
                 insertDataQuery+=(", ");
         }
 
@@ -238,9 +254,11 @@ public class InformationCrossingService {
         String tableName = "TEMPORAL_ci";
         createTableQuery.append(tableName).append(" (");
 
+        List<CampoRConcil> listCampos = conciliationRouteService.getCamposRcon(data);
+
         // Paso 1: Agregar los campos existentes de la tabla original
-        for (int i = 0; i < data.getCampos().size(); i++) {
-            CampoRConcil column = data.getCampos().get(i);
+        for (int i = 0; i < listCampos.size(); i++) {
+            CampoRConcil column = listCampos.get(i);
             createTableQuery.append(column.getNombre())
                     .append(" ");
             if (column.getTipo().equalsIgnoreCase("DATE"))
@@ -249,12 +267,12 @@ public class InformationCrossingService {
                 createTableQuery.append(column.getTipo());
             if (column.getTipo().equalsIgnoreCase("VARCHAR") || column.getTipo().equalsIgnoreCase("DATE"))
                 createTableQuery.append("(MAX)"); // Longitud de MAX para VARCHAR
-            if (i < data.getCampos().size() - 1)
+            if (i < listCampos.size() - 1)
                 createTableQuery.append(", ");
         }
 
         // Paso 2: Agregar los nuevos campos específicos
-        if (!data.getCampos().isEmpty()) {
+        if (!listCampos.isEmpty()) {
             createTableQuery.append(", ");
         }
         createTableQuery.append("INVENTARIO_PRECISOKEY VARCHAR(MAX), ")
@@ -284,18 +302,18 @@ public class InformationCrossingService {
         String sourceTableName = "preciso_rconcil_" + data.getId();
         StringBuilder insertDataQuery = new StringBuilder("INSERT INTO ").append(tableName).append(" (");
         // Agregar solo los nombres de los campos existentes en la tabla original
-        for (int i = 0; i < data.getCampos().size(); i++) {
-            CampoRConcil column = data.getCampos().get(i);
+        for (int i = 0; i < listCampos.size(); i++) {
+            CampoRConcil column = listCampos.get(i);
             insertDataQuery.append(column.getNombre());
-            if (i < data.getCampos().size() - 1) {
+            if (i < listCampos.size() - 1) {
                 insertDataQuery.append(", ");
             }
         }
         insertDataQuery.append(") SELECT ");
-        for (int i = 0; i < data.getCampos().size(); i++) {
-            CampoRConcil column = data.getCampos().get(i);
+        for (int i = 0; i < listCampos.size(); i++) {
+            CampoRConcil column = listCampos.get(i);
             insertDataQuery.append(column.getNombre());
-            if (i < data.getCampos().size() - 1)
+            if (i < listCampos.size() - 1)
                 insertDataQuery.append(", ");
         }
 
@@ -476,7 +494,7 @@ public class InformationCrossingService {
                         "\t\ta.campo_afecta_cruce as campo_afecta, \n" +
                         "\t\td.nombre as campo,\n" +
                         "\t\ta.valor_operacion,\n" +
-                        "\t\tCASE a.operacion WHEN 'Suma' THEN '+' WHEN 'Resta' THEN '-' WHEN 'Multiplica' THEN '*' WHEN 'Divida' THEN '/' ELSE '' END as Operacion \n" +
+                        "\t\tCASE a.operacion WHEN 'Suma' THEN '+' WHEN 'Resta' THEN '-' WHEN 'Multiplica' THEN '*' WHEN 'Divida' THEN '/' ELSE '' END as Operacion,a.adiciona_campo_afecta, a.aplica_formula \n" +
                         "\t\t\t FROM PRECISO.dbo.preciso_validaciones_matriz_evento a \n" +
                         "\t\t\t\tLEFT JOIN PRECISO.dbo.preciso_campos_rconcil b ON a.id_campo_validacion = b.id_campo \n" +
                         "\t\t\t\tLEFT JOIN PRECISO.dbo.preciso_campos_rconcil d ON a.id_campo_referencia = d.id_campo\n" +
@@ -486,18 +504,18 @@ public class InformationCrossingService {
 
         if (!validacionLista.isEmpty()) {
             for (Object[] obj : validacionLista) {
-                String operacion = obj[4] != null ? obj[4].toString() : "";
+                String operacion = obj[5] != null && (boolean) obj[7] ? obj[5].toString() : "";
 
                 // Determinar cuál campo actualizar
-                String campoActualizar = obj[2] != null ? obj[2].toString() : obj[0].toString();
+                String campoActualizar = obj[2] != null && (boolean) obj[6] ? obj[2].toString() : obj[3].toString();
 
                 // Construir la consulta dependiendo de si hay operación o no
                 String queryUpdate;
-                if (!operacion.isEmpty() && operacion.isBlank()) {
+                if ((boolean) obj[7] && !operacion.isEmpty() && !operacion.isBlank()) {
                     queryUpdate = "UPDATE " + nombreTabla + " SET " +
-                            campoActualizar + " = CAST(TRY_CAST(" + obj[0].toString() + " AS DECIMAL(38, 0)) * 0.01 " +
-                            operacion + obj[3].toString() + " AS VARCHAR) " +
-                            "WHERE " + obj[1].toString() + " = '" + obj[2].toString() + "' AND " + condicion;
+                            campoActualizar + " = CAST(CASE WHEN "+obj[3].toString()+" LIKE '%.%' THEN TRY_CAST("+obj[3].toString()+" AS DECIMAL(38, 2)) " +
+                            "ELSE TRY_CAST("+obj[3].toString()+" AS DECIMAL(38, 2)) /100.0 END "+ operacion + obj[4].toString() +" AS DECIMAL(38, 2)) "+
+                            "WHERE " + obj[0].toString() + " = '" + obj[1].toString() + "' AND " + condicion;
                 } else {
                     queryUpdate = "UPDATE " + nombreTabla + " SET " +
                             campoActualizar + " = '" + obj[4].toString() + "' " +

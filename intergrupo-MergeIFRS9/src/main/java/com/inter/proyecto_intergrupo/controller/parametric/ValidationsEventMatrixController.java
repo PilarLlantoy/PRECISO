@@ -131,7 +131,7 @@ public class ValidationsEventMatrixController {
     @PostMapping(value = "/parametric/createValidacionME")
     public ModelAndView createValidacionME(@ModelAttribute ValidationME validationME,
             @RequestParam(name = "selectedCampoVal", defaultValue = "0") Integer campoValidacion,
-            @RequestParam(name = "selectedCampoAf", defaultValue = "0") String campoAfecta,
+            @RequestParam(name = "selectedCampo2", defaultValue = "0") String campoAfecta,
             @RequestParam(name = "selectedCampo", defaultValue = "0") Integer campo,
             @RequestParam(name = "selectedOperacion", defaultValue = "0") String operacion,
             @RequestParam(name = "matrizId", defaultValue = "0") String matrizId,
