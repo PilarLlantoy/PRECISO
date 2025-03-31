@@ -418,17 +418,18 @@ public class InformationCrossingService {
 
         // Crear el query y setear los parámetros
         Query updateQuery = entityManager.createNativeQuery(query);
-        updateQuery.setParameter(1, data.getDetalle());
-        updateQuery.setParameter(2, fecha);
-        updateQuery.setParameter(3, tipoEvento.getNombre());
-        updateQuery.setParameter(4, matriz.getId());
-        updateQuery.setParameter(5, matriz.isManejaCC() ? matriz.getCampoCC().getNombre() : matriz.getCentroContable());
+        int columna=1;
+        updateQuery.setParameter(columna++, data.getDetalle());
+        updateQuery.setParameter(columna++, fecha);
+        updateQuery.setParameter(columna++, tipoEvento.getNombre());
+        updateQuery.setParameter(columna++, matriz.getId());
+        updateQuery.setParameter(columna++, matriz.isManejaCC() ? matriz.getCampoCC().getNombre() : matriz.getCentroContable());
         if (cuenta1 != null)
-            updateQuery.setParameter(6, cuenta1.getCuentaGanancia());
+            updateQuery.setParameter(columna++, cuenta1.getCuentaGanancia());
 
         // Si cuenta2 no es nula, agregar el parámetro adicional
         if (cuenta2 != null)
-            updateQuery.setParameter(7, cuenta2.getCuentaGanancia());
+            updateQuery.setParameter(columna++, cuenta2.getCuentaGanancia());
 
         // Ejecutar la consulta
         updateQuery.executeUpdate();
