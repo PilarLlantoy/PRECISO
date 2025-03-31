@@ -344,7 +344,7 @@ public class InformationCrossingService {
         if (cuenta1 != null && !cuenta1.isManejaFormula())
             valorCuenta1 = cuenta1.getCampoValorCuenta().getNombre();
         else if (cuenta1 != null)
-            valorCuenta1 = cuenta1.getCampoValorOp1().getNombre() + " " + operacionSimbolo(cuenta1.getOperacion()) + " " +
+            valorCuenta1 = "CASE WHEN "+cuenta1.getCampoValorOp1().getNombre() + " LIKE '%,%' THEN CAST(REPLACE(REPLACE("+cuenta1.getCampoValorOp1().getNombre() + ", '.', ''), ',', '.') AS DECIMAL(10, 2)) ELSE CAST("+cuenta1.getCampoValorOp1().getNombre() +" AS DECIMAL(10, 2)) END " + operacionSimbolo(cuenta1.getOperacion()) + " " +
                     (cuenta1.getCampoValorOp2() != null ? cuenta1.getCampoValorOp2().getNombre() : cuenta1.getValorOp2());
 
         // Aplicar ABS si cuenta1.isValorAbsoluto() es true
@@ -356,7 +356,7 @@ public class InformationCrossingService {
         if (cuenta2 != null && !cuenta2.isManejaFormula())
             valorCuenta2 = cuenta2.getCampoValorCuenta().getNombre();
         else if (cuenta2 != null)
-            valorCuenta2 = cuenta2.getCampoValorOp1().getNombre() + " " + operacionSimbolo(cuenta2.getOperacion()) + " " +
+            valorCuenta2 = "CASE WHEN "+cuenta2.getCampoValorOp1().getNombre() + " LIKE '%,%' THEN CAST(REPLACE(REPLACE("+cuenta2.getCampoValorOp1().getNombre() + ", '.', ''), ',', '.') AS DECIMAL(10, 2)) ELSE CAST("+cuenta2.getCampoValorOp1().getNombre() +" AS DECIMAL(10, 2)) END " + operacionSimbolo(cuenta2.getOperacion()) + " " +
                     (cuenta2.getCampoValorOp2() != null ? cuenta2.getCampoValorOp2().getNombre() : cuenta2.getValorOp2());
 
         // Aplicar ABS si cuenta2.isValorAbsoluto() es true
