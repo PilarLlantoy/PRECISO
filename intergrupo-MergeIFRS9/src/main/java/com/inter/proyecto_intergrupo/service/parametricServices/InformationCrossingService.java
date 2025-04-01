@@ -675,28 +675,29 @@ public class InformationCrossingService {
                         "    ROW_NUMBER() OVER (PARTITION BY fecha_proceso, id_conciliacion,id_evento ORDER BY fecha_preciso DESC) AS row_num\n" +
                         "FROM \n" +
                         "    PRECISO.dbo.preciso_log_cruce_informacion\n" +
-                        "WHERE fecha_proceso like ? \n" +
+                        "WHERE fecha_proceso like :fechaVarP \n" +
                         ")\n" +
                         "SELECT a.id_lci,\n" +
-                        "b.nombre,\n" +
+                        "b.nombre, \n" +
                         "'' as nulo,\n" +
                         "d.nombre_tipo_evento,\n" +
-                        "a.fecha_proceso,\n" +
-                        "a.novedad,\n" +
-                        "a.fecha_preciso,\n" +
-                        "a.usuario,\n" +
-                        "a.tipo_proceso,\n" +
-                        "a.estado_proceso,\n" +
-                        "a.total_intentos,\n" +
-                        "a.id_conciliacion,\n" +
-                        "a.id_evento     \n" +
-                        "FROM CTE a \n" +
-                        "left join preciso_conciliaciones b on a.id_conciliacion =b.id\n" +
-                        "left join preciso_tipo_evento d on a.id_evento =d.id_tipo_evento\n" +
-                        "WHERE row_num = 1\n" +
+                        "ISNULL(a.fecha_proceso,cast( :fechaVar as date)) as fecha_proceso,\n" +
+                        "ISNULL(a.novedad,'') as novedad,\n" +
+                        "ISNULL(a.fecha_preciso,cast( :fechaVar as date)) as fecha_preciso,\n" +
+                        "ISNULL(a.usuario,'Sin Ejecutar') as usuario,\n" +
+                        "ISNULL(a.tipo_proceso,'') as tipo_proceso,\n" +
+                        "ISNULL(a.estado_proceso,'Fallido') as estado_proceso,\n" +
+                        "ISNULL(a.total_intentos,0) as total_intentos,\n" +
+                        "b.id,\n" +
+                        "c.id_tipo_evento     \n" +
+                        "FROM preciso_conciliaciones b\n" +
+                        "inner join (select distinct id_conciliacion,id_tipo_evento from preciso_matriz_eventos) c on b.id = c.id_conciliacion\n" +
+                        "left join preciso_tipo_evento d on c.id_tipo_evento = d.id_tipo_evento\n" +
+                        "left join (SELECT * FROM CTE WHERE row_num = 1 ) a on b.id =a.id_conciliacion and d.id_tipo_evento = a.id_evento\n" +
                         "ORDER BY \n" +
-                        "a.fecha_proceso, a.id_conciliacion,a.id_evento;");
-        query.setParameter(1, fecha+"%");
+                        "b.id,a.id_evento,a.fecha_proceso;\n");
+        query.setParameter("fechaVar", fecha);
+        query.setParameter("fechaVarP", fecha+"%");
         return query.getResultList();
     }
 

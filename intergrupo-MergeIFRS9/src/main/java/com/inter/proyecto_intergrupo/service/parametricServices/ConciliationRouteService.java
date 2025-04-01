@@ -718,37 +718,38 @@ public class ConciliationRouteService {
     public List<Object[]> findAllLogByDate(String fecha) {
         Query query = entityManager.createNativeQuery(
                 "WITH CTE AS (\n" +
-                        "    SELECT \n" +
-                        "        [id_lci],\n" +
-                        "        [cantidad_registros],\n" +
-                        "        [estado_proceso],\n" +
-                        "        [fecha_cargue],\n" +
-                        "        [fecha_preciso],\n" +
-                        "        [novedad],\n" +
-                        "        [tipo_proceso],\n" +
-                        "        [usuario],\n" +
-                        "        [idcr],\n" +
-                        "        COUNT(*) OVER (PARTITION BY [fecha_cargue], [idcr]) AS total_intentos,\n" +
-                        "        ROW_NUMBER() OVER (PARTITION BY [fecha_cargue], [idcr] ORDER BY [fecha_preciso] DESC) AS row_num\n" +
-                        "    FROM \n" +
-                        "        [PRECISO].[dbo].[preciso_log_cargues_inventarios]\n" +
-                        "    WHERE fecha_cargue like ?" +
+                        "SELECT \n" +
+                        "[id_lci],\n" +
+                        "[cantidad_registros],\n" +
+                        "[estado_proceso],\n" +
+                        "[fecha_cargue],\n" +
+                        "[fecha_preciso],\n" +
+                        "[novedad],\n" +
+                        "[tipo_proceso],\n" +
+                        "[usuario],\n" +
+                        "[idcr],\n" +
+                        "COUNT(*) OVER (PARTITION BY [fecha_cargue], [idcr]) AS total_intentos,\n" +
+                        "ROW_NUMBER() OVER (PARTITION BY [fecha_cargue], [idcr] ORDER BY [fecha_preciso] DESC) AS row_num\n" +
+                        "FROM \n" +
+                        "[PRECISO].[dbo].[preciso_log_cargues_inventarios]\n" +
+                        "WHERE fecha_cargue like :fechaValP \n" +
                         ")\n" +
-                        "SELECT [id_lci],\n" +              //0
-                        "    [cantidad_registros],\n" +     //1
-                        "    [estado_proceso],\n" +         //2
-                        "    [fecha_cargue],\n" +           //3
-                        "    [fecha_preciso],\n" +          //4
-                        "    [novedad],\n" +                //5
-                        "    [tipo_proceso],\n" +           //6
-                        "    [usuario],\n" +                //7
-                        "    [idcr],\n" +                   //8
-                        "    total_intentos\n" +           //9
-                        "FROM CTE\n" +
-                        "WHERE row_num = 1\n" +
+                        "SELECT a.id_lci,\n" +
+                        "ISNULL(a.cantidad_registros,0) as cantidad_registros, \n" +
+                        "ISNULL(a.estado_proceso,'Fallido') as estado_proceso, \n" +
+                        "ISNULL(a.fecha_cargue,cast( :fechaVal as date)) as fecha_cargue, \n" +
+                        "ISNULL(a.fecha_preciso,cast( :fechaVal as date)) as fecha_preciso,\n" +
+                        "ISNULL(a.novedad,'') as novedad,\n" +
+                        "ISNULL(a.tipo_proceso,'') as tipo_proceso,\n" +
+                        "ISNULL(a.usuario,'Sin Ejecutar') as usuario, \n" +
+                        "b.id,\n" +
+                        "ISNULL(a.total_intentos,0) as total_intentos\n" +
+                        "FROM preciso_rutas_conciliaciones b\n" +
+                        "left join (SELECT * FROM CTE WHERE row_num = 1 ) a on b.id =a.idcr\n" +
                         "ORDER BY \n" +
-                        "[fecha_cargue], [idcr];");
-        query.setParameter(1, fecha+"%");
+                        "b.id, a.fecha_cargue;\n");
+        query.setParameter("fechaVal", fecha);
+        query.setParameter("fechaValP", fecha+"%");
         return query.getResultList();
     }
 
