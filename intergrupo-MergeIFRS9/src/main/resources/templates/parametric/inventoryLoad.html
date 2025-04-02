@@ -68,20 +68,18 @@
 
                 <div class="contend mb-2">
                     <h2>Opciones Manuales</h2>
-                    <div class="d-flex">
-                        <div class="mt-1" style="padding-left:0px">
-                            <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary"
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary w-100"
                                     th:onclick="|validarYSubir()|" type="button">Cargar Manual</button>
                         </div>
-                        <div class="mt-1 mx-1" style="padding-left:0px">
-                            <button type="button" class="btn btn-sm btn-primary" th:onclick="|validarYexportar()|" th:if="${allRCs.size()!=0}">Exportar Excel</button>
-                            <button type="button" class="btn btn-sm btn-primary" th:if="${allRCs.size()==0}" disabled>Exportar Excel</button>
+                        <div class="col-6">
+                            <button type="button" class="btn btn-sm btn-primary w-100" th:onclick="|validarYexportar()|" th:if="${allRCs.size()!=0}">Exportar Excel</button>
+                            <button type="button" class="btn btn-sm btn-primary w-100" th:if="${allRCs.size()==0}" disabled>Exportar Excel</button>
                         </div>
-                    </div>
-                    <div class="d-flex">
-                        <div class="mt-1" style="padding-left:0px">
-                            <a type="button" class="btn btn-primary btn-sm" th:if="${period != null }" th:href="@{'/parametric/cuadroMandoInvAndCont?period=' + ${period}}">Ir a Cuadro</a>
-                            <button type="button" class="btn btn-primary btn-sm" th:if="${period == null }" disabled >Ir a Cuadro</button>
+                        <div class="col-6">
+                            <a type="button" class="btn btn-primary btn-sm w-100" th:if="${period != null }" th:href="@{'/parametric/cuadroMandoInvAndCont?period=' + ${period}}">Ir a Cuadro</a>
+                            <button type="button" class="btn btn-primary btn-sm w-100" th:if="${period == null }" disabled >Ir a Cuadro</button>
                         </div>
                     </div>
                 </div>

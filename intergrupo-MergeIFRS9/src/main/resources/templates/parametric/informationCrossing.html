@@ -65,37 +65,33 @@
 
                 <div class="contend">
                     <h2>Opciones</h2>
-                    <div class="d-flex">
-                        <div class="mt-1" style="padding-left:0px">
-                            <button class="btn btn-primary btn-sm"
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <button class="btn btn-primary btn-sm w-100"
                                     th:disabled="${!p_modificar or (ultLog != null and ultLog[3] == true)}"
                                     th:onclick="|generarCuentas()|" type="button">Generar Cuentas</button>
                         </div>
-                        <div class="mt-1 mx-1" style="padding-left:0px">
-                            <button type="button" class="btn btn-sm btn-primary" th:onclick="|validarYexportar()|" th:if="${allRCs.size()!=0}">Exportar Consolidado</button>
-                            <button type="button" class="btn btn-sm btn-primary" th:if="${allRCs.size()==0}" disabled>Exportar Consolidado</button>
+                        <div class="col-6">
+                            <button type="button" class="btn btn-sm btn-primary w-100" th:onclick="|validarYexportar()|" th:if="${allRCs.size()!=0}">Exportar Agrupado</button>
+                            <button type="button" class="btn btn-sm btn-primary w-100" th:if="${allRCs.size()==0}" disabled>Exportar Agrupado</button>
                         </div>
-                    </div>
-                    <div class="d-flex">
-                        <div class="mt-1" style="padding-left:0px">
-                            <button type="button" class="btn btn-sm btn-primary" th:onclick="|validarYexportarD()|" th:if="${allRCs.size()!=0}">Exportar Detallado</button>
-                            <button type="button" class="btn btn-sm btn-primary" th:if="${allRCs.size()==0}" disabled>Exportar Detallado</button>
+                        <div class="col-6">
+                            <button type="button" class="btn btn-sm btn-primary w-100" th:onclick="|validarYexportarD()|" th:if="${allRCs.size()!=0}">Exportar Detallado</button>
+                            <button type="button" class="btn btn-sm btn-primary w-100" th:if="${allRCs.size()==0}" disabled>Exportar Detallado</button>
                         </div>
-                        <div class="mt-1 mx-1" style="padding-left:0px">
-                            <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm"
-                                    th:onclick="|validarYSubir()|" type="button">Exportar Novedades</button>
+                        <div class="col-6">
+                            <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm w-100"
+                                    th:onclick="|validarYSubir()|" type="button">Exportar Novedad</button>
                         </div>
-                    </div>
-                    <div class="d-flex">
-                        <div class="mt-1" style="padding-left:0px">
-                            <button class="btn btn-primary btn-sm"
+                        <div class="col-6">
+                            <button class="btn btn-primary btn-sm w-100"
                                     th:disabled="${!p_modificar or (ultLog != null and ultLog[3] == true) or ultLog==null}"
                                     data-toggle="modal"
                                     data-target="#confirmarModal"
                                     th:onclick="|validarYSubir()|" type="button">Confirmar Cruce</button>
                         </div>
-                        <div class="mt-1 mx-1" style="padding-left:0px">
-                            <a type="button" class="btn btn-primary btn-sm" th:if="${period != null }" th:href="@{'/parametric/cuadroMandoCru?period=' + ${period}}">Ir a Cuadro</a>
+                        <div class="col-6">
+                            <a type="button" class="btn btn-primary btn-sm w-100" th:if="${period != null }" th:href="@{'/parametric/cuadroMandoCru?period=' + ${period}}">Ir a Cuadro</a>
                             <button type="button" class="btn btn-primary btn-sm" th:if="${period == null }" disabled >Ir a Cuadro</button>
                         </div>
                     </div>
