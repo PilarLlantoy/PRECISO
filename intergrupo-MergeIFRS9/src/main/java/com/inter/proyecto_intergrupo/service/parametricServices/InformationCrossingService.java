@@ -153,8 +153,8 @@ public class InformationCrossingService {
         //System.out.println("CREANDO LA TABLA FINAL DE ESE INVENTARIO");
         //System.out.println("#############################");
 
-        String tableName = "preciso_ci_" + idConcil + "_" + data.getId();
-        String tableTemporal = "TEMPORAL_ci_" + idConcil + "_" + data.getId();
+        String tableName = "preciso_ci_" + data.getConciliacion().getId() + "_" + data.getId();
+        String tableTemporal = "TEMPORAL_ci_" + data.getConciliacion().getId() + "_" + data.getId();
 
         List<CampoRConcil> listCampos = conciliationRouteService.getCamposRcon(data);
 
@@ -348,8 +348,9 @@ public class InformationCrossingService {
         if (cuenta1 != null && !cuenta1.isManejaFormula())
             valorCuenta1 = cuenta1.getCampoValorCuenta().getNombre();
         else if (cuenta1 != null)
-            valorCuenta1 = "CASE WHEN "+cuenta1.getCampoValorOp1().getNombre() + " LIKE '%,%' THEN CAST(REPLACE(REPLACE("+cuenta1.getCampoValorOp1().getNombre() + ", '.', ''), ',', '.') AS FLOAT) WHEN "+cuenta1.getCampoValorOp1().getNombre() + " LIKE '%.%' THEN CAST("+cuenta1.getCampoValorOp1().getNombre() + " AS float) ELSE "+cuenta1.getCampoValorOp1().getNombre() + " END" + operacionSimbolo(cuenta1.getOperacion()) + " " +
-                    (cuenta1.getCampoValorOp2() != null ? cuenta1.getCampoValorOp2().getNombre() : cuenta1.getValorOp2());
+            valorCuenta1 = "CASE WHEN "+cuenta1.getCampoValorOp1().getNombre() + " LIKE '%,%' THEN CAST(REPLACE(REPLACE("+cuenta1.getCampoValorOp1().getNombre() + ", '.', ''), ',', '.') AS FLOAT) WHEN "+cuenta1.getCampoValorOp1().getNombre() + " LIKE '%.%' THEN CAST("+cuenta1.getCampoValorOp1().getNombre() + " AS float) ELSE "+cuenta1.getCampoValorOp1().getNombre() + " END" +
+                    operacionSimbolo(cuenta1.getOperacion()) + " CASE WHEN TRY_CAST(" +(cuenta1.getCampoValorOp2() != null ? cuenta1.getCampoValorOp2().getNombre() : cuenta1.getValorOp2())+ " AS FLOAT) = 0.00 THEN 1 ELSE TRY_CAST("+
+                    (cuenta1.getCampoValorOp2() != null ? cuenta1.getCampoValorOp2().getNombre() : cuenta1.getValorOp2())+" AS FLOAT) END ";
 
         // Aplicar ABS si cuenta1.isValorAbsoluto() es true
         if (cuenta1 != null && cuenta1.isValorAbsoluto()) {
@@ -360,8 +361,9 @@ public class InformationCrossingService {
         if (cuenta2 != null && !cuenta2.isManejaFormula())
             valorCuenta2 = cuenta2.getCampoValorCuenta().getNombre();
         else if (cuenta2 != null)
-            valorCuenta2 = "CASE WHEN "+cuenta2.getCampoValorOp1().getNombre() + " LIKE '%,%' THEN CAST(REPLACE(REPLACE("+cuenta2.getCampoValorOp1().getNombre() + ", '.', ''), ',', '.') AS FLOAT) WHEN "+cuenta2.getCampoValorOp1().getNombre() + " LIKE '%.%' THEN CAST("+cuenta2.getCampoValorOp1().getNombre() + " AS float) ELSE "+cuenta2.getCampoValorOp1().getNombre() + " END" + operacionSimbolo(cuenta2.getOperacion()) + " " +
-                    (cuenta2.getCampoValorOp2() != null ? cuenta2.getCampoValorOp2().getNombre() : cuenta2.getValorOp2());
+            valorCuenta2 = "CASE WHEN "+cuenta2.getCampoValorOp1().getNombre() + " LIKE '%,%' THEN CAST(REPLACE(REPLACE("+cuenta2.getCampoValorOp1().getNombre() + ", '.', ''), ',', '.') AS FLOAT) WHEN "+cuenta2.getCampoValorOp1().getNombre() + " LIKE '%.%' THEN CAST("+cuenta2.getCampoValorOp1().getNombre() + " AS float) ELSE "+cuenta2.getCampoValorOp1().getNombre() + " END" +
+                    operacionSimbolo(cuenta2.getOperacion()) + " CASE WHEN TRY_CAST(" +(cuenta2.getCampoValorOp2() != null ? cuenta2.getCampoValorOp2().getNombre() : cuenta2.getValorOp2())+ " AS FLOAT) = 0.00 THEN 1 ELSE TRY_CAST("+
+                    (cuenta2.getCampoValorOp2() != null ? cuenta2.getCampoValorOp2().getNombre() : cuenta2.getValorOp2()) +" AS FLOAT) END ";
 
         // Aplicar ABS si cuenta2.isValorAbsoluto() es true
         if (cuenta2 != null && cuenta2.isValorAbsoluto()) {
@@ -379,7 +381,9 @@ public class InformationCrossingService {
         if (cuenta1 != null) {
             queryBuilder.append(", CUENTA_CONTABLE_1_PRECISOKEY = ?, ");
             // Aplicar conversión de UVR a COP en DIVISA_CUENTA_1
-            if (cuenta1.isConvierteUVRaCOP())
+            if (!cuenta1.isManejaDivisa())
+                queryBuilder.append("DIVISA_CUENTA_1_PRECISOKEY = 'COP',");
+            else if (cuenta1.isConvierteUVRaCOP())
                 queryBuilder.append("DIVISA_CUENTA_1_PRECISOKEY = CASE WHEN ").append(cuenta1.getCampoDivisa().getNombre())
                         .append(" = 'UVR' THEN 'COP' ELSE ").append(cuenta1.getCampoDivisa().getNombre()).append(" END, ");
             else if (cuenta1.isConvierteDivisa())
@@ -399,7 +403,9 @@ public class InformationCrossingService {
             queryBuilder.append(", CUENTA_CONTABLE_2_PRECISOKEY = ?, ");
 
             // Aplicar conversión de UVR a COP en DIVISA_CUENTA_2
-            if (cuenta2.isConvierteUVRaCOP())
+            if (!cuenta2.isManejaDivisa())
+                queryBuilder.append("DIVISA_CUENTA_2_PRECISOKEY = 'COP',");
+            else if (cuenta2.isConvierteUVRaCOP())
                 queryBuilder.append("DIVISA_CUENTA_2_PRECISOKEY = CASE WHEN ").append(cuenta2.getCampoDivisa().getNombre())
                         .append(" = 'UVR' THEN 'COP' ELSE ").append(cuenta2.getCampoDivisa().getNombre()).append(" END, ");
             else if (cuenta2.isConvierteDivisa())
@@ -419,6 +425,8 @@ public class InformationCrossingService {
 
         // Completar la consulta
         String query = queryBuilder.toString();
+
+        System.out.println("ESTE ES EL QUERY------------------------------------------->\n"+query);
 
         // Crear el query y setear los parámetros
         Query updateQuery = entityManager.createNativeQuery(query);
@@ -704,65 +712,5 @@ public class InformationCrossingService {
         query.setParameter("fechaVarP", fecha+"%");
         return query.getResultList();
     }
-
-    public void leerArchivosMasivo(String[] ids,String fecha) {
-
-        for (String idPar :ids)
-        {
-            String[] partes = idPar.split(";");
-            int id=Integer.parseInt(partes[0]);
-            int evento=Integer.parseInt(partes[1]);
-            ConciliationRoute ruta = conciliationRouteService.findById(id);
-            EventType tipoEvento= eventTypeService.findAllById(evento);
-
-            try {
-                List<ConciliationRoute> listRoutes = conciliationRouteService.getRoutesByConciliation(ruta.getConciliacion().getId());
-
-                List<EventMatrix> matrices = eventMatrixService.findByConciliationxInventarioxTipoEvento(ruta.getConciliacion().getId(), id, evento);
-                creatTablaTemporalCruce(ruta, fecha);
-
-                for (EventMatrix matriz : matrices) {
-                    if(matriz.isEstado()){ //SOLO LAS MATRICES ACTIVAS
-                        //Primero veremos las condiciones
-                        List<CondicionEventMatrix> condiciones = condicionMEService.findByMatrizEvento(matriz);
-                        String condicion = null;
-                        if (condiciones.size() != 0)
-                            condicion = conditionData(ruta, matriz);
-
-                        AccountEventMatrix cuenta1 = accountEventMatrixService.findByMatrizEventoTipo1(matriz);
-                        AccountEventMatrix cuenta2 = accountEventMatrixService.findByMatrizEventoTipo2(matriz);
-                        completarTablaCruce(ruta, fecha, tipoEvento, matriz, cuenta1, cuenta2, condicion);
-
-                        //Realizamos las validaciones
-                        List<ValidationME> validaciones = validationMEService.findByEventMatrix(matriz);
-                        if (validaciones.size() != 0)
-                            validationData(ruta, matriz, condicion);
-                    }
-
-                }
-
-                //Agregamos estos registros a la tabla final
-                //Creamos las tablas finales vacias de cada inventario con los campos agregados
-                recreateTable(ruta, id, fecha,tipoEvento);
-
-                //SE LOGRO EL CRUCE
-                conciliationService.generarTablaCruceCompleto_x_Conciliacion(id, fecha, evento);
-                conciliationService.generarTablaNovedades(listRoutes, fecha, tipoEvento);
-                if(!findDataTable(listRoutes,fecha).isEmpty())
-                    loadLogInformationCrossing(null, id, evento, fecha, "Cargue Masivo", "Exitoso", "");
-                else
-                    loadLogInformationCrossing(null, id, evento, fecha, "Cargue Masivo", "Fallido", "No se encontraron Inventarios para cruzar, valide las rutas de cargue.");
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-                Throwable rootCause = e;
-                while (rootCause.getCause() != null) {
-                    rootCause = rootCause.getCause(); // Navega a la causa raíz
-                }
-                loadLogCargue(null,ruta.getConciliacion().getId(),fecha,"Cargue Masivo","Fallido",rootCause.getMessage(),tipoEvento);
-            }
-        }
-    }
-
 
 }

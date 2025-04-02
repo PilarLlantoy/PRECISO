@@ -1,6 +1,7 @@
 package com.inter.proyecto_intergrupo.controller.parametric;
 
 import com.inter.proyecto_intergrupo.model.admin.User;
+import com.inter.proyecto_intergrupo.model.parametric.*;
 import com.inter.proyecto_intergrupo.service.adminServices.UserService;
 import com.inter.proyecto_intergrupo.service.parametricServices.*;
 import org.apache.logging.log4j.LogManager;
@@ -47,7 +48,22 @@ public class CuadroMandoCruController {
     private EventTypeService eventTypeService;
 
     @Autowired
+    private EventMatrixService eventMatrixService;
+
+    @Autowired
+    private ValidationMEService validationMEService;
+
+    @Autowired
+    private CondicionMEService condicionMEService;
+
+    @Autowired
     private SourceSystemService sourceSystemService;
+
+    @Autowired
+    private ConciliationService conciliationService;
+
+    @Autowired
+    private AccountEventMatrixService accountEventMatrixService;
 
     @GetMapping(value="/parametric/cuadroMandoCru")
     public ModelAndView cuadroMandoCru(@RequestParam Map<String, Object> params) {
@@ -98,13 +114,77 @@ public class CuadroMandoCruController {
     }
     @PostMapping("/parametric/cuadroMandoCru/invMasive")
     public ModelAndView manejarSeleccionados(@RequestParam("idsSeleccionados") String idsSeleccionados,
-                                             @RequestParam("period") String period) {
+                                             @RequestParam("period") String fecha) {
         ModelAndView modelAndView = new ModelAndView("redirect:/parametric/cuadroMandoCru");
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findUserByUserName(auth.getName());
         String[] ids = idsSeleccionados.split(",");
-        modelAndView.addObject("period", period);
+        modelAndView.addObject("period", fecha);
         if(idsSeleccionados.trim().length()!=0)
         {
-            informationCrossingService.leerArchivosMasivo(ids,period);
+            for (String idPar :ids)
+            {
+                String[] partes = idPar.split(";");
+                int id=Integer.parseInt(partes[0]);
+                int evento=Integer.parseInt(partes[1]);
+                EventType tipoEvento= eventTypeService.findAllById(evento);
+
+                //VALIDAR QUE LOS INVENTARIOS ESTEN SUBIDOS
+                List<ConciliationRoute> listRoutes = conciliationRouteService.getRoutesByConciliation(id); //RUTAS CONCILIACIONES
+                try {
+                    //GENERAR CRUCE DE INVENTARIO
+                    //-----------------------------------------------------------------------------------
+                    for (ConciliationRoute ruta : listRoutes) {
+
+                        List<EventMatrix> matrices = eventMatrixService.findByConciliationxInventarioxTipoEvento(id, ruta.getId(), evento);
+                        //Creamos tablas temporales con la data total
+                        informationCrossingService.creatTablaTemporalCruce(ruta, fecha);
+
+                        for (EventMatrix matriz : matrices) {
+                            if(matriz.isEstado()){ //SOLO LAS MATRICES ACTIVAS
+                                //Primero veremos las condiciones
+                                List<CondicionEventMatrix> condiciones = condicionMEService.findByMatrizEvento(matriz);
+                                String condicion = null;
+                                if (condiciones.size() != 0)
+                                    condicion = informationCrossingService.conditionData(ruta, matriz);
+
+                                //Completamos informacion de cruce
+                                AccountEventMatrix cuenta1 = accountEventMatrixService.findByMatrizEventoTipo1(matriz);
+                                AccountEventMatrix cuenta2 = accountEventMatrixService.findByMatrizEventoTipo2(matriz);
+                                informationCrossingService.completarTablaCruce(ruta, fecha, tipoEvento, matriz, cuenta1, cuenta2, condicion);
+
+                                //Realizamos las validaciones
+                                List<ValidationME> validaciones = validationMEService.findByEventMatrix(matriz);
+                                if (validaciones.size() != 0)
+                                    informationCrossingService.validationData(ruta, matriz, condicion);
+                            }
+
+                        }
+
+                        //Agregamos estos registros a la tabla final
+                        //Creamos las tablas finales vacias de cada inventario con los campos agregados
+                        informationCrossingService.recreateTable(ruta, id, fecha,tipoEvento);
+                        System.out.println("RUTA CONCILIACION "+ruta.getDetalle());
+
+                    }
+
+                    //SE LOGRO EL CRUCE
+                    conciliationService.generarTablaCruceCompleto_x_Conciliacion(id, fecha, evento);
+                    conciliationService.generarTablaNovedades(listRoutes, fecha, tipoEvento);
+                    if(!informationCrossingService.findDataTable(listRoutes,fecha).isEmpty())
+                        informationCrossingService.loadLogInformationCrossing(user, id, evento, fecha, "Cargue Masivo", "Exitoso", "");
+                    else
+                        informationCrossingService.loadLogInformationCrossing(user, id, evento, fecha, "Cargue Masivo", "Fallido", "No se encontraron Inventarios para cruzar, valide las rutas de cargue.");
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                    Throwable rootCause = e;
+                    while (rootCause.getCause() != null) {
+                        rootCause = rootCause.getCause(); // Navega a la causa raíz
+                    }
+                    informationCrossingService.loadLogInformationCrossing(user, id, evento, fecha, "Cargue Masivo", "Fallido",rootCause.getMessage());
+                }
+            }
             modelAndView.addObject("resp", "CM1");
         }
         else

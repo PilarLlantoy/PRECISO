@@ -414,7 +414,9 @@ public class ConciliationService {
         // Recorremos las rutas para construir las consultas de inserción
         for (int i = 0; i < listRoutes.size(); i++) {
             ConciliationRoute ruta = listRoutes.get(i);
-            String nombreTablaRuta = "preciso_ci_" + concilId + "_" + ruta.getId();
+            String nombreTablaRuta = "preciso_ci_" + ruta.getConciliacion().getId() + "_" + ruta.getId();
+
+            queryBuilder.append(" IF OBJECT_ID('" + nombreTablaRuta + "', 'U') IS NOT NULL BEGIN \n");
 
             // Construir la consulta de inserción para la ruta actual (para CUENTA_CONTABLE_1 y CUENTA_CONTABLE_2)
             queryBuilder.append("INSERT INTO ").append(nombreTabla).append(" (INVENTARIO_PRECISOKEY, ID_INVENTARIO_PRECISOKEY, FECHA_CONCILIACION_PRECISOKEY, CENTRO_CONTABLE_PRECISOKEY, TIPO_EVENTO_PRECISOKEY, CDGO_MATRIZ_EVENTO_PRECISOKEY, CUENTA_CONTABLE_PRECISOKEY, DIVISA_CUENTA_PRECISOKEY, TOTAL_VALOR_CUENTA_PRECISOKEY) ")
@@ -431,6 +433,7 @@ public class ConciliationService {
                     .append("WHERE FECHA_CONCILIACION_PRECISOKEY = '").append(fecha).append("' AND CUENTA_CONTABLE_2_PRECISOKEY IS NOT NULL ")
                     .append("GROUP BY INVENTARIO_PRECISOKEY, ID_INVENTARIO_PRECISOKEY, FECHA_CONCILIACION_PRECISOKEY, CENTRO_CONTABLE_PRECISOKEY, TIPO_EVENTO_PRECISOKEY, CDGO_MATRIZ_EVENTO_PRECISOKEY, CUENTA_CONTABLE_2_PRECISOKEY, DIVISA_CUENTA_2_PRECISOKEY; ");
 
+            queryBuilder.append(" END \n");
             // Ejecutar la consulta de inserción
             Query queryInsert = entityManager.createNativeQuery(queryBuilder.toString());
             queryInsert.executeUpdate();  // Inserta los datos en la tabla
