@@ -103,18 +103,6 @@ public class InformationCrossingService {
         logInformationCrossingRepository.save(insert);
     }
 
-    public List<Object> findTemporal(){
-        List<Object> listTemp = new ArrayList<>();
-        try {
-            Query querySelect = entityManager.createNativeQuery("SELECT * FROM TEMPORAL_ci ");
-            listTemp = querySelect.getResultList();
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
-        return listTemp;
-    }
-
     public List<Object[]> findDataTable(List<ConciliationRoute> listRoutes, String fecha){
         List<Object[]> listTemp = new ArrayList<>();
         try {
@@ -137,7 +125,7 @@ public class InformationCrossingService {
         return querySelect.getResultList();
     }
 
-    public void loadLogCargue(User user, int idConcil, String fecha, String tipo, String estado, String mensaje) {
+    public void loadLogCargue(User user, int idConcil, String fecha, String tipo, String estado, String mensaje, EventType evento) {
         LocalDate localDate = LocalDate.parse(fecha);
         Date fechaDate = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
         Date today=new Date();
@@ -157,6 +145,7 @@ public class InformationCrossingService {
         else
             insert.setUsuario("Automático");
         insert.setIdConciliacion(concil);
+        insert.setIdEvento(evento);
         logInformationCrossingRepository.save(insert);
     }
 
@@ -165,6 +154,7 @@ public class InformationCrossingService {
         //System.out.println("#############################");
 
         String tableName = "preciso_ci_" + idConcil + "_" + data.getId();
+        String tableTemporal = "TEMPORAL_ci_" + idConcil + "_" + data.getId();
 
         List<CampoRConcil> listCampos = conciliationRouteService.getCamposRcon(data);
 
@@ -176,11 +166,11 @@ public class InformationCrossingService {
         for (int i = 0; i < listCampos.size(); i++) {
             CampoRConcil column = listCampos.get(i);
             createTableQuery+=(column.getNombre())+(" ");
-            if(column.getTipo().equalsIgnoreCase("DATE"))
+            if(column.getTipo().equalsIgnoreCase("DATE") || column.getTipo().equalsIgnoreCase("DATETIME"))
                 createTableQuery+=("VARCHAR");
             else
                 createTableQuery+=(column.getTipo());
-            if (column.getTipo().equalsIgnoreCase("VARCHAR") || column.getTipo().equalsIgnoreCase("DATE"))
+            if (column.getTipo().equalsIgnoreCase("VARCHAR") || column.getTipo().equalsIgnoreCase("DATE")|| column.getTipo().equalsIgnoreCase("DATETIME"))
                 createTableQuery+=("(MAX)");
             if (i < listCampos.size() - 1)
                 createTableQuery+=(", ");
@@ -248,7 +238,7 @@ public class InformationCrossingService {
                 +("CUENTA_CONTABLE_2_PRECISOKEY, ")
                 +("DIVISA_CUENTA_2_PRECISOKEY, ")
                 +("VALOR_CUENTA_2_PRECISOKEY");
-        insertDataQuery+=(" FROM TEMPORAL_ci;");
+        insertDataQuery+=(" FROM "+tableTemporal+";");
 
         // PASO 4.
         // Ejecutar las consultas
@@ -265,7 +255,7 @@ public class InformationCrossingService {
 
     public void creatTablaTemporalCruce(ConciliationRoute data, String fecha){
         StringBuilder createTableQuery = new StringBuilder("CREATE TABLE ");
-        String tableName = "TEMPORAL_ci";
+        String tableName = "TEMPORAL_ci_"+data.getConciliacion().getId()+"_"+data.getId();
         createTableQuery.append(tableName).append(" (");
 
         List<CampoRConcil> listCampos = conciliationRouteService.getCamposRcon(data);
@@ -275,11 +265,11 @@ public class InformationCrossingService {
             CampoRConcil column = listCampos.get(i);
             createTableQuery.append(column.getNombre())
                     .append(" ");
-            if (column.getTipo().equalsIgnoreCase("DATE"))
+            if (column.getTipo().equalsIgnoreCase("DATE") || column.getTipo().equalsIgnoreCase("DATETIME"))
                 createTableQuery.append("VARCHAR");
             else
                 createTableQuery.append(column.getTipo());
-            if (column.getTipo().equalsIgnoreCase("VARCHAR") || column.getTipo().equalsIgnoreCase("DATE"))
+            if (column.getTipo().equalsIgnoreCase("VARCHAR") || column.getTipo().equalsIgnoreCase("DATE")|| column.getTipo().equalsIgnoreCase("DATETIME"))
                 createTableQuery.append("(MAX)"); // Longitud de MAX para VARCHAR
             if (i < listCampos.size() - 1)
                 createTableQuery.append(", ");
@@ -358,7 +348,7 @@ public class InformationCrossingService {
         if (cuenta1 != null && !cuenta1.isManejaFormula())
             valorCuenta1 = cuenta1.getCampoValorCuenta().getNombre();
         else if (cuenta1 != null)
-            valorCuenta1 = "CASE WHEN "+cuenta1.getCampoValorOp1().getNombre() + " LIKE '%,%' THEN CAST(REPLACE(REPLACE("+cuenta1.getCampoValorOp1().getNombre() + ", '.', ''), ',', '.') AS DECIMAL(10, 2)) ELSE CAST("+cuenta1.getCampoValorOp1().getNombre() +" AS DECIMAL(10, 2)) END " + operacionSimbolo(cuenta1.getOperacion()) + " " +
+            valorCuenta1 = "CASE WHEN "+cuenta1.getCampoValorOp1().getNombre() + " LIKE '%,%' THEN CAST(REPLACE(REPLACE("+cuenta1.getCampoValorOp1().getNombre() + ", '.', ''), ',', '.') AS FLOAT) WHEN "+cuenta1.getCampoValorOp1().getNombre() + " LIKE '%.%' THEN CAST("+cuenta1.getCampoValorOp1().getNombre() + " AS float) ELSE "+cuenta1.getCampoValorOp1().getNombre() + " END" + operacionSimbolo(cuenta1.getOperacion()) + " " +
                     (cuenta1.getCampoValorOp2() != null ? cuenta1.getCampoValorOp2().getNombre() : cuenta1.getValorOp2());
 
         // Aplicar ABS si cuenta1.isValorAbsoluto() es true
@@ -370,7 +360,7 @@ public class InformationCrossingService {
         if (cuenta2 != null && !cuenta2.isManejaFormula())
             valorCuenta2 = cuenta2.getCampoValorCuenta().getNombre();
         else if (cuenta2 != null)
-            valorCuenta2 = "CASE WHEN "+cuenta2.getCampoValorOp1().getNombre() + " LIKE '%,%' THEN CAST(REPLACE(REPLACE("+cuenta2.getCampoValorOp1().getNombre() + ", '.', ''), ',', '.') AS DECIMAL(10, 2)) ELSE "+cuenta2.getCampoValorOp1().getNombre() +" END " + operacionSimbolo(cuenta2.getOperacion()) + " " +
+            valorCuenta2 = "CASE WHEN "+cuenta2.getCampoValorOp1().getNombre() + " LIKE '%,%' THEN CAST(REPLACE(REPLACE("+cuenta2.getCampoValorOp1().getNombre() + ", '.', ''), ',', '.') AS FLOAT) WHEN "+cuenta2.getCampoValorOp1().getNombre() + " LIKE '%.%' THEN CAST("+cuenta2.getCampoValorOp1().getNombre() + " AS float) ELSE "+cuenta2.getCampoValorOp1().getNombre() + " END" + operacionSimbolo(cuenta2.getOperacion()) + " " +
                     (cuenta2.getCampoValorOp2() != null ? cuenta2.getCampoValorOp2().getNombre() : cuenta2.getValorOp2());
 
         // Aplicar ABS si cuenta2.isValorAbsoluto() es true
@@ -379,7 +369,7 @@ public class InformationCrossingService {
         }
 
         // Construcción de la consulta SQL
-        StringBuilder queryBuilder = new StringBuilder("UPDATE TEMPORAL_ci SET ");
+        StringBuilder queryBuilder = new StringBuilder("UPDATE TEMPORAL_ci_"+data.getConciliacion().getId()+"_"+data.getId()+" SET ");
         queryBuilder.append("INVENTARIO_PRECISOKEY = ?, ");
         queryBuilder.append("FECHA_CONCILIACION_PRECISOKEY = ?, ");
         queryBuilder.append("TIPO_EVENTO_PRECISOKEY = ?, ");
@@ -450,7 +440,7 @@ public class InformationCrossingService {
     }
 
     public String conditionData(ConciliationRoute data, EventMatrix matriz){
-        String nombreTabla = "TEMPORAL_ci";
+        String nombreTabla = "TEMPORAL_ci_"+data.getConciliacion().getId()+"_"+data.getId();
         Query querySelect = entityManager.createNativeQuery("SELECT " +
                 "a.id_campo, c.nombre, a.condicion, a.valor_condicion" +
                 "  FROM [PRECISO].[dbo].[preciso_condiciones_matriz_evento] a" +
@@ -501,7 +491,7 @@ public class InformationCrossingService {
     }
 
     public void validationData(ConciliationRoute data, EventMatrix matriz, String condicion) {
-        String nombreTabla = "TEMPORAL_ci";
+        String nombreTabla = "TEMPORAL_ci_"+data.getConciliacion().getId()+"_"+data.getId();
         Query querySelect = entityManager.createNativeQuery(
                 "SELECT \n" +
                         "\t\tb.nombre as campo_validacion, \n" +
@@ -719,7 +709,7 @@ public class InformationCrossingService {
 
         for (String idPar :ids)
         {
-            String[] partes = idPar.split("\\|");
+            String[] partes = idPar.split(";");
             int id=Integer.parseInt(partes[0]);
             int evento=Integer.parseInt(partes[1]);
             ConciliationRoute ruta = conciliationRouteService.findById(id);
@@ -769,7 +759,7 @@ public class InformationCrossingService {
                 while (rootCause.getCause() != null) {
                     rootCause = rootCause.getCause(); // Navega a la causa raíz
                 }
-                loadLogCargue(null,ruta.getConciliacion().getId(),fecha,"Cargue Masivo","Fallido",rootCause.getMessage());
+                loadLogCargue(null,ruta.getConciliacion().getId(),fecha,"Cargue Masivo","Fallido",rootCause.getMessage(),tipoEvento);
             }
         }
     }

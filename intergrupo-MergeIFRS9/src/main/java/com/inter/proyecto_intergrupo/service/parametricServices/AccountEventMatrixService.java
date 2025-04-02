@@ -47,11 +47,12 @@ public class AccountEventMatrixService {
     }
 
     public AccountEventMatrix findByMatrizEventoTipo1(EventMatrix matriz){
+        System.out.println("1) Es esta ---------------------------------------------------------->"+matriz.getId());
         return accountEventMatrixRepository.findByMatrizEventoAndTipo(matriz, "1");
     }
 
     public AccountEventMatrix findByMatrizEventoTipo2(EventMatrix matriz){
-        System.out.println("Es esta ----------------------------------------------------------");
+        System.out.println("2) Es esta ---------------------------------------------------------->"+matriz.getId());
         return accountEventMatrixRepository.findByMatrizEventoAndTipo(matriz, "2");
     }
 
