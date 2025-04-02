@@ -98,15 +98,13 @@ public class CuadroMandoCruController {
     }
     @PostMapping("/parametric/cuadroMandoCru/invMasive")
     public ModelAndView manejarSeleccionados(@RequestParam("idsSeleccionados") String idsSeleccionados,
-                                             @RequestParam("period2") String period2,
                                              @RequestParam("period") String period) {
         ModelAndView modelAndView = new ModelAndView("redirect:/parametric/cuadroMandoCru");
         String[] ids = idsSeleccionados.split(",");
         modelAndView.addObject("period", period);
-        modelAndView.addObject("period2", period2);
         if(idsSeleccionados.trim().length()!=0)
         {
-            conciliationRouteService.leerArchivosMasivo(ids,period);
+            informationCrossingService.leerArchivosMasivo(ids,period);
             modelAndView.addObject("resp", "CM1");
         }
         else

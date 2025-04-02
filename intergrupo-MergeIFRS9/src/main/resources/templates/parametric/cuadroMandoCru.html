@@ -64,9 +64,8 @@
                         </form>
                     </div>
                 </div>
-                <form th:action="@{/parametric/cuadroMandoCru}" method="get" id="formSeleccionados">
+                <form th:action="@{/parametric/cuadroMandoCru/invMasive}" method="post" id="formSeleccionados">
                     <input type="hidden" name="idsSeleccionados" id="idsSeleccionados">
-                    <input type="hidden" th:name="period2" th:value="${period2}">
                     <input type="hidden" th:name="period" th:value="${period}">
                     <div class="col-md-12 p-0">
                         <div class="table-responsive rounded border-primary">
@@ -197,22 +196,9 @@
         $('#novedadModal').modal('show'); // Abre el modal
     }
 
-    function mostrarNovedad2(btn) {
-        let novedadTexto2 = btn.getAttribute("data-novedad2");
-        document.getElementById("modalNovedadTexto").textContent = novedadTexto2;
-        $('#novedadModal').modal('show'); // Abre el modal
-    }
-
     document.getElementById('select-all-failed').addEventListener('change', function() {
         const isChecked = this.checked;
         document.querySelectorAll('.process-checkbox').forEach(function(checkbox) {
-            checkbox.checked = isChecked;
-        });
-    });
-
-    document.getElementById('select-all-failed2').addEventListener('change', function() {
-        const isChecked = this.checked;
-        document.querySelectorAll('.process-checkbox2').forEach(function(checkbox) {
             checkbox.checked = isChecked;
         });
     });
@@ -261,6 +247,7 @@
         let selectedIds = [];
         document.querySelectorAll('.process-checkbox:checked').forEach(function (checkbox) {
             selectedIds.push(checkbox.value);
+            console.log(checkbox.value);
         });
 
         // Asignar los IDs seleccionados al campo oculto
@@ -268,22 +255,6 @@
 
         // Enviar el formulario
         const form = document.getElementById('formSeleccionados');
-        dialogOpen();
-        form.submit();
-    }
-
-    function submitSelectedIds2() {
-        // Obtener los IDs seleccionados
-        let selectedIds2 = [];
-        document.querySelectorAll('.process-checkbox2:checked').forEach(function (checkbox) {
-            selectedIds2.push(checkbox.value);
-        });
-
-        // Asignar los IDs seleccionados al campo oculto
-        document.getElementById('idsSeleccionados2').value = selectedIds2.join(',');
-
-        // Enviar el formulario
-        const form = document.getElementById('formSeleccionados2');
         dialogOpen();
         form.submit();
     }

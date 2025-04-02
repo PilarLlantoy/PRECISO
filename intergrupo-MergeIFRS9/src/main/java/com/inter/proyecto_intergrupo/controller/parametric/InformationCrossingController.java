@@ -291,11 +291,11 @@ public class InformationCrossingController {
 
     }
 
-    @Scheduled(cron = "0 56 20 * * ?")
+    @Scheduled(cron = "0 0 7-13/2 * * ?")
     public void processJob()  {
 
         LocalDateTime fechaHoy = LocalDateTime.now();
-        fechaHoy = fechaHoy.minusDays(15);
+        fechaHoy = fechaHoy.minusDays(1);
         DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String fecha = fechaHoy.format(formato);
         List<Object[]> list = informationCrossingService.findByJob(fecha);

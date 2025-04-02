@@ -28,6 +28,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static com.inter.proyecto_intergrupo.controller.parametric.AccountingLoadController.rutaArchivoFormato;
+
 @Service
 @Transactional
 public class InformationCrossingService {
@@ -42,6 +44,12 @@ public class InformationCrossingService {
     private AuditRepository auditRepository;
 
     @Autowired
+    private EventMatrixService eventMatrixService;
+
+    @Autowired
+    private ValidationMEService validationMEService;
+
+    @Autowired
     private LogAccountingLoadRepository logAccountingLoadRepository;
 
     @Autowired
@@ -51,7 +59,13 @@ public class InformationCrossingService {
     private ConciliationRouteService conciliationRouteService;
 
     @Autowired
+    private AccountEventMatrixService accountEventMatrixService;
+
+    @Autowired
     private EventTypeService eventTypeService;
+
+    @Autowired
+    private CondicionMEService condicionMEService;
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -699,6 +713,65 @@ public class InformationCrossingService {
         query.setParameter("fechaVar", fecha);
         query.setParameter("fechaVarP", fecha+"%");
         return query.getResultList();
+    }
+
+    public void leerArchivosMasivo(String[] ids,String fecha) {
+
+        for (String idPar :ids)
+        {
+            String[] partes = idPar.split("\\|");
+            int id=Integer.parseInt(partes[0]);
+            int evento=Integer.parseInt(partes[1]);
+            ConciliationRoute ruta = conciliationRouteService.findById(id);
+            EventType tipoEvento= eventTypeService.findAllById(evento);
+
+            try {
+                List<ConciliationRoute> listRoutes = conciliationRouteService.getRoutesByConciliation(ruta.getConciliacion().getId());
+
+                List<EventMatrix> matrices = eventMatrixService.findByConciliationxInventarioxTipoEvento(ruta.getConciliacion().getId(), id, evento);
+                creatTablaTemporalCruce(ruta, fecha);
+
+                for (EventMatrix matriz : matrices) {
+                    if(matriz.isEstado()){ //SOLO LAS MATRICES ACTIVAS
+                        //Primero veremos las condiciones
+                        List<CondicionEventMatrix> condiciones = condicionMEService.findByMatrizEvento(matriz);
+                        String condicion = null;
+                        if (condiciones.size() != 0)
+                            condicion = conditionData(ruta, matriz);
+
+                        AccountEventMatrix cuenta1 = accountEventMatrixService.findByMatrizEventoTipo1(matriz);
+                        AccountEventMatrix cuenta2 = accountEventMatrixService.findByMatrizEventoTipo2(matriz);
+                        completarTablaCruce(ruta, fecha, tipoEvento, matriz, cuenta1, cuenta2, condicion);
+
+                        //Realizamos las validaciones
+                        List<ValidationME> validaciones = validationMEService.findByEventMatrix(matriz);
+                        if (validaciones.size() != 0)
+                            validationData(ruta, matriz, condicion);
+                    }
+
+                }
+
+                //Agregamos estos registros a la tabla final
+                //Creamos las tablas finales vacias de cada inventario con los campos agregados
+                recreateTable(ruta, id, fecha,tipoEvento);
+
+                //SE LOGRO EL CRUCE
+                conciliationService.generarTablaCruceCompleto_x_Conciliacion(id, fecha, evento);
+                conciliationService.generarTablaNovedades(listRoutes, fecha, tipoEvento);
+                if(!findDataTable(listRoutes,fecha).isEmpty())
+                    loadLogInformationCrossing(null, id, evento, fecha, "Cargue Masivo", "Exitoso", "");
+                else
+                    loadLogInformationCrossing(null, id, evento, fecha, "Cargue Masivo", "Fallido", "No se encontraron Inventarios para cruzar, valide las rutas de cargue.");
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+                Throwable rootCause = e;
+                while (rootCause.getCause() != null) {
+                    rootCause = rootCause.getCause(); // Navega a la causa raíz
+                }
+                loadLogCargue(null,ruta.getConciliacion().getId(),fecha,"Cargue Masivo","Fallido",rootCause.getMessage());
+            }
+        }
     }
 
 
