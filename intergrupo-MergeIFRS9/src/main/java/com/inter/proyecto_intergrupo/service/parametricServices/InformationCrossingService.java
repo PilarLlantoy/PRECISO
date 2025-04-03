@@ -115,6 +115,25 @@ public class InformationCrossingService {
         return listTemp;
     }
 
+    public boolean findNovedades(List<ConciliationRoute> listRoutes, String fecha, EventType evento){
+        int capacidad = 1;
+        try {
+            StringBuilder query = new StringBuilder("");
+            for (ConciliationRoute route:listRoutes) {
+                query.append("select NOVEDADES_PRECISOKEY from preciso_ci_"+route.getConciliacion().getId()+"_"+route.getId()+" t WHERE t.FECHA_CONCILIACION_PRECISOKEY like '"+fecha+"%' and t.TIPO_EVENTO_PRECISOKEY ='"+evento.getNombre()+"' and t.NOVEDADES_PRECISOKEY != '' and t.NOVEDADES_PRECISOKEY IS NOT NULL \n");
+                if(capacidad!=listRoutes.size())
+                    query.append("UNION ALL\n" );
+                capacidad++;
+            }
+            Query querySelect = entityManager.createNativeQuery(query.toString());
+            return !querySelect.getResultList().isEmpty();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        return true;
+    }
+
     public List<Object[]> findByJob(String fecha) {
         String sql = "select a.id,b.id_tipo_evento\n" +
                 "from (select * from preciso_conciliaciones where activo = 1) a \n" +
@@ -188,12 +207,13 @@ public class InformationCrossingService {
                 +("VALOR_CUENTA_1_PRECISOKEY FLOAT, ")
                 +("CUENTA_CONTABLE_2_PRECISOKEY VARCHAR(MAX), ")
                 +("DIVISA_CUENTA_2_PRECISOKEY VARCHAR(MAX), ")
+                +("NOVEDADES_PRECISOKEY VARCHAR(MAX), ")
                 +("VALOR_CUENTA_2_PRECISOKEY FLOAT");
         createTableQuery+=("); END;");
 
         // PASO 2.
         // Eliminar los registros de la fecha del cruce
-        String deleteQuery = "DELETE FROM " + tableName + " WHERE FECHA_CONCILIACION_PRECISOKEY = :fechaConciliacion";
+        String deleteQuery = "DELETE FROM " + tableName + " WHERE FECHA_CONCILIACION_PRECISOKEY = :fechaConciliacion AND TIPO_EVENTO_PRECISOKEY = :tipoEvento ";
 
         // PASO 3.
         // Insertar registros desde "preciso_rc_<data.getId()>" a la nueva tabla de esa fecha
@@ -247,6 +267,7 @@ public class InformationCrossingService {
 
         Query deleteRecords = entityManager.createNativeQuery(deleteQuery);
         deleteRecords.setParameter("fechaConciliacion", fecha);
+        deleteRecords.setParameter("tipoEvento", tipoEvento.getNombre());
         deleteRecords.executeUpdate();
 
         Query insertData = entityManager.createNativeQuery(insertDataQuery);
@@ -376,7 +397,7 @@ public class InformationCrossingService {
         queryBuilder.append("FECHA_CONCILIACION_PRECISOKEY = ?, ");
         queryBuilder.append("TIPO_EVENTO_PRECISOKEY = ?, ");
         queryBuilder.append("CDGO_MATRIZ_EVENTO_PRECISOKEY = ?, ");
-        queryBuilder.append("CENTRO_CONTABLE_PRECISOKEY = ? ");
+        queryBuilder.append("CENTRO_CONTABLE_PRECISOKEY = "+(matriz.isManejaCC() ? matriz.getCampoCC().getNombre() : "'"+matriz.getCentroContable()+"'"));
 
         if (cuenta1 != null) {
             queryBuilder.append(", CUENTA_CONTABLE_1_PRECISOKEY = ?, ");
@@ -435,7 +456,6 @@ public class InformationCrossingService {
         updateQuery.setParameter(columna++, fecha);
         updateQuery.setParameter(columna++, tipoEvento.getNombre());
         updateQuery.setParameter(columna++, matriz.getId());
-        updateQuery.setParameter(columna++, matriz.isManejaCC() ? matriz.getCampoCC().getNombre() : matriz.getCentroContable());
         if (cuenta1 != null)
             updateQuery.setParameter(columna++, cuenta1.getCuentaGanancia());
 

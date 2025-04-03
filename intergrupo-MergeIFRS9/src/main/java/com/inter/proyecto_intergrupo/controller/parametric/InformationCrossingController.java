@@ -91,13 +91,14 @@ public class InformationCrossingController {
         Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Cargue Contable");
         if(userService.validateEndpoint(user.getId(),"Ver Cargue Contable")) {
 
-            List<AccountingRoute> listAroutes = accountingRouteService.findAllActive();
             List<Conciliation> listConcil = conciliationService.findAllActive();
             List<EventType> listTypeEvent = eventTypeService.findAllActive();
 
             List<Object[]> datos = new ArrayList<>();
             List<String> colDatos = new ArrayList<>();
             List<LogInformationCrossing> logCruces = new ArrayList<>();
+
+            boolean novedad=false;
 
             //El ultimo log de la fecha, conciliacion y tipo evento registrado
             Object[] ultLog = null;
@@ -126,6 +127,8 @@ public class InformationCrossingController {
                     modelAndView.addObject("nomb",concil.getNombre());
                 else
                     modelAndView.addObject("nomb","Vacio");
+
+                novedad=informationCrossingService.findNovedades(conciliationRouteService.findByConcil(Integer.parseInt(params.get("arhcont").toString())),params.get("period").toString(),evento);
             }
             int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
             PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
@@ -150,6 +153,7 @@ public class InformationCrossingController {
                 List<Integer> pagesData = IntStream.rangeClosed(1, totalPageData).boxed().collect(Collectors.toList());
                 modelAndView.addObject("pagesData",pagesData);
             }
+            modelAndView.addObject("allNov",novedad);
 
             modelAndView.addObject("allLog",pageLog.getContent());
             modelAndView.addObject("allRCs",pageLogData.getContent());
@@ -163,7 +167,6 @@ public class InformationCrossingController {
             modelAndView.addObject("prevData",pageData);
             modelAndView.addObject("lastData",totalPageData);
             modelAndView.addObject("filterExport","Original");
-            modelAndView.addObject("listRouteCont",listAroutes);
             modelAndView.addObject("listConcil",listConcil);
             modelAndView.addObject("listTypeEvent",listTypeEvent);
             modelAndView.addObject("directory","informationCrossing");
@@ -276,7 +279,12 @@ public class InformationCrossingController {
             //SE LOGRO EL CRUCE
             conciliationService.generarTablaCruceCompleto_x_Conciliacion(id, fecha, evento);
             conciliationService.generarTablaNovedades(listRoutes, fecha, tipoEvento);
-            informationCrossingService.loadLogInformationCrossing(user, id, evento, fecha, "Generar Cuentas", "Exitoso", "");
+            if(informationCrossingService.findNovedades(listRoutes,fecha,tipoEvento))
+                informationCrossingService.loadLogInformationCrossing(null, id, evento, fecha, "Automático", "Fallido", "Se presentaron novedades durante la ejecución por favor validelas en el botón de 'Exportar Novedad'.");
+            else if(!informationCrossingService.findDataTable(listRoutes,fecha).isEmpty())
+                informationCrossingService.loadLogInformationCrossing(null, id, evento, fecha, "Generar Cuentas", "Exitoso", "");
+            else
+                informationCrossingService.loadLogInformationCrossing(null, id, evento, fecha, "Generar Cuentas", "Fallido", "No se encontraron Inventarios para cruzar, valide las rutas de cargue.");
             return ResponseEntity.ok("Bulk->1");
         }
         catch (Exception e) {
@@ -346,7 +354,9 @@ public class InformationCrossingController {
                 //SE LOGRO EL CRUCE
                 conciliationService.generarTablaCruceCompleto_x_Conciliacion(id, fecha, evento);
                 conciliationService.generarTablaNovedades(listRoutes, fecha, tipoEvento);
-                if(!informationCrossingService.findDataTable(listRoutes,fecha).isEmpty())
+                if(informationCrossingService.findNovedades(listRoutes,fecha,tipoEvento))
+                    informationCrossingService.loadLogInformationCrossing(null, id, evento, fecha, "Automático", "Fallido", "Se presentaron novedades durante la ejecución por favor validelas en el botón de 'Exportar Novedad'.");
+                else if(!informationCrossingService.findDataTable(listRoutes,fecha).isEmpty())
                     informationCrossingService.loadLogInformationCrossing(null, id, evento, fecha, "Automático", "Exitoso", "");
                 else
                     informationCrossingService.loadLogInformationCrossing(null, id, evento, fecha, "Automático", "Fallido", "No se encontraron Inventarios para cruzar, valide las rutas de cargue.");
@@ -410,7 +420,7 @@ public class InformationCrossingController {
         String headerValue = "attachment; filename="+cr.getNombre().replace(" ","_") + currentDateTime + ".xlsx";
         response.setHeader(headerKey, headerValue);
         InformationCrossingListReport listReport = new InformationCrossingListReport(null,null,cr,entityManager);
-        listReport.exportDetail(response,crList,fecha);
+        listReport.exportDetail(response,crList,fecha,evento);
     }
 
     @GetMapping(value = "/parametric/informationCrossing/downloadNov")
@@ -418,14 +428,14 @@ public class InformationCrossingController {
     public void exportToExcelNov(HttpServletResponse response, @RequestParam(defaultValue = "0") String id, @RequestParam(defaultValue = "0") String fecha, @RequestParam(defaultValue = "0") String evento) throws IOException {
         response.setContentType("application/octet-stream");
         Conciliation cr = conciliationService.findById(Integer.parseInt(id));
-        EventType eventType = eventTypeService.findAllById(Integer.parseInt(id));
-        List<LogInformationCrossing> crList = informationCrossingService.findAllLog(cr,fecha,eventType);
+        List<ConciliationRoute> crList = conciliationRouteService.findByConcil(Integer.parseInt(id));
+        EventType eventType = eventTypeService.findAllById(Integer.parseInt(evento));
         DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
         String currentDateTime = dateFormatter.format(new Date());
         String headerKey = "Content-Disposition";
         String headerValue = "attachment; filename="+cr.getNombre().replace(" ","_") + currentDateTime + ".xlsx";
         response.setHeader(headerKey, headerValue);
         InformationCrossingListReport listReport = new InformationCrossingListReport(null,null,cr,entityManager);
-        listReport.exportNove(response,crList,fecha);
+        listReport.exportNove(response,crList,fecha,eventType.getNombre());
     }
 }

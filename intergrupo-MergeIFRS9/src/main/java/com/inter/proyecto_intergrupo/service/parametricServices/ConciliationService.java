@@ -357,13 +357,26 @@ public class ConciliationService {
     }
 
     public void generarTablaNovedades(List<ConciliationRoute> listRoutes, String fecha, EventType tipoEvento) {
-        /*for (ConciliationRoute route:listRoutes){
-            Query queryGenerateIncidents = entityManager.createNativeQuery("SELECT * FROM preciso_ci_1_1 WHERE FECHA_CONCILIACION_PRECISOKEY LIKE ? AND INVENTARIO_PRECISOKEY = ? AND TIPO_EVENTO_PRECISOKEY = ? AND CUENTA_CONTABLE_1_PRECISOKEY IS NULL AND CUENTA_CONTABLE_2_PRECISOKEY IS NULL;");
-            queryGenerateIncidents.setParameter(1,fecha+"%");
-            queryGenerateIncidents.setParameter(2,route.getDetalle());
-            queryGenerateIncidents.setParameter(3,tipoEvento.getNombre());
+        for (ConciliationRoute route:listRoutes){
+            String tableUpdate = "preciso_ci_"+route.getConciliacion().getId()+"_"+route.getId();
+            Query queryGenerateIncidents = entityManager.createNativeQuery("UPDATE t SET NOVEDADES_PRECISOKEY = \n" +
+                    "(CASE WHEN t.CUENTA_CONTABLE_1_PRECISOKEY IS NULL OR CUENTA_CONTABLE_1_PRECISOKEY = '' THEN 'A' ELSE '' END) +\n" +
+                    "(CASE WHEN EXISTS (SELECT 1 FROM "+tableUpdate+" t2 \n" +
+                    "\tWHERE t2.CENTRO_CONTABLE_PRECISOKEY = t.CENTRO_CONTABLE_PRECISOKEY \n" +
+                    "\tAND t2.CUENTA_CONTABLE_1_PRECISOKEY = t.CUENTA_CONTABLE_1_PRECISOKEY \n" +
+                    "\tAND t2.DIVISA_CUENTA_1_PRECISOKEY = t.DIVISA_CUENTA_1_PRECISOKEY \n" +
+                    "\tAND t2.VALOR_CUENTA_1_PRECISOKEY = t.VALOR_CUENTA_1_PRECISOKEY \n" +
+                    "\tAND t2.CUENTA_CONTABLE_2_PRECISOKEY = t.CUENTA_CONTABLE_2_PRECISOKEY \n" +
+                    "\tAND t2.DIVISA_CUENTA_2_PRECISOKEY = t.DIVISA_CUENTA_2_PRECISOKEY \n" +
+                    "\tAND t2.VALOR_CUENTA_2_PRECISOKEY = t.VALOR_CUENTA_2_PRECISOKEY \n" +
+                    "\tAND t2.FECHA_CONCILIACION_PRECISOKEY like :fecha and t2.TIPO_EVENTO_PRECISOKEY = :evento \n" +
+                    "\tGROUP BY t2.CENTRO_CONTABLE_PRECISOKEY, t2.CUENTA_CONTABLE_1_PRECISOKEY,t2.DIVISA_CUENTA_1_PRECISOKEY,t2.VALOR_CUENTA_1_PRECISOKEY\n" +
+                    "\t,t2.CUENTA_CONTABLE_2_PRECISOKEY,t2.DIVISA_CUENTA_2_PRECISOKEY,t2.VALOR_CUENTA_2_PRECISOKEY HAVING COUNT(*) > 1) THEN 'D' ELSE '' END)\n" +
+                    "FROM "+tableUpdate+" t WHERE t.FECHA_CONCILIACION_PRECISOKEY like :fecha and t.TIPO_EVENTO_PRECISOKEY = :evento ;");
+            queryGenerateIncidents.setParameter("fecha",fecha+"%");
+            queryGenerateIncidents.setParameter("evento",tipoEvento.getNombre());
             queryGenerateIncidents.executeUpdate();
-        }*/
+        }
     }
 
     public List<Object[]> generarTablaCruceCompleto_x_Conciliacion(int concilId, String fecha, int tipoEventoId) {
@@ -374,6 +387,7 @@ public class ConciliationService {
         StringBuilder queryBuilder = new StringBuilder();
 
         // Nombre de la tabla que se va a crear dinámicamente
+        System.out.println(concilId);
         String nombreTabla = "preciso_ci_" + concilId;
 
         // Crear la tabla solo si no existe
@@ -423,14 +437,14 @@ public class ConciliationService {
                     .append("SELECT INVENTARIO_PRECISOKEY, ID_INVENTARIO_PRECISOKEY, FECHA_CONCILIACION_PRECISOKEY, CENTRO_CONTABLE_PRECISOKEY, TIPO_EVENTO_PRECISOKEY, CDGO_MATRIZ_EVENTO_PRECISOKEY, CUENTA_CONTABLE_1_PRECISOKEY AS CUENTA_CONTABLE_PRECISOKEY, ")
                     .append("DIVISA_CUENTA_1_PRECISOKEY AS DIVISA_CUENTA_PRECISOKEY, SUM(VALOR_CUENTA_1_PRECISOKEY) AS TOTAL_VALOR_CUENTA_PRECISOKEY ")
                     .append("FROM ").append(nombreTablaRuta).append(" ")
-                    .append("WHERE FECHA_CONCILIACION_PRECISOKEY = '").append(fecha).append("' AND CUENTA_CONTABLE_1_PRECISOKEY IS NOT NULL ")
+                    .append("WHERE FECHA_CONCILIACION_PRECISOKEY = '").append(fecha).append("' AND CUENTA_CONTABLE_1_PRECISOKEY IS NOT NULL AND TIPO_EVENTO_PRECISOKEY = '"+tipoEvento.getNombre()+"' ")
                     .append("GROUP BY INVENTARIO_PRECISOKEY, ID_INVENTARIO_PRECISOKEY, FECHA_CONCILIACION_PRECISOKEY, CENTRO_CONTABLE_PRECISOKEY, TIPO_EVENTO_PRECISOKEY, CDGO_MATRIZ_EVENTO_PRECISOKEY, CUENTA_CONTABLE_1_PRECISOKEY, DIVISA_CUENTA_1_PRECISOKEY; ");
 
             queryBuilder.append("INSERT INTO ").append(nombreTabla).append(" (INVENTARIO_PRECISOKEY, ID_INVENTARIO_PRECISOKEY, FECHA_CONCILIACION_PRECISOKEY, CENTRO_CONTABLE_PRECISOKEY, TIPO_EVENTO_PRECISOKEY, CDGO_MATRIZ_EVENTO_PRECISOKEY, CUENTA_CONTABLE_PRECISOKEY, DIVISA_CUENTA_PRECISOKEY, TOTAL_VALOR_CUENTA_PRECISOKEY) ")
                     .append("SELECT INVENTARIO_PRECISOKEY, ID_INVENTARIO_PRECISOKEY, FECHA_CONCILIACION_PRECISOKEY, CENTRO_CONTABLE_PRECISOKEY, TIPO_EVENTO_PRECISOKEY, CDGO_MATRIZ_EVENTO_PRECISOKEY, CUENTA_CONTABLE_2_PRECISOKEY AS CUENTA_CONTABLE_PRECISOKEY, ")
                     .append("DIVISA_CUENTA_2_PRECISOKEY AS DIVISA_CUENTA_PRECISOKEY, SUM(VALOR_CUENTA_2_PRECISOKEY) AS TOTAL_VALOR_CUENTA_PRECISOKEY ")
                     .append("FROM ").append(nombreTablaRuta).append(" ")
-                    .append("WHERE FECHA_CONCILIACION_PRECISOKEY = '").append(fecha).append("' AND CUENTA_CONTABLE_2_PRECISOKEY IS NOT NULL ")
+                    .append("WHERE FECHA_CONCILIACION_PRECISOKEY = '").append(fecha).append("' AND CUENTA_CONTABLE_2_PRECISOKEY IS NOT NULL AND TIPO_EVENTO_PRECISOKEY = '"+tipoEvento.getNombre()+"' ")
                     .append("GROUP BY INVENTARIO_PRECISOKEY, ID_INVENTARIO_PRECISOKEY, FECHA_CONCILIACION_PRECISOKEY, CENTRO_CONTABLE_PRECISOKEY, TIPO_EVENTO_PRECISOKEY, CDGO_MATRIZ_EVENTO_PRECISOKEY, CUENTA_CONTABLE_2_PRECISOKEY, DIVISA_CUENTA_2_PRECISOKEY; ");
 
             queryBuilder.append(" END \n");

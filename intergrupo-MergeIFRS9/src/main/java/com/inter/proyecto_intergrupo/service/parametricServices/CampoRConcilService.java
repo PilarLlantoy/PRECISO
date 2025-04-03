@@ -18,6 +18,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.inter.proyecto_intergrupo.controller.parametric.AccountingLoadController.columnasOmitir;
+
 @Service
 @Transactional
 public class CampoRConcilService {
@@ -142,7 +144,6 @@ public class CampoRConcilService {
             }
         }
 
-        List<String> columnasOmitir = Arrays.asList("periodo_preciso", "id_preciso", "inventario_precisokey","id_inventario_precisokey","fecha_conciliacion_precisokey","tipo_evento_precisokey","cdgo_matriz_evento_precisokey","centro_contable_precisokey","cuenta_contable_1_precisokey","divisa_cuenta_1_precisokey","valor_cuenta_1_precisokey","cuenta_contable_2_precisokey","divisa_cuenta_2_precisokey","valor_cuenta_2_precisokey");
 
         // Opcional: Eliminar columnas que ya no deberían estar
         for (String existingColumn : existingColumns) {

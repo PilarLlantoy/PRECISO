@@ -72,23 +72,22 @@
                                     th:onclick="|generarCuentas()|" type="button">Generar Cuentas</button>
                         </div>
                         <div class="col-6">
-                            <button type="button" class="btn btn-sm btn-primary w-100" th:onclick="|validarYexportar()|" th:if="${allRCs.size()!=0}">Exportar Agrupado</button>
+                            <button type="button" class="btn btn-sm btn-primary w-100" th:if="${allRCs.size()!=0}" th:onclick="|validarYexportar()|">Exportar Agrupado</button>
                             <button type="button" class="btn btn-sm btn-primary w-100" th:if="${allRCs.size()==0}" disabled>Exportar Agrupado</button>
                         </div>
                         <div class="col-6">
-                            <button type="button" class="btn btn-sm btn-primary w-100" th:onclick="|validarYexportarD()|" th:if="${allRCs.size()!=0}">Exportar Detallado</button>
+                            <button type="button" class="btn btn-sm btn-primary w-100" th:if="${allRCs.size()!=0}" th:onclick="|validarYexportarD()|">Exportar Detallado</button>
                             <button type="button" class="btn btn-sm btn-primary w-100" th:if="${allRCs.size()==0}" disabled>Exportar Detallado</button>
                         </div>
                         <div class="col-6">
-                            <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm w-100"
-                                    th:onclick="|validarYSubir()|" type="button">Exportar Novedad</button>
+                            <button type="button" class="btn btn-primary btn-sm w-100" th:if="${allRCs.size()!=0 and allNov}" th:onclick="|validarYexportarN()|">Exportar Novedad</button>
+                            <button type="button" class="btn btn-sm btn-primary w-100" th:if="${allRCs.size()==0 or allNov == false}" disabled>Exportar Novedad</button>
                         </div>
                         <div class="col-6">
-                            <button class="btn btn-primary btn-sm w-100"
+                            <button type="button" class="btn btn-primary btn-sm w-100" th:if="${allRCs.size()!=0}"
                                     th:disabled="${!p_modificar or (ultLog != null and ultLog[3] == true) or ultLog==null}"
-                                    data-toggle="modal"
-                                    data-target="#confirmarModal"
-                                    th:onclick="|validarYSubir()|" type="button">Confirmar Cruce</button>
+                                    data-toggle="modal" data-target="#confirmarModal" th:onclick="|validarYSubir()|" >Confirmar Cruce</button>
+                            <button type="button" class="btn btn-sm btn-primary w-100" th:if="${allRCs.size()==0}" disabled>Confirmar Cruce</button>
                         </div>
                         <div class="col-6">
                             <a type="button" class="btn btn-primary btn-sm w-100" th:if="${period != null }" th:href="@{'/parametric/cuadroMandoCru?period=' + ${period}}">Ir a Cuadro</a>
@@ -398,7 +397,7 @@
                 const a = document.createElement('a');
                 a.style.display = 'none';
                 a.href = url;
-                a.download = document.getElementById("nomb").value+'_Consolidado.xlsx'; // Asigna un nombre al archivo descargado
+                a.download = document.getElementById("nomb").value+'_Consolidado_'+encodedFecha+'.xlsx'; // Asigna un nombre al archivo descargado
                 document.body.appendChild(a);
                 a.click();
                 window.URL.revokeObjectURL(url);
@@ -460,7 +459,7 @@
                 const a = document.createElement('a');
                 a.style.display = 'none';
                 a.href = url;
-                a.download = document.getElementById("nomb").value+'_Detallado.xlsx'; // Asigna un nombre al archivo descargado
+                a.download = document.getElementById("nomb").value+'_Detallado_'+encodedFecha+'.xlsx'; // Asigna un nombre al archivo descargado
                 document.body.appendChild(a);
                 a.click();
                 window.URL.revokeObjectURL(url);
@@ -523,7 +522,7 @@
                 const a = document.createElement('a');
                 a.style.display = 'none';
                 a.href = url;
-                a.download = document.getElementById("nomb").value+'_Novedades.xlsx'; // Asigna un nombre al archivo descargado
+                a.download = document.getElementById("nomb").value+'_Novedades_'+encodedFecha+'.xlsx'; // Asigna un nombre al archivo descargado
                 document.body.appendChild(a);
                 a.click();
                 window.URL.revokeObjectURL(url);
