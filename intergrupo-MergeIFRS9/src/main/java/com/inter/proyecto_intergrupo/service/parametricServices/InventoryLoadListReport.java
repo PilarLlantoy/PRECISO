@@ -15,6 +15,9 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.List;
 
@@ -43,8 +46,9 @@ public class InventoryLoadListReport {
         font.setFontHeightInPoints((short) 11);
         style.setFont(font);
 
+        createCell(row, count++,"ID", style);
         for (CampoRConcil campo :colCroutes) {
-            createCell(row, count++, campo.getNombre().toUpperCase().replace("PERIODO_PRECISO","FECHA CONTABLE"), style);
+            createCell(row, count++, campo.getNombre().toUpperCase().replace("PERIODO_PRECISO","FECHA_CARGUE"), style);
         }
     }
 
@@ -69,6 +73,30 @@ public class InventoryLoadListReport {
         cell.setCellStyle(style);
     }
 
+    public String normalizeDate(String dateStr) {
+        // Lista de formatos posibles
+        List<String> possibleFormats = List.of(
+                "ddMMyyyy", "yyyyMMdd", "MMddyyyy", "yyMMdd", "ddMMyy", "yyyyddMM",
+                "dd-MM-yyyy", "yyyy-MM-dd", "MM-dd-yyyy", "yy-MM-dd", "dd-MM-yy",
+                "dd/MM/yyyy", "yyyy/MM/dd", "MM/dd/yyyy", "yy/MM/dd", "dd/MM/yy"
+        );
+
+        for (String format : possibleFormats) {
+            try {
+                // Intentamos parsear la fecha con cada formato
+                DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern(format);
+                LocalDate date = LocalDate.parse(dateStr, inputFormatter);
+
+                // Convertimos la fecha al formato deseado
+                return date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            } catch (DateTimeParseException ignored) {
+                // Si falla, intentamos con el siguiente formato
+            }
+        }
+
+        throw new IllegalArgumentException("Formato de fecha no reconocido: " + dateStr);
+    }
+
     private void writeDataLines(){
         int rowCount = 1;
 
@@ -88,12 +116,13 @@ public class InventoryLoadListReport {
 
         CellStyle style3 = workbook.createCellStyle();
         style3.setFont(font);
-        style3.setDataFormat(workbook.createDataFormat().getFormat("dd-MM-yyyy"));
+        style3.setDataFormat(workbook.createDataFormat().getFormat("yyyy-MM-dd"));
 
+        int countReg=1;
         for(Object[] data: aroutes){
             Row row = sheet.createRow(rowCount++);
             int columnCount = 0;
-
+            createCell(row, columnCount++, countReg++, style2);
             for (int i =0;i<data.length;i++)
             {
                 if(data.length==(columnCount+1) && data[i]!=null) {
@@ -103,6 +132,8 @@ public class InventoryLoadListReport {
                     createCell(row,columnCount++,Integer.parseInt(data[i].toString()),style2);
                 else if(data[i]!=null && colCroutes.get(i).getTipo()!=null && (colCroutes.get(i).getTipo().equalsIgnoreCase("Float")))
                     createCell(row,columnCount++,Double.parseDouble(data[i].toString()),style1);
+                else if(data[i]!=null && colCroutes.get(i).getTipo()!=null && (colCroutes.get(i).getTipo().equalsIgnoreCase("Date")))
+                    createCell(row, columnCount++, normalizeDate(data[i].toString()), style3);
                 else if(data[i]!=null)
                     createCell(row,columnCount++,data[i].toString(),style);
                 else
