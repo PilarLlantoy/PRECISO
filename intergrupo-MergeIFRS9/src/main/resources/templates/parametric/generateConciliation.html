@@ -108,8 +108,8 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr th:each="rc : ${allLog}">
-                                <td th:text="${rc.id}"></td>
+                            <tr th:each="rc, iter : ${allLog}">
+                                <td th:text="${registers - ((current-1)*5) - iter.index}"></td>
                                 <td th:text="${#dates.format(rc.fechaInventario,'yyyy-MM-dd')}"></td>
                                 <td th:text="${#dates.format(rc.fechaPreciso,'yyyy-MM-dd HH:mm:ss')}"></td>
                                 <td th:text="${rc.usuario}"></td>

@@ -109,8 +109,7 @@
                             </thead>
                             <tbody>
                             <tr th:each="rc,iter : ${allLog}">
-                                <!--<td th:text="${rc.id}"></td>-->
-                                <td th:text="${iter.count + ((current-1)*5)}"></td>
+                                <td th:text="${registers - ((current-1)*5) - iter.index}"></td>
                                 <td th:text="${#dates.format(rc.fechaCargue,'dd/MM/yyyy')}"></td>
                                 <td th:text="${#numbers.formatDecimal(rc.cantidadRegistros, 0, 'COMMA', -1, 'POINT')}"></td>
                                 <td th:text="${#dates.format(rc.fechaPreciso,'dd/MM/yyyy HH:mm')}"></td>
