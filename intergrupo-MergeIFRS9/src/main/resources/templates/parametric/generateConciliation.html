@@ -23,6 +23,7 @@
                 <div class="contend mb-3">
                     <h2>Fecha de Información</h2>
                     <form th:object="${concil}" th:action="@{/parametric/generateConciliation}" method="GET">
+                        <input id="nomb" type="hidden" th:value="${nomb}">
                         <div class="form-group form-group-sm mb-1">
                             <h6 class="font-weight-bold">Conciliación</h6>
                             <select style="width: 100%; box-sizing: border-box;" class="form-control form-control-sm" required id="arhcont" name="arhcont">
@@ -83,7 +84,7 @@
                         </div>
                         <div class="col-6">
                             <a type="button" class="btn btn-primary btn-sm w-100" th:if="${period != null }" th:href="@{'/parametric/cuadroMandoCons?period=' + ${period}}">Ir a Cuadro</a>
-                            <button type="button" class="btn btn-primary btn-sm" th:if="${period == null }" disabled >Ir a Cuadro</button>
+                            <button type="button" class="btn btn-primary btn-sm w-100" th:if="${period == null }" disabled >Ir a Cuadro</button>
                         </div>
                     </div>
                 </div>
@@ -332,7 +333,8 @@
    function exportarConsolidado() {
        var conciliacion = document.getElementById("arhcont");
        var fechaInformacion = document.getElementById("period");
-       var evento = document.getElementById("evento");
+       var fechaContabilidad = document.getElementById("period2");
+
        var isValid = true;
        if (conciliacion !=null && !conciliacion.value) {
            conciliacion.classList.add("is-invalid");
@@ -346,55 +348,44 @@
        } else {
            fechaInformacion.classList.remove("is-invalid");
        }
-       if (evento !=null && !evento.value) {
-           evento.classList.add("is-invalid");
+       if (fechaContabilidad !=null && !fechaContabilidad.value) {
+           fechaContabilidad.classList.add("is-invalid");
            isValid = false;
        } else {
-          evento.classList.remove("is-invalid");
+          fechaContabilidad.classList.remove("is-invalid");
        }
        if (isValid) {
            dialogOpen();
-           exportacionConsolidado(conciliacion.value, fechaInformacion.value, evento.value);
+           exportacionConsolidado(conciliacion.value, fechaInformacion.value, fechaContabilidad.value);
        }
    }
-   function exportacionConsolidado(conciliacion, fechaInformacion, evento) {
-       fetch(`/parametric/informationCrossing/generateAccount?id=${encodeURIComponent(conciliacion)}&fecha=${encodeURIComponent(fechaInformacion)}&evento=${encodeURIComponent(evento)}`)
-       .then(response => response.text())
-       .then(data => {
-           Swal.close();
-           validateAlerts(data,'')
-       })
-       .catch(error => {
-           console.error("Error:", error);
-       });
-   }
-   function validarYSubirL() {
-       var customFileD = document.getElementById("customFile");
-       var archivoContable = document.getElementById("arhcont");
-       var fechaInformacion = document.getElementById("period");
-       var isValid = true;
-       if (archivoContable != null && !archivoContable.value) {
-           archivoContable.classList.add("is-invalid");
-           isValid = false;
-       } else {
-           archivoContable.classList.remove("is-invalid");
-       }
-       if (fechaInformacion != null && !fechaInformacion.value) {
-           fechaInformacion.classList.add("is-invalid");
-           isValid = false;
-       } else {
-           fechaInformacion.classList.remove("is-invalid");
-       }
-       if (customFileD != null && !customFileD.value) {
-           customFileD.classList.add("is-invalid");
-           isValid = false;
-       } else {
-           customFileD.classList.remove("is-invalid");
-       }
-       if (isValid) {
-           dialogOpen();
-           subidaL(archivoContable.value, fechaInformacion.value,customFileD.files[0]);
-       }
+   function exportacionConsolidado(archivoContable, fechaInformacion,fechaContabilidad) {
+       const encodedId = encodeURIComponent(archivoContable);
+       const encodedFecha = encodeURIComponent(fechaInformacion);
+       const encodedFecha2 = encodeURIComponent(fechaContabilidad);
+       const url = `/parametric/conciliation/download?id=${encodedId}&fecha=${encodedFecha}&fecha2=${encodedFecha2}`;
+       fetch(url)
+           .then(response => {
+               if (!response.ok) {
+                   throw new Error(`HTTP error! Status: ${response.status}`);
+               }
+               return response.blob(); // Cambia a blob para manejar la descarga del archivo
+           })
+           .then(blob => {
+               const url = window.URL.createObjectURL(blob);
+               const a = document.createElement('a');
+               a.style.display = 'none';
+               a.href = url;
+               a.download = document.getElementById("nomb").value+'_'+encodedFecha+'.xlsx';
+               document.body.appendChild(a);
+               a.click();
+               window.URL.revokeObjectURL(url);
+               Swal.close();
+           })
+           .catch(error => {
+               console.error("Error:", error);
+               alert("Error al descargar el archivo: " + error.message);
+           });
    }
 
    document.addEventListener('DOMContentLoaded', function () {
@@ -408,77 +399,6 @@
         });
     });
 
-   function subidaL(archivoContable,fechaInformacion,customFileD) {
-       const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
-       const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
-       var formData = new FormData();
-       formData.append("id", archivoContable);
-       formData.append("fecha", fechaInformacion);
-       formData.append("file", customFileD);
-       fetch('/parametric/accountingLoad/leerArchivoL', {
-           method: 'POST',
-           body: formData,
-           headers: {
-               [csrfHeader]: csrfToken
-           }
-       })
-       .then(response => response.text())
-       .then(data => {
-           Swal.close();
-           validateAlerts(data, '');
-       })
-       .catch(error => {
-           console.error("Error:", error);
-       });
-   }
-   function validarYexportar() {
-       var archivoContable = document.getElementById("arhcont");
-       var fechaInformacion = document.getElementById("period");
-       var isValid = true;
-       if (archivoContable !=null && !archivoContable.value) {
-           archivoContable.classList.add("is-invalid");
-           isValid = false;
-       } else {
-           archivoContable.classList.remove("is-invalid");
-       }
-       if (fechaInformacion !=null && !fechaInformacion.value) {
-           fechaInformacion.classList.add("is-invalid");
-           isValid = false;
-       } else {
-           fechaInformacion.classList.remove("is-invalid");
-       }
-       if (isValid) {
-           dialogOpen();
-           exportar(archivoContable.value, fechaInformacion.value);
-       }
-   }
-   function exportar(archivoContable, fechaInformacion) {
-       const encodedId = encodeURIComponent(archivoContable);
-       const encodedFecha = encodeURIComponent(fechaInformacion);
-       const url = `/parametric/accountingLoad/download?id=${encodedId}&fecha=${encodedFecha}`;
-       fetch(url)
-           .then(response => {
-               if (!response.ok) {
-                   throw new Error(`HTTP error! Status: ${response.status}`);
-               }
-               return response.blob(); // Cambia a blob para manejar la descarga del archivo
-           })
-           .then(blob => {
-               const url = window.URL.createObjectURL(blob);
-               const a = document.createElement('a');
-               a.style.display = 'none';
-               a.href = url;
-               a.download = 'exported_file.xlsx'; // Asigna un nombre al archivo descargado
-               document.body.appendChild(a);
-               a.click();
-               window.URL.revokeObjectURL(url);
-               Swal.close();
-           })
-           .catch(error => {
-               console.error("Error:", error);
-               alert("Error al descargar el archivo: " + error.message);
-           });
-   }
     window.onload=function(){
         toggleFechaConciliacion();
     }

@@ -138,7 +138,7 @@ public class InformationCrossingService {
         String sql = "select a.id,b.id_tipo_evento\n" +
                 "from (select * from preciso_conciliaciones where activo = 1) a \n" +
                 "inner join (select distinct id_conciliacion,id_tipo_evento from preciso_matriz_eventos) b on a.id = b.id_conciliacion\n" +
-                "left join (select distinct estado_proceso,id_conciliacion from preciso_log_cruce_informacion where fecha_preciso like '"+fecha+"%' and estado_proceso = 'Exitoso') c on a.id = c.id_conciliacion\n" +
+                "left join (select distinct estado_proceso,id_conciliacion from preciso_log_cruce_informacion where fecha_proceso like '"+fecha+"%' and estado_proceso = 'Exitoso') c on a.id = c.id_conciliacion\n" +
                 "where c.estado_proceso is null";
         Query querySelect = entityManager.createNativeQuery(sql);
         return querySelect.getResultList();

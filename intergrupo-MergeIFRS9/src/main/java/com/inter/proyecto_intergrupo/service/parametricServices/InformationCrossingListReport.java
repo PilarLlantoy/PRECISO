@@ -115,6 +115,8 @@ public class InformationCrossingListReport {
             if(data[2]!=null) createCell(row,columnCount++,data[2].toString(),style); else createCell(row,columnCount++,"",style);
             if(data[3]!=null) createCell(row,columnCount++,data[3].toString(),style); else createCell(row,columnCount++,"",style);
             if(data[4]!=null) createCell(row,columnCount++,Double.parseDouble(data[4].toString()),style1); else createCell(row,columnCount++,0.0,style1);
+            if(data.length>5) {if(data[5]!=null) createCell(row,columnCount++,Double.parseDouble(data[5].toString()),style1); else createCell(row,columnCount++,0.0,style1);}
+            if(data.length>6) {if(data[6]!=null) createCell(row,columnCount++,Double.parseDouble(data[6].toString()),style1); else createCell(row,columnCount++,0.0,style1);}
         }
     }
 

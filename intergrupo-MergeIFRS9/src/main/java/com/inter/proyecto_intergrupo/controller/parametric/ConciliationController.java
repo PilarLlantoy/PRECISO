@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.inter.proyecto_intergrupo.model.admin.User;
 import com.inter.proyecto_intergrupo.model.parametric.*;
+import com.inter.proyecto_intergrupo.model.parametric.Currency;
 import com.inter.proyecto_intergrupo.service.adminServices.UserService;
 import com.inter.proyecto_intergrupo.service.parametricServices.*;
 import org.apache.logging.log4j.LogManager;
@@ -21,9 +22,11 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -93,6 +96,7 @@ public class ConciliationController {
                 List<Integer> pages = IntStream.rangeClosed(1, totalPage).boxed().collect(Collectors.toList());
                 modelAndView.addObject("pages",pages);
             }
+
             modelAndView.addObject("allConcils",pageConciliation.getContent());
             modelAndView.addObject("current",page+1);
             modelAndView.addObject("next",page+2);
@@ -400,6 +404,7 @@ public class ConciliationController {
             List<Object[]> registros = new ArrayList<>();
             List<String> colRegistros = new ArrayList<>();
             List<LogConciliation> logConciliacion = new ArrayList<>();
+            String nomb ="Vacio";
 
             if(params.get("arhcont") != null && params.get("arhcont").toString() != null
                     && params.get("period") != null && params.get("period").toString() != null)
@@ -415,8 +420,10 @@ public class ConciliationController {
                 colRegistros = List.of("FECHA", "CENTRO CONTABLE", "CUENTA CONTABLE","DIVISA CUENTA","SALDO INVENTARIO", "SALDO CONTABLE", "TOTAL");;
                 registros = conciliationService.processList(conciliationService.findAllData(concil,params.get("period").toString()),colRegistros);
                 logConciliacion = conciliationService.findAllLog(concil,params.get("period").toString());
-
+                if(concil!=null && concil.getNombre()!=null)
+                    nomb=concil.getNombre();
             }
+            modelAndView.addObject("nomb",nomb);
             int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
             PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
             int start = (int) pageRequest.getOffset();
@@ -510,6 +517,22 @@ public class ConciliationController {
                                           @PathVariable("fechaInformacion") String fechaInformacion) {
         List<Object[]> campos = conciliationService.findFechaCont(idRCont, fechaInformacion);
         return campos;
+    }
+
+    @GetMapping(value = "/parametric/conciliation/download")
+    @ResponseBody
+    public void exportToExcel(HttpServletResponse response, @RequestParam(defaultValue = "0") String id, @RequestParam(defaultValue = "0") String fecha, @RequestParam(defaultValue = "0") String fecha2) throws IOException {
+        response.setContentType("application/octet-stream");
+        Conciliation cr = conciliationService.findById(Integer.parseInt(id));
+        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+        String currentDateTime = dateFormatter.format(new Date());
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename="+cr.getNombre().replace(" ","_") + currentDateTime + ".xlsx";
+        response.setHeader(headerKey, headerValue);
+        List<Object[]> croutes = conciliationService.findAllData(cr,fecha);
+        List<String> colConcil = Arrays.asList("FECHA_CONCILIACIÓN","CENTRO_CONTABLE","CUENTA_CONTABLE","DIVISA_CUENTA","SALDO_INVENTARIO","SALDO_CONTABLE","TOTAL");
+        InformationCrossingListReport listReport = new InformationCrossingListReport(croutes,colConcil,cr,null);
+        listReport.export(response);
     }
 
 }
