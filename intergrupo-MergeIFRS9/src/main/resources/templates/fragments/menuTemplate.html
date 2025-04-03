@@ -1336,21 +1336,24 @@
         </div>
         <ul class="nav_links">
             <li>
-                <a th:href="@{/parametric/cuadroMandoInvAndCont(period=${#dates.format(#dates.createNow(), 'yyyy-MM-dd')},period2=${#dates.format(#dates.createNow(), 'yyyy-MM-dd')})}">
+                <a th:href="@{/parametric/cuadroMandoInvAndCont(
+                    period=${#temporals.format(#temporals.createToday().minusDays(1), 'yyyy-MM-dd')},
+                    period2=${#temporals.format(#temporals.createToday().minusDays(1), 'yyyy-MM-dd')}
+                )}">
                     <span class="links_name">Cuadro Inventarios</span>
                 </a>
             </li>
             <li>
-                <a th:href="@{/parametric/cuadroMandoCru(period=${#dates.format(#dates.createNow(), 'yyyy-MM-dd')})}">
+                <a th:href="@{/parametric/cuadroMandoCru(period=${#temporals.format(#temporals.createToday().minusDays(1), 'yyyy-MM-dd')})}">
                     <span class="links_name">Cuadro Cruces Información</span>
                 </a>
             </li>
             <li>
-                <!--<a th:href="@{/parametric/cuadroMandoCru(period=${#dates.format(#dates.createNow(), 'yyyy-MM-dd')})}">-->
-                <a>
+                <a th:href="@{/parametric/cuadroMandoCons(period=${#temporals.format(#temporals.createToday().minusDays(1), 'yyyy-MM-dd')})}">
                     <span class="links_name">Cuadro Conciliaciones</span>
                 </a>
             </li>
+
         </ul>
     </div>
 

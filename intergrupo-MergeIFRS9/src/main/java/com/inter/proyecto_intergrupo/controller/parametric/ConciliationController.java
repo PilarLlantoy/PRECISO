@@ -402,12 +402,14 @@ public class ConciliationController {
             List<LogConciliation> logConciliacion = new ArrayList<>();
 
             if(params.get("arhcont") != null && params.get("arhcont").toString() != null
-                    && params.get("period") != null && params.get("period").toString() != null
-                    && params.get("period2") != null && params.get("period2").toString() != null)
+                    && params.get("period") != null && params.get("period").toString() != null)
             {
-                System.out.println("periodo " +params.get("period2"));
                 modelAndView.addObject("period",params.get("period").toString());
-                modelAndView.addObject("period2",params.get("period2").toString());
+                if(params.get("period2") != null && params.get("period2").toString() != null)
+                    modelAndView.addObject("period2",params.get("period2").toString());
+                List<Object[]> campos = conciliationService.findFechaCont(Integer.parseInt(params.get("arhcont").toString()), params.get("period").toString());
+                if(!campos.isEmpty())
+                    modelAndView.addObject("period2",campos.get(0)[0]);
                 Conciliation concil = conciliationService.findById(Integer.parseInt(params.get("arhcont").toString()));
                 modelAndView.addObject("arhcont",concil);
                 colRegistros = List.of("FECHA", "CENTRO CONTABLE", "CUENTA CONTABLE","DIVISA CUENTA","SALDO INVENTARIO", "SALDO CONTABLE", "TOTAL");;

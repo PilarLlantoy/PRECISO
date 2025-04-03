@@ -27,6 +27,9 @@ public class LogConciliation {
     @Column(name = "novedad")
     private String novedad;
 
+    @Column(name = "tipo_proceso")
+    private String tipoProceso;
+
     @Column(name = "fechaPreciso")
     private Date fechaPreciso;
 

@@ -246,7 +246,7 @@ public class ConciliationService {
 
 
 
-    public void generarConciliacion(Conciliation concil, String fecha, String fechaCont, int idCont) {
+    public boolean generarConciliacion(Conciliation concil, String fecha, String fechaCont, int idCont) {
         String campoCentro = concil.getCentro();
         String campoCuenta = concil.getCuenta();
         String campoDivisa = concil.getDivisa();
@@ -266,6 +266,9 @@ public class ConciliationService {
         // Construcción de las condiciones dinámicas
         String condicionCuentaConcil = construirCondicionSQL("CUENTA_CONTABLE_PRECISOKEY", resultado);
         String condicionCuentaContable = construirCondicionSQL(campoCuenta, resultado);
+
+        if(condicionCuentaContable.isEmpty() || condicionCuentaConcil.isEmpty())
+            return false;
 
         // Construcción de la consulta
         StringBuilder queryBuilder = new StringBuilder();
@@ -292,7 +295,10 @@ public class ConciliationService {
         // HACER LA SELECCION
         Query querySelect = entityManager.createNativeQuery(queryBuilder.toString());
         List<Object[]> resultados = querySelect.getResultList();
+        if(resultados.isEmpty())
+            return false;
         llenadoConciliacion(concil, resultados, fecha);
+        return true;
     }
 
 
@@ -575,6 +581,43 @@ public class ConciliationService {
         return query.getResultList();
     }
 
-
+    public List<Object[]> findAllLogByDate(String fecha) {
+        Query query = entityManager.createNativeQuery(
+                "WITH CTE AS (\n" +
+                        "SELECT \n" +
+                        "    id_lc,\n" +
+                        "    estado_proceso,\n" +
+                        "    fecha_proceso,\n" +
+                        "    fecha_preciso,\n" +
+                        "    novedad,\n" +
+                        "    tipo_proceso,\n" +
+                        "    usuario,\n" +
+                        "    id_conciliacion,\n" +
+                        "    COUNT(*) OVER (PARTITION BY fecha_proceso, id_conciliacion) AS total_intentos,\n" +
+                        "    ROW_NUMBER() OVER (PARTITION BY fecha_proceso, id_conciliacion ORDER BY fecha_preciso DESC) AS row_num\n" +
+                        "FROM \n" +
+                        "    PRECISO.dbo.preciso_log_conciliacion\n" +
+                        "WHERE fecha_proceso like :fechaVarP \n" +
+                        ")\n" +
+                        "SELECT a.id_lc,\n" +
+                        "b.nombre, \n" +
+                        "'' as nulo,\n" +
+                        "'' as nulo1,\n" +
+                        "ISNULL(a.fecha_proceso,cast( :fechaVar as date)) as fecha_proceso,\n" +
+                        "ISNULL(a.novedad,'') as novedad,\n" +
+                        "ISNULL(a.fecha_preciso,cast( :fechaVar as date)) as fecha_preciso,\n" +
+                        "ISNULL(a.usuario,'Sin Ejecutar') as usuario,\n" +
+                        "ISNULL(a.tipo_proceso,'') as tipo_proceso,\n" +
+                        "ISNULL(a.estado_proceso,'Fallido') as estado_proceso,\n" +
+                        "ISNULL(a.total_intentos,0) as total_intentos,\n" +
+                        "b.id   \n" +
+                        "FROM preciso_conciliaciones b\n" +
+                        "left join (SELECT * FROM CTE WHERE row_num = 1 ) a on b.id =a.id_conciliacion\n" +
+                        "ORDER BY \n" +
+                        "b.id,a.fecha_proceso;");
+        query.setParameter("fechaVar", fecha);
+        query.setParameter("fechaVarP", fecha+"%");
+        return query.getResultList();
+    }
 
 }

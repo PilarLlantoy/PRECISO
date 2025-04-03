@@ -90,6 +90,16 @@ function validateAlerts(operacion,data)
             showConfirmButton: true
         })
     }
+    else if(operacion=='CM-2')
+    {
+        Swal.fire({
+            position: 'center',
+            icon: 'warning',
+            title: 'Atención',
+            text: 'Falta completar el maestro de inventarios',
+            confirmButtonText: 'Entendido'
+        });
+    }
     else if(operacion=='Date-1')
     {
         Swal.fire({
