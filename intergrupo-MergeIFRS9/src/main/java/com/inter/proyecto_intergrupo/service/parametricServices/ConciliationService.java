@@ -371,8 +371,8 @@ public class ConciliationService {
                 dataCampo.append("t2."+campo.getNombre()).append(" = t."+campo.getNombre()).append(" AND\n");
             }
             Query queryGenerateIncidents = entityManager.createNativeQuery("UPDATE t SET NOVEDADES_PRECISOKEY = \n" +
-                    "(CASE WHEN t.CUENTA_CONTABLE_1_PRECISOKEY IS NULL OR CUENTA_CONTABLE_1_PRECISOKEY = '' THEN 'A' ELSE '' END) +\n" +
-                    "(CASE WHEN EXISTS (SELECT 1 FROM "+tableUpdate+" t2 \n" +
+                    "(CASE WHEN t.CUENTA_CONTABLE_1_PRECISOKEY IS NULL OR CUENTA_CONTABLE_1_PRECISOKEY = '' THEN 'A' ELSE '' END) \n" +
+                    /*"+(CASE WHEN EXISTS (SELECT 1 FROM "+tableUpdate+" t2 \n" +
                     "\tWHERE "+dataCampo+" t2.INVENTARIO_PRECISOKEY = t.INVENTARIO_PRECISOKEY \n" +
                     "\tAND t2.TIPO_EVENTO_PRECISOKEY = t.TIPO_EVENTO_PRECISOKEY \n" +
                     "\tAND t2.FECHA_CONCILIACION_PRECISOKEY = t.FECHA_CONCILIACION_PRECISOKEY \n" +
@@ -386,7 +386,7 @@ public class ConciliationService {
                     "\tAND t2.VALOR_CUENTA_2_PRECISOKEY = t.VALOR_CUENTA_2_PRECISOKEY \n" +
                     "\tAND t2.FECHA_CONCILIACION_PRECISOKEY like :fecha and t2.TIPO_EVENTO_PRECISOKEY = :evento \n" +
                     "\tGROUP BY t2.INVENTARIO_PRECISOKEY, t2.FECHA_CONCILIACION_PRECISOKEY, t2.TIPO_EVENTO_PRECISOKEY, t2.CDGO_MATRIZ_EVENTO_PRECISOKEY, t2.CENTRO_CONTABLE_PRECISOKEY, t2.CUENTA_CONTABLE_1_PRECISOKEY,t2.DIVISA_CUENTA_1_PRECISOKEY,t2.VALOR_CUENTA_1_PRECISOKEY\n" +
-                    "\t,t2.CUENTA_CONTABLE_2_PRECISOKEY,t2.DIVISA_CUENTA_2_PRECISOKEY,t2.VALOR_CUENTA_2_PRECISOKEY HAVING COUNT(*) > 1) THEN 'D' ELSE '' END)\n" +
+                    "\t,t2.CUENTA_CONTABLE_2_PRECISOKEY,t2.DIVISA_CUENTA_2_PRECISOKEY,t2.VALOR_CUENTA_2_PRECISOKEY HAVING COUNT(*) > 1) THEN 'D' ELSE '' END)\n" +*/
                     "FROM "+tableUpdate+" t WHERE t.FECHA_CONCILIACION_PRECISOKEY like :fecha and t.TIPO_EVENTO_PRECISOKEY = :evento ;");
             queryGenerateIncidents.setParameter("fecha",fecha+"%");
             queryGenerateIncidents.setParameter("evento",tipoEvento.getNombre());
