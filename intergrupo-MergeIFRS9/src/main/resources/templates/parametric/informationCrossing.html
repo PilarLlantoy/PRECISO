@@ -106,23 +106,28 @@
                             <tr>
                                 <th>Código</th>
                                 <th>Fecha Proceso</th>
-                                <th>Novedad Presentada</th>
                                 <th>Fecha Proceso</th>
                                 <th>Usuario</th>
                                 <th>Tipo Proceso</th>
                                 <th>Estado Proceso</th>
+                                <th>Novedad Presentada</th>
                             </tr>
                             </thead>
                             <tbody>
                             <tr th:each="rc,iter : ${allLog}">
                                 <td th:text="${iter.count + ((current-1)*5)}"></td>
                                 <td th:text="${#dates.format(rc.fechaProceso,'yyyy-MM-dd')}"></td>
-                                <td th:text="${rc.novedad}"></td>
                                 <td th:text="${#dates.format(rc.fechaPreciso,'yyyy-MM-dd HH:mm:ss')}"></td>
                                 <td th:text="${rc.usuario}"></td>
                                 <td th:text="${rc.tipoProceso}"></td>
                                 <td th:if="${rc.estadoProceso == 'Exitoso'}"><i class="fa fa-check-circle fa-2x text-success"></i></td>
                                 <td th:if="${rc.estadoProceso == 'Fallido'}"><i class="fa fa-times-circle fa-2x text-danger"></i></td>
+                                <td th:if="${rc.novedad != ''}">
+                                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#novedadModal" th:attr="data-novedad=${rc.novedad}">Ver</button>
+                                </td>
+                                <td th:if="${rc.novedad == ''}">
+                                    <button type="button" class="btn btn-primary btn-sm" disabled>Ver</button>
+                                </td>
                             </tr>
                             </tbody>
                         </table>
@@ -222,7 +227,19 @@
                 </div>
             </div>
         </div>
-
+    </div>
+    <div class="modal fade custom-modal-width" id="novedadModal" tabindex="-1" aria-labelledby="novedadModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title" id="novedadModalLabel">Detalle de Novedad</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="novedadText"></p>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -533,6 +550,18 @@
                 alert("Error al descargar el archivo: " + error.message);
             });
     }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const modal = document.getElementById('novedadModal');
+        const novedadText = document.getElementById('novedadText');
+
+        modal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget; // Botón que activó el modal
+            const novedad = button.getAttribute('data-novedad'); // Extraer el valor de data-novedad
+            novedadText.textContent = novedad; // Asignar el valor al contenido del modal
+        });
+    });
+
     window.onload = function() {
         toggleConciliacion();
     };

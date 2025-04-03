@@ -105,24 +105,26 @@
                             <tr>
                                 <th>Código</th>
                                 <th>Fecha Inventario</th>
-                                <th>Novedad Presentada</th>
                                 <th>Fecha Proceso</th>
                                 <th>Usuario</th>
                                 <th>Estado Proceso</th>
-                                <th COLSPAN="2"></th>
+                                <th>Novedad Presentada</th>
                             </tr>
                             </thead>
                             <tbody>
                             <tr th:each="rc : ${allLog}">
                                 <td th:text="${rc.id}"></td>
                                 <td th:text="${#dates.format(rc.fechaInventario,'yyyy-MM-dd')}"></td>
-                                <td th:text="${rc.novedad}"></td>
                                 <td th:text="${#dates.format(rc.fechaPreciso,'yyyy-MM-dd HH:mm:ss')}"></td>
                                 <td th:text="${rc.usuario}"></td>
                                 <td th:if="${rc.estadoProceso == 'Exitoso'}"><i class="fa fa-check-circle fa-2x text-success"></i></td>
                                 <td th:if="${rc.estadoProceso == 'Fallido'}"><i class="fa fa-times-circle fa-2x text-danger"></i></td>
-                                <td></td>
-                                <td></td>
+                                <td th:if="${rc.novedad != ''}">
+                                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#novedadModal" th:attr="data-novedad=${rc.novedad}">Ver</button>
+                                </td>
+                                <td th:if="${rc.novedad == ''}">
+                                    <button type="button" class="btn btn-primary btn-sm" disabled>Ver</button>
+                                </td>
                             </tr>
                             </tbody>
                         </table>
@@ -133,7 +135,7 @@
                     <div class="row mt-2" th:if="${last != 0}">
                         <div class="col-md-4 text-left">
                             <nav arial-label="Pagination">
-                                <ul class="pagination">
+                                <ul class="pagination pagination-sm">
                                     <li class="page-item" th:classappend="${prev == 0 ? 'disabled' : ''}">
                                         <a class="page-link"
                                            th:href="@{/parametric/{dir}/?page={page}&period={period}&arhcont={arhcont}&period2={period2}(arhcont=${arhcont.id},page=${prev},dir=${directory},period=${period},period2=${period2})}">Anterior</a>
@@ -175,7 +177,7 @@
                     <div class="row mt-2" th:if="${lastData != 0}">
                         <div class="col-md-4 text-left">
                             <nav arial-label="Pagination">
-                                <ul class="pagination">
+                                <ul class="pagination pagination-sm">
                                     <li class="page-item" th:classappend="${prevData == 0 ? 'disabled' : ''}">
                                         <a class="page-link"
                                            th:href="@{/parametric/{dir}/?pageData={pageData}&arhcont={arhcont}&period={period}&period2={period2}(period=${period},pageData=${prevData},dir=${directory},arhcont=${arhcont.id},period2=${period2})}">Anterior</a>
@@ -194,6 +196,19 @@
                             <h6 class="mx-1" th:utext="'Página ' + ${currentData} + ' de ' + ${lastData}"></h6>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade custom-modal-width" id="novedadModal" tabindex="-1" aria-labelledby="novedadModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title" id="novedadModalLabel">Detalle de Novedad</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="novedadText"></p>
                 </div>
             </div>
         </div>
@@ -383,6 +398,18 @@
            subidaL(archivoContable.value, fechaInformacion.value,customFileD.files[0]);
        }
    }
+
+   document.addEventListener('DOMContentLoaded', function () {
+        const modal = document.getElementById('novedadModal');
+        const novedadText = document.getElementById('novedadText');
+
+        modal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget; // Botón que activó el modal
+            const novedad = button.getAttribute('data-novedad'); // Extraer el valor de data-novedad
+            novedadText.textContent = novedad; // Asignar el valor al contenido del modal
+        });
+    });
+
    function subidaL(archivoContable,fechaInformacion,customFileD) {
        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
