@@ -34,6 +34,7 @@ import java.util.stream.IntStream;
 public class ConciliationController {
     //private static final int PAGINATIONCOUNT=12;
     private static final int PAGINATIONCOUNT=5;
+    private static final int PAGINATIONCOUNT2=12;
     private static final int PAGINATIONCOUNTDATA=500;
 
     private List<String> listColumns=List.of("Nombre", "Estado", "Sistema Fuente", "Fuente Contable");
@@ -84,7 +85,7 @@ public class ConciliationController {
         if(userService.validateEndpoint(user.getId(),"Ver Conciliaciones")) {
 
             int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
-            PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
+            PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT2);
 
             List<Conciliation> conciliations = conciliationService.findAll();
             int start = (int) pageRequest.getOffset();

@@ -280,7 +280,7 @@ public class InformationCrossingController {
             conciliationService.generarTablaCruceCompleto_x_Conciliacion(id, fecha, evento);
             conciliationService.generarTablaNovedades(listRoutes, fecha, tipoEvento);
             if(informationCrossingService.findNovedades(listRoutes,fecha,tipoEvento))
-                informationCrossingService.loadLogInformationCrossing(null, id, evento, fecha, "Automático", "Fallido", "Se presentaron novedades durante la ejecución por favor validelas en el botón de 'Exportar Novedad'.");
+                informationCrossingService.loadLogInformationCrossing(null, id, evento, fecha, "Generar Cuentas", "Fallido", "Se presentaron novedades durante la ejecución por favor validelas en el botón de 'Exportar Novedad'.");
             else if(!informationCrossingService.findDataTable(listRoutes,fecha).isEmpty())
                 informationCrossingService.loadLogInformationCrossing(null, id, evento, fecha, "Generar Cuentas", "Exitoso", "");
             else
