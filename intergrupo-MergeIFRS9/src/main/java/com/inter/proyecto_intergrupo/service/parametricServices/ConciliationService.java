@@ -225,7 +225,7 @@ public class ConciliationService {
             String[] valoresExactosArray = resultado.get("valoresExactos").split(", ");
             List<String> valoresExactosConComillas = new ArrayList<>();
             for (String valor : valoresExactosArray) {
-                valoresExactosConComillas.add("'" + valor + "'");
+                valoresExactosConComillas.add("'" + valor.replace(" ","").replace("\t","") + "'");
             }
             condiciones.add("CAST([" + campo + "] AS BIGINT) IN (" + String.join(", ", valoresExactosConComillas) + ")");
         }
@@ -235,7 +235,7 @@ public class ConciliationService {
             String[] patrones = resultado.get("patronesLike").split(", ");
             List<String> likes = new ArrayList<>();
             for (String patron : patrones) {
-                likes.add("[" + campo + "] LIKE '" + patron + "'");
+                likes.add("[" + campo + "] LIKE '" + patron.replace(" ","") + "'");
             }
             condiciones.add(String.join(" OR ", likes));
         }

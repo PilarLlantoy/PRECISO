@@ -23,31 +23,27 @@
                 <div class="contend mb-3">
                     <h2>Fecha de Información</h2>
                     <form th:object="${concil}" th:action="@{/parametric/generateConciliation}" method="GET">
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm mb-1">
                             <h6 class="font-weight-bold">Conciliación</h6>
-                            <select style="width: 100%; box-sizing: border-box;" class="form-control" required id="arhcont" name="arhcont">
+                            <select style="width: 100%; box-sizing: border-box;" class="form-control form-control-sm" required id="arhcont" name="arhcont">
                                 <option disabled value="" selected hidden>Seleccione un archivo</option>
                                 <option th:each="item : ${listConcil}" th:value="${item.id}" th:text="${item.nombre}"
                                         th:selected="${arhcont != null and arhcont.id == item.id }"></option>
                             </select>
                             <div class="invalid-feedback">Por favor, seleccione un archivo.</div>
                         </div>
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm mb-1">
                             <h6 class="font-weight-bold">Fecha Conciliación</h6>
-                            <div class="input-group">
-                                <div class="input-group">
-                                    <input type="date" id="period" th:name="period" th:value="${period}" class="form-control" style="width: 100%; box-sizing: border-box;" required onchange="toggleFechaConciliacion()">
-                                    <div class="invalid-feedback">Por favor, seleccione una fecha.</div>
-                                </div>
+                            <div class="input-group input-group-sm">
+                                <input type="date" id="period" th:name="period" th:value="${period}" class="form-control form-control-sm" style="width: 100%; box-sizing: border-box;" required onchange="toggleFechaConciliacion()">
+                                <div class="invalid-feedback">Por favor, seleccione una fecha.</div>
                             </div>
                         </div>
-                        <div class="form-group mb-1">
+                        <div class="form-group form-group-sm mb-1">
                             <h6 class="font-weight-bold">Fecha Contabilidad</h6>
-                            <div class="input-group">
-                                <div class="input-group">
-                                    <input type="date" id="period2" th:name="period2" th:value="${period2}" class="form-control" style="width: 100%; box-sizing: border-box;" disabled required>
-                                    <div class="invalid-feedback">Por favor, seleccione una fecha.</div>
-                                </div>
+                            <div class="input-group input-group-sm">
+                                <input type="date" id="period2" th:name="period2" th:value="${period2}" class="form-control form-control-sm" style="width: 100%; box-sizing: border-box;" disabled required>
+                                <div class="invalid-feedback">Por favor, seleccione una fecha.</div>
                             </div>
                         </div>
 
