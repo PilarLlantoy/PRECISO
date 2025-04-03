@@ -370,8 +370,8 @@ public class ConciliationService {
             {
                 dataCampo.append("t2."+campo.getNombre()).append(" = t."+campo.getNombre()).append(" AND\n");
             }
-            Query queryGenerateIncidents = entityManager.createNativeQuery("UPDATE t SET NOVEDADES_PRECISOKEY = \n" +
-                    "(CASE WHEN t.CUENTA_CONTABLE_1_PRECISOKEY IS NULL OR CUENTA_CONTABLE_1_PRECISOKEY = '' THEN 'A' ELSE '' END) \n" +
+            Query queryGenerateIncidents = entityManager.createNativeQuery("UPDATE t SET t.NOVEDADES_PRECISOKEY = \n" +
+                    "(CASE WHEN coalesce(CUENTA_CONTABLE_1_PRECISOKEY,CUENTA_CONTABLE_2_PRECISOKEY) IS NULL THEN 'A' ELSE '' END) \n" +
                     /*"+(CASE WHEN EXISTS (SELECT 1 FROM "+tableUpdate+" t2 \n" +
                     "\tWHERE "+dataCampo+" t2.INVENTARIO_PRECISOKEY = t.INVENTARIO_PRECISOKEY \n" +
                     "\tAND t2.TIPO_EVENTO_PRECISOKEY = t.TIPO_EVENTO_PRECISOKEY \n" +
