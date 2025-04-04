@@ -640,7 +640,7 @@ public class ConciliationService {
     public List<String> findByJob(String fecha) {
         String sql = "select a.id\n" +
                 " from (select * from preciso_conciliaciones where activo = 1) a \n" +
-                " left join (select distinct estado_proceso,id_conciliacion from preciso_log_cruce_informacion where fecha_proceso like '"+fecha+"%' and estado_proceso = 'Exitoso') c on a.id = c.id_conciliacion\n" +
+                " left join (select distinct estado_proceso,id_conciliacion from preciso_log_conciliacion where fecha_proceso like '"+fecha+"%' and estado_proceso = 'Exitoso') c on a.id = c.id_conciliacion\n" +
                 " where c.estado_proceso is null";
         Query querySelect = entityManager.createNativeQuery(sql);
         List<Object> result = querySelect.getResultList();
