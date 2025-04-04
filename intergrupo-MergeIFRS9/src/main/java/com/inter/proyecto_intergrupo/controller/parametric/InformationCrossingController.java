@@ -299,7 +299,7 @@ public class InformationCrossingController {
 
     }
 
-    @Scheduled(cron = "0 0 7-11/2 * * ?")
+    @Scheduled(cron = "0 5 7-11/2 * * ?")
     public void processJob()  {
 
         LocalDateTime fechaHoy = LocalDateTime.now();

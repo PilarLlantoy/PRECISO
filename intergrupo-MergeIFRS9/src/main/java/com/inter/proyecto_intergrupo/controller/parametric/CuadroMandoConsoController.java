@@ -144,7 +144,7 @@ public class CuadroMandoConsoController {
         }
         return modelAndView;
     }
-    @Scheduled(cron = "0 0 8-12/2 * * *")
+    @Scheduled(cron = "0 5 8-12/2 * * *")
     public void jobConciliacion() {
         LocalDateTime fechaHoy = LocalDateTime.now();
         fechaHoy = fechaHoy.minusDays(1);
