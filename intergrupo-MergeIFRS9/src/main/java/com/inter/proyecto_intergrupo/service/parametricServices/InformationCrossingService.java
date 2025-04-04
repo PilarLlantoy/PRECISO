@@ -118,20 +118,37 @@ public class InformationCrossingService {
     public boolean findNovedades(List<ConciliationRoute> listRoutes, String fecha, EventType evento){
         int capacidad = 1;
         try {
-            StringBuilder query = new StringBuilder("");
+            StringBuilder query = new StringBuilder();
             for (ConciliationRoute route:listRoutes) {
-                query.append("select NOVEDADES_PRECISOKEY from preciso_ci_"+route.getConciliacion().getId()+"_"+route.getId()+" t WHERE t.FECHA_CONCILIACION_PRECISOKEY like '"+fecha+"%' and t.TIPO_EVENTO_PRECISOKEY ='"+evento.getNombre()+"' and t.NOVEDADES_PRECISOKEY != '' and t.NOVEDADES_PRECISOKEY IS NOT NULL \n");
+                String tableName = "preciso_ci_" + route.getConciliacion().getId() + "_" + route.getId();
+                if (!tableExists(tableName))
+                    continue;
+                query.append("select NOVEDADES_PRECISOKEY from "+tableName+" t WHERE t.FECHA_CONCILIACION_PRECISOKEY like '"+fecha+"%' and t.TIPO_EVENTO_PRECISOKEY ='"+evento.getNombre()+"' and t.NOVEDADES_PRECISOKEY != '' and t.NOVEDADES_PRECISOKEY IS NOT NULL \n");
                 if(capacidad!=listRoutes.size())
                     query.append("UNION ALL\n" );
                 capacidad++;
             }
             Query querySelect = entityManager.createNativeQuery(query.toString());
-            return !querySelect.getResultList().isEmpty();
+            if(!query.isEmpty())
+                return !querySelect.getResultList().isEmpty();
+            else
+                return true;
         }
         catch (Exception e){
             e.printStackTrace();
+            return true;
         }
-        return true;
+    }
+
+    public boolean tableExists(String tableName) {
+        try {
+            String sql = "SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = :tableName";
+            Query query = entityManager.createNativeQuery(sql);
+            query.setParameter("tableName", tableName);
+            return ((Number) query.getSingleResult()).intValue() > 0;
+        } catch (Exception e) {
+            return false; // Si hay error, asumimos que no existe
+        }
     }
 
     public List<Object[]> findByJob(String fecha) {
@@ -548,11 +565,15 @@ public class InformationCrossingService {
                     queryUpdate = "UPDATE " + nombreTabla + " SET " +
                             campoActualizar + " = CAST(CASE WHEN "+obj[3].toString()+" LIKE '%.%' THEN TRY_CAST("+obj[3].toString()+" AS DECIMAL(38, 2)) " +
                             "ELSE TRY_CAST("+obj[3].toString()+" AS DECIMAL(38, 2)) /100.0 END "+ operacion + obj[4].toString() +" AS DECIMAL(38, 2)) "+
-                            "WHERE " + obj[0].toString() + " = '" + obj[1].toString() + "' AND " + condicion;
+                            "WHERE " + obj[0].toString() + " = '" + obj[1].toString() + "' ";
+                    if(condicion!=null && !condicion.isEmpty())
+                        queryUpdate=queryUpdate+ " AND " + condicion;
                 } else {
                     queryUpdate = "UPDATE " + nombreTabla + " SET " +
                             campoActualizar + " = '" + obj[4].toString() + "' " +
-                            "WHERE " + obj[0].toString() + " = '" + obj[1].toString() + "' AND " + condicion;
+                            "WHERE " + obj[0].toString() + " = '" + obj[1].toString() + "' ";
+                    if(condicion!=null && !condicion.isEmpty())
+                        queryUpdate=queryUpdate+ " AND " + condicion;
                 }
 
                 // Ejecutar la consulta
