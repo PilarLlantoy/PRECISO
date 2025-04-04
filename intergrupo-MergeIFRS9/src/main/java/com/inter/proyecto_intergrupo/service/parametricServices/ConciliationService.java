@@ -297,7 +297,7 @@ public class ConciliationService {
                 .append("WHERE periodo_preciso = '" + fechaCont + "' AND (" + condicionCuentaContable + ")\n")
                 .append("GROUP BY periodo_preciso, [" + campoCentro + "], [" + campoCuenta + "], [" + campoDivisa + "]\n")
                 .append(") t2\n")
-                .append("ON  t1.FECHA_PRECISOKEY = t2.FECHA AND t1.CENTRO_CONTABLE_PRECISOKEY = t2.CENTRO_CONTABLE AND CAST(t1.CUENTA_CONTABLE_PRECISOKEY AS BIGINT) = CAST(t2.CUENTA_CONTABLE AS BIGINT)AND t1.DIVISA_CUENTA_PRECISOKEY = t2.DIVISA_CUENTA");
+                .append("ON t1.CENTRO_CONTABLE_PRECISOKEY = t2.CENTRO_CONTABLE AND CAST(t1.CUENTA_CONTABLE_PRECISOKEY AS BIGINT) = CAST(t2.CUENTA_CONTABLE AS BIGINT)AND t1.DIVISA_CUENTA_PRECISOKEY = t2.DIVISA_CUENTA");
 
         // HACER LA SELECCION
         Query querySelect = entityManager.createNativeQuery(queryBuilder.toString());
