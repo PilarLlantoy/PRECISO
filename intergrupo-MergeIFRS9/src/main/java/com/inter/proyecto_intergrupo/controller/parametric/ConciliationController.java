@@ -497,7 +497,7 @@ public class ConciliationController {
         try {
             String idCont = conciliationService.findFechaCont(id, fecha).get(0)[1].toString();
             conciliationService.generarConciliacion(conciliacion,fecha, fechaContabilidad, Integer.valueOf(idCont));
-            conciliationService.loadLogConciliation(user, id, fecha, "Exitoso", "");
+            conciliationService.loadLogConciliation(user, id, fecha, "Exitoso", "","Generar Concil");
             return ResponseEntity.ok("Bulk--1");
         }
         catch (Exception e) {
@@ -506,7 +506,7 @@ public class ConciliationController {
             while (rootCause.getCause() != null) {
                 rootCause = rootCause.getCause(); // Navega a la causa raíz
             }
-            conciliationService.loadLogConciliation(user, id, fecha, "Fallido",rootCause.getMessage());
+            conciliationService.loadLogConciliation(user, id, fecha, "Fallido",rootCause.getMessage(),"Generar Concil");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk--2");
         }
 

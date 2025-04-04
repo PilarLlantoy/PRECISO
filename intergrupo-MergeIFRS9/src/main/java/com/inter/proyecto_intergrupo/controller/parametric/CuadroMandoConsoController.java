@@ -13,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -22,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -115,12 +118,12 @@ public class CuadroMandoConsoController {
                     {
                         boolean resp = conciliationService.generarConciliacion(conciliacion, fecha, fechaCont.get(0)[0].toString(), conciliacion.getRutaContable().getId());
                         if(resp)
-                            conciliationService.loadLogConciliation(user, Integer.parseInt(id), fecha, "Exitoso", "");
+                            conciliationService.loadLogConciliation(user, Integer.parseInt(id), fecha, "Exitoso", "","Cargue Masivo");
                         else
-                            conciliationService.loadLogConciliation(user, Integer.parseInt(id), fecha, "Fallido","No se encontraron cuentas a cruzar.'");
+                            conciliationService.loadLogConciliation(user, Integer.parseInt(id), fecha, "Fallido","No se encontraron cuentas a cruzar.'","Cargue Masivo");
                     }
                     else {
-                        conciliationService.loadLogConciliation(user, Integer.parseInt(id), fecha, "Fallido","Falta completar el maestro de inventarios.'");
+                        conciliationService.loadLogConciliation(user, Integer.parseInt(id), fecha, "Fallido","Falta completar el maestro de inventarios.'","Cargue Masivo");
                     }
 
                 }
@@ -130,7 +133,7 @@ public class CuadroMandoConsoController {
                     while (rootCause.getCause() != null) {
                         rootCause = rootCause.getCause(); // Navega a la causa raíz
                     }
-                    conciliationService.loadLogConciliation(user, Integer.parseInt(id), fecha, "Fallido",rootCause.getMessage());
+                    conciliationService.loadLogConciliation(user, Integer.parseInt(id), fecha, "Fallido",rootCause.getMessage(),"Cargue Masivo");
                 }
             }
             modelAndView.addObject("resp", "CM1");
@@ -140,5 +143,42 @@ public class CuadroMandoConsoController {
             modelAndView.addObject("resp", "CM-1");
         }
         return modelAndView;
+    }
+    @Scheduled(cron = "0 0 8-12/2 * * *")
+    public void jobConciliacion() {
+        LocalDateTime fechaHoy = LocalDateTime.now();
+        fechaHoy = fechaHoy.minusDays(1);
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String fecha = fechaHoy.format(formato);
+        List<String> ids = conciliationService.findByJob(fecha);
+
+        for (String id :ids)
+        {
+            try {
+                Conciliation conciliacion = conciliationService.findById(Integer.parseInt(id));
+                List<Object[]> fechaCont=conciliationService.findFechaCont(Integer.parseInt(id),fecha);
+                if(!fechaCont.isEmpty())
+                {
+                    boolean resp = conciliationService.generarConciliacion(conciliacion, fecha, fechaCont.get(0)[0].toString(), conciliacion.getRutaContable().getId());
+                    if(resp)
+                        conciliationService.loadLogConciliation(null, Integer.parseInt(id), fecha, "Exitoso", "","Automàtico");
+                    else
+                        conciliationService.loadLogConciliation(null, Integer.parseInt(id), fecha, "Fallido","No se encontraron cuentas a cruzar.'","Automàtico");
+                }
+                else {
+                    conciliationService.loadLogConciliation(null, Integer.parseInt(id), fecha, "Fallido","Falta completar el maestro de inventarios.'","Automàtico");
+                }
+
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+                Throwable rootCause = e;
+                while (rootCause.getCause() != null) {
+                    rootCause = rootCause.getCause(); // Navega a la causa raíz
+                }
+                conciliationService.loadLogConciliation(null, Integer.parseInt(id), fecha, "Fallido",rootCause.getMessage(),"Automàtico");
+            }
+        }
+
     }
 }

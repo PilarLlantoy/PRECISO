@@ -78,6 +78,13 @@ public class ConciliationService {
        return conciliacion;
     }
 
+    public List<AccountConcil> findCuentas(int id){
+        Query quer = entityManager.createNativeQuery(
+                "select * from preciso_cuentas_concil where id_concil = ? ", AccountConcil.class);
+        quer.setParameter(1, id);
+        return quer.getResultList();
+    }
+
     public List<Conciliation> findByFilter(String value, String filter) {
         List<Conciliation> list=new ArrayList<Conciliation>();
         switch (filter) {
@@ -255,7 +262,7 @@ public class ConciliationService {
         String nombreTablaContable = "preciso_rc_" + idCont;
         String nombreTablaConciliacion = "preciso_ci_" + concil.getId();
 
-        List<AccountConcil> cuentas = concil.getArregloCuentas();
+        List<AccountConcil> cuentas = findCuentas(concil.getId());
 
         // Separar valores exactos y patrones
         Map<String, String> resultado = separarCuentas(cuentas);
@@ -551,7 +558,7 @@ public class ConciliationService {
         return logConciliationRepository.findAllByIdConciliacionAndFechaProcesoOrderByIdDesc(concil,fechaDate);
     }
 
-    public void loadLogConciliation(User user,int concil,String fecha, String estado, String mensaje)
+    public void loadLogConciliation(User user,int concil,String fecha, String estado, String mensaje,String proceso)
     {
         LocalDate localDate = LocalDate.parse(fecha);
         Date fechaDate = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
@@ -568,6 +575,7 @@ public class ConciliationService {
             insert.setUsuario("Automático");
 
         insert.setNovedad(mensaje);
+        insert.setTipoProceso(proceso);
         insert.setEstadoProceso(estado);
         if(user!=null)
             insert.setUsuario(user.getUsuario());
@@ -627,6 +635,19 @@ public class ConciliationService {
         query.setParameter("fechaVar", fecha);
         query.setParameter("fechaVarP", fecha+"%");
         return query.getResultList();
+    }
+
+    public List<String> findByJob(String fecha) {
+        String sql = "select a.id\n" +
+                " from (select * from preciso_conciliaciones where activo = 1) a \n" +
+                " left join (select distinct estado_proceso,id_conciliacion from preciso_log_cruce_informacion where fecha_proceso like '"+fecha+"%' and estado_proceso = 'Exitoso') c on a.id = c.id_conciliacion\n" +
+                " where c.estado_proceso is null";
+        Query querySelect = entityManager.createNativeQuery(sql);
+        List<Object> result = querySelect.getResultList();
+
+        return result.stream()
+                .map(Object::toString)
+                .collect(Collectors.toList());
     }
 
 }
