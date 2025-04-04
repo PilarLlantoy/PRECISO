@@ -91,7 +91,7 @@
                         </div>
                         <div class="col-6">
                             <a type="button" class="btn btn-primary btn-sm w-100" th:if="${period != null }" th:href="@{'/parametric/cuadroMandoCru?period=' + ${period}}">Ir a Cuadro</a>
-                            <button type="button" class="btn btn-primary btn-sm" th:if="${period == null }" disabled >Ir a Cuadro</button>
+                            <button type="button" class="btn btn-primary btn-sm w-100" th:if="${period == null }" disabled >Ir a Cuadro</button>
                         </div>
                     </div>
                 </div>

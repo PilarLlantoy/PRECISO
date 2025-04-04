@@ -372,11 +372,11 @@ public class ConciliationService {
     public void generarTablaNovedades(List<ConciliationRoute> listRoutes, String fecha, EventType tipoEvento) {
         for (ConciliationRoute route:listRoutes){
             String tableUpdate = "preciso_ci_"+route.getConciliacion().getId()+"_"+route.getId();
-            StringBuilder dataCampo = new StringBuilder();
+            /*StringBuilder dataCampo = new StringBuilder();
             for (CampoRConcil campo:route.getCampos())
             {
                 dataCampo.append("t2."+campo.getNombre()).append(" = t."+campo.getNombre()).append(" AND\n");
-            }
+            }*/
             Query queryGenerateIncidents = entityManager.createNativeQuery("UPDATE t SET t.NOVEDADES_PRECISOKEY = \n" +
                     "(CASE WHEN coalesce(CUENTA_CONTABLE_1_PRECISOKEY,CUENTA_CONTABLE_2_PRECISOKEY) IS NULL THEN 'A' ELSE '' END) \n" +
                     /*"+(CASE WHEN EXISTS (SELECT 1 FROM "+tableUpdate+" t2 \n" +
