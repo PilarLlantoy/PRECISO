@@ -67,9 +67,10 @@
                     <h2>Opciones</h2>
                     <div class="row g-2">
                         <div class="col-6">
-                            <button class="btn btn-primary btn-sm w-100"
+                            <button class="btn btn-primary btn-sm w-100" th:if="${period != null }"
                                     th:disabled="${!p_modificar or (ultLog != null and ultLog[3] == true)}"
                                     th:onclick="|generarCuentas()|" type="button">Generar Cuentas</button>
+                            <button type="button" class="btn btn-sm btn-primary w-100" th:if="${period == null }" disabled>Generar Cuentas</button>
                         </div>
                         <div class="col-6">
                             <button type="button" class="btn btn-sm btn-primary w-100" th:if="${allRCs.size()!=0}" th:onclick="|validarYexportar()|">Exportar Agrupado</button>
@@ -84,10 +85,10 @@
                             <button type="button" class="btn btn-sm btn-primary w-100" th:if="${allRCs.size()==0 or allNov == false}" disabled>Exportar Novedad</button>
                         </div>
                         <div class="col-6">
-                            <button type="button" class="btn btn-primary btn-sm w-100" th:if="${allRCs.size()!=0}"
-                                    th:disabled="${!p_modificar or (ultLog != null and ultLog[3] == true) or ultLog==null}"
+                            <button type="button" class="btn btn-primary btn-sm w-100" th:if="${allRCs.size()!=0 and allNov == false and ((ultLog != null and ultLog[3] == false) or ultLog == null)}" th:disabled="${!p_modificar}"
                                     data-toggle="modal" data-target="#confirmarModal" th:onclick="|validarYSubir()|" >Confirmar Cruce</button>
-                            <button type="button" class="btn btn-sm btn-primary w-100" th:if="${allRCs.size()==0}" disabled>Confirmar Cruce</button>
+                            <button type="button" class="btn btn-sm btn-primary w-100" th:if="${allRCs.size()==0 or allNov}" disabled>Confirmar Cruce</button>
+                            <button type="button" class="btn btn-sm btn-success w-100" th:if="${allRCs.size()!=0 and allNov == false and (ultLog != null and ultLog[3] == true)}" disabled>Cruce Confirmado</button>
                         </div>
                         <div class="col-6">
                             <a type="button" class="btn btn-primary btn-sm w-100" th:if="${period != null }" th:href="@{'/parametric/cuadroMandoCru?period=' + ${period}}">Ir a Cuadro</a>
