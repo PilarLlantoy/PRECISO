@@ -457,9 +457,9 @@ public class InformationCrossingService {
 
             queryBuilder.append("VALOR_CUENTA_2_PRECISOKEY = ").append(valorCuenta2).append(" ");
         }
-
+        queryBuilder.append(" WHERE (CUENTA_CONTABLE_1_PRECISOKEY IS NULL OR CUENTA_CONTABLE_1_PRECISOKEY = '')");
         if (condicion != null)
-            queryBuilder.append(" WHERE ").append(condicion);
+            queryBuilder.append(" AND ").append(condicion);
 
         // Completar la consulta
         String query = queryBuilder.toString();
@@ -472,7 +472,7 @@ public class InformationCrossingService {
         updateQuery.setParameter(columna++, data.getDetalle());
         updateQuery.setParameter(columna++, fecha);
         updateQuery.setParameter(columna++, tipoEvento.getNombre());
-        updateQuery.setParameter(columna++, matriz.getId());
+        updateQuery.setParameter(columna++, matriz.getConsecutivo());
         if (cuenta1 != null)
             updateQuery.setParameter(columna++, cuenta1.getCuentaGanancia());
 
@@ -502,7 +502,7 @@ public class InformationCrossingService {
             String campo = condicionesLista.get(0)[2].toString();
             for(Object[] obj : condicionesLista){
                 if(campo.equals(obj[2]) && !condicion.equals("(")){
-                    condicion = condicion + " OR ";
+                    condicion = condicion + " AND ";
                 }
                 else if(!condicion.equals("(")){
                     campo = obj[2].toString();

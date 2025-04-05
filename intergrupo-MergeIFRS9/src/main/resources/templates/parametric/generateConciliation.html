@@ -59,28 +59,28 @@
                     <h2>Opciones</h2>
                     <div class="row g-2">
                         <div class="col-6">
-                            <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm w-100"
-                                    th:onclick="|generarConciliacion()|" type="button">Generar Concil.</button>
+                            <button th:disabled="${!p_modificar}" th:if="${period != null }" class="btn btn-primary btn-sm w-100" th:onclick="|generarConciliacion()|" type="button">Generar Concil.</button>
+                            <button type="button" class="btn btn-primary btn-sm w-100" th:if="${period == null }" disabled >Generar Concil.</button>
                         </div>
                         <div class="col-6">
-                            <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm w-100"
-                                    th:onclick="|exportarConsolidado()|" type="button">Exportar Concil.</button>
+                            <button th:disabled="${!p_modificar}" th:if="${period != null }" class="btn btn-primary btn-sm w-100" th:onclick="|exportarConsolidado()|" type="button">Exportar Concil.</button>
+                            <button type="button" class="btn btn-primary btn-sm w-100" th:if="${period == null }" disabled >Exportar Concil.</button>
                         </div>
                         <!--<div class="col-6">
                             <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm w-100"
                                     th:onclick="|exportarDetallado()|" type="button">Exportar Detallado</button>
                         </div>-->
                         <div class="col-6">
-                            <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm w-100"
-                                    th:onclick="|exportarDetallado()|" type="button">Confirmar Concil.</button>
+                            <button th:disabled="${!p_modificar}" th:if="${period != null }" class="btn btn-primary btn-sm w-100" th:onclick="|exportarDetallado()|" type="button">Confirmar Concil.</button>
+                            <button type="button" class="btn btn-primary btn-sm w-100" th:if="${period == null }" disabled >Confirmar Concil.</button>
                         </div>
                         <div class="col-6">
-                            <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm w-100"
-                                    th:onclick="|confirmarConciliacion()|" type="button">Confirmar Ajuste</button>
+                            <button th:disabled="${!p_modificar}" th:if="${period != null }" class="btn btn-primary btn-sm w-100" th:onclick="|confirmarConciliacion()|" type="button">Confirmar Ajuste</button>
+                            <button type="button" class="btn btn-primary btn-sm w-100" th:if="${period == null }" disabled >Confirmar Concil.</button>
                         </div>
                         <div class="col-6">
-                            <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm w-100"
-                                    th:onclick="|reanudarProceso()|" type="button">Reabrir Ajuste</button>
+                            <button th:disabled="${!p_modificar}" th:if="${period != null }" class="btn btn-primary btn-sm w-100" th:onclick="|reanudarProceso()|" type="button">Reabrir Ajuste</button>
+                            <button type="button" class="btn btn-primary btn-sm w-100" th:if="${period == null }" disabled >Confirmar Concil.</button>
                         </div>
                         <div class="col-6">
                             <a type="button" class="btn btn-primary btn-sm w-100" th:if="${period != null }" th:href="@{'/parametric/cuadroMandoCons?period=' + ${period}}">Ir a Cuadro</a>

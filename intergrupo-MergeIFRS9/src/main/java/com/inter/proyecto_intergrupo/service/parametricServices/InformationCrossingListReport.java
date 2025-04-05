@@ -19,6 +19,9 @@ import javax.persistence.Query;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -167,12 +170,14 @@ public class InformationCrossingListReport {
             style3.setFont(font);
             style3.setDataFormat(workbook.createDataFormat().getFormat("yyyy-MM-dd"));
 
-            Query query = entityManager.createNativeQuery("SELECT COLUMN_NAME,DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'preciso_ci_"+cr.getId()+"_"+ruta.getId()+"' ");
+            Query query = entityManager.createNativeQuery("select COLUMN_NAME,coalesce(tipo,DATA_TYPE) as tipo from \n" +
+                    "(SELECT COLUMN_NAME,DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'preciso_ci_"+cr.getId()+"_"+ruta.getId()+"') a\n" +
+                    "LEFT JOIN (select nombre,tipo from preciso_campos_rconcil where id_rconcil = "+ruta.getId()+" ) b on a.COLUMN_NAME = b.nombre");
             List<Object[]> campos =  query.getResultList();
             for (Object[] campo :campos) {
                 if(!campo[0].toString().equalsIgnoreCase("NOVEDADES_PRECISOKEY")) {
                     listCampos.append(campo[0].toString()).append(",");
-                    createCell(row0, columCount++, campo[0].toString().replace("_PRECISOKEY", ""), style);
+                    createCell(row0, columCount++, campo[0].toString().toUpperCase().replace("_PRECISOKEY", ""), style);
                 }
             }
             listCampos.setLength(listCampos.length()-1);
@@ -192,6 +197,8 @@ public class InformationCrossingListReport {
                         if(data[i]!=null) createCell(row,columnCount++,Double.parseDouble(data[i].toString()),style1); else createCell(row,columnCount++,"",style);
                     else if(campos.get(i)[1].toString().equalsIgnoreCase("int"))
                         if(data[i]!=null) createCell(row,columnCount++,Integer.parseInt(data[i].toString()),style2); else createCell(row,columnCount++,"",style);
+                    else if(campos.get(i)[1].toString().equalsIgnoreCase("Date") || campos.get(i)[1].toString().equalsIgnoreCase("DateTime"))
+                        if(data[i]!=null) createCell(row, columnCount++, normalizeDate(data[i].toString()), style3); else createCell(row,columnCount++,"",style);
                     else
                         if(data[i]!=null) createCell(row,columnCount++,data[i].toString(),style); else createCell(row,columnCount++,"",style);
                 }
@@ -199,6 +206,30 @@ public class InformationCrossingListReport {
 
             sheets.put(sheetName, sheet);
         }
+    }
+
+    public String normalizeDate(String dateStr) {
+        // Lista de formatos posibles
+        List<String> possibleFormats = List.of(
+                "ddMMyyyy", "yyyyMMdd", "MMddyyyy", "yyMMdd", "ddMMyy", "yyyyddMM",
+                "dd-MM-yyyy", "yyyy-MM-dd", "MM-dd-yyyy", "yy-MM-dd", "dd-MM-yy",
+                "dd/MM/yyyy", "yyyy/MM/dd", "MM/dd/yyyy", "yy/MM/dd", "dd/MM/yy"
+        );
+
+        for (String format : possibleFormats) {
+            try {
+                // Intentamos parsear la fecha con cada formato
+                DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern(format);
+                LocalDate date = LocalDate.parse(dateStr, inputFormatter);
+
+                // Convertimos la fecha al formato deseado
+                return date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            } catch (DateTimeParseException ignored) {
+                // Si falla, intentamos con el siguiente formato
+            }
+        }
+
+        throw new IllegalArgumentException("Formato de fecha no reconocido: " + dateStr);
     }
 
     public void exportNove(HttpServletResponse response, List<ConciliationRoute> crList, String fecha,String evento) throws IOException {
