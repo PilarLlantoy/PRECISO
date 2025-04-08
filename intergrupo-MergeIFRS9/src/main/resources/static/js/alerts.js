@@ -80,6 +80,26 @@ function validateAlerts(operacion,data)
             showConfirmButton: true
         })
     }
+    else if(operacion=='AD1')
+    {
+        Swal.fire({
+            position: 'center',
+            icon: 'success',
+            title: '¡Reversión Realizada Correctamente!',
+            text: 'Se ha finalizado el proceso de reversión del proceso.',
+            showConfirmButton: true
+        })
+    }
+    else if(operacion=='AD-1')
+    {
+        Swal.fire({
+            position: 'center',
+            icon: 'warning',
+            title: '¡Fallo en Reversión!',
+            text: 'Ha ocurrido un problema en el proceso.',
+            showConfirmButton: true
+        })
+    }
     else if(operacion=='CM-1')
     {
         Swal.fire({

@@ -1353,7 +1353,11 @@
                     <span class="links_name">Cuadro Conciliaciones</span>
                 </a>
             </li>
-
+            <li>
+                <a th:href="@{/parametric/adminCons(period=${#temporals.format(#temporals.createToday().minusDays(1), 'yyyy-MM-dd')})}">
+                    <span class="links_name">Administración Conciliaciones</span>
+                </a>
+            </li>
         </ul>
     </div>
 

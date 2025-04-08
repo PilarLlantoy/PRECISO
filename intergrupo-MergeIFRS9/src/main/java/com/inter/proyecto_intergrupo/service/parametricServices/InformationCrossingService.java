@@ -660,7 +660,7 @@ public class InformationCrossingService {
     public Object[] findLatestLog(String fechaPreciso, int idConciliacion, int idEvento) {
         StringBuilder queryBuilder = new StringBuilder();
 
-        queryBuilder.append("SELECT TOP 1 fecha_preciso, id_conciliacion, id_evento, confirmar_conciliacion, id_lci ")
+        queryBuilder.append("SELECT TOP 1 fecha_preciso, id_conciliacion, id_evento, confirmar_conciliacion, id_lci, estado_proceso ")
                 .append("FROM preciso_log_cruce_informacion ")
                 .append("WHERE fecha_proceso LIKE '")
                 .append(fechaPreciso).append("%' ")  // Insertamos el valor real

@@ -85,10 +85,9 @@
                             <button type="button" class="btn btn-sm btn-primary w-100" th:if="${allRCs.size()==0 or allNov == false}" disabled>Exportar Novedad</button>
                         </div>
                         <div class="col-6">
-                            <button type="button" class="btn btn-primary btn-sm w-100" th:if="${allRCs.size()!=0 and allNov == false and ((ultLog != null and ultLog[3] == false) or ultLog == null)}" th:disabled="${!p_modificar}"
+                            <button type="button" class="btn btn-primary btn-sm w-100" th:if="${((ultLog != null and ultLog[3] == false) or ultLog == null)}" th:disabled="${allRCs.size()==0 or allNov or (ultLog != null and (ultLog[3] == 'true' or ultLog[5] == 'Fallido'))}"
                                     data-toggle="modal" data-target="#confirmarModal" th:onclick="|validarYSubir()|" >Confirmar Cruce</button>
-                            <button type="button" class="btn btn-sm btn-primary w-100" th:if="${allRCs.size()==0 or allNov}" disabled>Confirmar Cruce</button>
-                            <button type="button" class="btn btn-sm btn-success w-100" th:if="${allRCs.size()!=0 and allNov == false and (ultLog != null and ultLog[3] == true)}" disabled>Cruce Confirmado</button>
+                            <button type="button" class="btn btn-sm btn-success w-100" th:if="${(ultLog != null and ultLog[3] == true and ultLog[5] == 'Exitoso')}" disabled>Cruce Confirmado</button>
                         </div>
                         <div class="col-6">
                             <a type="button" class="btn btn-primary btn-sm w-100" th:if="${period != null }" th:href="@{'/parametric/cuadroMandoCru?period=' + ${period}}">Ir a Cuadro</a>

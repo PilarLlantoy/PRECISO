@@ -49,6 +49,7 @@
                         </div>
 
                         <input type="hidden" id="period2Hidden" name="period2" />
+                        <input type="hidden" id="ultLog" name="ultLog" th:value="${ultLog != null ? ultLog[4] : 0}">
 
                         <div class="d-grid gap-2 col-3 mt-1" style="padding-left:0px">
                             <button type="submit" class="btn btn-primary btn-sm">Buscar</button>
@@ -59,32 +60,25 @@
                     <h2>Opciones</h2>
                     <div class="row g-2">
                         <div class="col-6">
-                            <button th:disabled="${!p_modificar}" th:if="${period != null }" class="btn btn-primary btn-sm w-100" th:onclick="|generarConciliacion()|" type="button">Generar Concil.</button>
-                            <button type="button" class="btn btn-primary btn-sm w-100" th:if="${period == null }" disabled >Generar Concil.</button>
+                            <button th:disabled="${allLog.size()==0 or (ultLog != null and ultLog[2] == true)}" class="btn btn-primary btn-sm w-100" th:onclick="|generarConciliacion()|" type="button">Generar Concil.</button>
                         </div>
                         <div class="col-6">
-                            <button th:disabled="${!p_modificar}" th:if="${period != null }" class="btn btn-primary btn-sm w-100" th:onclick="|exportarConsolidado()|" type="button">Exportar Concil.</button>
-                            <button type="button" class="btn btn-primary btn-sm w-100" th:if="${period == null }" disabled >Exportar Concil.</button>
-                        </div>
-                        <!--<div class="col-6">
-                            <button th:disabled="${!p_modificar}" class="btn btn-primary btn-sm w-100"
-                                    th:onclick="|exportarDetallado()|" type="button">Exportar Detallado</button>
-                        </div>-->
-                        <div class="col-6">
-                            <button th:disabled="${!p_modificar}" th:if="${period != null }" class="btn btn-primary btn-sm w-100" th:onclick="|exportarDetallado()|" type="button">Confirmar Concil.</button>
-                            <button type="button" class="btn btn-primary btn-sm w-100" th:if="${period == null }" disabled >Confirmar Concil.</button>
+                            <button th:disabled="${allLog.size()==0}" class="btn btn-primary btn-sm w-100" th:onclick="|exportarConsolidado()|" type="button">Exportar Concil.</button>
                         </div>
                         <div class="col-6">
-                            <button th:disabled="${!p_modificar}" th:if="${period != null }" class="btn btn-primary btn-sm w-100" th:onclick="|confirmarConciliacion()|" type="button">Confirmar Ajuste</button>
-                            <button type="button" class="btn btn-primary btn-sm w-100" th:if="${period == null }" disabled >Confirmar Concil.</button>
+                            <button th:if="${(ultLog != null and ultLog[3] == false) or ultLog == null}" th:disabled="${allLog.size()==0 or (ultLog != null and (ultLog[2] == false or ultLog[3] == true))}" class="btn btn-primary btn-sm w-100" data-toggle="modal" data-target="#confirmarModal2" type="button">Confirmar Concil.</button>
+                            <button th:if="${(ultLog != null and ultLog[3] == true)}" class="btn btn-success btn-sm w-100" disabled type="button">Concil. Confirmada</button>
                         </div>
                         <div class="col-6">
-                            <button th:disabled="${!p_modificar}" th:if="${period != null }" class="btn btn-primary btn-sm w-100" th:onclick="|reanudarProceso()|" type="button">Reabrir Ajuste</button>
-                            <button type="button" class="btn btn-primary btn-sm w-100" th:if="${period == null }" disabled >Confirmar Concil.</button>
+                            <button th:if="${(ultLog != null and ultLog[2] == false) or ultLog == null}" th:disabled="${allLog.size()==0 or (ultLog != null and ultLog[5] == 'Fallido')}" data-toggle="modal" data-target="#confirmarModal" class="btn btn-primary btn-sm w-100" type="button">Confirmar Ajuste</button>
+                            <button th:if="${(ultLog != null and ultLog[2] == true)}" class="btn btn-success btn-sm w-100" disabled type="button">Ajuste Confirmado</button>
                         </div>
                         <div class="col-6">
-                            <a type="button" class="btn btn-primary btn-sm w-100" th:if="${period != null }" th:href="@{'/parametric/cuadroMandoCons?period=' + ${period}}">Ir a Cuadro</a>
-                            <button type="button" class="btn btn-primary btn-sm w-100" th:if="${period == null }" disabled >Ir a Cuadro</button>
+                            <button th:disabled="${allLog.size()==0 or ultLog == null or (ultLog != null and (ultLog[2] == false or ultLog[3] == true))}" data-toggle="modal" data-target="#rconfirmarModal" class="btn btn-primary btn-sm w-100" type="button">Reabrir Ajuste</button>
+                        </div>
+                        <div class="col-6">
+                            <a type="button" class="btn btn-primary btn-sm w-100" th:if="${allLog.size()!=0}" th:href="@{'/parametric/cuadroMandoCons?period=' + ${period}}">Ir a Cuadro</a>
+                            <button type="button" class="btn btn-primary btn-sm w-100" th:if="${allLog.size()==0}" disabled >Ir a Cuadro</button>
                         </div>
                     </div>
                 </div>
@@ -188,6 +182,69 @@
                         <div class="col-md-4 text-right">
                             <h6 class="mx-1" th:utext="'Página ' + ${currentData} + ' de ' + ${lastData}"></h6>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="confirmarModal" tabindex="-1" role="dialog" aria-labelledby="confirmarModal" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title" id="exampleModalLabel">Confirmar Proceso</h2>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        ¿Estás seguro de confirmar el proceso?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary btn-sm" th:onclick="confirmarCruce()" data-dismiss="modal">
+                            Confirmar
+                        </button>
+                        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="rconfirmarModal" tabindex="-1" role="dialog" aria-labelledby="rconfirmarModal" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title" id="rexampleModalLabel">Confirmar Proceso</h2>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        ¿Estás seguro de reabrir el proceso?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary btn-sm" th:onclick="rconfirmarCruce()" data-dismiss="modal">
+                            Confirmar
+                        </button>
+                        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="confirmarModal2" tabindex="-1" role="dialog" aria-labelledby="confirmarModal2" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title" id="exampleModalLabel2">Confirmar Proceso</h2>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        ¿Estás seguro de confirmar el proceso?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary btn-sm" th:onclick="confirmarCruce2()" data-dismiss="modal">
+                            Confirmar
+                        </button>
+                        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cancelar</button>
                     </div>
                 </div>
             </div>
@@ -398,6 +455,68 @@
             novedadText.textContent = novedad; // Asignar el valor al contenido del modal
         });
     });
+
+    //CONFIRMACIÓN
+    //---------------------------------------------------------------------
+    function confirmarCruce(){
+        const valueCuen = document.getElementById('ultLog').value;
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+        var url = '/parametric/confirmarGenConciliacion/' + valueCuen;
+
+        // Realizar la solicitud POST con el token CSRF
+        $.post(url, {_csrf: csrfToken})
+            .done(function(response) {
+                if (response === false) {
+                    $('#errorModal').modal('show');
+                }
+                else location.reload();
+            })
+            .fail(function(xhr, status, error) {
+                console.error("Ocurrió un error al enviar la solicitud POST: " + error);
+            });
+    }
+
+    function rconfirmarCruce(){
+        const valueCuen = document.getElementById('ultLog').value;
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+        var url = '/parametric/rconfirmarGenConciliacion/' + valueCuen;
+
+        // Realizar la solicitud POST con el token CSRF
+        $.post(url, {_csrf: csrfToken})
+            .done(function(response) {
+                if (response === false) {
+                    $('#errorModal').modal('show');
+                }
+                else location.reload();
+            })
+            .fail(function(xhr, status, error) {
+                console.error("Ocurrió un error al enviar la solicitud POST: " + error);
+            });
+    }
+
+    function confirmarCruce2(){
+        const valueCuen = document.getElementById('ultLog').value;
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+        var url = '/parametric/confirmarGenConciliacion2/' + valueCuen;
+
+        // Realizar la solicitud POST con el token CSRF
+        $.post(url, {_csrf: csrfToken})
+            .done(function(response) {
+                if (response === false) {
+                    $('#errorModal').modal('show');
+                }
+                else location.reload();
+            })
+            .fail(function(xhr, status, error) {
+                console.error("Ocurrió un error al enviar la solicitud POST: " + error);
+            });
+    }
 
     window.onload=function(){
         toggleFechaConciliacion();

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+
+<div class="main-container">
+    <style>
+        .big-checkbox {width: 1rem; height: 1rem; top:0.5rem}
+
+        .nav-link {
+            font-size: 20px; /* Ajusta el tamaño de la fuente según lo necesites */
+        }
+
+        .alineacionHorizontal {
+            display: flex;
+            align-items: center;
+        }
+
+        .checkHorizontal {
+            display: flex;
+            align-items: baseline;
+        }
+        .modal-body p {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            max-width: 100%;
+            white-space: pre-wrap;
+        }
+        .modal-body {
+            max-height: 70vh;
+            overflow-y: auto;
+            text-align: justify;
+        }
+    </style>
+    <div class="row m-0 bg-primary fixed-top myNav">
+        <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
+            <h2 class="fw-bold text-white mx-4 my-3">Administración Conciliaciones</h2>
+        </div>
+    </div>
+    <div class="row m-0 px-4 mt-5">
+        <div class="text-left pr-3 col-md-12 my-1">
+            <div class="row mt-1">
+                <div class="col-md-12 px-1">
+                    <div class="px-2 row">
+                        <form  th:action="@{/parametric/adminCons}" method="GET">
+                            <div class="mb-1 row">
+                                <div class="col-md-10 d-flex align-items-center justify-content-start">
+
+                                </div>
+                                <div class="col-md-2 d-flex align-items-end justify-content-end">
+                                    <input type="date" id="period" th:name="period" th:value="${period}" class="form-control form-control-sm" style="width: 100%; box-sizing: border-box;" required>
+                                    <button class="btn btn-sm btn-secondary" type="submit"><i class="fa fa-search"></i></button>
+                                    <a class="btn btn-sm btn-secondary" th:href="@{/parametric/adminCons(period=${#dates.format(#dates.createNow(), 'yyyy-MM-dd')})}"><i class="fas fa-window-close"></i></a>
+                                </div>
+                                <!-- Campo oculto para el token CSRF -->
+                                <input type="hidden" id="csrfToken" th:value="${_csrf.token}" />
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                    <div class="col-md-12 p-0">
+                        <div class="table-responsive rounded border-primary">
+                            <table id="example" class="table table-striped table-hover text-center table-bordered table-sm" width="100%">
+                                <thead class="bg-primary">
+                                <tr>
+                                    <th>Fecha Conciliación</th>
+                                    <th>Conciliación</th>
+                                    <th>Fecha Contable</th>
+                                    <th>Estado Cargue Archivos</th>
+                                    <th>Estado Generación Conciliación</th>
+                                    <th>Nivel 1</th>
+                                    <th>Nivel 2</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="rc : ${allLog2}">
+                                    <td th:text="${#dates.format(rc[0],'yyyy-MM-dd')}"></td>
+                                    <td th:text="${rc[1]}"></td>
+                                    <td th:if="${rc[2] == null}">No se encontro en Maestro</td>
+                                    <td th:if="${rc[2] != null}" th:text="${#dates.format(rc[2],'yyyy-MM-dd')}"></td>
+                                    <td th:if="${rc[3] == 'Exitoso'}"><i class="fa fa-check-circle fa-2x text-success"></i></td>
+                                    <td th:if="${rc[3] == 'Fallido'}"><i class="fa fa-times-circle fa-2x text-danger"></i></td>
+                                    <td th:if="${rc[4] == 'Exitoso'}"><i class="fa fa-check-circle fa-2x text-success"></i></td>
+                                    <td th:if="${rc[4] == 'Fallido'}"><i class="fa fa-times-circle fa-2x text-danger"></i></td>
+                                    <td>
+                                        <button th:disabled="${rc[3] == 'Fallido'}" class="btn btn-primary btn-sm" th:attr="onclick=|abrirModalReversion(1, '${rc[5]}', '${period}')|">Nivel 1</button>
+                                    </td>
+                                    <td>
+                                        <button th:disabled="${rc[4] == 'Fallido'}" class="btn btn-primary btn-sm" th:attr="onclick=|abrirModalReversion(2, '${rc[5]}', '${period}')|">Nivel 2</button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <div th:if="${#lists.isEmpty(allLog2)}">
+                                <div class="alert alert-info">No hay registros disponibles.</div>
+                            </div>
+                        </div>
+                        <div class="row" th:if="${last2 != 0}">
+                            <div class="col-md-4 text-left">
+                                <nav arial-label="Pagination">
+                                    <ul class="pagination pagination-sm">
+                                        <li class="page-item" th:classappend="${prev2 == 0 ? 'disabled' : ''}">
+                                            <a class="page-link"
+                                               th:href="@{/parametric/{dir}/?page2={page2}&vId={vId}&vFilter={vFilter}&period={period}(period=${period},vFilter=${vFilter},page2=${prev2},dir=${directory},vId=${vId})}">Anterior</a>
+                                        </li>
+                                        <li class="page-item" th:classappend="${current2 == last2 ? 'disabled' : ''}">
+                                            <a class="page-link"
+                                               th:href="@{/parametric/{dir}/?page2={page2}&vId={vId}&vFilter={vFilter}&period={period}(period=${period},vFilter=${vFilter},page2=${next2},dir=${directory},vId=${vId})}">Siguiente</a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <h6 th:utext="${registersInventarios} + ' Registros Encontrados'"></h6>
+                            </div>
+                            <div class="col-md-4 text-right">
+                                <h6 class="mx-1" th:utext="'Página ' + ${current2} + ' de ' + ${last2}"></h6>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-center" th:if="${filterExport != 'Original'}">
+                            <h5><span class="badge badge-pill text-light badge-info py-2 px-5">¡La Tabla se encuentra Filtrada!</span>
+                            </h5>
+                        </div>
+                    </div>
+            </div>
+            <!-- Modal -->
+            <div class="modal fade" id="novedadModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Confirmar Reversión</h5>
+                            <button type="button" class="close" onclick="$('#novedadModal').modal('hide');" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p id="modalNovedadTexto"></p>
+                        </div>
+                        <div class="modal-footer">
+                            <button id="btnConfirmarReversion" class="btn btn-primary btn-sm">Confirmar</button>
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="$('#novedadModal').modal('hide');">Cancelar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var queryString = window.location.search;
+    var urlParams = new URLSearchParams(queryString);
+    var respuesta = urlParams.get('resp');
+    var row = urlParams.get('row');
+    var column = urlParams.get('colum');
+    validateAlerts(respuesta, row, column);
+
+    let nivelSeleccionado = null;
+    let arhcontSeleccionado = null;
+    let periodoSeleccionado = null;
+
+    function abrirModalReversion(nivel, arhcont, period) {
+        nivelSeleccionado = nivel;
+        arhcontSeleccionado = arhcont;
+        periodoSeleccionado = period;
+
+        console.log(nivelSeleccionado);
+        console.log(periodoSeleccionado);
+        console.log(periodoSeleccionado);
+
+        document.getElementById("modalNovedadTexto").innerText =
+            `¿Desea realizar la reversión al Nivel ${nivelSeleccionado}?`;
+
+        $('#novedadModal').modal('show');
+    }
+
+    document.getElementById("btnConfirmarReversion").addEventListener("click", function () {
+        const url = `/parametric/reverseLevel?level=${nivelSeleccionado}&arhcont=${arhcontSeleccionado}&period=${periodoSeleccionado}`;
+        window.location.href = url;
+    });
+
+</script>
+</body>
+</html>

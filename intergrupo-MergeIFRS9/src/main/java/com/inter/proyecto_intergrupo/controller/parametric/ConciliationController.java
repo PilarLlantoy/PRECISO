@@ -406,6 +406,7 @@ public class ConciliationController {
             List<String> colRegistros = new ArrayList<>();
             List<LogConciliation> logConciliacion = new ArrayList<>();
             String nomb ="Vacio";
+            Object[] ultLog = null;
 
             if(params.get("arhcont") != null && params.get("arhcont").toString() != null
                     && params.get("period") != null && params.get("period").toString() != null)
@@ -417,6 +418,7 @@ public class ConciliationController {
                 if(!campos.isEmpty())
                     modelAndView.addObject("period2",campos.get(0)[0]);
                 Conciliation concil = conciliationService.findById(Integer.parseInt(params.get("arhcont").toString()));
+                ultLog = conciliationService.findLatestLog(params.get("period").toString(),concil.getId());
                 modelAndView.addObject("arhcont",concil);
                 colRegistros = List.of("FECHA", "CENTRO CONTABLE", "CUENTA CONTABLE","DIVISA CUENTA","SALDO INVENTARIO", "SALDO CONTABLE", "TOTAL");;
                 registros = conciliationService.processList(conciliationService.findAllData(concil,params.get("period").toString()),colRegistros);
@@ -467,6 +469,7 @@ public class ConciliationController {
             modelAndView.addObject("userName", user.getPrimerNombre());
             modelAndView.addObject("userEmail", user.getCorreo());
             modelAndView.addObject("p_modificar", p_modificar);
+            modelAndView.addObject("ultLog", ultLog);
             modelAndView.setViewName("parametric/generateConciliation");
         }
         else

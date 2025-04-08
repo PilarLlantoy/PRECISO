@@ -39,6 +39,12 @@ public class LogConciliation {
     @Column(name = "estadoProceso")
     private String estadoProceso;
 
+    @Column(name = "confirmarConciliacion", columnDefinition = "BIT DEFAULT 0")
+    private boolean confirmarConciliacion = false;
+
+    @Column(name = "confirmarAjuste", columnDefinition = "BIT DEFAULT 0")
+    private boolean confirmarAjuste = false;
+
     @ManyToOne
     @JoinColumn(name = "idConciliacion", nullable = false)
     private Conciliation idConciliacion;

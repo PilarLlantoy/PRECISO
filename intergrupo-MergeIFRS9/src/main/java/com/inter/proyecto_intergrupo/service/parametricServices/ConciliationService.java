@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.math.BigDecimal;
@@ -637,6 +638,58 @@ public class ConciliationService {
         return query.getResultList();
     }
 
+    public List<Object[]> findAllLogByDateAdmin(String fecha) {
+        Query query = entityManager.createNativeQuery(
+                "SELECT ISNULL(c.fecha_conciliacion, CAST( :fechaVar AS DATE)) as fc1,a.nombre,c.fecha_cargue_contable,ISNULL(d.estado_proceso,'Fallido') as e1,ISNULL(b.estado_proceso,'Fallido') as e2,a.id\n" +
+                        "FROM PRECISO.dbo.preciso_conciliaciones a\n" +
+                        "LEFT JOIN (SELECT TOP 1 * FROM preciso_maestro_inventarios WHERE fecha_conciliacion LIKE :fechaVarP ) c on a.id = c.codigo_conciliacion\n" +
+                        "LEFT JOIN (SELECT TOP 1 * FROM PRECISO.dbo.preciso_log_conciliacion WHERE fecha_proceso LIKE :fechaVarP ORDER BY fecha_preciso DESC) b ON a.id = b.id_conciliacion\n" +
+                        "LEFT JOIN (SELECT TOP 1 * FROM PRECISO.dbo.preciso_log_cruce_informacion WHERE fecha_proceso LIKE :fechaVarP ORDER BY fecha_preciso DESC) d ON a.id = d.id_conciliacion\n" +
+                        "ORDER BY a.nombre");
+        query.setParameter("fechaVarP", fecha+"%");
+        query.setParameter("fechaVar", fecha);
+        return query.getResultList();
+    }
+
+    public void confirmarConciliacion(int id) {
+        Query query = entityManager.createNativeQuery("UPDATE preciso_log_conciliacion SET confirmar_ajuste = 1 WHERE id_lc = :id ");
+        query.setParameter("id", id);
+        query.executeUpdate();
+    }
+
+    public void rconfirmarConciliacion(int id) {
+        Query query = entityManager.createNativeQuery("UPDATE preciso_log_conciliacion SET confirmar_ajuste = 0 WHERE id_lc = :id ");
+        query.setParameter("id", id);
+        query.executeUpdate();
+    }
+    public void confirmarConciliacion2(int id) {
+        Query query = entityManager.createNativeQuery("UPDATE preciso_log_conciliacion SET confirmar_conciliacion = 1 WHERE id_lc = :id ");
+        query.setParameter("id", id);
+        query.executeUpdate();
+    }
+    public void reverseLevel(int level, String concil,String period) {
+
+        Query query1 = entityManager.createNativeQuery("UPDATE a SET a.estado_proceso='Fallido', confirmar_conciliacion = 0, confirmar_ajuste = 0 " +
+                "FROM (SELECT TOP 1 * FROM PRECISO.dbo.preciso_log_conciliacion WHERE fecha_proceso LIKE :period and id_conciliacion = :concil " +
+                "ORDER BY fecha_preciso DESC) a");
+        query1.setParameter("period", period + "%");
+        query1.setParameter("concil", concil);
+        query1.executeUpdate();
+
+        if (level == 1)
+        {
+            List<EventType> events = eventTypeService.findAll();
+            for (EventType event:events)
+            {
+                Query query = entityManager.createNativeQuery("UPDATE a SET a.estado_proceso='Fallido', confirmar_conciliacion = 0 FROM \n" +
+                        "(SELECT TOP 1 * FROM PRECISO.dbo.preciso_log_cruce_informacion WHERE fecha_proceso LIKE :period and id_conciliacion = :concil and id_evento = "+event.getId()+" ORDER BY fecha_preciso DESC) a");
+                query.setParameter("period", period + "%");
+                query.setParameter("concil", concil);
+                query.executeUpdate();
+            }
+        }
+    }
+
     public List<String> findByJob(String fecha) {
         String sql = "select a.id\n" +
                 " from (select * from preciso_conciliaciones where activo = 1) a \n" +
@@ -648,6 +701,30 @@ public class ConciliationService {
         return result.stream()
                 .map(Object::toString)
                 .collect(Collectors.toList());
+    }
+
+    public Object[] findLatestLog(String fechaPreciso, int idConciliacion) {
+        StringBuilder queryBuilder = new StringBuilder();
+
+        queryBuilder.append("SELECT TOP 1 fecha_preciso, id_conciliacion, confirmar_ajuste, confirmar_conciliacion, id_lc, estado_proceso ")
+                .append("FROM preciso_log_conciliacion ")
+                .append("WHERE fecha_proceso LIKE '")
+                .append(fechaPreciso).append("%' ")  // Insertamos el valor real
+                .append("AND id_conciliacion = ")
+                .append(idConciliacion).append(" ")
+                .append("ORDER BY fecha_preciso DESC");
+
+        // Imprimir el query con los valores ya insertados
+        System.out.println("QUERY COMPLETO: " + queryBuilder.toString());
+
+        // Crear la consulta con parámetros dinámicos (más seguro)
+        Query querySelect = entityManager.createNativeQuery(queryBuilder.toString());
+
+        try {
+            return (Object[]) querySelect.getSingleResult(); // Retorna el único resultado esperado
+        } catch (NoResultException e) {
+            return null; // Retorna null si no encuentra nada
+        }
     }
 
 }
