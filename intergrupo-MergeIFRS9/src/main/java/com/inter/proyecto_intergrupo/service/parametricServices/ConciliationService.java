@@ -642,7 +642,7 @@ public class ConciliationService {
         Query query = entityManager.createNativeQuery(
                 "SELECT ISNULL(c.fecha_conciliacion, CAST( :fechaVar AS DATE)) as fc1,a.nombre,c.fecha_cargue_contable,ISNULL(d.estado_proceso,'Fallido') as e1,ISNULL(b.estado_proceso,'Fallido') as e2,a.id\n" +
                         "FROM PRECISO.dbo.preciso_conciliaciones a\n" +
-                        "LEFT JOIN (SELECT TOP 1 * FROM preciso_maestro_inventarios WHERE fecha_conciliacion LIKE :fechaVarP ) c on a.id = c.codigo_conciliacion\n" +
+                        "LEFT JOIN (SELECT * FROM preciso_maestro_inventarios WHERE fecha_conciliacion LIKE :fechaVarP ) c on a.id = c.codigo_conciliacion\n" +
                         "LEFT JOIN (SELECT TOP 1 * FROM PRECISO.dbo.preciso_log_conciliacion WHERE fecha_proceso LIKE :fechaVarP ORDER BY fecha_preciso DESC) b ON a.id = b.id_conciliacion\n" +
                         "LEFT JOIN (SELECT TOP 1 * FROM PRECISO.dbo.preciso_log_cruce_informacion WHERE fecha_proceso LIKE :fechaVarP ORDER BY fecha_preciso DESC) d ON a.id = d.id_conciliacion\n" +
                         "ORDER BY a.nombre");
