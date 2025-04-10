@@ -6,27 +6,6 @@ IF NOT EXISTS(SELECT * FROM preciso_administracion_cargos WHERE id_cargo = 4) BE
 IF NOT EXISTS(SELECT * FROM preciso_administracion_cargos WHERE id_cargo = 5) BEGIN INSERT INTO preciso_administracion_cargos (nombre_cargo) VALUES ('Ingeniero') END
 IF NOT EXISTS(SELECT * FROM preciso_administracion_cargos WHERE id_cargo = 6) BEGIN INSERT INTO preciso_administracion_cargos (nombre_cargo) VALUES ('Consultor') END
 
--- Add PAISES
-IF NOT EXISTS(SELECT * FROM preciso_paises WHERE id_pais = 1) BEGIN INSERT INTO preciso_paises (nombre_pais, sigla_pais) VALUES ('Colombia', 'CO') END
-IF NOT EXISTS(SELECT * FROM preciso_paises WHERE id_pais = 2) BEGIN INSERT INTO preciso_paises (nombre_pais, sigla_pais) VALUES ('España', 'ES') END
-IF NOT EXISTS(SELECT * FROM preciso_paises WHERE id_pais = 3) BEGIN INSERT INTO preciso_paises (nombre_pais, sigla_pais) VALUES ('Estados Unidos', 'US') END
-
--- Add DIVISAS
-IF NOT EXISTS(SELECT * FROM preciso_divisas WHERE id_divisa = 1) BEGIN INSERT INTO preciso_divisas (nombre_divisa, sigla_divisa) VALUES ('Peso Colombiano', 'COP') END
-IF NOT EXISTS(SELECT * FROM preciso_divisas WHERE id_divisa = 2) BEGIN INSERT INTO preciso_divisas (nombre_divisa, sigla_divisa) VALUES ('Euro', 'EUR') END
-IF NOT EXISTS(SELECT * FROM preciso_divisas WHERE id_divisa = 3) BEGIN INSERT INTO preciso_divisas (nombre_divisa, sigla_divisa) VALUES ('Dolar', 'USD') END
-
--- Add SISTEMAS FUENTE
-IF NOT EXISTS(SELECT * FROM preciso_sistema_fuente WHERE id_sf = 1) BEGIN INSERT INTO preciso_sistema_fuente (nombre_sf, sigla_sf, festivo, id_pais, activo) VALUES ('Dialogo', 'DIA', 1, 1, 1) END
-IF NOT EXISTS(SELECT * FROM preciso_sistema_fuente WHERE id_sf = 2) BEGIN INSERT INTO preciso_sistema_fuente (nombre_sf, sigla_sf, festivo, id_pais, activo) VALUES ('Bank Trade', 'EY0', 0, 1, 0) END
-IF NOT EXISTS(SELECT * FROM preciso_sistema_fuente WHERE id_sf = 3) BEGIN INSERT INTO preciso_sistema_fuente (nombre_sf, sigla_sf, festivo, id_pais, activo) VALUES ('Extranjera', 'GA0', 1, 2, 1) END
-
-
--- Add TIPOS EVENTOS
-IF NOT EXISTS(SELECT * FROM preciso_tipo_evento WHERE id_tipo_evento = 1) BEGIN INSERT INTO preciso_tipo_evento (nombre_tipo_evento) VALUES ('Conciliación') END
-IF NOT EXISTS(SELECT * FROM preciso_tipo_evento WHERE id_tipo_evento = 2) BEGIN INSERT INTO preciso_tipo_evento (nombre_tipo_evento) VALUES ('Notas') END
-IF NOT EXISTS(SELECT * FROM preciso_tipo_evento WHERE id_tipo_evento = 3) BEGIN INSERT INTO preciso_tipo_evento (nombre_tipo_evento) VALUES ('Resultados') END
-
 -- Add TIPO DOCUMENTO
 IF NOT EXISTS(SELECT * FROM preciso_administracion_tipo_documento WHERE id_tipo_documento = 1) BEGIN INSERT INTO preciso_administracion_tipo_documento (nombre_tipo_documento,codigo_tipo_documento) VALUES ('ACCIONISTA','Z') END
 IF NOT EXISTS(SELECT * FROM preciso_administracion_tipo_documento WHERE id_tipo_documento = 2) BEGIN INSERT INTO preciso_administracion_tipo_documento (nombre_tipo_documento,codigo_tipo_documento) VALUES ('CARNET DIPLOMATICO','A') END
