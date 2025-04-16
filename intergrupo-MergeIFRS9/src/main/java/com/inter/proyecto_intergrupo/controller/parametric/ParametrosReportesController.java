@@ -81,7 +81,7 @@ public class ParametrosReportesController {
         Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Conciliaciones");
         if(userService.validateEndpoint(user.getId(),"Ver Conciliaciones")) {
 
-            int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
+            int page=(params.get("page")!=null && !params.get("page").toString().equalsIgnoreCase(""))?(Integer.valueOf(params.get("page").toString())-1):0;
             PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
 
             List<ParametrosReportes> parametros = parametrosReportesService.findAll();

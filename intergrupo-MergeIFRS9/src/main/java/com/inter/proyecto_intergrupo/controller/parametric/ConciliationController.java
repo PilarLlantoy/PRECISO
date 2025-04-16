@@ -32,8 +32,8 @@ import java.util.stream.IntStream;
 
 @Controller
 public class ConciliationController {
-    //private static final int PAGINATIONCOUNT=12;
-    private static final int PAGINATIONCOUNT=5;
+    private static final int PAGINATIONCOUNT=12;
+    //private static final int PAGINATIONCOUNT=5;
     private static final int PAGINATIONCOUNT2=12;
     private static final int PAGINATIONCOUNTDATA=500;
 

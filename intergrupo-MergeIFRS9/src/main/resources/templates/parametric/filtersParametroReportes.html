@@ -13,12 +13,20 @@
             <h2 class="fw-bold text-white mx-4 my-3">Cargue de Filtros de Parametros Reportes</h2>
         </div>
     </div>
-    <div class="row mt-5 ml-1 px-2">
-        <div class="text-left col-md-6">
+    <div class="row mt-5 pt-3 px-4">
+        <div class="text-left col-md-4">
             <h2>Cargue de Filtros de Reportes</h2>
         </div>
-        <div class="text-right col-md-6">
-            <a class="btn btn-sm btn-danger mx-1" th:href="@{/parametric/parametrosReportes}"><i class="fa-solid fa-left-long"></i> Regresar</a>
+        <div class="text-right col-md-8">
+            <a class="btn btn-danger btn-sm" th:href="@{/parametric/parametrosReportes(page=${page1})}"><i class="bx bxs-home"></i> Ir a Para. Reportes</a>
+            <a class="btn btn-primary btn-sm mx-1" th:href="@{/parametric/fieldLoadingParametrosReportes/{id}(id=${parametro.id},page1=${page1})}">Campos <i class="fa-solid fa-right-long"></i></a>
+            <a class="btn btn-primary btn-sm mx-1 disabled" th:href="@{/parametric/filtersParametroReportes/{id}(id=${parametro.id},page1=${page1})}">Filtros <i class="fa-solid fa-right-long"></i></a>
+            <a class="btn btn-primary btn-sm mx-1" th:href="@{/parametric/sourcesParametroReportes/{id}(id=${parametro.id},page1=${page1})}">Fuentes <i class="fa-solid fa-right-long"></i></a>
+            <a class="btn btn-primary btn-sm mx-1" th:href="@{/parametric/structuresParametroReportes/{id}/0(id=${parametro.id},page1=${page1})}">Estructuras <i class="fa-solid fa-right-long"></i></a>
+            <a class="btn btn-primary btn-sm mx-1" th:href="@{/parametric/additionalSourcesParametrosReportes/{id}(id=${parametro.id},page1=${page1})}">Fuen. Adicion <i class="fa-solid fa-right-long"></i></a>
+            <a class="btn btn-primary btn-sm mx-1" th:href="@{/parametric/validationsParametroReportes/{id}/0(id=${parametro.id},page1=${page1})}">Vald. Adicion <i class="fa-solid fa-right-long"></i></a>
+            <a class="btn btn-primary btn-sm mx-1" th:href="@{/parametric/resultingfieldsParametroReportes/{id}/0(id=${parametro.id},page1=${page1})}">Rsl. Adicion <i class="fa-solid fa-right-long"></i></a>
+
         </div>
     </div>
     <div class="row px-4">

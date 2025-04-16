@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/menuTemplate :: menuHead"></div>
+
+<body>
+<div th:replace="fragments/menuTemplate :: menuBody"></div>
+
+<div class="main-container">
+    <style>
+         h3{
+            font-size: 13.5px;
+            font-weight: bold;
+        }
+    </style>
+    <div class="row m-0 bg-primary fixed-top myNav">
+        <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
+            <h2 class="fw-bold text-white mx-4 my-3">Módulo de Reportes Conciliaciones</h2>
+        </div>
+    </div>
+    <div class="row mt-5 pt-3 px-4">
+        <div class="text-left col-md-4">
+            <h2>Selección de Filtros Según Reporte</h2>
+        </div>
+
+    </div>
+    <div class="row px-4">
+        <!-- Columna del formulario -->
+        <div class="col-md-6">
+            <div class="text-left pr-3 col-md-12 my-1">
+                <form method="get" th:action="@{/parametric/searchEventMatrix}">
+                    <div class="row">
+                        <div class="col-2">
+                            <h3>REPORTE:</h3>
+                        </div>
+                        <div class="col-3">
+                            <div class="form-group form-group-sm">
+                                <select class="form-control form-control-sm" name="selectedConcil" id="selectedConcil" onchange="toggleConciliacion()">
+                                    <option disabled value="0" selected hidden>Seleccione una conciliación</option>
+                                    <option th:each="concil : ${allConcils}" th:value="${concil.id}" th:text="${concil.nombre}" th:selected="${concil.id != null and concil.id == selectedConcil}"></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-2">
+                            <h3>RANGOS:</h3>
+                        </div>
+                        <div class="col-2">
+                            <div class="form-group form-group-sm">
+                                <select class="form-control form-control-sm" name="selectedConcil" id="selectedConcil" onchange="toggleConciliacion()">
+                                    <option disabled value="0" selected hidden>Seleccione</option>
+                                    <option th:each="concil : ${allConcils}" th:value="${concil.id}" th:text="${concil.nombre}" th:selected="${concil.id != null and concil.id == selectedConcil}"></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            <div class="form-group form-group-sm ">
+                                <input id="idInput" type="text" class="form-control form-control-sm" >
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            <div class="form-group form-group-sm ">
+                                <input id="idInput" type="text" class="form-control form-control-sm" >
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            <button type="button" class="btn btn-primary btn-sm custom-btn-signo">
+                                <i class="fa fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-2">
+                            <h3>PUNTUAL:</h3>
+                        </div>
+                        <div class="col-2">
+                            <div class="form-group form-group-sm">
+                                <select class="form-control form-control-sm" name="selectedConcil" id="selectedConcil" onchange="toggleConciliacion()">
+                                    <option disabled value="0" selected hidden>Seleccione</option>
+                                    <option th:each="concil : ${allConcils}" th:value="${concil.id}" th:text="${concil.nombre}" th:selected="${concil.id != null and concil.id == selectedConcil}"></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            <div class="form-group form-group-sm">
+                                <select class="form-control form-control-sm" name="selectedConcil" id="selectedConcil" onchange="toggleConciliacion()">
+                                    <option disabled value="0" selected hidden>Seleccione</option>
+                                    <option th:each="concil : ${allConcils}" th:value="${concil.id}" th:text="${concil.nombre}" th:selected="${concil.id != null and concil.id == selectedConcil}"></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            <div class="form-group form-group-sm ">
+                                <input id="idInput" type="text" class="form-control form-control-sm" >
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            <button type="button" class="btn btn-primary btn-sm custom-btn-signo">
+                                <i class="fa fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-auto">
+                            <a class="btn btn-danger btn-sm" th:href="@{/parametric/parametrosReportes(page=${page1})}">Cancelar</a>
+                        </div>
+                        <div class="col-auto">
+                            <a class="btn btn-primary btn-sm" th:href="@{/parametric/parametrosReportes(page=${page1})}">Exportar</a>
+                        </div>
+                        <div class="col-auto">
+                            <a class="btn btn-primary btn-sm" th:href="@{/parametric/parametrosReportes(page=${page1})}">Ir a Para. Reportes</a>
+                        </div>
+                    </div>
+                    <!-- Campo oculto para el token CSRF -->
+                    <input type="hidden" id="csrfToken" th:value="${_csrf.token}" />
+                </form>
+
+            </div>
+        </div>
+
+        <!-- Columna para la tabla, alineada a la derecha -->
+        <div class="col-md-6">
+            <div class="table-responsive rounded border-primary">
+                <table id="example" class="table table-striped table-hover text-center table-bordered table-sm" width="100%">
+                    <thead class="bg-primary">
+                    <tr>
+                        <th>Filtro</th>
+                        <th>Campo Inf</th>
+                        <th>Condicion</th>
+                        <th>Valor 1</th>
+                        <th>Valor 2</th>
+                        <th>Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="event : ${allEvents}">
+                        <td th:text="${event[0]}"></td>
+                        <td th:text="${event[1]}"></td>
+                        <td th:text="${event[2]}"></td>
+                        <td th:text="${event[3]}"></td>
+                        <td th:text="${event[3]}"></td>
+                        <td th:text="${event[3]}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="row m-0 px-4 mt-1">
+
+        <div class="col-md-12 p-0 pt-3">
+            <h2>Selección de Filtros Según Reporte</h2>
+            <div class="table-responsive rounded border-primary">
+                <table id="example" class="table table-striped table-hover text-center table-bordered table-sm" width="100%">
+                    <thead class="bg-primary">
+                    <tr>
+                        <th>Conciliacion</th>
+                        <th>Inventario</th>
+                        <th>Matriz</th>
+                        <th>Tipo Evento</th>
+                        <th>Cuenta 1</th>
+                        <th>Cuenta 2</th>
+                        <th>Hom. Cntros</th>
+                        <th>PYG</th>
+                        <th>Estado</th>
+                        <th COLSPAN="4">Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="event : ${allEvents}">
+                        <td th:text="${event[0]}"></td>
+                        <td th:text="${event[1]}"></td>
+                        <td th:text="${event[2]}"></td>
+                        <td th:text="${event[3]}"></td>
+                        <td th:text="${event[4]}"></td>
+                        <td th:text="${event[5]}"></td>
+                        <!--<td th:text="${@accountEventMatrixService.findByMatrizEventoTipo1(event)?.cuentaGanancia ?: ''}"></td>
+                        <td th:text="${@accountEventMatrixService.findByMatrizEventoTipo2(event)?.cuentaGanancia ?: ''}"></td>-->
+                        <td th:if="${event[6] == true}">Activo</td>
+                        <td th:if="${event[6] == false}">Inactivo</td>
+                        <td th:if="${event[7] == true}">Activo</td>
+                        <td th:if="${event[7] == false}">Inactivo</td>
+                        <td th:if="${event[8] == true}">Activo</td>
+                        <td th:if="${event[8] == false}">Inactivo</td>
+                        <td>
+                            <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
+                                    th:onclick="|window.location.href='@{/parametric/conditionsEventMatrix/{id}(id=${event[9]},selectedConcil1=${selectedConcil1},selectedInv1=${selectedInv1},selectedET1=${selectedET1},selectedEstado1=${selectedEstado1},page1=${current})}'|">Condiciones</button>
+                        </td>
+                        <td>
+                            <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
+                                    th:onclick="|window.location.href='@{/parametric/cuentasEventMatrix/{id}(id=${event[9]},selectedConcil1=${selectedConcil1},selectedInv1=${selectedInv1},selectedET1=${selectedET1},selectedEstado1=${selectedEstado1},page1=${current})}'|">Cuentas</button>
+                        </td>
+                        <td>
+                            <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
+                                    th:onclick="|window.location.href='@{/parametric/validationsEventMatrix/{id}(id=${event[9]},selectedConcil=${selectedConcil1},selectedInv=${selectedInv1},selectedET=${selectedET1},selectedEstado=${selectedEstado1},page1=${current})}'|">Validaciones</button>
+                        <td>
+                            <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
+                                    th:onclick="|window.location.href='@{/parametric/modifyEventMatrix/{id}(id=${event[9]},selectedConcil=${selectedConcil1},selectedInv=${selectedInv1},selectedET=${selectedET1},selectedEstado=${selectedEstado1},page=${current})}'|">Editar</button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="row" th:if="${last != 0}">
+                <div class="col-md-4 text-left">
+                    <nav arial-label="Pagination">
+                        <ul class="pagination pagination-sm">
+                            <li class="page-item" th:classappend="${prev == 0 ? 'disabled' : ''}">
+                                <a class="page-link"
+                                   th:href="@{/parametric/searchEventMatrix/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${prev},dir=${directory},vId=${vId},selectedConcil=${selectedConcil1},selectedInv=${selectedInv1},selectedET=${selectedET1},selectedEstado=${selectedEstado1},selectedCuenta=${selectedCuenta1})}">Anterior</a>
+                            </li>
+                            <li class="page-item" th:classappend="${current == last ? 'disabled' : ''}">
+                                <a class="page-link"
+                                   th:href="@{/parametric/searchEventMatrix/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${next},dir=${directory},vId=${vId},selectedConcil=${selectedConcil1},selectedInv=${selectedInv1},selectedET=${selectedET1},selectedEstado=${selectedEstado1},selectedCuenta=${selectedCuenta1})}">Siguiente</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="col-md-4 text-center">
+                    <h6 th:utext="${registers} + ' Registros Encontrados'"></h6>
+                </div>
+                <div class="col-md-4 text-right">
+                    <h6 class="mx-1" th:utext="'Página ' + ${current} + ' de ' + ${last}"></h6>
+                </div>
+            </div>
+            <div class="d-flex align-items-center justify-content-center" th:if="${filterExport != 'Original'}">
+                <h5><span class="badge badge-pill text-light badge-info py-2 px-5">¡La Tabla se encuentra Filtrada!</span>
+                </h5>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+</div>
+
+<script>
+    async function toggleConciliacion() {
+        const concilID = document.getElementById('selectedConcil').value;
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+        if (concilID) {
+            const response = await fetch(`/parametric/obtenerRutasConcilByConcil/${concilID}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                }
+            });
+
+            const data = await response.json();
+
+            const ruta = document.getElementById('selectedInv');
+            const valueInv = document.getElementById('valueInv1').value;
+
+            ruta.innerHTML = '<option selected value="0" >Seleccione un archivo</option>';
+
+            data.forEach(campo => {
+                const optionRC = document.createElement('option');
+                optionRC.value = campo[0];
+                optionRC.text = campo[1];
+                if(campo[0] != null && campo[0] == valueInv)
+                {
+                    optionRC.selected=true;
+                }
+                ruta.appendChild(optionRC);
+            });
+
+        }
+    }
+
+    async function toggleInventario() {
+        const tipoEventoID = document.getElementById('selectedET').value;
+        const concilID = document.getElementById('selectedConcil').value;
+        const inventarioID = document.getElementById('selectedInv').value;
+        const valueInvID = document.getElementById('valueInv1').value;
+        var valueInvFin = 0;
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+        if(inventarioID != 0)
+            valueInvFin= inventarioID;
+        else
+            valueInvFin= valueInvID;
+        console.log(tipoEventoID , concilID , inventarioID,valueInvID,valueInvFin);
+        if (tipoEventoID && concilID && valueInvFin) {
+            const response = await fetch(`/parametric/obtenerCuentas/${tipoEventoID}/${concilID}/${valueInvFin}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                }
+            });
+
+            const data = await response.json();
+
+            const cuentaSelect = document.getElementById('selectedCuenta');
+            const valueCuen = document.getElementById('valueCuen1').value;
+            cuentaSelect.innerHTML = '<option value="0" selected>Seleccione una Cuenta</option>';
+
+            data.forEach(cuenta => {
+                const option = document.createElement('option');
+                option.value = cuenta;
+                option.text = cuenta;
+                if(cuenta != null && cuenta == valueCuen)
+                {
+                    option.selected=true;
+                }
+                cuentaSelect.appendChild(option);
+            });
+        }
+    }
+    window.onload=function(){
+        toggleConciliacion();
+        toggleInventario();
+    }
+</script>
+</body>
+</html>

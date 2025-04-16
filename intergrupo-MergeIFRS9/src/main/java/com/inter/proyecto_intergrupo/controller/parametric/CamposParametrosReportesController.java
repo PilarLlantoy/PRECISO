@@ -123,6 +123,8 @@ public class CamposParametrosReportesController {
     public ModelAndView createCampoParamReportes(@ModelAttribute CampoParamReportes campoNuevo,
                                       @RequestParam(name = "paramId") String paramId,
                                       @RequestParam(name = "longitud") String longitud,
+                                     @RequestParam(name = "page", defaultValue = "0") String page,
+                                     @RequestParam(name = "page1", defaultValue = "0") String page1,
                                       BindingResult bindingResult){
         ModelAndView modelAndView = new ModelAndView("redirect:/parametric/fieldLoadingParametrosReportes/" + paramId);
         if(longitud!=null && longitud.length()>0 ){
@@ -152,6 +154,12 @@ public class CamposParametrosReportesController {
         {
             campoParametroReportesService.modificar(campoNuevo);
         }
+
+        if(!page.equalsIgnoreCase("0"))
+            modelAndView.addObject("page",page);
+        if(!page1.equalsIgnoreCase("0"))
+            modelAndView.addObject("page1",page1);
+
         return modelAndView;
 
     }
