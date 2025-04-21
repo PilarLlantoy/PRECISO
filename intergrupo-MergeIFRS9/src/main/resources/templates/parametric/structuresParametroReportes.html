@@ -123,7 +123,9 @@
                                        th:text="${estructura.campoReporte.detalle}"
                                 >
                             </td>
-                            <td th:if="${estructura.campoReporte.fuenteAdicion == false}">
+
+                            <!--CAMPO1-->
+                            <td th:if="${estructura.campoReporte.fuenteAdicion == false && parametro.tipoInsumo!='contable'}">
                                 <select class="form-control form-control-sm" id="campo1Select" onchange="updateCampo1HiddenValue()"
                                         th:name="'campo1_'+${iter.count}"
                                         th:id="'campo1_'+${iter.count}"
@@ -136,6 +138,21 @@
                                     ></option>
                                 </select>
                             </td>
+                            <td th:if="${estructura.campoReporte.fuenteAdicion == false && parametro.tipoInsumo=='contable'}">
+                                <select class="form-control form-control-sm" id="campo1rcSelect" onchange="updateCampo1HiddenValue()"
+                                        th:name="'campo1rc_'+${iter.count}"
+                                        th:id="'campo1rc_'+${iter.count}"
+                                >
+                                    <option value="0" selected>Seleccione Campo</option>
+                                    <option th:each="campRC : ${camposRc}"
+                                            th:value="${campRC[0]}"
+                                            th:text="${campRC[1]}"
+                                            th:selected="${estructura.campo1rc != null and campRC[0] == estructura.campo1rc.id}"
+                                    ></option>
+                                </select>
+                            </td>
+
+                            <!--CAMPO2-->
                             <td th:if="${estructura.campoReporte.fuenteAdicion == false}">
                                 <select class="form-control form-control-sm" id="operacionSelect" onchange="updateOperacionHiddenValue()"
                                         th:name="'operacion_'+${iter.count}"

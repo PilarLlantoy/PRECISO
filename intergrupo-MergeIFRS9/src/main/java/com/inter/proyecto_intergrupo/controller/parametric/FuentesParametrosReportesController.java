@@ -171,5 +171,16 @@ public class FuentesParametrosReportesController {
 
     }
 
+    @DeleteMapping("/parametric/deleteFuenteParamReporte/{id}")
+    public ResponseEntity<?> deleteFuenteParamReporte(@PathVariable int id) {
+        try {
+            sourceParametroReportesService.deleteById(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al eliminar el registro");
+        }
+    }
+
 
 }

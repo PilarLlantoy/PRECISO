@@ -43,12 +43,20 @@ public class StructureParametroReportes {
     @JoinColumn(name = "campo_1_id")
     private CampoRConcil campo1;
 
+    @ManyToOne
+    @JoinColumn(name = "campo_1rc_id")
+    private CampoRC campo1rc;
+
     @Column(name = "operacion")
     private String operacion;
 
     @ManyToOne
     @JoinColumn(name = "campo_2_id")
     private CampoRConcil campo2;
+
+    @ManyToOne
+    @JoinColumn(name = "campo_2rc_id")
+    private CampoRC campo2rc;
 
     @Column(name = "aplica_formula", columnDefinition = "BIT DEFAULT 0")
     private boolean aplicaFormula = false;

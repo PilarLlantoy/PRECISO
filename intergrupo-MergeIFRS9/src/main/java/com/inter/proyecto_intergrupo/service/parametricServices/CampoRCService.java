@@ -54,6 +54,13 @@ public class CampoRCService {
        return campo;
     }
 
+    public List<Object[]> findCamposByRutaContable(int idRC) {
+        Query query = entityManager.createNativeQuery(
+                "SELECT id_campo, nombre FROM preciso_campos_rc WHERE id_rc = :idRC");
+        query.setParameter("idRC", idRC);
+        return query.getResultList();
+    }
+
     /*public void recreateTable(AccountingRoute data){
         StringBuilder createTableQuery = new StringBuilder("CREATE TABLE ");
         createTableQuery.append("preciso_rc_"+data.getId()).append(" (");

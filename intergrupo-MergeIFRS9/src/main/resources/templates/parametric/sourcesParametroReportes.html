@@ -49,7 +49,7 @@
                         </div>
                         <div class="form-group form-group-sm" th:if="${parametro.tipoInsumo.equals('contable')}">
                             <h6 class="font-weight-bold">Fuente</h6>
-                            <select class="form-control form-control-sm" name="selectedContable" id="selectedContable" required onchange="toggleConciliacion()">
+                            <select class="form-control form-control-sm" name="selectedContable" id="selectedContable" required onchange="toggleContable()">
                                 <option disabled value="" selected hidden>Seleccione Fuente</option>
                                 <option th:each="fuente : ${rcontables}" th:value="${fuente.id}" th:text="${fuente.nombre}"></option>
                             </select>
@@ -125,6 +125,7 @@
                                     th:data-id="${fuente.id}"
                                     th:data-concil="${fuente.fuente?.id}"
                                     th:data-inventario="${fuente.inventario?.id}"
+                                    th:data-contable="${fuente.contable?.id}"
                                     th:data-evento="${fuente.evento?.id}"
                                     onclick="cargarCampos(this)">Seleccionar</button>
                         </td>
@@ -203,6 +204,34 @@
        }
    }
 
+   async function toggleContable() {
+       const concilID = document.getElementById('selectedContable').value;
+       const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+       const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+       if (concilID) {
+           const response = await fetch(`/parametric/obtenerRutasConcilByConcil/${concilID}`, {
+               method: 'GET',
+               headers: {
+                   'Content-Type': 'application/json',
+                   [csrfHeader]: csrfToken
+               }
+           });
+
+           const data = await response.json();
+
+           const ruta = document.getElementById('selectedInventario');
+           ruta.innerHTML = '<option disabled value="" selected hidden>Seleccione Inventario</option>';
+
+           data.forEach(campo => {
+               const optionRC = document.createElement('option');
+               optionRC.value = campo[0];
+               optionRC.text = campo[1];
+               ruta.appendChild(optionRC);
+           });
+       }
+   }
+
    async function toggleInventario() {
         const concilID = document.getElementById('selectedConcil').value;
         const invID = document.getElementById('selectedInventario').value;
@@ -233,13 +262,17 @@
         }
     }
 
-
+   var idSeleccionado = 0;
 
    async function cargarCampos(button) {
        var id = button.getAttribute("data-id");
+       idSeleccionado = id;
        var idconciliacion = button.getAttribute("data-concil");
        var idinventario = button.getAttribute("data-inventario");
+       var idcontable = button.getAttribute("data-contable");
        var evento = button.getAttribute("data-evento");
+
+       console.log(idconciliacion,idinventario,idcontable)
 
        // Asignar los valores a los campos del formulario
        document.querySelector("input[name='id']").value = id;
@@ -250,8 +283,17 @@
             if (!selectConcil.value) {
                 console.warn("El valor asignado no corresponde a ninguna opción del select.");
             }
+            await toggleConciliacion();
         }
-        await toggleConciliacion();
+
+        var selectContable = document.querySelector("select[name='selectedContable']");
+        if (idcontable) {
+            selectContable.value = idcontable; // Establece el valor directamente
+            if (!selectContable.value) {
+                console.warn("El valor asignado no corresponde a ninguna opción del select.");
+            }
+            await toggleContable();
+        }
 
         var selectInventario = document.querySelector("select[name='selectedInventario']");
         if (idinventario) {
@@ -259,8 +301,8 @@
             if (!selectInventario.value) {
                 console.warn("El valor asignado no corresponde a ninguna opción del select.");
             }
+            await toggleInventario();
         }
-        await toggleInventario();
 
         var selectEvento = document.querySelector("select[name='selectedEvento']");
         if (evento) {
@@ -274,19 +316,18 @@
 
    function Limpiar() {
        document.getElementById('miFormulario').reset();
+       idSeleccionado=0;
        updateButtonText();
    }
 
    function descartar() {
-       const id = document.querySelector("input[name='id']").value;
-       const selectCampo = document.querySelector("select[name='selectedCampo']").value;
-       const valorCondicion = document.querySelector("input[name='valorCondicion']").value;
+       const paramID = document.getElementById('parametroId').value;
+       const id = idSeleccionado;
        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
-       const arouteId = document.getElementById('arouteId').value;
 
-       if (id && selectCampo && valorCondicion) {
-           fetch(`/parametric/deleteCondicionRC/${id}`, {
+       if (id!=0) {
+           fetch(`/parametric/deleteFuenteParamReporte/${id}`, {
                method: 'DELETE',
                headers: {
                    'Content-Type': 'application/json',
@@ -294,7 +335,7 @@
                }
            }).then(response => {
                if (response.ok) {
-                   window.location.href = `/parametric/fuenteitionLoadingAccountingRoute/${arouteId}`;
+                   window.location.href = `/parametric/sourcesParametroReportes/${paramID}`;
                }
            }).catch(error => {
                // Manejo de errores

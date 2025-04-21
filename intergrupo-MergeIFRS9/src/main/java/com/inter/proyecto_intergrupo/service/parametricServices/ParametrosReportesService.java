@@ -112,5 +112,24 @@ public class ParametrosReportesService {
         return query.getResultList();
     }
 
+    public List<Object[]> findDatosxEstructuraContable(int id, List<String> campos) {
+        // Construir el nombre de la tabla dinámicamente
+        String nombreTabla = "preciso_rc_" + id;
+
+        // Construir la parte de la consulta SQL con los campos dinámicos
+        String camposStr = String.join(", ", campos);  // Unir los campos de la lista con comas
+        String sqlQuery = "SELECT TOP 100 " + camposStr + " FROM " + nombreTabla + " a";
+
+        // Crear la consulta nativa
+        Query query = entityManager.createNativeQuery(sqlQuery);
+
+        // Ejecutar la consulta y devolver los resultados
+        return query.getResultList();
+    }
+
+    public void deleteById(int id){
+        parametrosReportesRepository.deleteById(id);
+    }
+
 
 }

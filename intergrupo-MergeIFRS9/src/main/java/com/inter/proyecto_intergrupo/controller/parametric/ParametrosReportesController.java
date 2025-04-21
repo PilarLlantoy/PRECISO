@@ -65,6 +65,9 @@ public class ParametrosReportesController {
     private CampoRConcilService campoRConcilService;
 
     @Autowired
+    private CampoRCService campoRCService;
+
+    @Autowired
     private StructureParametroReportesService structureParametroReportesService;
 
     @Autowired
@@ -207,7 +210,12 @@ public class ParametrosReportesController {
         modelAndView.addObject("campos",campos);
 
         List<Object[]> camposRc = new ArrayList<>();
-        if(fuenteId!=0) camposRc = campoRConcilService.findCamposByRutaConcil(fuente.getInventario().getId());
+        if(fuenteId!=0) {
+            if(parametro.getTipoInsumo().equalsIgnoreCase("inventarios"))
+                camposRc = campoRConcilService.findCamposByRutaConcil(fuente.getInventario().getId());
+            if(parametro.getTipoInsumo().equalsIgnoreCase("contable"))
+                camposRc = campoRCService.findCamposByRutaContable(fuente.getContable().getId());
+        }
         modelAndView.addObject("camposRc",camposRc);
 
         List<StructureParametroReportes> allEstructuras = structureParametroReportesService.findByParamByFuente(id, fuenteId);
@@ -344,6 +352,8 @@ public class ParametrosReportesController {
                                                    @RequestParam Map<String, String> params) {
 
         ModelAndView modelAndView = new ModelAndView("redirect:/parametric/structuresParametroReportes/" + parametroId+"/"+fuenteId);
+        ParametrosReportes parametro = parametrosReportesService.findById(parametroId);
+
 
         for(int i=1; i<numCampos+1; i++){
 
@@ -353,19 +363,37 @@ public class ParametrosReportesController {
             if(campoReporte!=null)
                 estructura.setCampoReporte(campoReporte);
 
-            if(params.get("campo1_"+i)!=null) {
-                CampoRConcil campo1 = campoRConcilService.findById(Integer.valueOf(params.get("campo1_" + i)));
-                estructura.setCampo1(campo1);
+            if(parametro.getTipoInsumo().equalsIgnoreCase("inventarios")) {
+                if(params.get("campo1_"+i)!=null) {
+                    CampoRConcil campo1 = campoRConcilService.findById(Integer.valueOf(params.get("campo1_" + i)));
+                    estructura.setCampo1(campo1);
+                }
+                else estructura.setCampo1(null);
+
+                if(params.get("campo2_"+i)!=null) {
+                    CampoRConcil campo2 = campoRConcilService.findById(Integer.valueOf(params.get("campo2_" + i)));
+                    estructura.setCampo2(campo2);
+                }
+                else estructura.setCampo2(null);
             }
-            else estructura.setCampo1(null);
+            if(parametro.getTipoInsumo().equalsIgnoreCase("contable")) {
+                if(params.get("campo1_"+i)!=null) {
+                    CampoRC campo1 = campoRCService.findById(Integer.valueOf(params.get("campo1_" + i)));
+                    estructura.setCampo1rc(campo1);
+                }
+                else estructura.setCampo1(null);
+
+                if(params.get("campo2_"+i)!=null) {
+                    CampoRC campo2 = campoRCService.findById(Integer.valueOf(params.get("campo2_" + i)));
+                    estructura.setCampo2rc(campo2);
+                }
+                else estructura.setCampo2(null);
+            }
+
 
             estructura.setOperacion(params.get("operacion_"+i));
 
-            if(params.get("campo2_"+i)!=null) {
-                CampoRConcil campo2 = campoRConcilService.findById(Integer.valueOf(params.get("campo2_" + i)));
-                estructura.setCampo2(campo2);
-            }
-            else estructura.setCampo2(null);
+
 
             if(Boolean.valueOf(params.get("aplicaFormula_"+i))==true)
                 estructura.setAplicaFormula(true);

@@ -185,7 +185,7 @@ public class ReportesConciliacionesController {
         //primero hacemos match con estructuras
         ParametrosReportes reporte = parametrosReportesService.findById(reporteId);
         System.out.println("REPORTE "+reporteId);
-        List<CampoParamReportes> cabeceras = parametrosReportesService.findById(reporteId).getCampos();;
+
 
         // Convertir los resultados en una lista de Map<String, Object> para mayor claridad
         List<Map<String, Object>> reporteResultados = new ArrayList<>();
@@ -194,40 +194,77 @@ public class ReportesConciliacionesController {
         //verificamos que tipo de reporte es
         String tipo = reporte.getTipoInsumo();
         System.out.println(tipo);
-        if(tipo.equalsIgnoreCase("inventarios")) {
-            ConciliationRoute inventario = reporte.getFuentes().get(0).getInventario();
-            SourceParametroReportes fuente = reporte.getFuentes().get(0);
-            System.out.println(inventario.getDetalle());
-            List<StructureParametroReportes> allEstructuras = structureParametroReportesService.findByParamByFuente(reporteId, fuente.getId());
-            System.out.println(allEstructuras.size());
-            List<String> campos = new ArrayList<>();
-
-            for (StructureParametroReportes estructura : allEstructuras)
-                campos.add(estructura.getCampo1().getNombre());
-            String[] camposArray = campos.toArray(new String[0]);
-            System.out.println("GENERANDO");  // Esto imprime los campos, solo como ejemplo
-            System.out.println(Arrays.toString(camposArray));  // Esto imprime los campos, solo como ejemplo
-
-
-            // Obtener los resultados usando los campos seleccionados
-            List<Object[]> resultados = parametrosReportesService.findDatosxEstructuraInventario(inventario.getId(), campos);
-
-            // Convertir los resultados en una lista de Map<String, Object> para mayor claridad
-            reporteResultados = new ArrayList<>();
-
-            for (Object[] row : resultados) {
-
-                Map<String, Object> rowMap = new HashMap<>();
-                for (int i = 0; i < campos.size(); i++) {
-                    System.out.println(row[i]);
-                    rowMap.put(cabeceras.get(i).getDetalle(), row[i]);  // Mapear cada valor a su campo correspondiente
-                }
-                reporteResultados.add(rowMap);  // Agregar la fila al reporte final
-            }
-
-
-        }
+        if(tipo.equalsIgnoreCase("inventarios"))
+            reporteResultados = generarReporteInventario(reporte);
+        if(tipo.equalsIgnoreCase("contable"))
+            reporteResultados = generarReporteContable(reporte);
         // Devolver los resultados como una lista de mapas
+        return reporteResultados;
+    }
+
+    List<Map<String, Object>> generarReporteInventario(ParametrosReportes reporte){
+        List<CampoParamReportes> cabeceras = parametrosReportesService.findById(reporte.getId()).getCampos();;
+        ConciliationRoute inventario = reporte.getFuentes().get(0).getInventario();
+        SourceParametroReportes fuente = reporte.getFuentes().get(0);
+        System.out.println(inventario.getDetalle());
+        List<StructureParametroReportes> allEstructuras = structureParametroReportesService.findByParamByFuente(reporte.getId(), fuente.getId());
+        System.out.println(allEstructuras.size());
+        List<String> campos = new ArrayList<>();
+
+        for (StructureParametroReportes estructura : allEstructuras)
+            campos.add(estructura.getCampo1().getNombre());
+        String[] camposArray = campos.toArray(new String[0]);
+        System.out.println("GENERANDO");  // Esto imprime los campos, solo como ejemplo
+        System.out.println(Arrays.toString(camposArray));  // Esto imprime los campos, solo como ejemplo
+
+
+        // Obtener los resultados usando los campos seleccionados
+        List<Object[]> resultados = parametrosReportesService.findDatosxEstructuraInventario(inventario.getId(), campos);
+
+        // Convertir los resultados en una lista de Map<String, Object> para mayor claridad
+        List<Map<String, Object>> reporteResultados = new ArrayList<>();
+
+        for (Object[] row : resultados) {
+
+            Map<String, Object> rowMap = new HashMap<>();
+            for (int i = 0; i < campos.size(); i++) {
+                System.out.println(row[i]);
+                rowMap.put(cabeceras.get(i).getDetalle(), row[i]);  // Mapear cada valor a su campo correspondiente
+            }
+            reporteResultados.add(rowMap);  // Agregar la fila al reporte final
+        }
+        return reporteResultados;
+    }
+
+    List<Map<String, Object>> generarReporteContable(ParametrosReportes reporte){
+        List<CampoParamReportes> cabeceras = parametrosReportesService.findById(reporte.getId()).getCampos();;
+        AccountingRoute contable = reporte.getFuentes().get(0).getContable();
+        SourceParametroReportes fuente = reporte.getFuentes().get(0);
+        System.out.println(contable.getNombre());
+        List<StructureParametroReportes> allEstructuras = structureParametroReportesService.findByParamByFuente(reporte.getId(), fuente.getId());
+        System.out.println(allEstructuras.size());
+        List<String> campos = new ArrayList<>();
+
+        for (StructureParametroReportes estructura : allEstructuras)
+            campos.add(estructura.getCampo1rc().getNombre());
+        String[] camposArray = campos.toArray(new String[0]);
+        System.out.println("GENERANDO");  // Esto imprime los campos, solo como ejemplo
+
+
+        // Obtener los resultados usando los campos seleccionados
+        List<Object[]> resultados = parametrosReportesService.findDatosxEstructuraContable(contable.getId(), campos);
+
+        // Convertir los resultados en una lista de Map<String, Object> para mayor claridad
+        List<Map<String, Object>> reporteResultados = new ArrayList<>();
+
+        for (Object[] row : resultados) {
+
+            Map<String, Object> rowMap = new HashMap<>();
+            for (int i = 0; i < campos.size(); i++) {
+                rowMap.put(cabeceras.get(i).getDetalle(), row[i]);  // Mapear cada valor a su campo correspondiente
+            }
+            reporteResultados.add(rowMap);  // Agregar la fila al reporte final
+        }
         return reporteResultados;
     }
 
