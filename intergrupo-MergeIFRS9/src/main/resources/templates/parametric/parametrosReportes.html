@@ -36,7 +36,7 @@
                     <tbody>
                     <tr th:each="parametro, iter : ${allParametros}">
                         <td th:text="${iter.count + ((current-1)*12)}"></td>
-                        <td th:text="${parametro.detalle}"></td>
+                        <td th:text="${parametro.nombre}"></td>
 
                         <td th:if="${parametro.activo == true}">Activo</td>
                         <td th:if="${parametro.activo == false}">Inactivo</td>

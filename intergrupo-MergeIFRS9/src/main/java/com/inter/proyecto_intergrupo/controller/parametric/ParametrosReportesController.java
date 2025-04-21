@@ -165,16 +165,17 @@ public class ParametrosReportesController {
 
     @PostMapping(value = "/parametric/modifyParametrosReportes")
     public ModelAndView modifyParametrosReportes(@ModelAttribute ParametrosReportes parametro,
-                                     @RequestParam(name = "selectedPais") String pais,
+                                     @RequestParam(name = "selectedPais", defaultValue = "0") String pais,
                                      BindingResult bindingResult){
 
         ModelAndView modelAndView = new ModelAndView("redirect:/parametric/parametrosReportes/");
         if(bindingResult.hasErrors()){
             modelAndView.setViewName("parametric/modifyParametrosReportes");
         }else {
-
-            Country paisSeleccionado = countryService.findCountryByName(pais).get(0);
-            parametro.setPais(paisSeleccionado);
+            if(!pais.equalsIgnoreCase("0")){
+                Country paisSeleccionado = countryService.findCountryByName(pais).get(0);
+                parametro.setPais(paisSeleccionado);
+            }
             parametrosReportesService.modificar(parametro);
         }
 
@@ -200,7 +201,9 @@ public class ParametrosReportesController {
         modelAndView.addObject("fuentes",fuentes);
 
         List<CampoParamReportes> campos =  new ArrayList<>();
-        if(fuenteId!=0) campos = parametro.getCampos();
+        if(fuenteId!=0) {
+            campos = parametro.getCampos();
+        }
         modelAndView.addObject("campos",campos);
 
         List<Object[]> camposRc = new ArrayList<>();

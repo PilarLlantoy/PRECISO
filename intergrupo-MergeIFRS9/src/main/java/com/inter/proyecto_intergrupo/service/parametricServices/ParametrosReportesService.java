@@ -86,5 +86,15 @@ public class ParametrosReportesService {
         return query.getResultList();
     }
 
+    public List<Object[]> findCampoReporteFiltro(int reporteId, String tipo) {
+        System.out.println(reporteId + "  "+tipo);
+        Query query = entityManager.createNativeQuery(
+                "select id_campo, detalle, tipo from preciso_campos_param_reportes a\n" +
+                        "  where a.id_parametro= :reporteId and a.filtrado=1 and a.tipo_filtro= :tipo");
+        query.setParameter("reporteId", reporteId);
+        query.setParameter("tipo", tipo);
+        return query.getResultList();
+    }
+
 
 }

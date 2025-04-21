@@ -53,7 +53,8 @@
                         <div class="form-group form-group-sm col-md-2">
                             <div class="form-check form-check-inline">
                                 <input id="filtrado" name="filtrado" th:field="*{filtrado}" th:id="${filtrado}"
-                                       th:value="${filtrado}" type="checkbox" class="styled-checkbox ms-2">
+                                       th:value="${filtrado}" type="checkbox" class="styled-checkbox ms-2"
+                                       onchange="toggleFiltrado()">
                             </div>
                         </div>
                     </div>
@@ -240,6 +241,17 @@
 
 <script>
 
+    function toggleFiltrado() {
+        var filtradoCheckbox = document.getElementById('filtrado1');
+        var tipoFiltro = document.getElementById('selectedTipoFiltro');
+
+        if (filtradoCheckbox.checked) {
+            tipoFiltro.disabled = false; // Habilitar el campo
+        } else {
+            tipoFiltro.disabled = true; // Deshabilitar el campo
+        }
+    }
+
     function cargarCampos(button) {
         var id = button.getAttribute("data-id");
         var detalle = button.getAttribute("data-detalle");
@@ -279,6 +291,8 @@
         } else {
             selectTipoFiltro.value = tipoFiltro;
         }
+
+        toggleFiltrado()
 
     }
 
@@ -358,7 +372,7 @@
    }
 
    window.onload = function() {
-       //toggleFechaIdiomaFields();
+       toggleFiltrado();
    };
 </script>
 </body>

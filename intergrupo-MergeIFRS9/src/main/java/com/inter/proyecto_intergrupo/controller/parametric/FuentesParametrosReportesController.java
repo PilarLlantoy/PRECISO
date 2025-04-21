@@ -76,6 +76,9 @@ public class FuentesParametrosReportesController {
     @Autowired
     private ResultingFieldsParametroReportesService resultingFieldsParametroReportesService;
 
+    @Autowired
+    private AccountingRouteService accountingRouteService;
+
 
     @GetMapping(value = "/parametric/sourcesParametroReportes/{id}")
     public ModelAndView sourcesParametroReportes(@PathVariable int id, @RequestParam Map<String, Object> params){
@@ -97,6 +100,9 @@ public class FuentesParametrosReportesController {
         modelAndView.addObject("conciliaciones",conciliaciones);
         List<ConciliationRoute> inventarios = new ArrayList<>();
         modelAndView.addObject("inventarios",inventarios);
+        List<AccountingRoute> rcontables = accountingRouteService.findAllActive();
+        modelAndView.addObject("rcontables",rcontables);
+
         List<EventType> eventos = new ArrayList<>();
         modelAndView.addObject("eventos",eventos);
 
@@ -132,9 +138,10 @@ public class FuentesParametrosReportesController {
 
     @PostMapping(value = "/parametric/createSourceParametroReportes")
     public ModelAndView createSourceParametroReportes(@ModelAttribute SourceParametroReportes fuente,
-                                          @RequestParam(name = "selectedConcil") int idConcil,
-                                          @RequestParam(name = "selectedInventario") int idInv,
-                                          @RequestParam(name = "selectedEvento") int idEvento,
+                                          @RequestParam(name = "selectedConcil", defaultValue = "0") int idConcil,
+                                          @RequestParam(name = "selectedInventario", defaultValue = "0") int idInv,
+                                          @RequestParam(name = "selectedContable", defaultValue = "0") int idCont,
+                                          @RequestParam(name = "selectedEvento", defaultValue = "0") int idEvento,
                                           @RequestParam(name = "parametroId") String parametroId,
                                           BindingResult bindingResult){
         ModelAndView modelAndView = new ModelAndView("redirect:/parametric/sourcesParametroReportes/" + parametroId);
@@ -142,12 +149,22 @@ public class FuentesParametrosReportesController {
         ParametrosReportes parametro = parametrosReportesService.findById(Integer.parseInt(parametroId));
         fuente.setParametroReportes(parametro);
 
-        Conciliation concil = conciliationService.findById(idConcil);
-        fuente.setFuente(concil);
-        ConciliationRoute inventario = conciliationRouteService.findById(idInv);
-        fuente.setInventario(inventario);
-        EventType evento = eventTypeService.findAllById(idEvento);
-        fuente.setEvento(evento);
+        if(idConcil!=0) {
+            Conciliation concil = conciliationService.findById(idConcil);
+            fuente.setFuente(concil);
+        }
+        if(idInv!=0) {
+            ConciliationRoute inventario = conciliationRouteService.findById(idInv);
+            fuente.setInventario(inventario);
+        }
+        if(idCont!=0) {
+            AccountingRoute contable = accountingRouteService.findById(idCont);
+            fuente.setContable(contable);
+        }
+        if(idEvento!=0) {
+            EventType evento = eventTypeService.findAllById(idEvento);
+            fuente.setEvento(evento);
+        }
 
         sourceParametroReportesService.modificar(fuente);
         return modelAndView;

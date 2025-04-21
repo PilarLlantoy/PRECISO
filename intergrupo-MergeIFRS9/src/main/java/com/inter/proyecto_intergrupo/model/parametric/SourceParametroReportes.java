@@ -30,15 +30,19 @@ public class SourceParametroReportes {
     private ParametrosReportes parametroReportes;
 
     @ManyToOne
-    @JoinColumn(name = "id_conciliacion", nullable = false)
+    @JoinColumn(name = "id_conciliacion")
     private Conciliation fuente;
 
     @ManyToOne
-    @JoinColumn(name = "id_inventario", nullable = false)
+    @JoinColumn(name = "id_inventario")
     private ConciliationRoute inventario;
 
     @ManyToOne
-    @JoinColumn(name = "id_evento", nullable = false)
+    @JoinColumn(name = "id_contable")
+    private AccountingRoute contable;
+
+    @ManyToOne
+    @JoinColumn(name = "id_evento")
     private EventType evento;
 
     // Relación OneToMany con StructureParametroReportes

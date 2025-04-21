@@ -40,7 +40,7 @@
                             <input id="idInput" type="text" class="form-control form-control-sm  " th:field="*{id}">
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-6" th:if="${!parametro.tipoInsumo.equals('contable')}">
                         <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Fuente</h6>
                             <select class="form-control form-control-sm" name="selectedFuente" id="selectedFuente" required onchange="toggleFuente()">
@@ -50,6 +50,19 @@
                                         th:data-id="${fnt.id}"
                                         th:selected="${fuente != null and fuente.id == fnt.id}"
                                         th:text="${fnt.fuente.detalle + ' - ' + fnt.inventario.detalle + ' - ' + fnt.evento.nombre}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6" th:if="${parametro.tipoInsumo.equals('contable')}">
+                        <div class="form-group form-group-sm">
+                            <h6 class="font-weight-bold">Fuente</h6>
+                            <select class="form-control form-control-sm" name="selectedFuente" id="selectedFuente" required onchange="toggleFuente()">
+                                <option disabled value="" selected hidden>Seleccione Fuente</option>
+                                <option th:each="fnt : ${fuentes}"
+                                        th:value="${fnt.contable.id}"
+                                        th:data-id="${fnt.id}"
+                                        th:selected="${fuente != null and fuente.id == fnt.id}"
+                                        th:text="${fnt.contable.nombre}"></option>
                             </select>
                         </div>
                     </div>
@@ -81,7 +94,7 @@
                         </thead>
                         <tbody>
                         <tr th:each="estructura, iter : ${fuente.estructuras}">
-                            <td hidden>
+                            <td hidden th:if="${estructura.campoReporte.fuenteAdicion == false}">
                                 <input type="text" class="form-control form-control-sm"
                                        th:value="${estructura.id}"
                                        th:name="'estructuraId_'+${iter.count}"
@@ -89,7 +102,7 @@
                                        th:text="${estructura.id}"
                                 >
                             </td>
-                            <td>
+                            <td th:if="${estructura.campoReporte.fuenteAdicion == false}">
                                 <input type="text" class="form-control form-control-sm" hidden
                                        th:value="${estructura.campoReporte.id}"
                                        th:name="'campoReporte_'+${iter.count}"
@@ -97,7 +110,7 @@
                                        th:text="${estructura.campoReporte.detalle}"
                                 >
                             </td>
-                            <td>
+                            <td th:if="${estructura.campoReporte.fuenteAdicion == false}">
                                 <select class="form-control form-control-sm" id="campo1Select" onchange="updateCampo1HiddenValue()"
                                         th:name="'campo1_'+${iter.count}"
                                         th:id="'campo1_'+${iter.count}"
@@ -110,7 +123,7 @@
                                     ></option>
                                 </select>
                             </td>
-                            <td>
+                            <td th:if="${estructura.campoReporte.fuenteAdicion == false}">
                                 <select class="form-control form-control-sm" id="operacionSelect" onchange="updateOperacionHiddenValue()"
                                         th:name="'operacion_'+${iter.count}"
                                         th:id="'operacion_'+${iter.count}"
@@ -122,7 +135,7 @@
                                     <option th:value="Divida" th:selected="${estructura.operacion == 'Divida'}">Divida</option>
                                 </select>
                             </td>
-                            <td>
+                            <td th:if="${estructura.campoReporte.fuenteAdicion == false}">
                                 <select class="form-control form-control-sm" id="campo2Select" onchange="updateCampo2HiddenValue()"
                                         th:name="'campo2_'+${iter.count}"
                                         th:id="'campo2_'+${iter.count}"
@@ -135,7 +148,7 @@
                                     ></option>
                                 </select>
                             </td>
-                            <td>
+                            <td th:if="${estructura.campoReporte.fuenteAdicion == false}">
                                 <input type="checkbox"
                                        th:name="'aplicaFormula_'+${iter.count}"
                                        th:id="'aplicaFormula_'+${iter.count}"
@@ -143,7 +156,7 @@
                                        th:checked="${estructura.aplicaFormula}"
                                 >
                             </td>
-                            <td>
+                            <td th:if="${estructura.campoReporte.fuenteAdicion == false}">
                                 <input type="text" class="form-control form-control-sm"
                                        th:name="'valorFormula_'+${iter.count}"
                                        th:id="'valorFormula_'+${iter.count}"

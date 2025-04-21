@@ -34,11 +34,12 @@
                         <div class="col-2">
                             <h3>REPORTE:</h3>
                         </div>
-                        <div class="col-3">
+                        <div class="col-7">
                             <div class="form-group form-group-sm">
-                                <select class="form-control form-control-sm" name="selectedConcil" id="selectedConcil" onchange="toggleConciliacion()">
-                                    <option disabled value="0" selected hidden>Seleccione una conciliación</option>
-                                    <option th:each="concil : ${allConcils}" th:value="${concil.id}" th:text="${concil.nombre}" th:selected="${concil.id != null and concil.id == selectedConcil}"></option>
+                                <select class="form-control form-control-sm" name="selectedReporte" id="selectedReporte" onchange="toggleReporte()">
+                                    <option disabled value="0" selected hidden>Seleccione un reporte</option>
+                                    <option th:each="reporte : ${reportes}" th:value="${reporte.id}" th:text="${reporte.nombre}"
+                                            th:selected="${reporte.id != null and reporte.id == selectedReporte}"></option>
                                 </select>
                             </div>
                         </div>
@@ -47,26 +48,36 @@
                         <div class="col-2">
                             <h3>RANGOS:</h3>
                         </div>
-                        <div class="col-2">
+                        <div class="col-3">
                             <div class="form-group form-group-sm">
-                                <select class="form-control form-control-sm" name="selectedConcil" id="selectedConcil" onchange="toggleConciliacion()">
+                                <select class="form-control form-control-sm" name="selectedRangos" id="selectedRangos" onchange="toggleInputType()">
                                     <option disabled value="0" selected hidden>Seleccione</option>
-                                    <option th:each="concil : ${allConcils}" th:value="${concil.id}" th:text="${concil.nombre}" th:selected="${concil.id != null and concil.id == selectedConcil}"></option>
                                 </select>
                             </div>
                         </div>
-                        <div class="col-2">
-                            <div class="form-group form-group-sm ">
-                                <input id="idInput" type="text" class="form-control form-control-sm" >
+                        <div class="col-3">
+                            <div class="input-group">
+                                <div class="input-group">
+                                    <input type="date" id="periodR1" th:name="periodR1" th:value="${periodR1}"
+                                           class="form-control" style="width: 100%; box-sizing: border-box;">
+                                    <div class="invalid-feedback">Por favor, seleccione una fecha.</div>
+                                    <input id="rangos1" type="text" class="form-control form-control-sm" >
+                                </div>
                             </div>
                         </div>
-                        <div class="col-2">
-                            <div class="form-group form-group-sm ">
-                                <input id="idInput" type="text" class="form-control form-control-sm" >
+                        <div class="col-3">
+                            <div class="input-group">
+                                <div class="input-group">
+                                    <input type="date" id="periodR2" th:name="periodR2" th:value="${periodR2}"
+                                           class="form-control" style="width: 100%; box-sizing: border-box;">
+                                    <div class="invalid-feedback">Por favor, seleccione una fecha.</div>
+                                    <input id="rangos2" type="text" class="form-control form-control-sm" >
+                                </div>
                             </div>
                         </div>
-                        <div class="col-2">
-                            <button type="button" class="btn btn-primary btn-sm custom-btn-signo">
+                        <div class="col-1">
+                            <button type="button" class="btn btn-primary btn-sm custom-btn-signo"
+                                    th:onclick="|agregarRangos()|">
                                 <i class="fa fa-plus"></i>
                             </button>
                         </div>
@@ -76,29 +87,40 @@
                         <div class="col-2">
                             <h3>PUNTUAL:</h3>
                         </div>
-                        <div class="col-2">
+                        <div class="col-3">
                             <div class="form-group form-group-sm">
-                                <select class="form-control form-control-sm" name="selectedConcil" id="selectedConcil" onchange="toggleConciliacion()">
+                                <select class="form-control form-control-sm" name="selectedPuntual" id="selectedPuntual" onchange="toggleInputType2()">
                                     <option disabled value="0" selected hidden>Seleccione</option>
-                                    <option th:each="concil : ${allConcils}" th:value="${concil.id}" th:text="${concil.nombre}" th:selected="${concil.id != null and concil.id == selectedConcil}"></option>
+                                    <option th:each="concil : ${allConcils}" th:value="${concil.id}" th:text="${concil.nombre}" th:selected="${concil.id != null and concil.id == selectedReporte}"></option>
                                 </select>
                             </div>
                         </div>
-                        <div class="col-2">
-                            <div class="form-group form-group-sm">
-                                <select class="form-control form-control-sm" name="selectedConcil" id="selectedConcil" onchange="toggleConciliacion()">
-                                    <option disabled value="0" selected hidden>Seleccione</option>
-                                    <option th:each="concil : ${allConcils}" th:value="${concil.id}" th:text="${concil.nombre}" th:selected="${concil.id != null and concil.id == selectedConcil}"></option>
-                                </select>
-                            </div>
+                        <div class="col-3">
+                            <select class="form-control form-control-sm" name="selectedOperacion" id="selectedOperacion">
+                                <option disabled value="" selected hidden>Seleccione operación</option>
+                                <option th:value="agrupa">Agrupa</option>
+                                <option th:value="contiene">Contiene</option>
+                                <option th:value="diferente">Diferente a</option>
+                                <option th:value="igual">Igual a</option>
+                                <option th:value="mayorIgualQue">Mayor Igual Que</option>
+                                <option th:value="mayorQue">Mayor Que</option>
+                                <option th:value="menorIgualQue">Menor Igual Que</option>
+                                <option th:value="menorQue">Menor Que</option>
+                                <option th:value="noAgrupa">No Agrupa</option>
+                                <option th:value="noContiene">No Contiene</option>
+                            </select>
                         </div>
-                        <div class="col-2">
+                        <div class="col-3">
                             <div class="form-group form-group-sm ">
-                                <input id="idInput" type="text" class="form-control form-control-sm" >
+                                <input type="date" id="periodP1" th:name="periodP1" th:value="${periodP1}"
+                                       class="form-control" style="width: 100%; box-sizing: border-box;">
+                                <div class="invalid-feedback">Por favor, seleccione una fecha.</div>
+                                <input id="puntual1" type="text" class="form-control form-control-sm" >
                             </div>
                         </div>
-                        <div class="col-2">
-                            <button type="button" class="btn btn-primary btn-sm custom-btn-signo">
+                        <div class="col-1">
+                            <button type="button" class="btn btn-primary btn-sm custom-btn-signo"
+                                    th:onclick="|agregarPuntual()|">
                                 <i class="fa fa-plus"></i>
                             </button>
                         </div>
@@ -106,13 +128,10 @@
 
                     <div class="row">
                         <div class="col-auto">
-                            <a class="btn btn-danger btn-sm" th:href="@{/parametric/parametrosReportes(page=${page1})}">Cancelar</a>
+                            <a class="btn btn-danger btn-sm" th:href="@{/parametric/parametrosReportes(page=${page1})}">Ir a Param. Reportes</a>
                         </div>
                         <div class="col-auto">
-                            <a class="btn btn-primary btn-sm" th:href="@{/parametric/parametrosReportes(page=${page1})}">Exportar</a>
-                        </div>
-                        <div class="col-auto">
-                            <a class="btn btn-primary btn-sm" th:href="@{/parametric/parametrosReportes(page=${page1})}">Ir a Para. Reportes</a>
+                            <button type="button" class="btn btn-primary btn-sm" id="btnConsultar"  onclick="generarReporte()">Generar</button>
                         </div>
                     </div>
                     <!-- Campo oculto para el token CSRF -->
@@ -125,7 +144,7 @@
         <!-- Columna para la tabla, alineada a la derecha -->
         <div class="col-md-6">
             <div class="table-responsive rounded border-primary">
-                <table id="example" class="table table-striped table-hover text-center table-bordered table-sm" width="100%">
+                <table id="filtros" class="table table-striped table-hover text-center table-bordered table-sm" width="100%">
                     <thead class="bg-primary">
                     <tr>
                         <th>Filtro</th>
@@ -137,13 +156,17 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="event : ${allEvents}">
-                        <td th:text="${event[0]}"></td>
-                        <td th:text="${event[1]}"></td>
-                        <td th:text="${event[2]}"></td>
-                        <td th:text="${event[3]}"></td>
-                        <td th:text="${event[3]}"></td>
-                        <td th:text="${event[3]}"></td>
+                    <tr th:each="filtro : ${allFiltros}">
+                        <td ></td>
+                        <td ></td>
+                        <td ></td>
+                        <td ></td>
+                        <td ></td>
+                        <td>
+                            <button type="button" class="btn btn-primary btn-sm">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
                     </tr>
                     </tbody>
                 </table>
@@ -153,85 +176,21 @@
     <div class="row m-0 px-4 mt-1">
 
         <div class="col-md-12 p-0 pt-3">
-            <h2>Selección de Filtros Según Reporte</h2>
+            <h2>Resultado de Reporte</h2>
             <div class="table-responsive rounded border-primary">
-                <table id="example" class="table table-striped table-hover text-center table-bordered table-sm" width="100%">
+                <table id="example2" class="table table-striped table-hover text-center table-bordered table-sm" width="100%" th:fragment="tablaCompleta">
                     <thead class="bg-primary">
                     <tr>
-                        <th>Conciliacion</th>
-                        <th>Inventario</th>
-                        <th>Matriz</th>
-                        <th>Tipo Evento</th>
-                        <th>Cuenta 1</th>
-                        <th>Cuenta 2</th>
-                        <th>Hom. Cntros</th>
-                        <th>PYG</th>
-                        <th>Estado</th>
-                        <th COLSPAN="4">Acciones</th>
+                        <th th:each="rc : ${allColRCs}" th:text="${rc.nombre}"></th> <!-- Encabezados dinámicos -->
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="event : ${allEvents}">
-                        <td th:text="${event[0]}"></td>
-                        <td th:text="${event[1]}"></td>
-                        <td th:text="${event[2]}"></td>
-                        <td th:text="${event[3]}"></td>
-                        <td th:text="${event[4]}"></td>
-                        <td th:text="${event[5]}"></td>
-                        <!--<td th:text="${@accountEventMatrixService.findByMatrizEventoTipo1(event)?.cuentaGanancia ?: ''}"></td>
-                        <td th:text="${@accountEventMatrixService.findByMatrizEventoTipo2(event)?.cuentaGanancia ?: ''}"></td>-->
-                        <td th:if="${event[6] == true}">Activo</td>
-                        <td th:if="${event[6] == false}">Inactivo</td>
-                        <td th:if="${event[7] == true}">Activo</td>
-                        <td th:if="${event[7] == false}">Inactivo</td>
-                        <td th:if="${event[8] == true}">Activo</td>
-                        <td th:if="${event[8] == false}">Inactivo</td>
-                        <td>
-                            <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
-                                    th:onclick="|window.location.href='@{/parametric/conditionsEventMatrix/{id}(id=${event[9]},selectedConcil1=${selectedConcil1},selectedInv1=${selectedInv1},selectedET1=${selectedET1},selectedEstado1=${selectedEstado1},page1=${current})}'|">Condiciones</button>
-                        </td>
-                        <td>
-                            <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
-                                    th:onclick="|window.location.href='@{/parametric/cuentasEventMatrix/{id}(id=${event[9]},selectedConcil1=${selectedConcil1},selectedInv1=${selectedInv1},selectedET1=${selectedET1},selectedEstado1=${selectedEstado1},page1=${current})}'|">Cuentas</button>
-                        </td>
-                        <td>
-                            <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
-                                    th:onclick="|window.location.href='@{/parametric/validationsEventMatrix/{id}(id=${event[9]},selectedConcil=${selectedConcil1},selectedInv=${selectedInv1},selectedET=${selectedET1},selectedEstado=${selectedEstado1},page1=${current})}'|">Validaciones</button>
-                        <td>
-                            <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
-                                    th:onclick="|window.location.href='@{/parametric/modifyEventMatrix/{id}(id=${event[9]},selectedConcil=${selectedConcil1},selectedInv=${selectedInv1},selectedET=${selectedET1},selectedEstado=${selectedEstado1},page=${current})}'|">Editar</button>
-                        </td>
+                    <tr th:each="row : ${allRCs}">
+                        <td th:each="col : ${row}" th:text="${col}"></td> <!-- Filas dinámicas -->
                     </tr>
                     </tbody>
                 </table>
             </div>
-            <div class="row" th:if="${last != 0}">
-                <div class="col-md-4 text-left">
-                    <nav arial-label="Pagination">
-                        <ul class="pagination pagination-sm">
-                            <li class="page-item" th:classappend="${prev == 0 ? 'disabled' : ''}">
-                                <a class="page-link"
-                                   th:href="@{/parametric/searchEventMatrix/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${prev},dir=${directory},vId=${vId},selectedConcil=${selectedConcil1},selectedInv=${selectedInv1},selectedET=${selectedET1},selectedEstado=${selectedEstado1},selectedCuenta=${selectedCuenta1})}">Anterior</a>
-                            </li>
-                            <li class="page-item" th:classappend="${current == last ? 'disabled' : ''}">
-                                <a class="page-link"
-                                   th:href="@{/parametric/searchEventMatrix/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${next},dir=${directory},vId=${vId},selectedConcil=${selectedConcil1},selectedInv=${selectedInv1},selectedET=${selectedET1},selectedEstado=${selectedEstado1},selectedCuenta=${selectedCuenta1})}">Siguiente</a>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
-                <div class="col-md-4 text-center">
-                    <h6 th:utext="${registers} + ' Registros Encontrados'"></h6>
-                </div>
-                <div class="col-md-4 text-right">
-                    <h6 class="mx-1" th:utext="'Página ' + ${current} + ' de ' + ${last}"></h6>
-                </div>
-            </div>
-            <div class="d-flex align-items-center justify-content-center" th:if="${filterExport != 'Original'}">
-                <h5><span class="badge badge-pill text-light badge-info py-2 px-5">¡La Tabla se encuentra Filtrada!</span>
-                </h5>
-            </div>
-
         </div>
 
     </div>
@@ -239,86 +198,277 @@
 </div>
 
 <script>
-    async function toggleConciliacion() {
-        const concilID = document.getElementById('selectedConcil').value;
+
+    function generarReporte() {
+        const reporteId = document.getElementById('selectedReporte').value;
         const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
         const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+        //Obtener la lista de los filtros y pasarlos al generarReporteConciliacion
+         console.log(filtros); // Para ver los filtros antes de enviarlos
 
-        if (concilID) {
-            const response = await fetch(`/parametric/obtenerRutasConcilByConcil/${concilID}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    [csrfHeader]: csrfToken
-                }
-            });
+        // Realizamos la llamada AJAX
+        $.ajax({
+            url: '/generarReporteConciliacion', // URL del endpoint
+            type: 'POST',
+            data: {
+                //Se pasa el id del reporte y los filtros
+                reporteId: reporteId,  // ID del reporte
+                filtros: JSON.stringify(filtros) // Enviar los filtros como JSON
+            },
+            headers: {
+            [csrfHeader]: csrfToken},
+            success: function(response) {
+                $('#example2').html(response); // Reemplaza la tabla completa
+            },
+            error: function(xhr, status, error) {
+                console.error("Error en la consulta: " + error);
+            }
+        });
+    }
 
-            const data = await response.json();
+    // Llamar la función para inicializar la visibilidad de los campos al cargar la página
+   window.onload = function() {
+       toggleInputType();
+       toggleInputType2();
+   };
 
-            const ruta = document.getElementById('selectedInv');
-            const valueInv = document.getElementById('valueInv1').value;
+   function toggleInputType() {
+        var tipoSeleccionado = document.getElementById("selectedRangos").value;
+        var selectedOption = document.querySelector(`#selectedRangos option[value='${tipoSeleccionado}']`);
+        var tipoDato = selectedOption ? selectedOption.dataset.tipo : null;
 
-            ruta.innerHTML = '<option selected value="0" >Seleccione un archivo</option>';
+        var inputDate = document.getElementById("periodR1");
+        var inputText = document.getElementById("rangos1");
+        if (tipoDato === "Date") {
+            inputDate.style.display = "block";
+            inputText.style.display = "none";
+        } else {
+            inputDate.style.display = "none";
+            inputText.style.display = "block";
+        }
 
-            data.forEach(campo => {
-                const optionRC = document.createElement('option');
-                optionRC.value = campo[0];
-                optionRC.text = campo[1];
-                if(campo[0] != null && campo[0] == valueInv)
-                {
-                    optionRC.selected=true;
-                }
-                ruta.appendChild(optionRC);
-            });
-
+        var inputDate = document.getElementById("periodR2");
+        var inputText = document.getElementById("rangos2");
+        if (tipoDato === "Date") {
+            inputDate.style.display = "block";
+            inputText.style.display = "none";
+        } else {
+            inputDate.style.display = "none";
+            inputText.style.display = "block";
         }
     }
 
-    async function toggleInventario() {
-        const tipoEventoID = document.getElementById('selectedET').value;
-        const concilID = document.getElementById('selectedConcil').value;
-        const inventarioID = document.getElementById('selectedInv').value;
-        const valueInvID = document.getElementById('valueInv1').value;
-        var valueInvFin = 0;
-        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
-        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+    function toggleInputType2() {
+        var tipoSeleccionado = document.getElementById("selectedPuntual").value;
+        var selectedOption = document.querySelector(`#selectedPuntual option[value='${tipoSeleccionado}']`);
+        var tipoDato = selectedOption ? selectedOption.dataset.tipo : null;
 
-        if(inventarioID != 0)
-            valueInvFin= inventarioID;
-        else
-            valueInvFin= valueInvID;
-        console.log(tipoEventoID , concilID , inventarioID,valueInvID,valueInvFin);
-        if (tipoEventoID && concilID && valueInvFin) {
-            const response = await fetch(`/parametric/obtenerCuentas/${tipoEventoID}/${concilID}/${valueInvFin}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    [csrfHeader]: csrfToken
-                }
-            });
-
-            const data = await response.json();
-
-            const cuentaSelect = document.getElementById('selectedCuenta');
-            const valueCuen = document.getElementById('valueCuen1').value;
-            cuentaSelect.innerHTML = '<option value="0" selected>Seleccione una Cuenta</option>';
-
-            data.forEach(cuenta => {
-                const option = document.createElement('option');
-                option.value = cuenta;
-                option.text = cuenta;
-                if(cuenta != null && cuenta == valueCuen)
-                {
-                    option.selected=true;
-                }
-                cuentaSelect.appendChild(option);
-            });
+        var inputDate = document.getElementById("periodP1");
+        var inputText = document.getElementById("puntual1");
+        if (tipoDato === "Date") {
+            inputDate.style.display = "block";
+            inputText.style.display = "none";
+        } else {
+            inputDate.style.display = "none";
+            inputText.style.display = "block";
         }
     }
-    window.onload=function(){
-        toggleConciliacion();
-        toggleInventario();
-    }
+
+   // Lista para almacenar los filtros
+   let filtros = [];
+
+   function agregarRangos() {
+       var tipoSeleccionado = document.getElementById("selectedRangos").value;
+       var selectedOption = document.querySelector(`#selectedRangos option[value='${tipoSeleccionado}']`);
+       var tipoDato = selectedOption ? selectedOption.dataset.tipo : null;
+       var campoSeleccionado = document.getElementById("selectedRangos").value;
+       var campoNombre = document.getElementById("selectedRangos").options[document.getElementById("selectedRangos").selectedIndex].text;
+       var var1 = "";
+       var var2 = "";
+
+       if (tipoDato === "Date") {
+           var1 = document.getElementById("periodR1").value;
+           var2 = document.getElementById("periodR2").value;
+       }
+       else{
+           var1 = document.getElementById("rangos1").value;
+           var2 = document.getElementById("rangos2").value;
+       }
+
+       if (!var1 || !var2 || campoSeleccionado == 0) {
+           alert("Por favor, seleccione un campo de rango y ambos valores rangos.");
+           return;
+       }
+
+       var nuevoFiltro = {
+           filtro: "RANGO",
+           campoInf: campoNombre,
+           condicion: "Entre",
+           valor1: var1,
+           valor2: var2
+       };
+
+       filtros.push(nuevoFiltro);
+       actualizarTablaFiltros();
+       limpiarFormulario();
+   }
+
+   function agregarPuntual() {
+       var tipoSeleccionado = document.getElementById("selectedPuntual").value;
+       var selectedOption = document.querySelector(`#selectedPuntual option[value='${tipoSeleccionado}']`);
+       var tipoDato = selectedOption ? selectedOption.dataset.tipo : null;
+       var campoSeleccionado = document.getElementById("selectedPuntual").value;
+       var campoNombre = document.getElementById("selectedPuntual").options[document.getElementById("selectedPuntual").selectedIndex].text;
+       var operacion = document.getElementById("selectedOperacion").value;
+       var var1 = "";
+
+       if (tipoDato === "Date") {
+           var1 = document.getElementById("periodP1").value;
+       }
+       else{
+           var1 = document.getElementById("puntual1").value;
+       }
+
+       // Verificar que las fechas no estén vacías
+       if (!var1 || operacion == "" || campoSeleccionado == 0) {
+           alert("Por favor, seleccione un campo puntual, condicion y valor puntual.");
+           return;
+       }
+
+       // Crear el nuevo filtro
+       var nuevoFiltro = {
+           filtro: "PUNTUAL",
+           campoInf: campoNombre,
+           condicion: operacion,
+           valor1: var1,
+           valor2: ""
+       };
+
+       filtros.push(nuevoFiltro);
+       actualizarTablaFiltros();
+       limpiarFormulario();
+   }
+
+   // Función para actualizar la tabla de filtros con los nuevos datos
+   function actualizarTablaFiltros() {
+       var tablaFiltros = document.getElementById("filtros");
+       var tbody = tablaFiltros.querySelector("tbody");
+
+       // Limpiar la tabla
+       tbody.innerHTML = "";
+
+       // Recorrer la lista de filtros y agregar las filas correspondientes
+       filtros.forEach(filtro => {
+           var fila = document.createElement("tr");
+
+           // Filtro
+           var celdaFiltro = document.createElement("td");
+           celdaFiltro.textContent = filtro.filtro;
+           fila.appendChild(celdaFiltro);
+
+           // Campo Inf
+           var celdaCampoInf = document.createElement("td");
+           celdaCampoInf.textContent = filtro.campoInf;
+           fila.appendChild(celdaCampoInf);
+
+           // Condicion
+           var celdaCondicion = document.createElement("td");
+           celdaCondicion.textContent = filtro.condicion;
+           fila.appendChild(celdaCondicion);
+
+           // Valor 1 (Fecha 1)
+           var celdaValor1 = document.createElement("td");
+           celdaValor1.textContent = filtro.valor1;
+           fila.appendChild(celdaValor1);
+
+           // Valor 2 (Fecha 2)
+           var celdaValor2 = document.createElement("td");
+           celdaValor2.textContent = filtro.valor2;
+           fila.appendChild(celdaValor2);
+
+           // Acciones
+           var celdaAcciones = document.createElement("td");
+           var btnEliminar = document.createElement("button");
+           btnEliminar.classList.add("btn", "btn-danger", "btn-sm");
+           btnEliminar.innerHTML = '<i class="fa fa-trash"></i>';
+           btnEliminar.onclick = function() {
+               eliminarFiltro(filtro);
+           };
+           celdaAcciones.appendChild(btnEliminar);
+           fila.appendChild(celdaAcciones);
+
+           // Agregar la fila a la tabla
+           tbody.appendChild(fila);
+       });
+   }
+
+   // Función para eliminar un filtro de la lista
+   function eliminarFiltro(filtro) {
+       filtros = filtros.filter(f => f !== filtro);
+       actualizarTablaFiltros();
+   }
+
+   // Función para limpiar el formulario
+   function limpiarFormulario() {
+       // Limpiar el campo "Rango"
+       document.getElementById("selectedRangos").value = 0;
+       document.getElementById("selectedPuntual").value = 0;
+       document.getElementById("selectedOperacion").value = "";
+
+       // Limpiar los campos de fecha
+       document.getElementById("periodR1").value = "";
+       document.getElementById("periodR2").value = "";
+       document.getElementById("periodP1").value = "";
+   }
+
+       async function toggleReporte() {
+           const reporteId = document.getElementById('selectedReporte').value;
+           const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+           const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+
+           if (reporteId) {
+               const response = await fetch(`/parametric/obtenerCamposPuntual/${reporteId}`, {
+                   method: 'GET',
+                   headers: {
+                       'Content-Type': 'application/json',
+                       [csrfHeader]: csrfToken
+                   }
+               });
+               const data = await response.json();
+               const reporteSelect = document.getElementById('selectedPuntual');
+               reporteSelect.innerHTML = '<option selected value="0" >Seleccione</option>';
+               data.forEach(campo => {
+                   const option = document.createElement('option');
+                   option.value = campo[0];
+                   option.text = campo[1];
+                   option.dataset.tipo = campo[2]; // Asignar el tipo de dato como 'data-tipo'
+                   reporteSelect.appendChild(option);
+               });
+           }
+           if (reporteId) {
+               const response = await fetch(`/parametric/obtenerCamposRangos/${reporteId}`, {
+                   method: 'GET',
+                   headers: {
+                       'Content-Type': 'application/json',
+                       [csrfHeader]: csrfToken
+                   }
+               });
+               const data = await response.json();
+               const reporteSelect2 = document.getElementById('selectedRangos');
+               reporteSelect2.innerHTML = '<option selected value="0" >Seleccione</option>';
+               data.forEach(campo2 => {
+                   const option2 = document.createElement('option');
+                   option2.value = campo2[0];
+                   option2.text = campo2[1];
+                   option2.dataset.tipo = campo2[2]; // Asignar el tipo de dato como 'data-tipo'
+                   reporteSelect2.appendChild(option2);
+               });
+           }
+
+       }
+
+
 </script>
 </body>
 </html>

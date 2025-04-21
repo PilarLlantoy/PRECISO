@@ -40,18 +40,25 @@
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <div class="form-group form-group-sm">
+                        <div class="form-group form-group-sm" th:if="${!parametro.tipoInsumo.equals('contable')}">
                             <h6 class="font-weight-bold">Fuente</h6>
                             <select class="form-control form-control-sm" name="selectedConcil" id="selectedConcil" required onchange="toggleConciliacion()">
                                 <option disabled value="" selected hidden>Seleccione Fuente</option>
                                 <option th:each="fuente : ${conciliaciones}" th:value="${fuente.id}" th:text="${fuente.detalle}"></option>
                             </select>
                         </div>
+                        <div class="form-group form-group-sm" th:if="${parametro.tipoInsumo.equals('contable')}">
+                            <h6 class="font-weight-bold">Fuente</h6>
+                            <select class="form-control form-control-sm" name="selectedContable" id="selectedContable" required onchange="toggleConciliacion()">
+                                <option disabled value="" selected hidden>Seleccione Fuente</option>
+                                <option th:each="fuente : ${rcontables}" th:value="${fuente.id}" th:text="${fuente.nombre}"></option>
+                            </select>
+                        </div>
                     </div>
                     <div class="col-md-2">
                         <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Inventario</h6>
-                            <select class="form-control form-control-sm" name="selectedInventario" id="selectedInventario" required onchange="toggleInventario()">
+                            <select class="form-control form-control-sm" name="selectedInventario" id="selectedInventario" required onchange="toggleInventario()" th:disabled="${parametro.tipoInsumo.equals('contable')}">
                                 <option disabled value="" selected hidden>Seleccione Inventario</option>
                                 <option th:each="inventario : ${inventarios}" th:value="${inventario.id}" th:text="${inventario.detalle}"></option>
                             </select>
@@ -61,7 +68,7 @@
                     <div class="col-md-2">
                         <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Evento</h6>
-                            <select class="form-control form-control-sm" name="selectedEvento" id="selectedEvento" required>
+                            <select class="form-control form-control-sm" name="selectedEvento" id="selectedEvento" required th:disabled="${!parametro.tipoInsumo.equals('conciliacion')}" >
                                 <option disabled value="" selected hidden>Seleccione Evento</option>
                                 <option th:each="evento : ${eventos}" th:value="${evento.id}" th:text="${evento.detalle}"></option>
                             </select>
@@ -107,16 +114,18 @@
                     <tbody>
                     <tr th:each="fuente, iter : ${allFuentes}">
                         <td th:text="${iter.count + ((current-1)*12)}"></td>
-                        <td th:text="${fuente.fuente.detalle}"></td>
-                        <td th:text="${fuente.inventario.detalle}"></td>
-                        <td th:text="${fuente.evento.nombre}"></td>
+                        <td th:if="${fuente.fuente}" th:text="${fuente.fuente?.detalle}"></td>
+                        <td th:if="${fuente.contable}" th:text="${fuente.contable?.nombre}"></td>
+
+                        <td th:text="${fuente.inventario?.detalle}"></td>
+                        <td th:text="${fuente.evento?.nombre}"></td>
 
                         <td>
                             <button th:disabled="${!p_modificar}" class="btn btn-sm btn-primary mx-1"
                                     th:data-id="${fuente.id}"
-                                    th:data-concil="${fuente.fuente.id}"
-                                    th:data-inventario="${fuente.inventario.id}"
-                                    th:data-evento="${fuente.evento.id}"
+                                    th:data-concil="${fuente.fuente?.id}"
+                                    th:data-inventario="${fuente.inventario?.id}"
+                                    th:data-evento="${fuente.evento?.id}"
                                     onclick="cargarCampos(this)">Seleccionar</button>
                         </td>
                         <td>
