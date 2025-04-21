@@ -40,7 +40,7 @@
                             <input id="idInput" type="text" class="form-control form-control-sm  " th:field="*{id}">
                         </div>
                     </div>
-                    <div class="col-md-6" th:if="${!parametro.tipoInsumo.equals('contable')}">
+                    <div class="col-md-6" th:if="${parametro.tipoInsumo.equals('conciliacion')}">
                         <div class="form-group form-group-sm">
                             <h6 class="font-weight-bold">Fuente</h6>
                             <select class="form-control form-control-sm" name="selectedFuente" id="selectedFuente" required onchange="toggleFuente()">
@@ -63,6 +63,19 @@
                                         th:data-id="${fnt.id}"
                                         th:selected="${fuente != null and fuente.id == fnt.id}"
                                         th:text="${fnt.contable.nombre}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6" th:if="${parametro.tipoInsumo.equals('inventarios')}">
+                        <div class="form-group form-group-sm">
+                            <h6 class="font-weight-bold">Fuente</h6>
+                            <select class="form-control form-control-sm" name="selectedFuente" id="selectedFuente" required onchange="toggleFuente()">
+                                <option disabled value="" selected hidden>Seleccione Fuente</option>
+                                <option th:each="fnt : ${fuentes}"
+                                        th:value="${fnt.inventario.id}"
+                                        th:data-id="${fnt.id}"
+                                        th:selected="${fuente != null and fuente.id == fnt.id}"
+                                        th:text="${fnt.fuente.detalle + ' - ' + fnt.inventario.detalle}"></option>
                             </select>
                         </div>
                     </div>

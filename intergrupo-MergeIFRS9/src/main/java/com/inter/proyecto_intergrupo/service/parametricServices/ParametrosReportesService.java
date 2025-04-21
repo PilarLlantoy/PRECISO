@@ -97,4 +97,20 @@ public class ParametrosReportesService {
     }
 
 
+    public List<Object[]> findDatosxEstructuraInventario(int id, List<String> campos) {
+        // Construir el nombre de la tabla dinámicamente
+        String nombreTabla = "preciso_rconcil_" + id;
+
+        // Construir la parte de la consulta SQL con los campos dinámicos
+        String camposStr = String.join(", ", campos);  // Unir los campos de la lista con comas
+        String sqlQuery = "SELECT " + camposStr + " FROM " + nombreTabla + " a";
+
+        // Crear la consulta nativa
+        Query query = entityManager.createNativeQuery(sqlQuery);
+
+        // Ejecutar la consulta y devolver los resultados
+        return query.getResultList();
+    }
+
+
 }
