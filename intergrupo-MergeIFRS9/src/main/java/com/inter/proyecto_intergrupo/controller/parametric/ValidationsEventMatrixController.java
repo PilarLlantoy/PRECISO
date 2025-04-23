@@ -64,31 +64,6 @@ public class ValidationsEventMatrixController {
         Boolean p_modificar= userService.validateEndpointModificar(user.getId(),"Ver Países");
         if(userService.validateEndpoint(user.getId(),"Ver Países")) { //CAMBIAR A VER Matriz de Eventos
 
-            int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
-            PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
-
-            List<EventMatrix> eventMatrixes = eventMatrixService.findAllActive();
-            int start = (int) pageRequest.getOffset();
-            int end = Math.min((start + pageRequest.getPageSize()), eventMatrixes.size());
-            Page<EventMatrix> pageEventMatrix = new PageImpl<>(eventMatrixes.subList(start, end), pageRequest, eventMatrixes.size());
-
-            int totalPage=pageEventMatrix.getTotalPages();
-            if(totalPage>0){
-                List<Integer> pages = IntStream.rangeClosed(1, totalPage).boxed().collect(Collectors.toList());
-                modelAndView.addObject("pages",pages);
-            }
-            modelAndView.addObject("allEvents",pageEventMatrix.getContent());
-            modelAndView.addObject("current",page+1);
-            modelAndView.addObject("next",page+2);
-            modelAndView.addObject("prev",page);
-            modelAndView.addObject("last",totalPage);
-            modelAndView.addObject("filterExport","Original");
-            modelAndView.addObject("directory","country");
-            modelAndView.addObject("registers",eventMatrixes.size());
-            modelAndView.addObject("userName", user.getPrimerNombre());
-            modelAndView.addObject("userEmail", user.getCorreo());
-            modelAndView.addObject("p_modificar", p_modificar);
-
             List<EventType> allTEs = eventTypeService.findAll();
             modelAndView.addObject("allTEs", allTEs);
 
@@ -106,6 +81,33 @@ public class ValidationsEventMatrixController {
 
             List<Object[]> campos = campoRConcilService.findCamposByRutaConcil(matriz.getInventarioConciliacion().getId());
             modelAndView.addObject("campos", campos);
+
+            int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
+            PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
+
+            List<EventMatrix> eventMatrixes = eventMatrixService.findAllActive();
+
+            int start = (int) pageRequest.getOffset();
+            int end = Math.min((start + pageRequest.getPageSize()), validaciones.size());
+
+            Page<ValidationME> pageValidation = new PageImpl<>(validaciones.subList(start, end), pageRequest, validaciones.size());
+
+            int totalPage=pageValidation.getTotalPages();
+            if(totalPage>0){
+                List<Integer> pages = IntStream.rangeClosed(1, totalPage).boxed().collect(Collectors.toList());
+                modelAndView.addObject("pages",pages);
+            }
+            modelAndView.addObject("allEvents",pageValidation.getContent());
+            modelAndView.addObject("current",page+1);
+            modelAndView.addObject("next",page+2);
+            modelAndView.addObject("prev",page);
+            modelAndView.addObject("last",totalPage);
+            modelAndView.addObject("filterExport","Original");
+            modelAndView.addObject("directory","country");
+            modelAndView.addObject("registers",validaciones.size());
+            modelAndView.addObject("userName", user.getPrimerNombre());
+            modelAndView.addObject("userEmail", user.getCorreo());
+            modelAndView.addObject("p_modificar", p_modificar);
 
             if(params.get("selectedConcil")!= null && !params.get("selectedConcil").toString().equalsIgnoreCase(""))
                 modelAndView.addObject("selectedConcil1", params.get("selectedConcil").toString());

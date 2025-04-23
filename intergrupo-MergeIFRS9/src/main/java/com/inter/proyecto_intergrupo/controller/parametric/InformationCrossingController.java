@@ -280,11 +280,11 @@ public class InformationCrossingController {
             conciliationService.generarTablaCruceCompleto_x_Conciliacion(id, fecha, evento);
             conciliationService.generarTablaNovedades(listRoutes, fecha, tipoEvento);
             if(informationCrossingService.findNovedades(listRoutes,fecha,tipoEvento))
-                informationCrossingService.loadLogInformationCrossing(null, id, evento, fecha, "Generar Cuentas", "Fallido", "Se presentaron novedades durante la ejecución por favor validelas en el botón de 'Exportar Novedad'.");
+                informationCrossingService.loadLogInformationCrossing(user, id, evento, fecha, "Generar Cuentas", "Fallido", "Se presentaron novedades durante la ejecución por favor validelas en el botón de 'Exportar Novedad'.");
             else if(!informationCrossingService.findDataTable(listRoutes,fecha).isEmpty())
-                informationCrossingService.loadLogInformationCrossing(null, id, evento, fecha, "Generar Cuentas", "Exitoso", "");
+                informationCrossingService.loadLogInformationCrossing(user, id, evento, fecha, "Generar Cuentas", "Exitoso", "");
             else
-                informationCrossingService.loadLogInformationCrossing(null, id, evento, fecha, "Generar Cuentas", "Fallido", "No se encontraron Inventarios para cruzar, valide las rutas de cargue.");
+                informationCrossingService.loadLogInformationCrossing(user, id, evento, fecha, "Generar Cuentas", "Fallido", "No se encontraron Inventarios para cruzar, valide las rutas de cargue.");
             return ResponseEntity.ok("Bulk->1");
         }
         catch (Exception e) {

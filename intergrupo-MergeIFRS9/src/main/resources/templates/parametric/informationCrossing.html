@@ -81,8 +81,8 @@
                             <button type="button" class="btn btn-sm btn-primary w-100" th:if="${allRCs.size()==0}" disabled>Exportar Detallado</button>
                         </div>
                         <div class="col-6">
-                            <button type="button" class="btn btn-primary btn-sm w-100" th:if="${allRCs.size()!=0 and allNov}" th:onclick="|validarYexportarN()|">Exportar Novedad</button>
-                            <button type="button" class="btn btn-sm btn-primary w-100" th:if="${allRCs.size()==0 or allNov == false}" disabled>Exportar Novedad</button>
+                            <button type="button" class="btn btn-primary btn-sm w-100" th:if="${allNov}" th:onclick="|validarYexportarN()|">Exportar Novedad</button>
+                            <button type="button" class="btn btn-sm btn-primary w-100" th:if="${allNov == false}" disabled>Exportar Novedad</button>
                         </div>
                         <div class="col-6">
                             <button type="button" class="btn btn-primary btn-sm w-100" th:if="${((ultLog != null and ultLog[3] == false) or ultLog == null)}" th:disabled="${allRCs.size()==0 or allNov or (ultLog != null and (ultLog[3] == 'true' or ultLog[5] == 'Fallido'))}"

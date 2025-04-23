@@ -60,7 +60,7 @@
                     <h2>Opciones</h2>
                     <div class="row g-2">
                         <div class="col-6">
-                            <button th:disabled="${allLog.size()==0 or (ultLog != null and ultLog[2] == true)}" class="btn btn-primary btn-sm w-100" th:onclick="|generarConciliacion()|" type="button">Generar Concil.</button>
+                            <button th:disabled="${(ultLog != null and ultLog[2] == true)}" class="btn btn-primary btn-sm w-100" th:onclick="|generarConciliacion()|" type="button">Generar Concil.</button>
                         </div>
                         <div class="col-6">
                             <button th:disabled="${allLog.size()==0}" class="btn btn-primary btn-sm w-100" th:onclick="|exportarConsolidado()|" type="button">Exportar Concil.</button>
