@@ -182,7 +182,7 @@ public class CuadroMandoInvAndContController {
         if(idsSeleccionados2.trim().length()!=0)
         {
             accountingRouteService.leerArchivosMasivo(ids,period2);
-            modelAndView.addObject("resp", "CM1");
+            modelAndView.addObject("resp", "CM2");
         }
         else
         {

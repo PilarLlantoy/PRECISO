@@ -121,14 +121,14 @@ public class InformationCrossingService {
             StringBuilder query = new StringBuilder();
             for (ConciliationRoute route:listRoutes) {
                 String tableName = "preciso_ci_" + route.getConciliacion().getId() + "_" + route.getId();
-                if (!tableExists(tableName))
-                    continue;
-                query.append("select NOVEDADES_PRECISOKEY from "+tableName+" t WHERE t.FECHA_CONCILIACION_PRECISOKEY like '"+fecha+"%' and t.TIPO_EVENTO_PRECISOKEY ='"+evento.getNombre()+"' and t.NOVEDADES_PRECISOKEY != '' and t.NOVEDADES_PRECISOKEY IS NOT NULL \n");
-                if(capacidad!=listRoutes.size())
-                    query.append("UNION ALL\n" );
+                if (tableExists(tableName)) {
+                    query.append("select NOVEDADES_PRECISOKEY from " + tableName + " t WHERE t.FECHA_CONCILIACION_PRECISOKEY like '" + fecha + "%' and t.TIPO_EVENTO_PRECISOKEY ='" + evento.getNombre() + "' and t.NOVEDADES_PRECISOKEY != '' and t.NOVEDADES_PRECISOKEY IS NOT NULL \n");
+                    if (capacidad != listRoutes.size())
+                        query.append("UNION ALL\n");
+                }
                 capacidad++;
             }
-            Query querySelect = entityManager.createNativeQuery(query.toString());
+            Query querySelect = entityManager.createNativeQuery(query.toString().replaceFirst("(?i)\\sUNION\\s+ALL\\s$", ""));
             if(!query.isEmpty())
                 return !querySelect.getResultList().isEmpty();
             else

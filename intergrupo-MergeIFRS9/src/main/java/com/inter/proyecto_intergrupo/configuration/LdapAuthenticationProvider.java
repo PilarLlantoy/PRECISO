@@ -34,19 +34,11 @@ public class LdapAuthenticationProvider implements AuthenticationProvider {
         String username = authentication.getName();
         String password = authentication.getCredentials().toString();
 
-        System.out.println("VALIDAR "+username+password);
-
         ldap = new LDAP();
-        //String rta = ldap.inicializarLDAP(username,password);
-        String rta = "exitosa";
-
-        //UserDetails u = userDetailsService.loadUserByUsername(username);
-
+        String rta = ldap.inicializarLDAP(username,password);
         if (rta.contains("exitosa")){
-
                 //verificar en tabla local
                 User existe = userService.findUserByUserName(username);
-
                 if(existe==null){
                     //si no está, mandar correo
                     String subject = "Solicitud de registro de usuario BBVA PRECISO";

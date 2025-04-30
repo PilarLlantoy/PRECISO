@@ -136,7 +136,7 @@ public class CuadroMandoConsoController {
                     conciliationService.loadLogConciliation(user, Integer.parseInt(id), fecha, "Fallido",rootCause.getMessage(),"Cargue Masivo");
                 }
             }
-            modelAndView.addObject("resp", "CM1");
+            modelAndView.addObject("resp", "CM4");
         }
         else
         {

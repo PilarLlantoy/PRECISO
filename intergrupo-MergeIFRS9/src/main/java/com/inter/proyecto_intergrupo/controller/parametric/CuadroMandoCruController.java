@@ -187,7 +187,7 @@ public class CuadroMandoCruController {
                     informationCrossingService.loadLogInformationCrossing(user, id, evento, fecha, "Cargue Masivo", "Fallido",rootCause.getMessage());
                 }
             }
-            modelAndView.addObject("resp", "CM1");
+            modelAndView.addObject("resp", "CM3");
         }
         else
         {

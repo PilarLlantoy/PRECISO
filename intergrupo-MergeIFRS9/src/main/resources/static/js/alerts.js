@@ -74,9 +74,39 @@ function validateAlerts(operacion,data)
     {
         Swal.fire({
             position: 'center',
-            icon: 'success',
-            title: '¡Carga Masiva Ejecutada!',
-            text: 'Se ha finalizado el proceso de carga masiva de los inventarios.',
+            icon: 'info',
+            title: '¡Cargue Inventarios Ejecutado!',
+            text: 'Se ha finalizado el proceso de cargue cargue de los ficheros de inventarios.',
+            showConfirmButton: true
+        })
+    }
+    else if(operacion=='CM2')
+    {
+        Swal.fire({
+            position: 'center',
+            icon: 'info',
+            title: '¡Cargue Contables Ejecutado!',
+            text: 'Se ha finalizado el proceso de cargue cargue de los ficheros contables.',
+            showConfirmButton: true
+        })
+    }
+    else if(operacion=='CM3')
+    {
+        Swal.fire({
+            position: 'center',
+            icon: 'info',
+            title: '¡Cruce de Información Ejecutado!',
+            text: 'Se ha finalizado el proceso de cruce de información.',
+            showConfirmButton: true
+        })
+    }
+    else if(operacion=='CM4')
+    {
+        Swal.fire({
+            position: 'center',
+            icon: 'info',
+            title: '¡Conciliación Ejecutado!',
+            text: 'Se ha finalizado el proceso de conciliaciones.',
             showConfirmButton: true
         })
     }

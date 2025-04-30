@@ -500,11 +500,13 @@ public class ConciliationController {
         try {
             String idCont = conciliationService.findFechaCont(id, fecha).get(0)[1].toString();
             boolean resp = conciliationService.generarConciliacion(conciliacion,fecha, fechaContabilidad, Integer.valueOf(idCont));
-            if(resp)
-                conciliationService.loadLogConciliation(user, id, fecha, "Exitoso", "","Generar Concil");
-            else
-                conciliationService.loadLogConciliation(user, id, fecha, "Fallido","No se encontraron cuentas a cruzar.'","Generar Concil");
-            return ResponseEntity.ok("Bulk--1");
+            if(resp) {
+                conciliationService.loadLogConciliation(user, id, fecha, "Exitoso", "", "Generar Concil");
+                return ResponseEntity.ok("Bulk--1");
+            }else {
+                conciliationService.loadLogConciliation(user, id, fecha, "Fallido", "No se encontraron cuentas a cruzar.'", "Generar Concil");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bulk--2");
+            }
         }
         catch (Exception e) {
             e.printStackTrace();
