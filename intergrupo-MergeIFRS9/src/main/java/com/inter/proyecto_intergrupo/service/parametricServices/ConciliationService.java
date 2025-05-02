@@ -282,26 +282,27 @@ public class ConciliationService {
         StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append("SELECT \n")
                 .append("t1.FECHA_PRECISOKEY, t1.CENTRO_CONTABLE_PRECISOKEY, t1.CUENTA_CONTABLE_PRECISOKEY, t1.DIVISA_CUENTA_PRECISOKEY, " +
-                        "t1.TOTAL_VALOR_CUENTA_PRECISOKEY AS TOTAL_VALOR_CUENTA1_PRECISOKEY, " +
-                        "COALESCE(t2.TOTAL_VALOR_CUENTA,0) AS TOTAL_VALOR_CUENTA2_PRECISOKEY, " +
-                        "t1.TOTAL_VALOR_CUENTA_PRECISOKEY - COALESCE(t2.TOTAL_VALOR_CUENTA,0) AS TOTAL_PRECISOKEY\n")
+                        "COALESCE(t2.TOTAL_VALOR_CUENTA_PRECISOKEY,0) AS TOTAL_VALOR_CUENTA1_PRECISOKEY, " +
+                        "COALESCE(t1.TOTAL_VALOR_CUENTA_PRECISOKEY,0) AS TOTAL_VALOR_CUENTA2_PRECISOKEY, " +
+                        "COALESCE(t2.TOTAL_VALOR_CUENTA_PRECISOKEY,0) - COALESCE(t1.TOTAL_VALOR_CUENTA_PRECISOKEY,0) AS TOTAL_PRECISOKEY\n")
                 .append("FROM \n")
+                .append("(SELECT periodo_preciso AS FECHA_PRECISOKEY, RIGHT('0000'+CAST(" + campoCentro + " AS VARCHAR(4)),4) AS CENTRO_CONTABLE_PRECISOKEY, CAST(" + campoCuenta + " AS BIGINT) AS CUENTA_CONTABLE_PRECISOKEY, [" +
+                        campoDivisa + "] AS DIVISA_CUENTA_PRECISOKEY, SUM(TRY_CAST([" + campoSaldo + "] AS DECIMAL(18, 2))) AS TOTAL_VALOR_CUENTA_PRECISOKEY\n")
+                .append("FROM [" + nombreTablaContable + "]\n")
+                .append("WHERE periodo_preciso = '" + fechaCont + "' AND (" + condicionCuentaContable + ")\n")
+                .append("GROUP BY periodo_preciso, [" + campoCentro + "], [" + campoCuenta + "], [" + campoDivisa + "]\n")
+                .append(") t1\n")
+                .append("LEFT JOIN\n")
                 .append("(SELECT [FECHA_CONCILIACION_PRECISOKEY] AS FECHA_PRECISOKEY, RIGHT('0000'+CAST(CENTRO_CONTABLE_PRECISOKEY AS VARCHAR(4)),4) AS CENTRO_CONTABLE_PRECISOKEY, CAST(CUENTA_CONTABLE_PRECISOKEY AS BIGINT) AS CUENTA_CONTABLE_PRECISOKEY, DIVISA_CUENTA_PRECISOKEY, SUM([TOTAL_VALOR_CUENTA_PRECISOKEY]) AS TOTAL_VALOR_CUENTA_PRECISOKEY\n")
                 .append("FROM [" + nombreTablaConciliacion + "]\n")
                 .append("WHERE [FECHA_CONCILIACION_PRECISOKEY] = '" + fecha + "' AND (" + condicionCuentaConcil + ")\n")
                 .append("GROUP BY [FECHA_CONCILIACION_PRECISOKEY], [CENTRO_CONTABLE_PRECISOKEY], [CUENTA_CONTABLE_PRECISOKEY], [DIVISA_CUENTA_PRECISOKEY]\n")
-                .append(") t1\n")
-                .append("LEFT JOIN\n")
-                .append("(SELECT periodo_preciso AS FECHA, RIGHT('0000'+CAST(" + campoCentro + " AS VARCHAR(4)),4) AS CENTRO_CONTABLE, CAST(" + campoCuenta + " AS BIGINT) AS CUENTA_CONTABLE, [" +
-                        campoDivisa + "] AS DIVISA_CUENTA, SUM(TRY_CAST([" + campoSaldo + "] AS DECIMAL(18, 2))) AS TOTAL_VALOR_CUENTA\n")
-                .append("FROM [" + nombreTablaContable + "]\n")
-                .append("WHERE periodo_preciso = '" + fechaCont + "' AND (" + condicionCuentaContable + ")\n")
-                .append("GROUP BY periodo_preciso, [" + campoCentro + "], [" + campoCuenta + "], [" + campoDivisa + "]\n")
                 .append(") t2\n")
-                .append("ON t1.CENTRO_CONTABLE_PRECISOKEY = t2.CENTRO_CONTABLE AND t1.CUENTA_CONTABLE_PRECISOKEY = t2.CUENTA_CONTABLE AND t1.DIVISA_CUENTA_PRECISOKEY = t2.DIVISA_CUENTA");
+                .append("ON t1.CENTRO_CONTABLE_PRECISOKEY = t2.CENTRO_CONTABLE_PRECISOKEY AND t1.CUENTA_CONTABLE_PRECISOKEY = t2.CUENTA_CONTABLE_PRECISOKEY AND t1.DIVISA_CUENTA_PRECISOKEY = t2.DIVISA_CUENTA_PRECISOKEY");
 
         // HACER LA SELECCION
         Query querySelect = entityManager.createNativeQuery(queryBuilder.toString());
+        System.out.println("NUEVA CONSULTA ---------------------->"+queryBuilder.toString());
         List<Object[]> resultados = querySelect.getResultList();
         if(resultados.isEmpty())
             return false;
@@ -367,6 +368,7 @@ public class ConciliationService {
 
         // Ejecutar la consulta de inserción
         Query queryInsert = entityManager.createNativeQuery(queryBuilder.toString());
+        System.out.println("Segunda CONSULTA ---------------------->"+queryBuilder.toString());
         queryInsert.executeUpdate();  // Esto inserta los registros en la tabla
     }
 
