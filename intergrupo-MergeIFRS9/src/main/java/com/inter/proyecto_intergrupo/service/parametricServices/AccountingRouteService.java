@@ -363,8 +363,6 @@ public class AccountingRouteService {
     public String todayDateConvert(String formato,String fecha,String idioma,AccountingRoute data) {
         LocalDate fechaHoy = LocalDate.now();
         LocalDate today = fechaHoy;
-        if(data.getDiasRetardo()!=0)
-            today = fechaHoy.minusDays(data.getDiasRetardo());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(formato,convertRegion(idioma));
         if(fecha.isEmpty()) {
             return today.format(formatter).replace(".","");
@@ -373,8 +371,6 @@ public class AccountingRouteService {
         {
             LocalDate fecha2 = LocalDate.parse(fecha);
             LocalDate fechaCast = fecha2;
-            if(data.getDiasRetardo()!=0)
-                fechaCast = fecha2.minusDays(data.getDiasRetardo());
             return fechaCast.format(formatter).replace(".","");
         }
     }
@@ -845,12 +841,15 @@ public class AccountingRouteService {
 
     @Scheduled(cron = "0 0/30 * * * ?")
     public void processJob()  {
-        LocalDateTime fechaHoy = LocalDateTime.now();
-        fechaHoy = fechaHoy.minusDays(1);
-        DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String fecha = fechaHoy.format(formato);
+
         List<AccountingRoute> list = findByJob();
         for (AccountingRoute ac :list) {
+            LocalDateTime fechaHoy = LocalDateTime.now();
+            fechaHoy = fechaHoy.minusDays(1);
+            if(ac.getDiasRetardo()>1)
+                fechaHoy = fechaHoy.minusDays(ac.getDiasRetardo()-1);
+            DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            String fecha = fechaHoy.format(formato);
             try {
                 List<CondicionRC> crc = findCondicionesRc(ac.getId());
                 List<ValidationRC> vrc = findValidacionesRc(ac.getId());
@@ -893,12 +892,19 @@ public class AccountingRouteService {
 
     @Scheduled(cron = "0 45 23 * * ?")
     public void jobEjectutarDiariosFaltantes() {
-        LocalDateTime fechaHoy = LocalDateTime.now();
-        fechaHoy = fechaHoy.minusDays(1);
-        DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String fecha = fechaHoy.format(formato);
-        List<AccountingRoute> list = findByJobNotLoad(fecha);
+        LocalDateTime fechaHoyTemp = LocalDateTime.now();
+        fechaHoyTemp = fechaHoyTemp.minusDays(1);
+        DateTimeFormatter formatoTemp = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String fechaTemp = fechaHoyTemp.format(formatoTemp);
+
+        List<AccountingRoute> list = findByJobNotLoad(fechaTemp);
         for (AccountingRoute ac :list) {
+            LocalDateTime fechaHoy = LocalDateTime.now();
+            fechaHoy = fechaHoy.minusDays(1);
+            if(ac.getDiasRetardo()>1)
+                fechaHoy = fechaHoy.minusDays(ac.getDiasRetardo()-1);
+            DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            String fecha = fechaHoy.format(formato);
             try {
                 List<CondicionRC> crc = findCondicionesRc(ac.getId());
                 List<ValidationRC> vrc = findValidacionesRc(ac.getId());

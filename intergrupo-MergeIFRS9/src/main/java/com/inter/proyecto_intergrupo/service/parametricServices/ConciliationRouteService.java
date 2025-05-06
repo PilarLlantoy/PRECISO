@@ -308,11 +308,9 @@ public class ConciliationRouteService {
         return locale;
     }
 
-    public String todayDateConvert(String formato,String fecha,String idioma,ConciliationRoute data, boolean isAuto) {
+    public String todayDateConvert(String formato,String fecha,String idioma,ConciliationRoute data) {
         LocalDate fechaHoy = LocalDate.now();
         LocalDate today = fechaHoy;
-        if(data.getDiasRetardo()>1 && isAuto)
-            today = fechaHoy.minusDays(data.getDiasRetardo());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(formato,convertRegion(idioma));
         if(fecha.isEmpty()) {
             return today.format(formatter).replace(".","");
@@ -321,8 +319,6 @@ public class ConciliationRouteService {
         {
             LocalDate fecha2 = LocalDate.parse(fecha);
             LocalDate fechaCast = fecha2;
-            if(data.getDiasRetardo()>1 && isAuto)
-                fechaCast = fecha2.minusDays(data.getDiasRetardo());
             return fechaCast.format(formatter).replace(".","");
         }
     }
@@ -350,10 +346,10 @@ public class ConciliationRouteService {
         return querySelect.getResultList();
     }
 
-    public void importXlsx(ConciliationRoute data, String ruta,String fecha, String fuente, boolean isAuto) throws PersistenceException, IOException {
+    public void importXlsx(ConciliationRoute data, String ruta,String fecha, String fuente) throws PersistenceException, IOException {
         String fichero=ensureTrailingSlash(data.getRuta()) + data.getNombreArchivo() +"."+ data.getTipoArchivo();
         if(data.isSiglasFechas()){
-            fichero=ensureTrailingSlash(data.getRuta()) + data.getNombreArchivo() + todayDateConvert(data.getFormatoFecha(),fecha,data.getIdiomaFecha(),data,isAuto) +"."+ data.getTipoArchivo();
+            fichero=ensureTrailingSlash(data.getRuta()) + data.getNombreArchivo() + todayDateConvert(data.getFormatoFecha(),fecha,data.getIdiomaFecha(),data) +"."+ data.getTipoArchivo();
         }
 
         if(fuente !=null)
@@ -490,7 +486,7 @@ public class ConciliationRouteService {
         }
     }
 
-    public void bulkImport(ConciliationRoute data, String ruta,String fecha, String fuente,boolean isAuto) throws PersistenceException  {
+    public void bulkImport(ConciliationRoute data, String ruta,String fecha, String fuente) throws PersistenceException  {
         String nombreTabla = "PRECISO_TEMP_INVENTARIOS";
         String extension="";
         String delimitador=data.getDelimitador();
@@ -509,7 +505,7 @@ public class ConciliationRouteService {
 
         String fechaConvert="";
         if(data.isSiglasFechas()==true)
-            fechaConvert=todayDateConvert(data.getFormatoFecha(),fecha,data.getIdiomaFecha(),data,isAuto);
+            fechaConvert=todayDateConvert(data.getFormatoFecha(),fecha,data.getIdiomaFecha(),data);
         String fichero=ensureTrailingSlash(data.getRuta()) + data.getNombreArchivo() + fechaConvert + extension;
         if(fuente !=null)
             fichero=fuente;
@@ -811,21 +807,23 @@ public class ConciliationRouteService {
 
     @Scheduled(cron = "0 0/30 * * * ?")
     public void jobLeerArchivos() {
-        LocalDateTime fechaHoy = LocalDateTime.now();
-        fechaHoy = fechaHoy.minusDays(1);
-        DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String fecha = fechaHoy.format(formato);
-
         List<ConciliationRoute> list = findByJob();
         for (ConciliationRoute cr :list)
         {
-            try {;
+            LocalDateTime fechaHoy = LocalDateTime.now();
+            fechaHoy = fechaHoy.minusDays(1);
+            if(cr.getDiasRetardo()>1)
+                fechaHoy = fechaHoy.minusDays(cr.getDiasRetardo()-1);
+            DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            String fecha = fechaHoy.format(formato);
+
+            try {
                 createTableTemporal(cr);
                 generarArchivoFormato(getCamposRcon(cr), rutaArchivoFormato);
                 if(cr.getTipoArchivo().equalsIgnoreCase("XLS") || cr.getTipoArchivo().equalsIgnoreCase("XLSX"))
-                    importXlsx(cr,rutaArchivoFormato,fecha,null,true);
+                    importXlsx(cr,rutaArchivoFormato,fecha,null);
                 else
-                    bulkImport(cr,rutaArchivoFormato,fecha,null,true);
+                    bulkImport(cr,rutaArchivoFormato,fecha,null);
                 validationData(cr);
                 copyData(cr,fecha);
 
@@ -852,21 +850,28 @@ public class ConciliationRouteService {
 
     @Scheduled(cron = "0 45 23 * * ?")
     public void jobEjectutarDiariosFaltantes() {
-        LocalDateTime fechaHoy = LocalDateTime.now();
-        fechaHoy = fechaHoy.minusDays(1);
-        DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String fecha = fechaHoy.format(formato);
+        LocalDateTime fechaHoyTemp = LocalDateTime.now();
+        fechaHoyTemp = fechaHoyTemp.minusDays(1);
+        DateTimeFormatter formatoTemp = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String fechaTemp = fechaHoyTemp.format(formatoTemp);
 
-        List<ConciliationRoute> list = findByJobNotLoad(fecha);
+        List<ConciliationRoute> list = findByJobNotLoad(fechaTemp);
         for (ConciliationRoute cr :list)
         {
-            try {;
+            LocalDateTime fechaHoy = LocalDateTime.now();
+            fechaHoy = fechaHoy.minusDays(1);
+            if(cr.getDiasRetardo()>1)
+                fechaHoy = fechaHoy.minusDays(cr.getDiasRetardo()-1);
+            DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            String fecha = fechaHoy.format(formato);
+
+            try {
                 createTableTemporal(cr);
                 generarArchivoFormato(getCamposRcon(cr), rutaArchivoFormato);
                 if(cr.getTipoArchivo().equalsIgnoreCase("XLS") || cr.getTipoArchivo().equalsIgnoreCase("XLSX"))
-                    importXlsx(cr,rutaArchivoFormato,fecha,null,true);
+                    importXlsx(cr,rutaArchivoFormato,fecha,null);
                 else
-                    bulkImport(cr,rutaArchivoFormato,fecha,null,true);
+                    bulkImport(cr,rutaArchivoFormato,fecha,null);
                 validationData(cr);
                 copyData(cr,fecha);
 
@@ -896,13 +901,13 @@ public class ConciliationRouteService {
         for (String id :ids)
         {
             ConciliationRoute cr = findById(Integer.parseInt(id));
-            try {;
+            try {
                 createTableTemporal(cr);
                 generarArchivoFormato(getCamposRcon(cr), rutaArchivoFormato);
                 if(cr.getTipoArchivo().equalsIgnoreCase("XLS") || cr.getTipoArchivo().equalsIgnoreCase("XLSX"))
-                    importXlsx(cr,rutaArchivoFormato,fecha,null,false);
+                    importXlsx(cr,rutaArchivoFormato,fecha,null);
                 else
-                    bulkImport(cr,rutaArchivoFormato,fecha,null,false);
+                    bulkImport(cr,rutaArchivoFormato,fecha,null);
                 validationData(cr);
                 copyData(cr,fecha);
 

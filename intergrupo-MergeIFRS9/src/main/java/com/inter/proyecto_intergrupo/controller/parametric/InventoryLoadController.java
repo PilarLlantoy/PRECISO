@@ -169,9 +169,9 @@ public class InventoryLoadController {
             conciliationRouteService.createTableTemporal(cr);
             conciliationRouteService.generarArchivoFormato(cr.getCampos(), rutaArchivoFormato);
             if(cr.getTipoArchivo().equalsIgnoreCase("XLS") || cr.getTipoArchivo().equalsIgnoreCase("XLSX"))
-                conciliationRouteService.importXlsx(cr,rutaArchivoFormato,fecha,null,false);
+                conciliationRouteService.importXlsx(cr,rutaArchivoFormato,fecha,null);
             else
-                conciliationRouteService.bulkImport(cr,rutaArchivoFormato,fecha,null,false);
+                conciliationRouteService.bulkImport(cr,rutaArchivoFormato,fecha,null);
             conciliationRouteService.validationData(cr);
             conciliationRouteService.copyData(cr,fecha);
 
@@ -212,9 +212,9 @@ public class InventoryLoadController {
             conciliationRouteService.createTableTemporal(cr);
             conciliationRouteService.generarArchivoFormato(cr.getCampos(), rutaArchivoFormato);
             if(cr.getTipoArchivo().equalsIgnoreCase("XLS") || cr.getTipoArchivo().equalsIgnoreCase("XLSX"))
-                conciliationRouteService.importXlsx(cr,rutaArchivoFormato,fecha,rutaArchivo,false);
+                conciliationRouteService.importXlsx(cr,rutaArchivoFormato,fecha,rutaArchivo);
             else
-                conciliationRouteService.bulkImport(cr,rutaArchivoFormato,fecha,rutaArchivo,false);
+                conciliationRouteService.bulkImport(cr,rutaArchivoFormato,fecha,rutaArchivo);
             conciliationRouteService.validationData(cr);
             conciliationRouteService.copyData(cr,fecha);
             conciliationRouteService.loadLogCargue(user,cr,fecha,"Cargar Archivo","Exitoso","");
