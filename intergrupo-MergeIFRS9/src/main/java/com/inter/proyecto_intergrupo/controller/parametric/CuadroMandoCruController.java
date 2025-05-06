@@ -29,7 +29,7 @@ import java.util.stream.IntStream;
 @Controller
 @EnableScheduling
 public class CuadroMandoCruController {
-    private static final int PAGINATIONCOUNT=10;
+    private static final int PAGINATIONCOUNT=100;
     Logger logger = LogManager.getLogger(LogManager.ROOT_LOGGER_NAME);
 
     @Autowired

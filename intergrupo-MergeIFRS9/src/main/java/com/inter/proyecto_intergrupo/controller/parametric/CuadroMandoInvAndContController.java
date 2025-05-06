@@ -47,7 +47,7 @@ import java.util.stream.IntStream;
 @Controller
 @EnableScheduling
 public class CuadroMandoInvAndContController {
-    private static final int PAGINATIONCOUNT=10;
+    private static final int PAGINATIONCOUNT=100;
     private static final int PAGINATIONCOUNTDATA=500;
     Logger logger = LogManager.getLogger(LogManager.ROOT_LOGGER_NAME);
 

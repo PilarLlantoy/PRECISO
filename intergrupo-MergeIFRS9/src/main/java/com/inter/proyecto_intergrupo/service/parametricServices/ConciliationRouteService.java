@@ -308,10 +308,10 @@ public class ConciliationRouteService {
         return locale;
     }
 
-    public String todayDateConvert(String formato,String fecha,String idioma,ConciliationRoute data) {
+    public String todayDateConvert(String formato,String fecha,String idioma,ConciliationRoute data, boolean isAuto) {
         LocalDate fechaHoy = LocalDate.now();
         LocalDate today = fechaHoy;
-        if(data.getDiasRetardo()!=0)
+        if(data.getDiasRetardo()>1 && isAuto)
             today = fechaHoy.minusDays(data.getDiasRetardo());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(formato,convertRegion(idioma));
         if(fecha.isEmpty()) {
@@ -321,7 +321,7 @@ public class ConciliationRouteService {
         {
             LocalDate fecha2 = LocalDate.parse(fecha);
             LocalDate fechaCast = fecha2;
-            if(data.getDiasRetardo()!=0)
+            if(data.getDiasRetardo()>1 && isAuto)
                 fechaCast = fecha2.minusDays(data.getDiasRetardo());
             return fechaCast.format(formatter).replace(".","");
         }
@@ -350,10 +350,10 @@ public class ConciliationRouteService {
         return querySelect.getResultList();
     }
 
-    public void importXlsx(ConciliationRoute data, String ruta,String fecha, String fuente) throws PersistenceException, IOException {
+    public void importXlsx(ConciliationRoute data, String ruta,String fecha, String fuente, boolean isAuto) throws PersistenceException, IOException {
         String fichero=ensureTrailingSlash(data.getRuta()) + data.getNombreArchivo() +"."+ data.getTipoArchivo();
         if(data.isSiglasFechas()){
-            fichero=ensureTrailingSlash(data.getRuta()) + data.getNombreArchivo() + todayDateConvert(data.getFormatoFecha(),fecha,data.getIdiomaFecha(),data) +"."+ data.getTipoArchivo();
+            fichero=ensureTrailingSlash(data.getRuta()) + data.getNombreArchivo() + todayDateConvert(data.getFormatoFecha(),fecha,data.getIdiomaFecha(),data,isAuto) +"."+ data.getTipoArchivo();
         }
 
         if(fuente !=null)
@@ -400,18 +400,21 @@ public class ConciliationRouteService {
                                 // Manejar tipo Float
                                 if (campos.get(i).getTipo().equalsIgnoreCase("Float")) {
                                     if (cell != null) {
-                                        // Obtener el valor numérico
-                                        //Double numericValue = cell.getNumericCellValue();
-                                        String numericValue = "";
-                                        if(!campos.get(i).getSeparador().equalsIgnoreCase("."))
-                                            numericValue = formatter.formatCellValue(cell).replace(".","").replace(",",".");
+                                        if(cell.getCellType() == CellType.NUMERIC)
+                                        {
+                                            double numericValue = cell.getNumericCellValue();
+                                            value = new BigDecimal(Double.toString(numericValue));
+                                        }
                                         else
-                                            numericValue = formatter.formatCellValue(cell).replace(",","");
-
-
-                                        System.out.println(numericValue);
-                                        // Verificar si tiene decimales adicionales y formatear dinámicamente
-                                        value = Double.parseDouble(numericValue);
+                                        {
+                                            String numericValue = "";
+                                            if (!campos.get(i).getSeparador().equalsIgnoreCase("."))
+                                                numericValue = formatter.formatCellValue(cell).replace(".", "").replace(",", ".");
+                                            else
+                                                numericValue = formatter.formatCellValue(cell).replace(",", "");
+                                            System.out.println(numericValue);
+                                            value = Double.parseDouble(numericValue);
+                                        }
                                     } else {
                                         value = null;
                                     }
@@ -487,7 +490,7 @@ public class ConciliationRouteService {
         }
     }
 
-    public void bulkImport(ConciliationRoute data, String ruta,String fecha, String fuente) throws PersistenceException  {
+    public void bulkImport(ConciliationRoute data, String ruta,String fecha, String fuente,boolean isAuto) throws PersistenceException  {
         String nombreTabla = "PRECISO_TEMP_INVENTARIOS";
         String extension="";
         String delimitador=data.getDelimitador();
@@ -506,7 +509,7 @@ public class ConciliationRouteService {
 
         String fechaConvert="";
         if(data.isSiglasFechas()==true)
-            fechaConvert=todayDateConvert(data.getFormatoFecha(),fecha,data.getIdiomaFecha(),data);
+            fechaConvert=todayDateConvert(data.getFormatoFecha(),fecha,data.getIdiomaFecha(),data,isAuto);
         String fichero=ensureTrailingSlash(data.getRuta()) + data.getNombreArchivo() + fechaConvert + extension;
         if(fuente !=null)
             fichero=fuente;
@@ -820,9 +823,9 @@ public class ConciliationRouteService {
                 createTableTemporal(cr);
                 generarArchivoFormato(getCamposRcon(cr), rutaArchivoFormato);
                 if(cr.getTipoArchivo().equalsIgnoreCase("XLS") || cr.getTipoArchivo().equalsIgnoreCase("XLSX"))
-                    importXlsx(cr,rutaArchivoFormato,fecha,null);
+                    importXlsx(cr,rutaArchivoFormato,fecha,null,true);
                 else
-                    bulkImport(cr,rutaArchivoFormato,fecha,null);
+                    bulkImport(cr,rutaArchivoFormato,fecha,null,true);
                 validationData(cr);
                 copyData(cr,fecha);
 
@@ -861,9 +864,9 @@ public class ConciliationRouteService {
                 createTableTemporal(cr);
                 generarArchivoFormato(getCamposRcon(cr), rutaArchivoFormato);
                 if(cr.getTipoArchivo().equalsIgnoreCase("XLS") || cr.getTipoArchivo().equalsIgnoreCase("XLSX"))
-                    importXlsx(cr,rutaArchivoFormato,fecha,null);
+                    importXlsx(cr,rutaArchivoFormato,fecha,null,true);
                 else
-                    bulkImport(cr,rutaArchivoFormato,fecha,null);
+                    bulkImport(cr,rutaArchivoFormato,fecha,null,true);
                 validationData(cr);
                 copyData(cr,fecha);
 
@@ -897,9 +900,9 @@ public class ConciliationRouteService {
                 createTableTemporal(cr);
                 generarArchivoFormato(getCamposRcon(cr), rutaArchivoFormato);
                 if(cr.getTipoArchivo().equalsIgnoreCase("XLS") || cr.getTipoArchivo().equalsIgnoreCase("XLSX"))
-                    importXlsx(cr,rutaArchivoFormato,fecha,null);
+                    importXlsx(cr,rutaArchivoFormato,fecha,null,false);
                 else
-                    bulkImport(cr,rutaArchivoFormato,fecha,null);
+                    bulkImport(cr,rutaArchivoFormato,fecha,null,false);
                 validationData(cr);
                 copyData(cr,fecha);
 
