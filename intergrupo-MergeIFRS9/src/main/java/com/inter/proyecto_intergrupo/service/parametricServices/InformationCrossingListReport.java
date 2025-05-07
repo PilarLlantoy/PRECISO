@@ -414,14 +414,24 @@ public class InformationCrossingListReport {
         for(Object[] data: datas){
             Row row = sheet.createRow(rowCount++);
             int columnCount = 0;
-            for (int i =0; i<data.length;i++)
-            {
-                if(campos.get(i)[1].toString().equalsIgnoreCase("float"))
-                    if(data[i]!=null) createCell(row,columnCount++,Double.parseDouble(data[i].toString()),style1); else createCell(row,columnCount++,"",style);
-                else if(campos.get(i)[1].toString().equalsIgnoreCase("int"))
-                    if(data[i]!=null) createCell(row,columnCount++,Integer.parseInt(data[i].toString()),style2); else createCell(row,columnCount++,"",style);
-                else
-                if(data[i]!=null) createCell(row,columnCount++,data[i].toString(),style); else createCell(row,columnCount++,"",style);
+            for (int i =0; i<data.length;i++) {
+                if (campos.get(i)[1].toString().equalsIgnoreCase("float")){
+                    try {
+                        if (data[i] != null) createCell(row, columnCount++, Double.parseDouble(data[i].toString()), style1); else createCell(row, columnCount++, "", style);
+                    } catch (Exception e) {
+                        if (data[i] != null) createCell(row, columnCount++, data[i].toString(), style); else createCell(row, columnCount++, "", style);
+                    }
+                }
+                else if(campos.get(i)[1].toString().equalsIgnoreCase("int")) {
+                    try {
+                        if (data[i] != null) createCell(row, columnCount++, Integer.parseInt(data[i].toString()), style2); else createCell(row, columnCount++, "", style);
+                    } catch (Exception e) {
+                        if (data[i] != null) createCell(row, columnCount++, data[i].toString(), style); else createCell(row, columnCount++, "", style);
+                    }
+                }
+                else {
+                    if (data[i] != null) createCell(row, columnCount++, data[i].toString(), style); else createCell(row, columnCount++, "", style);
+                }
             }
         }
 
