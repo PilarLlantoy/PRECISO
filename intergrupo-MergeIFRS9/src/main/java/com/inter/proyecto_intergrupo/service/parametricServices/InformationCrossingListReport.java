@@ -259,7 +259,8 @@ public class InformationCrossingListReport {
     }
     private void writeHeaderLineDetail2(List<ConciliationRoute> crList,String fecha , String evento,StringBuilder stringQuery){
 
-        XSSFSheet sheet = workbook.createSheet("OPERACIONES");
+        String sheetName =cr.getNombre().replace(" ","_")+"_OPERACIONES";
+        XSSFSheet sheet = workbook.createSheet(sheetName);
         Row row0 = sheet.createRow(0);
         int columCount = 0;
         StringBuilder  listCampos = new StringBuilder("");
@@ -319,7 +320,7 @@ public class InformationCrossingListReport {
             if(data[5]!=null) createCell(row,5,Double.parseDouble(data[5].toString()),style1); else createCell(row,5,"",style);
         }
 
-        sheets.put("OPERACIONES", sheet);
+        sheets.put(sheetName, sheet);
     }
 
     public String normalizeDate(String dateStr) {
