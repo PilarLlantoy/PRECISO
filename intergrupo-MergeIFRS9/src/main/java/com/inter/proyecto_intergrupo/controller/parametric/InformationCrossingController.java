@@ -407,7 +407,7 @@ public class InformationCrossingController {
         System.out.println(eventType);
         List<Object[]> croutes = informationCrossingService.findAllData(cr,fecha,eventType);
         List<String> colConcil = Arrays.asList("FECHA_CONCILIACIÓN","CENTRO_CONTABLE","CUENTA_CONTABLE","DIVISA","TOTAL");
-        InformationCrossingListReport listReport = new InformationCrossingListReport(croutes,colConcil,cr,null);
+        InformationCrossingListReport listReport = new InformationCrossingListReport(croutes,colConcil,cr,entityManager);
         listReport.export(response);
     }
 

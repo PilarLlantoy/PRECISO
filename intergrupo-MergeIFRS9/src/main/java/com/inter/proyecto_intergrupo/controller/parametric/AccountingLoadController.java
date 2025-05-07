@@ -50,7 +50,7 @@ public class AccountingLoadController {
     private static final int PAGINATIONCOUNTDATA=500;
     public static final String rutaArchivoFormato = "\\\\co.igrupobbva\\svrfilesystem\\BBVA_VIC06\\DP10\\Preciso\\Temporales\\archivo.fmt";
     public static final String rutaArchivoFormato1 = "\\\\co.igrupobbva\\svrfilesystem\\BBVA_VIC06\\DP10\\Preciso\\Temporales\\";
-    public static final List<String> columnasOmitir = Arrays.asList("periodo_preciso", "id_preciso", "inventario_precisokey","id_inventario_precisokey","fecha_conciliacion_precisokey","tipo_evento_precisokey","cdgo_matriz_evento_precisokey","centro_contable_precisokey","cuenta_contable_1_precisokey","divisa_cuenta_1_precisokey","valor_cuenta_1_precisokey","cuenta_contable_2_precisokey","divisa_cuenta_2_precisokey","valor_cuenta_2_precisokey","novedades_precisokey");
+    public static final List<String> columnasOmitir = Arrays.asList("periodo_preciso", "id_preciso", "inventario_precisokey","id_inventario_precisokey","fecha_conciliacion_precisokey","tipo_evento_precisokey","cdgo_matriz_evento_precisokey","centro_contable_precisokey","cuenta_contable_1_precisokey","divisa_cuenta_1_precisokey","valor_cuenta_1_precisokey","cuenta_contable_2_precisokey","divisa_cuenta_2_precisokey","valor_cuenta_2_precisokey","novedades_precisokey","operacion_precisokey");
     //public static final String rutaArchivoFormato = "D:\\archivo.fmt";
     //public static final String rutaArchivoFormato1 = "D:\\";
 

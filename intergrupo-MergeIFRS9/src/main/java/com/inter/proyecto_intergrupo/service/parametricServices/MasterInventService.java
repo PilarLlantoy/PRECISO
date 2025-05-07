@@ -57,11 +57,11 @@ public class MasterInventService {
 
     public List<MasterInvent> findAll(){return masterInvertRepository.findAll();}
 
-    public List<Object[]> findAllObj(){
+    public List<Object[]> findAllObj(String mes){
         Query query = entityManager.createNativeQuery("select b.nombre as codigo_concil,a.fecha_conciliacion,c.nombre as codigo_conta,a.fecha_cargue_contable,a.estado_cargue_conciliacion,a.estado_cargue_cargue_contable,a.aplica_semana, a.id\n" +
                         "from preciso_maestro_inventarios a\n" +
                         "left join preciso_conciliaciones b on a.codigo_conciliacion=b.id\n" +
-                        "left join preciso_rutas_contables c on a.codigo_cargue_contable=c.id_rc order by b.nombre, a.fecha_conciliacion,c.nombre,a.fecha_cargue_contable ");
+                        "left join preciso_rutas_contables c on a.codigo_cargue_contable=c.id_rc where a.fecha_conciliacion like '"+mes+"%' order by b.nombre, a.fecha_conciliacion,c.nombre,a.fecha_cargue_contable ");
         return query.getResultList();
     }
 
@@ -315,15 +315,18 @@ public class MasterInventService {
         auditRepository.save(insert);
     }
 
-    public List<Object[]> findByFilter(String value, String filter) {
+    public List<Object[]> findByFilter(String value, String filter, Object mes) {
         List<Object[]> list=new ArrayList<Object[]>();
+        String dataMes ="";
+        if(mes!=null)
+            dataMes =" and a.fecha_conciliacion like '"+mes.toString()+"%' ";
         switch (filter)
         {
             case "Conciliación":
                 Query quer = entityManager.createNativeQuery("select b.nombre as codigo_concil,a.fecha_conciliacion,c.nombre as codigo_conta,a.fecha_cargue_contable,a.estado_cargue_conciliacion,a.estado_cargue_cargue_contable,a.aplica_semana, a.id\n" +
                         "from preciso_maestro_inventarios a\n" +
                         "left join preciso_conciliaciones b on a.codigo_conciliacion=b.id\n" +
-                        "left join preciso_rutas_contables c on a.codigo_cargue_contable=c.id_rc where b.nombre like ? order by b.nombre, a.fecha_conciliacion,c.nombre,a.fecha_cargue_contable ");
+                        "left join preciso_rutas_contables c on a.codigo_cargue_contable=c.id_rc where b.nombre like ? "+dataMes+" order by b.nombre, a.fecha_conciliacion,c.nombre,a.fecha_cargue_contable ");
                 quer.setParameter(1,value);
                 list = quer.getResultList();
                 break;
@@ -331,7 +334,7 @@ public class MasterInventService {
                 Query query = entityManager.createNativeQuery("select b.nombre as codigo_concil,a.fecha_conciliacion,c.nombre as codigo_conta,a.fecha_cargue_contable,a.estado_cargue_conciliacion,a.estado_cargue_cargue_contable,a.aplica_semana, a.id\n" +
                         "from preciso_maestro_inventarios a\n" +
                         "left join preciso_conciliaciones b on a.codigo_conciliacion=b.id\n" +
-                        "left join preciso_rutas_contables c on a.codigo_cargue_contable=c.id_rc where c.nombre like ? order by b.nombre, a.fecha_conciliacion,c.nombre,a.fecha_cargue_contable ");
+                        "left join preciso_rutas_contables c on a.codigo_cargue_contable=c.id_rc where c.nombre like ? "+dataMes+" order by b.nombre, a.fecha_conciliacion,c.nombre,a.fecha_cargue_contable ");
                 query.setParameter(1,value);
                 list= query.getResultList();
                 break;

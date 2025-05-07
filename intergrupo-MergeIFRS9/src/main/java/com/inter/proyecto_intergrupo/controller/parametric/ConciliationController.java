@@ -22,6 +22,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.text.DateFormat;
@@ -74,7 +76,13 @@ public class ConciliationController {
     private InformationCrossingService informationCrossingService;
 
     @Autowired
+    private ConciliationRouteService conciliationRouteService;
+
+    @Autowired
     private CampoRCService campoRCService;
+
+    @PersistenceContext
+    EntityManager entityManager;
 
     @GetMapping(value="/parametric/conciliation")
     public ModelAndView showConciliation(@RequestParam Map<String, Object> params) {
@@ -539,9 +547,10 @@ public class ConciliationController {
         String headerValue = "attachment; filename="+cr.getNombre().replace(" ","_") + currentDateTime + ".xlsx";
         response.setHeader(headerKey, headerValue);
         List<Object[]> croutes = conciliationService.findAllData(cr,fecha);
-        List<String> colConcil = Arrays.asList("FECHA_CONCILIACIÓN","CENTRO_CONTABLE","CUENTA_CONTABLE","DIVISA_CUENTA","SALDO_INVENTARIO","SALDO_CONTABLE","TOTAL");
-        InformationCrossingListReport listReport = new InformationCrossingListReport(croutes,colConcil,cr,null);
-        listReport.export(response);
+        List<ConciliationRoute> crList = conciliationRouteService.findByConcil(Integer.parseInt(id));
+        List<String> colConcil = Arrays.asList("FECHA_CONCILIACIÓN","CENTRO_CONTABLE","CUENTA_CONTABLE","DIVISA_CUENTA","SALDO_INVENTARIO","SALDO_CONTABLE","DIFERENCIA","AJUSTADO","JUSTIFICACION","CUENTA_HOMOLOGA");
+        InformationCrossingListReport listReport = new InformationCrossingListReport(croutes,colConcil,cr,entityManager);
+        listReport.exportConsol(response,crList,fecha);
     }
 
 }

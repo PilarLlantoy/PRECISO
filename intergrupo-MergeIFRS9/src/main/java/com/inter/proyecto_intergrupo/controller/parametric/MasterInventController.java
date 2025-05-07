@@ -60,7 +60,16 @@ public class MasterInventController {
             int page=params.get("page")!=null?(Integer.valueOf(params.get("page").toString())-1):0;
             PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
 
-            List<Object[]> data = masterInventService.findAllObj();
+            LocalDate localDate= LocalDate.now();
+            DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM");
+            String mes = localDate.format(formato);
+
+            if(params.get("vperiod")!=null)
+                mes = params.get("vperiod").toString();
+            List<Object[]> data = masterInventService.findAllObj(mes);
+
+            modelAndView.addObject("vperiod",mes);
+
             int start = (int) pageRequest.getOffset();
             int end = Math.min((start + pageRequest.getPageSize()), data.size());
             Page<Object[]> pageET = new PageImpl<>(data.subList(start, end), pageRequest, data.size());
@@ -226,10 +235,15 @@ public class MasterInventController {
         int page=params.get("page")==null?0:(Integer.valueOf(params.get("page").toString())-1);
         PageRequest pageRequest=PageRequest.of(page,PAGINATIONCOUNT);
         List<Object[]> list;
-        if(params==null)
-            list=masterInventService.findByFilter("inactivo", "Estado");
-        else
-            list=masterInventService.findByFilter(params.get("vId").toString(),params.get("vFilter").toString());
+        if((params.get("vId")==null && params.get("vFilter") ==null) || (params.get("vId").toString().equalsIgnoreCase("") && params.get("vFilter").toString().equalsIgnoreCase("")) )
+            list = masterInventService.findAllObj(params.get("vperiod").toString());
+        else {
+            list = masterInventService.findByFilter(params.get("vId").toString(), params.get("vFilter").toString(), params.get("vperiod"));
+            modelAndView.addObject("vId",params.get("vId").toString());
+            modelAndView.addObject("vFilter",params.get("vFilter").toString());
+        }
+
+        modelAndView.addObject("vperiod",params.get("vperiod").toString());
 
         int start = (int)pageRequest.getOffset();
         int end = Math.min((start + pageRequest.getPageSize()), list.size());
@@ -244,9 +258,7 @@ public class MasterInventController {
         modelAndView.addObject("current",page+1);
         modelAndView.addObject("next",page+2);
         modelAndView.addObject("prev",page);
-        modelAndView.addObject("vId",params.get("vId").toString());
         modelAndView.addObject("last",totalPage);
-        modelAndView.addObject("vFilter",params.get("vFilter").toString());
         modelAndView.addObject("columns",listColumns);
         modelAndView.addObject("directory","searchMasterinvent");
         modelAndView.addObject("filterExport", "Filtrado");
@@ -274,7 +286,7 @@ public class MasterInventController {
         response.setHeader(headerKey, headerValue);
         List<Object[]> list= new ArrayList<>();
         //if((params.get("vFilter").toString()).equals("Original") ||params.get("vFilter")==null||(params.get("vFilter").toString()).equals("")) {
-            list = masterInventService.findAllObj();
+            list = masterInventService.findAllObj(params.get("vperiod").toString());
         /*}
         else{
             list = masterInventService.findByFilter(params.get("vId").toString(),params.get("vFilter").toString());

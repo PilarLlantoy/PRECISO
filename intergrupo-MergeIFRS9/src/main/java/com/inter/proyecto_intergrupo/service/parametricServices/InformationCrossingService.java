@@ -225,6 +225,7 @@ public class InformationCrossingService {
                 +("CUENTA_CONTABLE_2_PRECISOKEY VARCHAR(MAX), ")
                 +("DIVISA_CUENTA_2_PRECISOKEY VARCHAR(MAX), ")
                 +("NOVEDADES_PRECISOKEY VARCHAR(MAX), ")
+                +("OPERACION_PRECISOKEY VARCHAR(MAX), ")
                 +("VALOR_CUENTA_2_PRECISOKEY FLOAT");
         createTableQuery+=("); END;");
 
@@ -252,6 +253,7 @@ public class InformationCrossingService {
                 +("VALOR_CUENTA_1_PRECISOKEY, ")
                 +("CUENTA_CONTABLE_2_PRECISOKEY, ")
                 +("DIVISA_CUENTA_2_PRECISOKEY, ")
+                +("OPERACION_PRECISOKEY, ")
                 +("VALOR_CUENTA_2_PRECISOKEY");
         insertDataQuery+=(") SELECT ");
 
@@ -274,6 +276,7 @@ public class InformationCrossingService {
                 +("VALOR_CUENTA_1_PRECISOKEY, ")
                 +("CUENTA_CONTABLE_2_PRECISOKEY, ")
                 +("DIVISA_CUENTA_2_PRECISOKEY, ")
+                +("OPERACION_PRECISOKEY, ")
                 +("VALOR_CUENTA_2_PRECISOKEY");
         insertDataQuery+=(" FROM "+tableTemporal+";");
 
@@ -328,6 +331,7 @@ public class InformationCrossingService {
                 .append("VALOR_CUENTA_1_PRECISOKEY FLOAT, ")
                 .append("CUENTA_CONTABLE_2_PRECISOKEY VARCHAR(MAX), ")
                 .append("DIVISA_CUENTA_2_PRECISOKEY VARCHAR(MAX), ")
+                .append("OPERACION_PRECISOKEY VARCHAR(MAX), " )
                 .append("VALOR_CUENTA_2_PRECISOKEY FLOAT");
         createTableQuery.append(");");
 
@@ -408,9 +412,15 @@ public class InformationCrossingService {
             valorCuenta2 = "ABS(" + valorCuenta2 + ")";
         }
 
+        String operacionConsolida = null;
+        if(matriz.getCampoOperacion()!=null && matriz.getCampoOperacion().getNombre() !=null)
+            operacionConsolida = matriz.getCampoOperacion().getNombre();
+
         // Construcción de la consulta SQL
         StringBuilder queryBuilder = new StringBuilder("UPDATE TEMPORAL_ci_"+data.getConciliacion().getId()+"_"+data.getId()+" SET ");
         queryBuilder.append("INVENTARIO_PRECISOKEY = ?, ");
+        if(operacionConsolida!=null)
+            queryBuilder.append("OPERACION_PRECISOKEY = "+operacionConsolida+", ");
         queryBuilder.append("FECHA_CONCILIACION_PRECISOKEY = ?, ");
         queryBuilder.append("TIPO_EVENTO_PRECISOKEY = ?, ");
         queryBuilder.append("CDGO_MATRIZ_EVENTO_PRECISOKEY = ?, ");

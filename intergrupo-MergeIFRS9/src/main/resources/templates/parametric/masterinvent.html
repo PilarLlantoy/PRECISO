@@ -8,13 +8,24 @@
 <div th:replace="fragments/menuTemplate :: menuBody"></div>
 <div class="main-container">
     <div class="row m-0 bg-primary fixed-top myNav">
-        <div class="col-md-6 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
+        <div class="col-md-4 border-bottom border-primary p-0 bg-primary d-flex justify-content-start align-items-center">
             <h2 class="fw-bold text-white mx-4 my-3">Maestro de Inventarios</h2>
         </div>
-        <div class="col-md-6 d-flex align-items-center justify-content-end pe-5">
+        <div class="col-md-4 d-flex align-items-center justify-content-center pe-5">
             <form class="form-inline" method="get" th:action="@{/parametric/searchMasterinvent}">
                 <div class="input-group input-group-sm">
-                    <input type="text" class="form-control form-control-sm" th:name="vId" placeholder="Buscar..." required>
+                    <input type="month" class="form-control form-control-sm" th:value="${vperiod}" th:name="vperiod" placeholder="Mes..." required>
+                    <div class="input-group-append d-flex align-items-center">
+                        <button class="btn btn-secondary btn-sm" type="submit"><i class="fa fa-search"></i></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-4 d-flex align-items-center justify-content-end pe-5">
+            <form class="form-inline" method="get" th:action="@{/parametric/searchMasterinvent}">
+                <div class="input-group input-group-sm">
+                    <input type="text" class="form-control form-control-sm" th:value="${vId}"  th:name="vId" placeholder="Buscar..." required>
+                    <input type="hidden" class="form-control form-control-sm" th:value="${vperiod}" th:name="vperiod">
                     <div class="input-group-append">
                         <select class="form-control form-control-sm" th:name="vFilter" required>
                             <option disabled value="" selected hidden>Seleccione un filtro</option>
@@ -121,11 +132,11 @@
                     <ul class="pagination pagination-sm">
                         <li class="page-item" th:classappend="${prev == 0 ? 'disabled' : ''}">
                             <a class="page-link"
-                               th:href="@{/parametric/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${prev},dir=${directory},vId=${vId})}">Anterior</a>
+                               th:href="@{/parametric/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${prev},dir=${directory},vId=${vId},vperiod=${vperiod})}">Anterior</a>
                         </li>
                         <li class="page-item" th:classappend="${current == last ? 'disabled' : ''}">
                             <a class="page-link"
-                               th:href="@{/parametric/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${next},dir=${directory},vId=${vId})}">Siguiente</a>
+                               th:href="@{/parametric/{dir}/?page={page}&vId={vId}&vFilter={vFilter}(vFilter=${vFilter},page=${next},dir=${directory},vId=${vId},vperiod=${vperiod})}">Siguiente</a>
                         </li>
                     </ul>
                 </nav>
@@ -142,7 +153,7 @@
             </h5>
         </div>
         <div class="d-flex align-items-center justify-content-center">
-            <a th:href="@{/parametric/masterinvent/download/?vFilter={vFilter}&vId={vId}(vFilter=${vFilter},vId=${vId})}"
+            <a th:href="@{/parametric/masterinvent/download/?vFilter={vFilter}&vId={vId}&vperiod={vperiod}(vFilter=${vFilter},vId=${vId},vperiod=${vperiod})}"
                class="btn btn-primary btn-sm">Exportar</a>
         </div>
     </div>
