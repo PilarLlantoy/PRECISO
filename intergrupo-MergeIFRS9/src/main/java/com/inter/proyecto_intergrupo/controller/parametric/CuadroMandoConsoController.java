@@ -49,6 +49,9 @@ public class CuadroMandoConsoController {
     private ConciliationService conciliationService;
 
     @Autowired
+    private InformationCrossingService informationCrossingService;
+
+    @Autowired
     private EventTypeService eventTypeService;
 
     @Autowired
@@ -117,9 +120,14 @@ public class CuadroMandoConsoController {
                     if(!fechaCont.isEmpty())
                     {
                         boolean resp = conciliationService.generarConciliacion(conciliacion, fecha, fechaCont.get(0)[0].toString(), conciliacion.getRutaContable().getId());
-                        if(resp)
-                            conciliationService.loadLogConciliation(user, Integer.parseInt(id), fecha, "Exitoso", "","Cargue Masivo");
-                        else
+                        if(resp) {
+                            if(informationCrossingService.findNovedadesAll(Integer.parseInt(id),fecha)) {
+                                conciliationService.loadLogConciliation(user, Integer.parseInt(id), fecha, "Fallido", "Hay novedades en cruce de información", "Cargue Masivo");
+                            }
+                            else {
+                                conciliationService.loadLogConciliation(user, Integer.parseInt(id), fecha, "Exitoso", "", "Cargue Masivo");
+                            }
+                        }else
                             conciliationService.loadLogConciliation(user, Integer.parseInt(id), fecha, "Fallido","No se encontraron cuentas a cruzar.'","Cargue Masivo");
                     }
                     else {
@@ -160,9 +168,14 @@ public class CuadroMandoConsoController {
                 if(!fechaCont.isEmpty())
                 {
                     boolean resp = conciliationService.generarConciliacion(conciliacion, fecha, fechaCont.get(0)[0].toString(), conciliacion.getRutaContable().getId());
-                    if(resp)
-                        conciliationService.loadLogConciliation(null, Integer.parseInt(id), fecha, "Exitoso", "","Automàtico");
-                    else
+                    if(resp) {
+                        if(informationCrossingService.findNovedadesAll(Integer.parseInt(id),fecha)) {
+                            conciliationService.loadLogConciliation(null, Integer.parseInt(id), fecha, "Fallido", "Hay novedades en cruce de información", "Automàtico");
+                        }
+                        else {
+                            conciliationService.loadLogConciliation(null, Integer.parseInt(id), fecha, "Exitoso", "", "Automàtico");
+                        }
+                    }else
                         conciliationService.loadLogConciliation(null, Integer.parseInt(id), fecha, "Fallido","No se encontraron cuentas a cruzar.'","Automàtico");
                 }
                 else {

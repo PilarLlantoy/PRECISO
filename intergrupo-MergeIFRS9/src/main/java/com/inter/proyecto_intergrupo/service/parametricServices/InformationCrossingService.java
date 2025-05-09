@@ -3,6 +3,7 @@ package com.inter.proyecto_intergrupo.service.parametricServices;
 import com.inter.proyecto_intergrupo.model.admin.User;
 import com.inter.proyecto_intergrupo.model.parametric.*;
 import com.inter.proyecto_intergrupo.repository.admin.AuditRepository;
+import com.inter.proyecto_intergrupo.repository.parametric.ConstructionParameterRepository;
 import com.inter.proyecto_intergrupo.repository.parametric.LogAccountingLoadRepository;
 import com.inter.proyecto_intergrupo.repository.parametric.LogInformationCrossingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +25,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static com.inter.proyecto_intergrupo.controller.parametric.AccountingLoadController.rutaArchivoFormato;
 
@@ -57,6 +56,9 @@ public class InformationCrossingService {
 
     @Autowired
     private ConciliationRouteService conciliationRouteService;
+
+    @Autowired
+    private ConstructionParameterRepository constructionParameterRepository;
 
     @Autowired
     private AccountEventMatrixService accountEventMatrixService;
@@ -138,6 +140,30 @@ public class InformationCrossingService {
             e.printStackTrace();
             return true;
         }
+    }
+
+    public boolean findNovedadesAll(int id, String fecha) {
+        Query query = entityManager.createNativeQuery("SELECT l.estado_proceso,count(l.estado_proceso)\n" +
+                "FROM (select id_conciliacion,id_tipo_evento from preciso_matriz_eventos group by id_conciliacion,id_tipo_evento)c\n" +
+                "OUTER APPLY (\n" +
+                "    SELECT TOP 1 *\n" +
+                "    FROM preciso_log_cruce_informacion l\n" +
+                "    WHERE l.id_conciliacion = c.id_conciliacion and fecha_proceso LIKE ? and c.id_tipo_evento=id_evento\n" +
+                "    ORDER BY l.fecha_preciso DESC\n" +
+                ") l where c.id_conciliacion = ? group by l.estado_proceso\n" +
+                "\n");
+        query.setParameter(1, fecha+"%");
+        query.setParameter(2, id);
+        List<Object[]> result = query.getResultList();
+        if(!result.isEmpty())
+        {
+            if(result.size() == 1 && result.get(0)[0]!=null && result.get(0)[0].toString().equalsIgnoreCase("EXITOSO"))
+                return false;
+            else
+                return true;
+        }
+        else
+            return true;
     }
 
     public boolean tableExists(String tableName) {
@@ -389,10 +415,13 @@ public class InformationCrossingService {
         String valorCuenta1 = null;
         if (cuenta1 != null && !cuenta1.isManejaFormula())
             valorCuenta1 = cuenta1.getCampoValorCuenta().getNombre();
-        else if (cuenta1 != null)
+        else if (cuenta1 != null && cuenta1.isManejaFormula() && cuenta1.getOperacion().equalsIgnoreCase("Divida"))
             valorCuenta1 = "CASE WHEN "+cuenta1.getCampoValorOp1().getNombre() + " LIKE '%,%' THEN CAST(REPLACE(REPLACE("+cuenta1.getCampoValorOp1().getNombre() + ", '.', ''), ',', '.') AS FLOAT) WHEN "+cuenta1.getCampoValorOp1().getNombre() + " LIKE '%.%' THEN CAST("+cuenta1.getCampoValorOp1().getNombre() + " AS float) ELSE "+cuenta1.getCampoValorOp1().getNombre() + " END" +
                     operacionSimbolo(cuenta1.getOperacion()) + " CASE WHEN TRY_CAST(" +(cuenta1.getCampoValorOp2() != null ? cuenta1.getCampoValorOp2().getNombre() : cuenta1.getValorOp2())+ " AS FLOAT) = 0.00 THEN 1 ELSE TRY_CAST("+
                     (cuenta1.getCampoValorOp2() != null ? cuenta1.getCampoValorOp2().getNombre() : cuenta1.getValorOp2())+" AS FLOAT) END ";
+        else if (cuenta1 != null && cuenta1.isManejaFormula() && !cuenta1.getOperacion().equalsIgnoreCase("Divida"))
+            valorCuenta1 = "CASE WHEN "+cuenta1.getCampoValorOp1().getNombre() + " LIKE '%,%' THEN CAST(REPLACE(REPLACE("+cuenta1.getCampoValorOp1().getNombre() + ", '.', ''), ',', '.') AS FLOAT) WHEN "+cuenta1.getCampoValorOp1().getNombre() + " LIKE '%.%' THEN CAST("+cuenta1.getCampoValorOp1().getNombre() + " AS float) ELSE "+cuenta1.getCampoValorOp1().getNombre() + " END" +
+                    operacionSimbolo(cuenta1.getOperacion()) + " TRY_CAST(" +(cuenta1.getCampoValorOp2() != null ? cuenta1.getCampoValorOp2().getNombre() : cuenta1.getValorOp2())+" AS FLOAT) ";
 
         // Aplicar ABS si cuenta1.isValorAbsoluto() es true
         if (cuenta1 != null && cuenta1.isValorAbsoluto()) {
@@ -402,10 +431,13 @@ public class InformationCrossingService {
         String valorCuenta2 = null;
         if (cuenta2 != null && !cuenta2.isManejaFormula())
             valorCuenta2 = cuenta2.getCampoValorCuenta().getNombre();
-        else if (cuenta2 != null)
+        else if (cuenta2 != null && cuenta2.isManejaFormula() && cuenta2.getOperacion().equalsIgnoreCase("Divida"))
             valorCuenta2 = "CASE WHEN "+cuenta2.getCampoValorOp1().getNombre() + " LIKE '%,%' THEN CAST(REPLACE(REPLACE("+cuenta2.getCampoValorOp1().getNombre() + ", '.', ''), ',', '.') AS FLOAT) WHEN "+cuenta2.getCampoValorOp1().getNombre() + " LIKE '%.%' THEN CAST("+cuenta2.getCampoValorOp1().getNombre() + " AS float) ELSE "+cuenta2.getCampoValorOp1().getNombre() + " END" +
                     operacionSimbolo(cuenta2.getOperacion()) + " CASE WHEN TRY_CAST(" +(cuenta2.getCampoValorOp2() != null ? cuenta2.getCampoValorOp2().getNombre() : cuenta2.getValorOp2())+ " AS FLOAT) = 0.00 THEN 1 ELSE TRY_CAST("+
                     (cuenta2.getCampoValorOp2() != null ? cuenta2.getCampoValorOp2().getNombre() : cuenta2.getValorOp2()) +" AS FLOAT) END ";
+        else if (cuenta2 != null && cuenta2.isManejaFormula() && !cuenta2.getOperacion().equalsIgnoreCase("Divida"))
+            valorCuenta2 = "CASE WHEN "+cuenta2.getCampoValorOp1().getNombre() + " LIKE '%,%' THEN CAST(REPLACE(REPLACE("+cuenta2.getCampoValorOp1().getNombre() + ", '.', ''), ',', '.') AS FLOAT) WHEN "+cuenta2.getCampoValorOp1().getNombre() + " LIKE '%.%' THEN CAST("+cuenta2.getCampoValorOp1().getNombre() + " AS float) ELSE "+cuenta2.getCampoValorOp1().getNombre() + " END" +
+                    operacionSimbolo(cuenta2.getOperacion()) + " TRY_CAST(" +(cuenta2.getCampoValorOp2() != null ? cuenta2.getCampoValorOp2().getNombre() : cuenta2.getValorOp2()) +" AS FLOAT) ";
 
         // Aplicar ABS si cuenta2.isValorAbsoluto() es true
         if (cuenta2 != null && cuenta2.isValorAbsoluto()) {
@@ -492,6 +524,63 @@ public class InformationCrossingService {
 
         // Ejecutar la consulta
         updateQuery.executeUpdate();
+
+        if(matriz.isHomCntros())
+        {
+            StringBuilder queryBuilderHomo = new StringBuilder("UPDATE a SET ");
+            queryBuilderHomo.append(" a.CENTRO_CONTABLE_PRECISOKEY = b.centro_destino ");
+            queryBuilderHomo.append(" FROM TEMPORAL_ci_"+data.getConciliacion().getId()+"_"+data.getId()+" a ");
+            queryBuilderHomo.append(" INNER JOIN preciso_homologacion_centros b ON RIGHT('0000'+ a.CENTRO_CONTABLE_PRECISOKEY, 4) = RIGHT('0000'+ b.centro_origen, 4) WHERE ");
+            queryBuilderHomo.append("INVENTARIO_PRECISOKEY = ? AND ");
+            queryBuilderHomo.append("FECHA_CONCILIACION_PRECISOKEY = ? AND ");
+            queryBuilderHomo.append("TIPO_EVENTO_PRECISOKEY = ? AND ");
+            queryBuilderHomo.append("CDGO_MATRIZ_EVENTO_PRECISOKEY = ? ");
+            if (condicion != null)
+                queryBuilderHomo.append(" AND ").append(condicion);
+
+            Query updateQueryHomo = entityManager.createNativeQuery(queryBuilderHomo.toString());
+            updateQueryHomo.setParameter(1, data.getDetalle());
+            updateQueryHomo.setParameter(2, fecha);
+            updateQueryHomo.setParameter(3, tipoEvento.getNombre());
+            updateQueryHomo.setParameter(4, matriz.getConsecutivo());
+            updateQueryHomo.executeUpdate();
+        }
+
+        if (cuenta1 != null && cuenta1.isConstruyeCuenta())
+            generateCuenta(cuenta1,data,"1",condicion,fecha,tipoEvento,matriz);
+        if (cuenta2 != null && cuenta2.isConstruyeCuenta())
+            generateCuenta(cuenta2,data,"2",condicion,fecha,tipoEvento,matriz);
+    }
+
+    public void generateCuenta(AccountEventMatrix cuenta, ConciliationRoute data, String num, String condicion,String fecha,EventType tipoEvento,EventMatrix matriz)
+    {
+        List<ConstructionParameter> parametros = constructionParameterRepository.findByAccount(cuenta);
+        String setData = "";
+        String joinData = "";
+
+        for (ConstructionParameter parameter:parametros) {
+            setData=setData+" + "+parameter.getRutaContable().getNombre().replace(" ","_")+"."+parameter.getCampoContResultante().getNombre();
+            joinData=joinData+" INNER JOIN PRECISO_RC_"+parameter.getRutaContable().getId()+" AS "+parameter.getRutaContable().getNombre().replace(" ","_")+" ON a."+parameter.getCampoConciliacion().getNombre()+"="+parameter.getRutaContable().getNombre().replace(" ","_")+"."+parameter.getCampoContValidar().getNombre();
+        }
+
+        StringBuilder queryAccount = new StringBuilder("UPDATE a SET ");
+        queryAccount.append(" a.CUENTA_CONTABLE_"+num+"_PRECISOKEY = '"+cuenta.getCuentaGanancia()+"'"+setData);
+        queryAccount.append(" FROM TEMPORAL_ci_"+data.getConciliacion().getId()+"_"+data.getId()+" a "+joinData);
+        queryAccount.append(" WHERE a.INVENTARIO_PRECISOKEY = ? AND ");
+        queryAccount.append("a.FECHA_CONCILIACION_PRECISOKEY = ? AND ");
+        queryAccount.append("a.TIPO_EVENTO_PRECISOKEY = ? AND ");
+        queryAccount.append("a.CDGO_MATRIZ_EVENTO_PRECISOKEY = ? ");
+        if (condicion != null)
+            queryAccount.append(" AND ").append(condicion.replace("ISNULL(","ISNULL(a."));
+
+        Query querySelect = entityManager.createNativeQuery(queryAccount.toString());
+        querySelect.setParameter(1, data.getDetalle());
+        querySelect.setParameter(2, fecha);
+        querySelect.setParameter(3, tipoEvento.getNombre());
+        querySelect.setParameter(4, matriz.getConsecutivo());
+
+        if(!parametros.isEmpty())
+            querySelect.executeUpdate();
     }
 
     public String conditionData(ConciliationRoute data, EventMatrix matriz){
@@ -508,17 +597,11 @@ public class InformationCrossingService {
         querySelect.setParameter(2,matriz.getId());
         List<Object[]> condicionesLista = querySelect.getResultList();
         if(!condicionesLista.isEmpty()){
-            String condicion = "(";
+            StringBuilder condicion = new StringBuilder("(");
             String campo = condicionesLista.get(0)[2].toString();
+            Map<String, List<String>> agrupaciones = new LinkedHashMap<>();
+            Map<String, List<String>> noAgrupaciones = new LinkedHashMap<>();
             for(Object[] obj : condicionesLista){
-                if(campo.equals(obj[2]) && !condicion.equals("(")){
-                    condicion = condicion + " AND ";
-                }
-                else if(!condicion.equals("(")){
-                    campo = obj[2].toString();
-                    condicion = condicion + ") AND (";
-                }
-
                 String operacion = null;
 
                 if (obj[2].equals("igual")) operacion = " = '" + obj[3].toString() + "'";
@@ -531,16 +614,46 @@ public class InformationCrossingService {
                 if (obj[2].equals("menorIgualQue")) operacion = " <= '" + obj[3].toString() + "'";
 
                 // Agrupa: se usará una expresión REGEXP para buscar múltiples valores
-                if (obj[2].equals("agrupa")) operacion = " LIKE '%" + obj[3].toString() + "%'";
+                if (obj[2].equals("agrupa")) agrupaciones.computeIfAbsent(obj[1].toString(), k -> new ArrayList<>()).add(obj[3].toString());
 
                 // No Agrupa: Se niega la expresión REGEXP
-                if (obj[2].equals("noAgrupa")) operacion = " NOT LIKE '%" + obj[3].toString() + "%'";
+                if (obj[2].equals("noAgrupa")) noAgrupaciones.computeIfAbsent(obj[1].toString(), k -> new ArrayList<>()).add(obj[3].toString());;
 
-                condicion = condicion + obj[1] + operacion;
+                if(operacion!=null)
+                    condicion.append(" ISNULL("+obj[1] +",'') "+ operacion+ " AND ");
             }
-            condicion+=")";
-            //System.out.println("CONDICION "+  condicion);
-            return condicion;
+
+            StringBuilder resultado = new StringBuilder();
+            for (Map.Entry<String, List<String>> entry : agrupaciones.entrySet()) {
+                String campoP = entry.getKey();
+                List<String> valores = entry.getValue();
+                String valoresFormateados = "'" + String.join("', '", valores) + "'";
+                resultado.append("ISNULL("+campoP+",'')")
+                        .append(" IN (")
+                        .append(valoresFormateados)
+                        .append(") AND ");
+            }
+            condicion.append(resultado.toString());
+
+            resultado = new StringBuilder();
+            for (Map.Entry<String, List<String>> entry : noAgrupaciones.entrySet()) {
+                String campoP = entry.getKey();
+                List<String> valores = entry.getValue();
+                String valoresFormateados = "'" + String.join("', '", valores) + "'";
+                resultado.append("ISNULL("+campoP+",'')")
+                        .append(" NOT IN (")
+                        .append(valoresFormateados)
+                        .append(") AND ");
+            }
+            condicion.append(resultado.toString());
+
+            if (condicion.length() > 5) {
+                condicion.setLength(condicion.length() - 5);
+            }
+
+            condicion.append(")");
+            System.out.println("CONDICION ---> "+  condicion.toString());
+            return condicion.toString();
         }
         return null;
     }
@@ -573,8 +686,8 @@ public class InformationCrossingService {
                 String queryUpdate;
                 if ((boolean) obj[7] && !operacion.isEmpty() && !operacion.isBlank()) {
                     queryUpdate = "UPDATE " + nombreTabla + " SET " +
-                            campoActualizar + " = CAST(CASE WHEN "+obj[3].toString()+" LIKE '%.%' THEN TRY_CAST("+obj[3].toString()+" AS DECIMAL(38, 2)) " +
-                            "ELSE TRY_CAST("+obj[3].toString()+" AS DECIMAL(38, 2)) /100.0 END "+ operacion + obj[4].toString() +" AS DECIMAL(38, 2)) "+
+                            campoActualizar + " = CAST(CASE WHEN "+obj[3].toString()+" LIKE '%.%' THEN TRY_CAST("+obj[3].toString()+" AS FLOAT) " +
+                            "ELSE TRY_CAST("+obj[3].toString()+" AS FLOAT) END "+ operacion + obj[4].toString() +" AS FLOAT) "+
                             "WHERE " + obj[0].toString() + " = '" + obj[1].toString() + "' ";
                     if(condicion!=null && !condicion.isEmpty())
                         queryUpdate=queryUpdate+ " AND " + condicion;

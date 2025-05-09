@@ -70,6 +70,46 @@ function validateAlerts(operacion,data)
             showConfirmButton: true
         })
     }
+    else if(operacion=='Office1')
+    {
+        Swal.fire({
+            position: 'center',
+            icon: 'success',
+            title: '¡Parametro Guardado!',
+            text: 'Se guardo la información de forma exitosa.',
+            showConfirmButton: true
+        })
+    }
+    else if(operacion=='Office-1')
+    {
+        Swal.fire({
+            position: 'center',
+            icon: 'warning',
+            title: '¡Parametro Fallido!',
+            text: 'Revise la información seleccionada ya que ocurrio un error.',
+            showConfirmButton: true
+        })
+    }
+    else if(operacion=='Office2')
+    {
+        Swal.fire({
+            position: 'center',
+            icon: 'success',
+            title: '¡Tabla Actualizada!',
+            text: 'Se guardo la información de forma exitosa.',
+            showConfirmButton: true
+        })
+    }
+    else if(operacion=='Office-2')
+    {
+        Swal.fire({
+            position: 'center',
+            icon: 'warning',
+            title: '¡Actualización Fallida!',
+            text: 'Revise la información seleccionada ya que ocurrio un error, revise que no se encuentren centros duplicados en la fuente.',
+            showConfirmButton: true
+        })
+    }
     else if(operacion=='CM1')
     {
         Swal.fire({

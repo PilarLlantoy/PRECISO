@@ -243,7 +243,7 @@ public class ConciliationService {
             String[] patrones = resultado.get("patronesLike").split(", ");
             List<String> likes = new ArrayList<>();
             for (String patron : patrones) {
-                likes.add("[" + campo + "] LIKE '" + patron.replace(" ","") + "'");
+                likes.add("CAST([" + campo + "]AS BIGINT) LIKE '" + patron.replace(" ","") + "'");
             }
             condiciones.add(String.join(" OR ", likes));
         }

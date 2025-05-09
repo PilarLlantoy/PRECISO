@@ -154,7 +154,7 @@
                     <tr>
                         <th>Campo validación</th>
                         <th>Valor validación</th>
-                        <th>Campo Campo Afecta</th>
+                        <!--<th>Campo Campo Afecta</th>-->
                         <th>Campo referencia</th>
                         <th>Operación</th>
                         <th>Valor operación</th>
@@ -165,7 +165,7 @@
                     <tr th:each="val : ${validaciones}">
                         <td th:text="${val.campoVal.nombre}"></td>
                         <td th:text="${val.valorValidacion}"></td>
-                        <td th:text="${val.campoAfecta?.nombre ?: ''}"></td>
+                        <!--<td th:text="${val.campoAfecta?.nombre ?: ''}"></td>-->
                         <td th:text="${val.campoRef?.nombre ?: ''}"></td>
                         <td th:text="${val.operacion == '0' ? '' : val.operacion}"></td>
                         <td th:text="${val.valorOperacion}"></td>
@@ -295,7 +295,7 @@
         var optionsOperacion = selectOperacion.options;
         if (campoRef != null && campoRef.trim().length > 0) {
             for (var i = 0; i < optionsOperacion.length; i++) {
-                if (optionsOperacion[i].text.trim() === operacion.trim()) {
+                if (optionsOperacion[i].text.trim() === campoRef.trim()) {
                     selectOperacion.value = optionsOperacion[i].value; // Establece el valor de la opción encontrada
                     break;
                 }
