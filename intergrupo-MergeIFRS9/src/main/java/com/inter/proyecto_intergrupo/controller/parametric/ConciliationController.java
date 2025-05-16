@@ -533,6 +533,16 @@ public class ConciliationController {
         }
 
     }
+    @GetMapping("/parametric/detalleRegistroobtenerFechaCont/{fecha}/{centro}/{cuenta}/{divisa}/{idConcil1}")
+    @ResponseBody
+    public List<Object[]> detalleRegistro(@PathVariable("idConcil1") String idConcil1,
+                                          @PathVariable("fecha") String fecha,
+                                          @PathVariable("centro") String centro,
+                                          @PathVariable("cuenta") String cuenta,
+                                          @PathVariable("divisa") String divisa) {
+        List<Object[]> campos = conciliationService.detalleRegistro(fecha,centro,cuenta,divisa,idConcil1);
+        return campos;
+    }
 
     @GetMapping("/parametric/obtenerFechaCont/{concilID}/{fechaInformacion}")
     @ResponseBody
@@ -541,7 +551,6 @@ public class ConciliationController {
         List<Object[]> campos = conciliationService.findFechaCont(idRCont, fechaInformacion);
         return campos;
     }
-
     @GetMapping(value = "/parametric/conciliation/download")
     @ResponseBody
     public void exportToExcel(HttpServletResponse response, @RequestParam(defaultValue = "0") String id, @RequestParam(defaultValue = "0") String fecha, @RequestParam(defaultValue = "0") String fecha2) throws IOException {

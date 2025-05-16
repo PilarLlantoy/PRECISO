@@ -589,6 +589,16 @@ public class ConciliationService {
         return query.getResultList();
     }
 
+    public List<Object[]> detalleRegistro(String fecha,String centro, String cuenta, String divisa, String idConcil1) {
+        Query query = entityManager.createNativeQuery("");
+        query.setParameter("idConcil1", idConcil1);
+        query.setParameter("fecha", fecha);
+        query.setParameter("centro", centro);
+        query.setParameter("cuenta", cuenta);
+        query.setParameter("divisa", divisa);
+        return query.getResultList();
+    }
+
     public List<Object[]> findAllLogByDate(String fecha) {
         Query query = entityManager.createNativeQuery(
                 "WITH CTE AS (\n" +

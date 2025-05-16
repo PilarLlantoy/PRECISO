@@ -149,11 +149,28 @@
                             <thead class="bg-primary">
                             <tr>
                                 <td th:each="rc : ${allColRCs}" th:text="${rc}"></td>
+                                <td th:if="${(ultLog != null and ultLog[2] == true)}">Ajustes</td>
                             </tr>
                             </thead>
                             <tbody>
                             <tr th:each="row : ${allRCs}">
                                 <td th:each="col, colStat : ${row}" th:text="${col}"></td>
+                                <td th:if="${(ultLog != null and ultLog[2] == true) and T(java.lang.Double).parseDouble(row[6].replace('.', '').replace(',', '.')) != 0}">
+                                    <button type="button"
+                                            class="btn btn-primary btn-sm"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#detalleModal"
+                                            th:attr="
+                                                data-campo1=${row[0]},
+                                                data-campo2=${row[1]},
+                                                data-campo3=${row[2]},
+                                                data-campo4=${row[3]},
+                                                data-campo5=${row[4]},
+                                                data-campo6=${row[5]},
+                                                data-campo7=${row[6]}">Seleccionar
+                                    </button>
+                                </td>
+                                <td th:if="${(ultLog != null and ultLog[2] == true) and T(java.lang.Double).parseDouble(row[6].replace('.', '').replace(',', '.')) == 0}"><i class="fa fa-check-circle fa-2x text-success"></i></td>
                             </tr>
                             </tbody>
                         </table>
@@ -263,6 +280,76 @@
             </div>
         </div>
     </div>
+    <!-- Modal de detalle -->
+    <div class="modal fade" id="detalleModal" tabindex="-1" aria-labelledby="detalleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl"> <!-- modal-xl para tamaño grande -->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="detalleModalLabel">Detalle del Registro</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Campos principales -->
+                    <div class="row mb-2">
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold">Fecha</label>
+                            <input type="text" id="det-campo1" class="form-control form-control-sm" readonly>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold">Centro</label>
+                            <input type="text" id="det-campo2" class="form-control form-control-sm" readonly>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold">Cuenta</label>
+                            <input type="text" id="det-campo3" class="form-control form-control-sm" readonly>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold">Divisa</label>
+                            <input type="text" id="det-campo4" class="form-control form-control-sm" readonly>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Saldo Contable</label>
+                            <input type="text" id="det-campo5" class="form-control form-control-sm" readonly>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Saldo Inventario</label>
+                            <input type="text" id="det-campo6" class="form-control form-control-sm" readonly>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label fw-bold">Diferencia</label>
+                            <input type="text" id="det-campo7" class="form-control form-control-sm" readonly>
+                        </div>
+                    </div>
+
+                    <!-- Tabla de detalle -->
+                    <div class="table-responsive mb-3">
+                        <table class="table table-sm table-bordered">
+                            <thead class="table-light">
+                            <tr>
+                                <th>Inventario</th>
+                                <th>Operación</th>
+                                <th>Valor Operación</th>
+                            </tr>
+                            </thead>
+                            <tbody id="detalleTablaBody">
+                            <!-- se inyectará desde JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Justificación -->
+                    <div class="mb-2">
+                        <label for="justificacion" class="form-label fw-bold">Justificación</label>
+                        <textarea id="justificacion" class="form-control" rows="4" placeholder="Escribe tu justificación aquí..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary btn-sm" id="btnGuardarRegistro">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"
@@ -272,9 +359,64 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"
         integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
         crossorigin="anonymous"></script>
-
 <script>
+  const detalleModal = document.getElementById('detalleModal');
+  detalleModal.addEventListener('show.bs.modal', function (event) {
+  const button = event.relatedTarget;
 
+    // Extraer datos de data-attributes
+    const fecha   = button.getAttribute('data-campo1');
+    const centro   = button.getAttribute('data-campo2');
+    const cuenta   = button.getAttribute('data-campo3');
+    const divisa   = button.getAttribute('data-campo4');
+    const campo5   = button.getAttribute('data-campo5');
+    const campo6   = button.getAttribute('data-campo6');
+    const campo7   = button.getAttribute('data-campo7');
+
+    console.log(campo1);
+
+    // Rellenar inputs principales
+    document.getElementById('det-campo1').value = fecha;
+    document.getElementById('det-campo2').value = centro;
+    document.getElementById('det-campo3').value = cuenta;
+    document.getElementById('det-campo4').value = divisa;
+    document.getElementById('det-campo5').value = campo5;
+    document.getElementById('det-campo6').value = campo6;
+    document.getElementById('det-campo7').value = campo7;
+
+    const idConcil1 = document.getElementById('arhcont').value;
+
+    // Llamada AJAX opcional para obtener datos de detalle
+    /*fetch(/parametric/detalleRegistro/${fecha}/${centro}/${cuenta}/${divisa}/${idConcil1})
+      .then(resp => resp.json())
+      .then(data => {
+        const tbody = document.getElementById('detalleTablaBody');
+        tbody.innerHTML = '';
+        data.forEach(det => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${det[0]}</td>
+            <td>${det[1]}</td>
+            <td>${det[2]}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      })
+      .catch(err => console.error(err));*/
+  });
+
+  document.getElementById('btnGuardarRegistro').addEventListener('click', () => {
+    const id    = document.getElementById('det-id').value;
+    const just  = document.getElementById('justificacion').value;
+
+    fetch('/parametric/registrarJustificacion', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ id, just })
+    })
+    .then(r => r.ok ? location.reload() : Promise.reject('Error'))
+    .catch(e => alert('No se pudo guardar: ' + e));
+  });
 
     // Obtener los elementos de fecha
    const periodInput = document.getElementById('period');
